@@ -83,7 +83,7 @@ const StitchedUpApp = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-serif">Stitched Up</h1>
-            <p className="text-sm mt-1">An Interactive Companion to Martin Parsons' Novel</p>
+            <p className="text-sm mt-1">An Interactive Companion to Matt Parry's Novel</p>
           </div>
           <div>
             <button 
@@ -266,7 +266,7 @@ const StitchedUpApp = () => {
               <p className="text-sm">
                 The "Stitched Up" Interactive Companion is designed to enhance your reading experience
                 by providing detailed information about characters, locations, events, and spy techniques
-                featured in Martin Parsons' novel.
+                featured in Matt Parry's novel.
               </p>
             </div>
             

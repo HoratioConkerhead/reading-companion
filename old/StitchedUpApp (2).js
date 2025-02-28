@@ -49,7 +49,7 @@ const StitchedUpApp = () => {
       <header className="bg-gray-800 text-white p-4">
         <div className="container mx-auto">
           <h1 className="text-3xl font-serif">Stitched Up</h1>
-          <p className="text-sm mt-1">An Interactive Companion to Martin Parsons' Novel</p>
+          <p className="text-sm mt-1">An Interactive Companion to Matt Parry's Novel</p>
         </div>
       </header>
       

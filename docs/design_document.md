@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the design and implementation strategy for an interactive companion app for Martin Parsons' novel "Stitched Up." The app will allow readers to explore the complex spy narrative through multiple lenses, helping them track characters, understand relationships, follow locations, and navigate the intricate plot.
+This document outlines the design and implementation strategy for an interactive companion app for Matt Parry's novel "Stitched Up." The app will allow readers to explore the complex spy narrative through multiple lenses, helping them track characters, understand relationships, follow locations, and navigate the intricate plot.
 
 ## Target Audience
 

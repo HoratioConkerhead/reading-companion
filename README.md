@@ -1,6 +1,6 @@
 # Stitched Up Interactive Companion
 
-An interactive web application to explore Martin Parsons' spy thriller novel "Stitched Up", helping readers navigate the complex web of characters, locations, events, and plot elements.
+An interactive web application to explore Matt Parry's spy thriller novel "Stitched Up", helping readers navigate the complex web of characters, locations, events, and plot elements.
 
 ![Stitched Up Interactive App](https://via.placeholder.com/800x400?text=Stitched+Up+Interactive+App)
 
@@ -212,4 +212,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-This project was created as an interactive companion to Martin Parsons' novel "Stitched Up", designed to enhance the reading experience by providing additional context and exploration tools.
+This project was created as an interactive companion to Matt Parry's novel "Stitched Up", designed to enhance the reading experience by providing additional context and exploration tools.

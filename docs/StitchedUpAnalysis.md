@@ -1,4 +1,4 @@
-# "Stitched Up" by Martin Parsons - Structured Analysis
+# "Stitched Up" by Matt Parry' - Structured Analysis
 
 ## Overall Design Approach
 
