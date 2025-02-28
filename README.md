@@ -80,6 +80,9 @@ Learn about espionage techniques referenced in the novel and their historical co
 
 ```
 ├── docs/                  # Documentation files
+│   ├── data_format_documentation.md
+│   ├── design_document.md
+│   └── stitchedUpAnalysus.md
 ├── public/                # Static files
 └── src/                   # Source code
     ├── assets/            # Images and other assets
@@ -91,14 +94,15 @@ Learn about espionage techniques referenced in the novel and their historical co
     │   ├── InteractiveMap.js
     │   ├── PlotNavigator.js
     │   ├── ObjectGallery.js
-    │   └── SpycraftEncyclopedia.js
+    │   ├── SpycraftEncyclopedia.js
+    │   └── Timeline.js
     ├── data/              # Data files
-    │   ├── characters.js
-    │   ├── events.js
-    │   ├── locations.js
-    │   ├── mockData.js
-    │   └── spycraftEntries.js
+    │   ├── index.js
+    │   └── stitchedUp/
+    │       ├── datapycraftEncyclopedia.js
+    │       └── index.js
     ├── styles/            # CSS and styling
+    │   └── style.css
     ├── App.js             # Main app component
     └── index.js           # Entry point
 ```
