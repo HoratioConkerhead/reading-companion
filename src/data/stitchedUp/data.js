@@ -945,7 +945,7 @@ export const characters = [
   ];
 
   // Chapter data
-  const chapters = [
+  export const chapters = [
     {
       id: 'preface',
       title: 'Preface',
@@ -1040,7 +1040,7 @@ export const characters = [
   ];
   
   // Mystery elements that get revealed through the story
-  const mysteryElements = [
+  export const mysteryElements = [
     {
       id: 'knitters_group',
       title: 'The Knitters Group',
@@ -1093,7 +1093,7 @@ export const characters = [
   ];
   
   // Theme elements throughout the story
-  const themeElements = [
+  export const themeElements = [
     {
       id: 'class_privilege',
       title: 'Class and Privilege',

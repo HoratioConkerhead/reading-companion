@@ -223,7 +223,7 @@ const Timeline = ({
                         className={`w-4 h-4 rounded-full relative top-3 z-10 cursor-pointer ${
                           selectedEvent?.id === event.id 
                             ? 'bg-blue-600' 
-                            : getEventColor(event)
+                            : getEventColor(event, charactersData)
                         }`}
                       ></div>
                       <div className={`text-xs pt-6 w-24 text-center cursor-pointer transform -rotate-45 origin-top-left ${
@@ -257,7 +257,7 @@ const Timeline = ({
                       <div className="flex mt-2">
                         {event.location && (
                           <span className="text-xs px-2 py-1 rounded bg-gray-200 mr-2">
-                            {getLocationName(event.location)}
+                            {getLocationName(event.location, locationsData)}
                           </span>
                         )}
                         {event.characters && event.characters.length > 0 && (
@@ -345,9 +345,9 @@ const Timeline = ({
               <div className="p-3 bg-gray-100 rounded">
                 {selectedEvent.location ? (
                   <div>
-                    <div className="font-medium">{getLocationName(selectedEvent.location)}</div>
+                    <div className="font-medium">{getLocationName(selectedEvent.location, locationsData)}</div>
                     <div className="text-sm text-gray-600">
-                      {getLocationArea(selectedEvent.location)}
+                      {getLocationArea(selectedEvent.location, locationsData)}
                     </div>
                   </div>
                 ) : (
@@ -422,19 +422,19 @@ const Timeline = ({
 };
 
 // Helper function to get location name from ID
-const getLocationName = (locationId) => {
+const getLocationName = (locationId, locationsData) => {
   const location = locationsData.find(l => l.id === locationId);
   return location ? location.name : locationId;
 };
 
 // Helper function to get location area from ID
-const getLocationArea = (locationId) => {
+const getLocationArea = (locationId, locationsData) => {
   const location = locationsData.find(l => l.id === locationId);
   return location ? location.area : '';
 };
 
 // Helper function to get event color based on primary character group
-const getEventColor = (event) => {
+const getEventColor = (event, charactersData) => {
   if (!event.characters || event.characters.length === 0) {
     return 'bg-gray-400';
   }
