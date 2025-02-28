@@ -1,7 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
-import { charactersData, relationshipsData } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
 
-const CharacterExplorer = ({ onCharacterSelect, selectedCharacter }) => {
+const CharacterExplorer = ({ 
+  onCharacterSelect, 
+  selectedCharacter,
+  charactersData,
+  relationshipsData 
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
@@ -297,4 +301,3 @@ const formatSceneId = (sceneId) => {
 };
 
 export default CharacterExplorer;
-

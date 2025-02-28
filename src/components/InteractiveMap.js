@@ -1,7 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { locationsData, eventsData } from '../data/mockData';
-
-const InteractiveMap = ({ onLocationSelect, onEventSelect }) => {
+const InteractiveMap = ({ 
+  onLocationSelect, 
+  onEventSelect,
+  locationsData,
+  eventsData
+}) => {
   const [mapMode, setMapMode] = useState('locations'); // 'locations', 'events', 'characters'
   const [timeFilter, setTimeFilter] = useState('all');
   const [hoveredLocation, setHoveredLocation] = useState(null);

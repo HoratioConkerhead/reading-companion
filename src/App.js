@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
@@ -12,8 +12,8 @@ import PlotNavigator from './components/PlotNavigator';
 import ObjectGallery from './components/ObjectGallery';
 import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 
-// Import data
-import { charactersData, eventsData, locationsData, objectsData } from './data/mockData';
+// Import data from new structure - using the namespace approach
+import { stitchedUp } from './data';
 
 const StitchedUpApp = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -135,6 +135,8 @@ const StitchedUpApp = () => {
               <CharacterExplorer 
                 onCharacterSelect={handleCharacterSelect} 
                 selectedCharacter={selectedCharacter}
+                charactersData={stitchedUp.characters}
+                relationshipsData={stitchedUp.relationships}
               />
             </TabPanel>
             
@@ -143,6 +145,8 @@ const StitchedUpApp = () => {
               <RelationshipWeb 
                 onCharacterSelect={handleCharacterSelect}
                 selectedCharacter={selectedCharacter}
+                charactersData={stitchedUp.characters}
+                relationshipsData={stitchedUp.relationships}
               />
             </TabPanel>
             
@@ -152,6 +156,9 @@ const StitchedUpApp = () => {
                 onEventSelect={handleEventSelect}
                 selectedEvent={selectedEvent}
                 onCharacterSelect={handleCharacterSelect}
+                eventsData={stitchedUp.events}
+                charactersData={stitchedUp.characters}
+                locationsData={stitchedUp.locations}
               />
             </TabPanel>
             
@@ -161,6 +168,9 @@ const StitchedUpApp = () => {
                 onLocationSelect={handleLocationSelect}
                 selectedLocation={selectedLocation}
                 onEventSelect={handleEventSelect}
+                locationsData={stitchedUp.locations}
+                eventsData={stitchedUp.events}
+                charactersData={stitchedUp.characters}
               />
             </TabPanel>
             
@@ -169,6 +179,8 @@ const StitchedUpApp = () => {
               <InteractiveMap 
                 onLocationSelect={handleLocationSelect}
                 onEventSelect={handleEventSelect}
+                locationsData={stitchedUp.locations}
+                eventsData={stitchedUp.events}
               />
             </TabPanel>
             
@@ -177,6 +189,8 @@ const StitchedUpApp = () => {
               <PlotNavigator 
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
+                eventsData={stitchedUp.events}
+                charactersData={stitchedUp.characters}
               />
             </TabPanel>
             
@@ -185,12 +199,17 @@ const StitchedUpApp = () => {
               <ObjectGallery 
                 onObjectSelect={handleObjectSelect}
                 selectedObject={selectedObject}
+                objectsData={stitchedUp.objects}
+                charactersData={stitchedUp.characters}
+                eventsData={stitchedUp.events}
               />
             </TabPanel>
             
             {/* Spy Encyclopedia Tab */}
             <TabPanel>
-              <SpycraftEncyclopedia />
+              <SpycraftEncyclopedia 
+                spycraftEntries={stitchedUp.spycraftEntries}
+              />
             </TabPanel>
           </div>
         </Tabs>
@@ -269,7 +288,7 @@ const StitchedUpApp = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-gray-600 text-center text-sm">
-            <p>"Stitched Up" Interactive Companion Â© {new Date().getFullYear()}</p>
+            <p>"Stitched Up" Interactive Companion © {new Date().getFullYear()}</p>
           </div>
         </div>
       </footer>
@@ -313,4 +332,3 @@ export const getGroupColor = (group) => {
 };
 
 export default StitchedUpApp;
-

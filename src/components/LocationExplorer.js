@@ -1,7 +1,12 @@
 ﻿import React, { useState } from 'react';
-import { locationsData, eventsData, charactersData } from '../data/mockData';
-
-const LocationExplorer = ({ onLocationSelect, selectedLocation, onEventSelect }) => {
+const LocationExplorer = ({ 
+  onLocationSelect, 
+  selectedLocation, 
+  onEventSelect,
+  locationsData,
+  eventsData,
+  charactersData
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [locationTypeFilter, setLocationTypeFilter] = useState('all');
   const [areaFilter, setAreaFilter] = useState('all');

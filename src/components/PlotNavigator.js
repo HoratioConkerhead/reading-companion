@@ -1,5 +1,4 @@
 ﻿import React, { useState } from 'react';
-import { eventsData, charactersData } from '../data/mockData';
 
 // In a real implementation, we'd have a proper chapters structure
 // For now, let's create a mock chapters array based on the events
@@ -198,7 +197,13 @@ const themeElements = [
   }
 ];
 
-const PlotNavigator = ({ onEventSelect, onCharacterSelect }) => {
+
+const PlotNavigator = ({ 
+  onEventSelect, 
+  onCharacterSelect,
+  eventsData,
+  charactersData
+}) => {
   const [viewMode, setViewMode] = useState('chapters'); // 'chapters', 'mysteries', 'themes'
   const [readerKnowledge, setReaderKnowledge] = useState('full'); // 'progressive', 'full'
   const [expandedChapter, setExpandedChapter] = useState(null);

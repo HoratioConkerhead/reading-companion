@@ -1,7 +1,11 @@
 ﻿import React, { useState } from 'react';
-import { objectsData, charactersData, eventsData } from '../data/mockData';
-
-const ObjectGallery = ({ onObjectSelect, selectedObject }) => {
+const ObjectGallery = ({ 
+  onObjectSelect, 
+  selectedObject,
+  objectsData,
+  charactersData,
+  eventsData
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Filter objects based on search

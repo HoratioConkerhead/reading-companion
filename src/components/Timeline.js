@@ -1,7 +1,11 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { eventsData, charactersData, locationsData } from '../data/mockData';
-
-const Timeline = ({ onEventSelect, selectedEvent }) => {
+const Timeline = ({ 
+  onEventSelect, 
+  selectedEvent,
+  eventsData,
+  charactersData,
+  locationsData
+}) => {
   const [timelineFilter, setTimelineFilter] = useState('all');
   const [characterFilter, setCharacterFilter] = useState('all');
   const [layoutMode, setLayoutMode] = useState('chronological'); // 'chronological' or 'parallel'

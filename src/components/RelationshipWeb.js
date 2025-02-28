@@ -1,7 +1,12 @@
 ﻿import React, { useState } from 'react';
-import { charactersData, relationshipsData } from '../data/mockData';
 
-const RelationshipWeb = ({ onCharacterSelect, selectedCharacter }) => {
+const RelationshipWeb = ({ 
+  onCharacterSelect, 
+  selectedCharacter,
+  charactersData,
+  relationshipsData
+}) => {
+
   const [groupFilter, setGroupFilter] = useState('all');
   const [relationshipTypeFilter, setRelationshipTypeFilter] = useState('all');
   
