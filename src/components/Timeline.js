@@ -1,7 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
+
 const Timeline = ({ 
   onEventSelect, 
   selectedEvent,
+  onCharacterSelect,
   eventsData,
   charactersData,
   locationsData
@@ -9,6 +11,11 @@ const Timeline = ({
   const [timelineFilter, setTimelineFilter] = useState('all');
   const [characterFilter, setCharacterFilter] = useState('all');
   const [layoutMode, setLayoutMode] = useState('chronological'); // 'chronological' or 'parallel'
+  
+  // Refs for scrolling
+  const timelineRef = useRef(null);
+  const eventDetailsRef = useRef(null);
+  const timelinePosition = useRef(null);
   
   // Filter events based on selection
   const filteredEvents = eventsData.filter(event => {
@@ -115,9 +122,66 @@ const Timeline = ({
     return groups;
   })();
   
+  // Handle event selection and scrolling
+  const handleEventSelect = (event) => {
+    // Store current scroll position before selecting event
+    timelinePosition.current = window.scrollY;
+    
+    // Call the parent's event selection handler
+    onEventSelect(event);
+    
+    // Scroll to event details after a short delay to allow for rendering
+    setTimeout(() => {
+      if (eventDetailsRef.current) {
+        eventDetailsRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }, 100);
+  };
+  
+  // Handle back button click
+  const handleBackToTimeline = () => {
+    if (timelinePosition.current !== null) {
+      window.scrollTo({
+        top: timelinePosition.current,
+        behavior: 'smooth'
+      });
+    } else if (timelineRef.current) {
+      timelineRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  };
+  
+  // Handle navigation between events
+  const handlePreviousEvent = () => {
+    if (!selectedEvent) return;
+    
+    const currentIndex = sortedEvents.findIndex(e => e.id === selectedEvent.id);
+    if (currentIndex > 0) {
+      handleEventSelect(sortedEvents[currentIndex - 1]);
+    }
+  };
+  
+  const handleNextEvent = () => {
+    if (!selectedEvent) return;
+    
+    const currentIndex = sortedEvents.findIndex(e => e.id === selectedEvent.id);
+    if (currentIndex < sortedEvents.length - 1) {
+      handleEventSelect(sortedEvents[currentIndex + 1]);
+    }
+  };
+  
+  // Determine if previous/next navigation is possible
+  const hasPreviousEvent = selectedEvent && sortedEvents.findIndex(e => e.id === selectedEvent.id) > 0;
+  const hasNextEvent = selectedEvent && sortedEvents.findIndex(e => e.id === selectedEvent.id) < sortedEvents.length - 1;
+  
   return (
     <div className="timeline-container">
-      <div className="mb-6">
+      <div className="mb-6" ref={timelineRef}>
         <h2 className="text-2xl font-bold mb-4">Event Timeline</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -208,25 +272,40 @@ const Timeline = ({
       {/* Chronological Timeline View */}
       {layoutMode === 'chronological' && (
         <>
-          <div className="overflow-x-auto mb-6">
-            <div className="min-w-max">
-              <div className="relative pb-10">
-                <div className="absolute left-0 right-0 h-1 bg-gray-300 top-4"></div>
-                <div className="flex">
+          {/* 
+            Interactive Timeline - Modified for better positioning
+            
+            ADJUSTABLE PARAMETERS:
+            1. timeline-container height: change "h-32" to increase/decrease the container height
+            2. Timeline line position: change "top-24" to adjust where the line sits vertically
+            3. Dot position: change "top-24" in the dot style to align with the line
+            4. Label position: change "pt-6" to adjust the vertical position of date labels
+          */}
+          <div className="overflow-x-auto mb-4 relative h-40 border bg-white rounded"> {/* Container height - change h-32 to adjust */}
+            <div className="min-w-max h-full">
+              <div className="relative h-full">
+                {/* Timeline line - positioned near the bottom */}
+                <div className="absolute left-0 right-0 h-1 bg-gray-300 top-28"></div> {/* Line position - change top-24 to move up/down */}
+                
+                {/* Timeline events */}
+                <div className="flex h-full">
                   {sortedEvents.map((event, index) => (
                     <div 
                       key={event.id} 
-                      className="relative px-4"
-                      onClick={() => onEventSelect(event)}
+                      className="relative px-8 h-full" /* Reduced horizontal spacing */
+                      onClick={() => handleEventSelect(event)}
                     >
+                      {/* Dot - positioned to match the line */}
                       <div 
-                        className={`w-4 h-4 rounded-full relative top-3 z-10 cursor-pointer ${
+                        className={`w-3 h-3 rounded-full absolute top-28 transform -translate-y-1/2 z-10 cursor-pointer ${
                           selectedEvent?.id === event.id 
-                            ? 'bg-blue-600' 
+                            ? 'bg-blue-600 border-2 border-white' 
                             : getEventColor(event, charactersData)
                         }`}
                       ></div>
-                      <div className={`text-xs pt-6 w-24 text-center cursor-pointer transform -rotate-45 origin-top-left ${
+                      
+                      {/* Date label - positioned below the line */}
+                      <div className={`text-xs absolute top-16 pt-6 w-20 cursor-pointer transform -rotate-45 origin-bottom-left ${
                         selectedEvent?.id === event.id ? 'font-bold' : ''
                       }`}>
                         {event.date}
@@ -238,18 +317,18 @@ const Timeline = ({
             </div>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             {Object.entries(groupedEvents).map(([year, events]) => (
               <div key={year} className="border-l-4 border-blue-200 pl-4">
                 <h3 className="text-lg font-bold mb-2">{year}</h3>
-                <div className="space-y-4">
+                <div className="space-y-3"> {/* Reduced vertical spacing */}
                   {events.map(event => (
                     <div 
                       key={event.id}
                       className={`p-3 border rounded cursor-pointer hover:bg-gray-100 ${
                         selectedEvent?.id === event.id ? 'bg-blue-100 border-blue-300' : ''
                       }`}
-                      onClick={() => onEventSelect(event)}
+                      onClick={() => handleEventSelect(event)}
                     >
                       <div className="text-sm text-gray-600">{event.date}</div>
                       <h3 className="font-bold">{event.title}</h3>
@@ -277,8 +356,8 @@ const Timeline = ({
       
       {/* Parallel Storylines View */}
       {layoutMode === 'parallel' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-3"> {/* Reduced spacing */}
             <h3 className="font-bold text-lg text-blue-700 border-b pb-2">Protagonists</h3>
             {parallelEvents['Protagonists'].map(event => (
               <div 
@@ -286,7 +365,7 @@ const Timeline = ({
                 className={`p-3 border-l-4 border-blue-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
                   selectedEvent?.id === event.id ? 'bg-blue-100' : ''
                 }`}
-                onClick={() => onEventSelect(event)}
+                onClick={() => handleEventSelect(event)}
               >
                 <div className="text-sm text-gray-600">{event.date}</div>
                 <h3 className="font-bold">{event.title}</h3>
@@ -295,7 +374,7 @@ const Timeline = ({
             ))}
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3"> {/* Reduced spacing */}
             <h3 className="font-bold text-lg text-red-700 border-b pb-2">Fifth Columnists</h3>
             {parallelEvents['Fifth Columnists'].map(event => (
               <div 
@@ -303,7 +382,7 @@ const Timeline = ({
                 className={`p-3 border-l-4 border-red-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
                   selectedEvent?.id === event.id ? 'bg-red-100' : ''
                 }`}
-                onClick={() => onEventSelect(event)}
+                onClick={() => handleEventSelect(event)}
               >
                 <div className="text-sm text-gray-600">{event.date}</div>
                 <h3 className="font-bold">{event.title}</h3>
@@ -312,7 +391,7 @@ const Timeline = ({
             ))}
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3"> {/* Reduced spacing */}
             <h3 className="font-bold text-lg text-yellow-700 border-b pb-2">German Connection</h3>
             {parallelEvents['German Connection'].map(event => (
               <div 
@@ -320,7 +399,7 @@ const Timeline = ({
                 className={`p-3 border-l-4 border-yellow-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
                   selectedEvent?.id === event.id ? 'bg-yellow-100' : ''
                 }`}
-                onClick={() => onEventSelect(event)}
+                onClick={() => handleEventSelect(event)}
               >
                 <div className="text-sm text-gray-600">{event.date}</div>
                 <h3 className="font-bold">{event.title}</h3>
@@ -333,7 +412,44 @@ const Timeline = ({
       
       {/* Event Details Panel */}
       {selectedEvent && (
-        <div className="mt-8 border rounded p-6 bg-gray-50">
+        <div className="mt-8 border rounded p-6 bg-gray-50" ref={eventDetailsRef}>
+          {/* Navigation controls with Previous/Next buttons */}
+          <div className="flex items-center justify-between mb-4">
+            <button 
+              className="flex items-center text-blue-600 hover:text-blue-800"
+              onClick={handleBackToTimeline}
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+              </svg>
+              Back to timeline
+            </button>
+            
+            <div className="flex space-x-3">
+              <button
+                className={`flex items-center px-3 py-1 rounded ${hasPreviousEvent ? 'bg-gray-200 hover:bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                onClick={handlePreviousEvent}
+                disabled={!hasPreviousEvent}
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Previous Event
+              </button>
+              
+              <button
+                className={`flex items-center px-3 py-1 rounded ${hasNextEvent ? 'bg-gray-200 hover:bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                onClick={handleNextEvent}
+                disabled={!hasNextEvent}
+              >
+                Next Event
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
           <h2 className="text-2xl font-bold">{selectedEvent.title}</h2>
           <div className="text-gray-600 mb-4">{selectedEvent.date}</div>
           
@@ -468,4 +584,3 @@ const getGroupColor = (group) => {
 };
 
 export default Timeline;
-
