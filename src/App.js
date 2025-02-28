@@ -191,6 +191,9 @@ const StitchedUpApp = () => {
                 onCharacterSelect={handleCharacterSelect}
                 eventsData={stitchedUp.events}
                 charactersData={stitchedUp.characters}
+                chaptersData={stitchedUp.chapters}
+                mysteryElements={stitchedUp.mysteryElements}
+                themeElements={stitchedUp.themeElements}
               />
             </TabPanel>
             
