@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Original styles after Tailwind */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+:root {
+  --color-primary: #3b4d61;
+  --color-secondary: #aa9b77;
+  --color-background: #f5f3ed;
+  --color-text: #333;
+  --color-light: #f8f8f8;
+  --color-border: #ddd;
+  --color-protagonists: #3182ce;
+  --color-fifth-columnists: #e53e3e;
+  --color-german-connection: #d69e2e;
+  --color-supporting: #718096;
+}
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+/* Custom Tab Styling */
+.react-tabs__tab--selected {
+  background-color: #fff;
+  border-radius: 5px 5px 0 0;
+  border-color: var(--color-border);
+  color: var(--color-primary);
+}
+
+.react-tabs__tab:focus {
+  box-shadow: 0 0 5px var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+/* Timeline */
+.timeline-container {
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  min-width: max-content;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-border);
+}
+
+.timeline-event {
+  position: relative;
+  margin-right: 50px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.timeline-event::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  transform: translate(-50%, -50%);
+}
+
+/* Character network */
+.character-node {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.character-node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+/* Custom height class for scrollable containers */
+.h-128 {
+  height: 32rem;
+}
+
+/* Custom styling for active elements */
+.active-element {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Custom borders for character groups */
+.border-protagonists {
+  border-color: var(--color-protagonists);
+}
+
+.border-fifth-columnists {
+  border-color: var(--color-fifth-columnists);
+}
+
+.border-german-connection {
+  border-color: var(--color-german-connection);
+}
+
+.border-supporting {
+  border-color: var(--color-supporting);
+}
