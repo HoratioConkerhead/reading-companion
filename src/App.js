@@ -181,9 +181,11 @@ const StitchedUpApp = () => {
                 onEventSelect={handleEventSelect}
                 locationsData={stitchedUp.locations}
                 eventsData={stitchedUp.events}
+                charactersData={stitchedUp.characters}
+                objectsData={stitchedUp.objects}
               />
             </TabPanel>
-            
+
             {/* Plot Navigator Tab */}
             <TabPanel>
               <PlotNavigator 
