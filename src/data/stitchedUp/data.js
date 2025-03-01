@@ -1497,7 +1497,7 @@ export const characters = [
     { from: 'hannah_park', to: 'jane_maclean', type: 'colleague-partner' },
     { from: 'louise_harrington', to: 'gerda_stammer', type: 'associate' },
     { from: 'richard_childreth', to: 'bill_laurie', type: 'asset-handler' },
-    { from: 'megan_davies', to: 'edwards', type: 'assassin-victim' }
+    { from: 'megan_davies', to: 'edwards', type: 'assassin-victim' },
 
     // Montgomery relationships
     { from: 'montgomery', to: 'montys_adc', type: 'superior-subordinate' },
