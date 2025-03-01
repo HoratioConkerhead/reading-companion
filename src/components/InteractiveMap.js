@@ -22,8 +22,7 @@ import {
   mapBoundaries
 } from '../data/stitchedUp/positions';
 
-// Fix Leaflet's default icon paths which can cause issues in some build setups
-// This is needed because Leaflet's CSS assumes these images are in specific locations
+// Fix Leaflet's default icon paths
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -99,6 +98,8 @@ const MapController = ({ center, zoom, bounds, selectedItem }) => {
 const InteractiveMap = ({ 
   onLocationSelect, 
   onEventSelect,
+  onCharacterSelect,
+  onObjectSelect,
   locationsData,
   eventsData,
   charactersData,
@@ -110,9 +111,11 @@ const InteractiveMap = ({
   const [mapView, setMapView] = useState('uk'); // 'uk', 'europe'
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
+  const [selectedItemData, setSelectedItemData] = useState(null);
   const [mapCenter, setMapCenter] = useState([52.3555, -1.1743]); // Default to UK center
   const [mapZoom, setMapZoom] = useState(6);
   const [mapBounds, setMapBounds] = useState(null);
+  const [showDetailPanel, setShowDetailPanel] = useState(false);
   
   // Get map view settings based on selected view
   useEffect(() => {
@@ -141,6 +144,36 @@ const InteractiveMap = ({
     if (timeFilter === 'late' && (event.date.includes('1943') || event.date.includes('1944'))) return true;
     return false;
   });
+
+  // Update selected item data when selection changes
+  useEffect(() => {
+    if (!selectedItem || !selectedItemType) {
+      setSelectedItemData(null);
+      setShowDetailPanel(false);
+      return;
+    }
+
+    let itemData = null;
+    switch (selectedItemType) {
+      case 'location':
+        itemData = locationsData.find(loc => loc.id === selectedItem);
+        break;
+      case 'event':
+        itemData = eventsData.find(e => e.id === selectedItem);
+        break;
+      case 'character':
+        itemData = charactersData.find(c => c.id === selectedItem);
+        break;
+      case 'object':
+        itemData = objectsData.find(o => o.id === selectedItem);
+        break;
+      default:
+        break;
+    }
+
+    setSelectedItemData(itemData);
+    setShowDetailPanel(!!itemData);
+  }, [selectedItem, selectedItemType, locationsData, eventsData, charactersData, objectsData]);
   
   // Handle location click
   const handleLocationClick = (locationId) => {
@@ -148,7 +181,8 @@ const InteractiveMap = ({
     if (location) {
       setSelectedItem(locationId);
       setSelectedItemType('location');
-      onLocationSelect(location);
+      setSelectedItemData(location);
+      setShowDetailPanel(true);
     }
   };
   
@@ -158,7 +192,30 @@ const InteractiveMap = ({
     if (event) {
       setSelectedItem(eventId);
       setSelectedItemType('event');
-      onEventSelect(event);
+      setSelectedItemData(event);
+      setShowDetailPanel(true);
+    }
+  };
+
+  // Handle character click
+  const handleCharacterClick = (characterId) => {
+    const character = charactersData.find(c => c.id === characterId);
+    if (character) {
+      setSelectedItem(characterId);
+      setSelectedItemType('character');
+      setSelectedItemData(character);
+      setShowDetailPanel(true);
+    }
+  };
+
+  // Handle object click
+  const handleObjectClick = (objectId) => {
+    const object = objectsData.find(o => o.id === objectId);
+    if (object) {
+      setSelectedItem(objectId);
+      setSelectedItemType('object');
+      setSelectedItemData(object);
+      setShowDetailPanel(true);
     }
   };
   
@@ -167,6 +224,8 @@ const InteractiveMap = ({
     if (!itemId) {
       setSelectedItem(null);
       setSelectedItemType(null);
+      setSelectedItemData(null);
+      setShowDetailPanel(false);
       return;
     }
     
@@ -176,14 +235,31 @@ const InteractiveMap = ({
     // Focus map on selected item
     focusMapOnItem(itemId, type);
     
-    // Trigger appropriate selection handler
-    if (type === 'location') {
-      const location = locationsData.find(loc => loc.id === itemId);
-      if (location) onLocationSelect(location);
-    } else if (type === 'event') {
-      const event = eventsData.find(e => e.id === itemId);
-      if (event) onEventSelect(event);
+    // Find selected item data and set detail panel
+    let itemData = null;
+    switch (type) {
+      case 'location':
+        itemData = locationsData.find(loc => loc.id === itemId);
+        if (itemData) onLocationSelect(itemData);
+        break;
+      case 'event':
+        itemData = eventsData.find(e => e.id === itemId);
+        if (itemData) onEventSelect(itemData);
+        break;
+      case 'character':
+        itemData = charactersData.find(c => c.id === itemId);
+        if (itemData && onCharacterSelect) onCharacterSelect(itemData);
+        break;
+      case 'object':
+        itemData = objectsData.find(o => o.id === itemId);
+        if (itemData && onObjectSelect) onObjectSelect(itemData);
+        break;
+      default:
+        break;
     }
+
+    setSelectedItemData(itemData);
+    setShowDetailPanel(!!itemData);
   };
   
   // Focus map on an item
@@ -242,6 +318,33 @@ const InteractiveMap = ({
       setMapCenter(latLng);
       setMapZoom(11); // Zoom in closer on selected item
       setMapBounds(null); // Clear any existing bounds
+    }
+  };
+  
+  // Handle closing the detail panel
+  const handleCloseDetailPanel = () => {
+    setShowDetailPanel(false);
+  };
+
+  // Navigate to full details page
+  const handleViewFullDetails = () => {
+    if (!selectedItemType || !selectedItemData) return;
+
+    switch (selectedItemType) {
+      case 'location':
+        onLocationSelect(selectedItemData);
+        break;
+      case 'event':
+        onEventSelect(selectedItemData);
+        break;
+      case 'character':
+        if (onCharacterSelect) onCharacterSelect(selectedItemData);
+        break;
+      case 'object':
+        if (onObjectSelect) onObjectSelect(selectedItemData);
+        break;
+      default:
+        break;
     }
   };
   
@@ -478,7 +581,7 @@ const InteractiveMap = ({
           position={[location.lat, location.lon]}
           icon={characterIcon(color, isSelected)}
           eventHandlers={{
-            click: () => handleItemSelect(id, 'character')
+            click: () => handleCharacterClick(id)
           }}
         >
           <Tooltip>{charData.name}</Tooltip>
@@ -522,7 +625,7 @@ const InteractiveMap = ({
           position={[location.lat, location.lon]}
           icon={objectIcon(isSelected)}
           eventHandlers={{
-            click: () => handleItemSelect(id, 'object')
+            click: () => handleObjectClick(id)
           }}
         >
           <Tooltip>{objData.name}</Tooltip>
@@ -539,6 +642,216 @@ const InteractiveMap = ({
     });
   };
 
+  // Render detail panel
+  const renderDetailPanel = () => {
+    if (!showDetailPanel || !selectedItemData) return null;
+
+    const getTitleByType = () => {
+      switch (selectedItemType) {
+        case 'location':
+          return selectedItemData.name;
+        case 'event':
+          return selectedItemData.title;
+        case 'character':
+          return selectedItemData.name;
+        case 'object':
+          return selectedItemData.name;
+        default:
+          return '';
+      }
+    };
+
+    const getContentByType = () => {
+      switch (selectedItemType) {
+        case 'location':
+          return (
+            <>
+              <div className="text-gray-600 mb-2">{selectedItemData.area} • {selectedItemData.type}</div>
+              {selectedItemData.description && (
+                <p className="mb-2">{selectedItemData.description}</p>
+              )}
+              {selectedItemData.significance && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Significance:</h4>
+                  <ul className="list-disc pl-4 text-sm">
+                    {selectedItemData.significance.map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {selectedItemData.features && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Features:</h4>
+                  <ul className="list-disc pl-4 text-sm">
+                    {selectedItemData.features.slice(0, 3).map((feature, i) => (
+                      <li key={i}>{feature}</li>
+                    ))}
+                    {selectedItemData.features.length > 3 && (
+                      <li>+ {selectedItemData.features.length - 3} more features</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </>
+          );
+        case 'event':
+          return (
+            <>
+              <div className="text-gray-600 mb-2">{selectedItemData.date}</div>
+              <p className="mb-2">{selectedItemData.description}</p>
+              {selectedItemData.keyActions && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Key Actions:</h4>
+                  <ul className="list-disc pl-4 text-sm">
+                    {selectedItemData.keyActions.slice(0, 2).map((action, i) => (
+                      <li key={i}>{action}</li>
+                    ))}
+                    {selectedItemData.keyActions.length > 2 && (
+                      <li>+ {selectedItemData.keyActions.length - 2} more actions</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              {selectedItemData.characters && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Characters Involved:</h4>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedItemData.characters.slice(0, 3).map((char, i) => {
+                      const character = charactersData.find(c => c.id === char.characterId);
+                      return character ? (
+                        <span key={i} className="inline-block px-2 py-1 bg-gray-100 rounded text-xs">
+                          {character.name}
+                          {char.role && ` (${char.role})`}
+                        </span>
+                      ) : null;
+                    })}
+                    {selectedItemData.characters.length > 3 && (
+                      <span className="inline-block px-2 py-1 bg-gray-100 rounded text-xs">
+                        + {selectedItemData.characters.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        case 'character':
+          return (
+            <>
+              {selectedItemData.role && (
+                <div className="text-gray-600 mb-2">{selectedItemData.role}</div>
+              )}
+              {selectedItemData.group && (
+                <div className="mb-2">
+                  <span className={`inline-block px-2 py-1 rounded text-xs ${
+                    selectedItemData.group === 'Protagonists' ? 'bg-blue-100 text-blue-800' :
+                    selectedItemData.group === 'Fifth Columnists' ? 'bg-red-100 text-red-800' :
+                    selectedItemData.group === 'German Connection' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {selectedItemData.group}
+                  </span>
+                </div>
+              )}
+              {selectedItemData.background && (
+                <p className="mb-2">{selectedItemData.background}</p>
+              )}
+              {selectedItemData.personality && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Personality:</h4>
+                  <p className="text-sm">{selectedItemData.personality}</p>
+                </div>
+              )}
+              {selectedItemData.traits && selectedItemData.traits.length > 0 && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Traits:</h4>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedItemData.traits.map((trait, i) => (
+                      <span key={i} className="inline-block px-2 py-1 bg-gray-100 rounded text-xs">
+                        {trait}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        case 'object':
+          return (
+            <>
+              {selectedItemData.type && (
+                <div className="text-gray-600 mb-2">{selectedItemData.type}</div>
+              )}
+              <p className="mb-2">{selectedItemData.description}</p>
+              {selectedItemData.significance && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Significance:</h4>
+                  <ul className="list-disc pl-4 text-sm">
+                    {selectedItemData.significance.slice(0, 2).map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                    {selectedItemData.significance.length > 2 && (
+                      <li>+ {selectedItemData.significance.length - 2} more points</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              {selectedItemData.possessors && (
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">Possessors:</h4>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedItemData.possessors.slice(0, 2).map((possessor, i) => {
+                      const character = charactersData.find(c => c.id === possessor.characterId);
+                      return character ? (
+                        <span key={i} className="inline-block px-2 py-1 bg-gray-100 rounded text-xs">
+                          {character.name} ({possessor.period})
+                        </span>
+                      ) : null;
+                    })}
+                    {selectedItemData.possessors.length > 2 && (
+                      <span className="inline-block px-2 py-1 bg-gray-100 rounded text-xs">
+                        + {selectedItemData.possessors.length - 2} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        default:
+          return null;
+      }
+    };
+
+    return (
+      <div className="bg-white p-4 rounded shadow-md h-full overflow-y-auto">
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="text-xl font-bold">{getTitleByType()}</h3>
+          <button 
+            className="text-gray-500 hover:text-gray-700"
+            onClick={handleCloseDetailPanel}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        {getContentByType()}
+        <div className="mt-4">
+          <button
+            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+            onClick={handleViewFullDetails}
+          >
+            View Full Details
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Main component return
   return (
     <div className="map-container">
       <div className="mb-4 flex flex-wrap gap-4">
@@ -638,6 +951,7 @@ const InteractiveMap = ({
             className="w-full p-2 border rounded"
             value={selectedItemType === 'location' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'location')}
+            title={selectedItemType === 'location' && selectedItemData ? selectedItemData.name : ''}
           >
             {getLocationOptions().map(option => (
               <option key={`loc-${option.value}`} value={option.value}>{option.label}</option>
@@ -651,6 +965,7 @@ const InteractiveMap = ({
             className="w-full p-2 border rounded"
             value={selectedItemType === 'event' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'event')}
+            title={selectedItemType === 'event' && selectedItemData ? selectedItemData.title : ''}
           >
             {getEventOptions().map(option => (
               <option key={`event-${option.value}`} value={option.value}>{option.label}</option>
@@ -664,6 +979,7 @@ const InteractiveMap = ({
             className="w-full p-2 border rounded"
             value={selectedItemType === 'character' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'character')}
+            title={selectedItemType === 'character' && selectedItemData ? selectedItemData.name : ''}
           >
             {getCharacterOptions().map(option => (
               <option key={`char-${option.value}`} value={option.value}>{option.label}</option>
@@ -677,6 +993,7 @@ const InteractiveMap = ({
             className="w-full p-2 border rounded"
             value={selectedItemType === 'object' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'object')}
+            title={selectedItemType === 'object' && selectedItemData ? selectedItemData.name : ''}
           >
             {getObjectOptions().map(option => (
               <option key={`obj-${option.value}`} value={option.value}>{option.label}</option>
@@ -685,37 +1002,47 @@ const InteractiveMap = ({
         </div>
       </div>
       
-      {/* Leaflet Map */}
-      <div className="border rounded overflow-hidden" style={{ height: '500px' }}>
-        <MapContainer 
-          center={mapCenter}
-          zoom={mapZoom}
-          style={{ height: '100%', width: '100%' }}
-          zoomControl={false} // We'll add it in a better position
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          {/* Add zoom control to top-right instead of default top-left */}
-          <ZoomControl position="topright" />
-          
-          {/* Dynamic map controller */}
-          <MapController 
+      {/* Map and Detail Panel Container */}
+      <div className="flex flex-col md:flex-row border rounded overflow-hidden" style={{ height: '600px' }}>
+        {/* Leaflet Map - Adjusts width based on panel visibility */}
+        <div className={`${showDetailPanel ? 'w-full md:w-2/3' : 'w-full'} h-full transition-all duration-300`}>
+          <MapContainer 
             center={mapCenter}
             zoom={mapZoom}
-            bounds={mapBounds}
-            selectedItem={selectedItem}
-          />
-          
-          {/* Map elements */}
-          {renderLocations()}
-          {renderEvents()}
-          {renderEventPaths()}
-          {renderCharacters()}
-          {renderObjects()}
-        </MapContainer>
+            style={{ height: '100%', width: '100%' }}
+            zoomControl={false} // We'll add it in a better position
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            
+            {/* Add zoom control to top-right instead of default top-left */}
+            <ZoomControl position="topright" />
+            
+            {/* Dynamic map controller */}
+            <MapController 
+              center={mapCenter}
+              zoom={mapZoom}
+              bounds={mapBounds}
+              selectedItem={selectedItem}
+            />
+            
+            {/* Map elements */}
+            {renderLocations()}
+            {renderEvents()}
+            {renderEventPaths()}
+            {renderCharacters()}
+            {renderObjects()}
+          </MapContainer>
+        </div>
+        
+        {/* Detail Panel - Conditionally shown */}
+        {showDetailPanel && (
+          <div className="w-full md:w-1/3 h-full border-l overflow-hidden bg-white">
+            {renderDetailPanel()}
+          </div>
+        )}
       </div>
       
       {/* Map Legend */}
@@ -786,7 +1113,7 @@ const InteractiveMap = ({
       </div>
       
       <div className="mt-4 text-sm text-gray-500 p-2 border-t">
-        <p>Interactive map showing key locations, events, characters, and objects from "Stitched Up". Click on markers for details and use the controls to filter content.</p>
+        <p>Interactive map showing key locations, events, characters, and objects from "Stitched Up". Click on markers for details or use the dropdowns to select specific items. The detail panel will show a summary with the option to view full details.</p>
       </div>
     </div>
   );

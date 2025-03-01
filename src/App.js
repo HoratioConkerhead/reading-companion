@@ -177,9 +177,11 @@ const StitchedUpApp = () => {
             
             {/* Map Tab */}
             <TabPanel>
-              <InteractiveMap 
+              <InteractiveMap
                 onLocationSelect={handleLocationSelect}
                 onEventSelect={handleEventSelect}
+                onCharacterSelect={handleCharacterSelect} // If you have this handler
+                onObjectSelect={handleObjectSelect} // If you have this handler
                 locationsData={stitchedUp.locations}
                 eventsData={stitchedUp.events}
                 charactersData={stitchedUp.characters}
