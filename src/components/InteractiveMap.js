@@ -1,11 +1,100 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
+  MapContainer, 
+  TileLayer, 
+  Marker, 
+  Popup, 
+  Tooltip, 
+  Polyline, 
+  CircleMarker,
+  useMap,
+  ZoomControl
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Import position data
+import { 
   locationPositions, 
   eventPositions, 
   characterPositions, 
   objectPositions,
   mapBoundaries
 } from '../data/stitchedUp/positions';
+
+// Fix Leaflet's default icon paths which can cause issues in some build setups
+// This is needed because Leaflet's CSS assumes these images are in specific locations
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+});
+
+// Custom icon for locations
+const locationIcon = (color) => L.divIcon({
+  html: `<div style="background-color: ${color}; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white;"></div>`,
+  className: 'custom-div-icon',
+  iconSize: [14, 14],
+  iconAnchor: [7, 7]
+});
+
+// Custom icon for events
+const eventIcon = (isSelected = false) => L.divIcon({
+  html: `<div style="background-color: ${isSelected ? '#9f1239' : '#e53e3e'}; width: 12px; height: 12px; border: 2px solid white;"></div>`,
+  className: 'custom-div-icon',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8]
+});
+
+// Custom icon for characters (triangle)
+const characterIcon = (color, isSelected = false) => L.divIcon({
+  html: `
+    <div style="
+      width: 0; 
+      height: 0; 
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 14px solid ${color};
+      transform: ${isSelected ? 'scale(1.3)' : 'scale(1)'};
+    "></div>
+  `,
+  className: 'custom-div-icon',
+  iconSize: [16, 14],
+  iconAnchor: [8, 7]
+});
+
+// Custom icon for objects
+const objectIcon = (isSelected = false) => L.divIcon({
+  html: `
+    <div style="
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #805ad5;
+      border: 2px solid white;
+      transform: ${isSelected ? 'scale(1.3)' : 'scale(1)'};
+    "></div>
+  `,
+  className: 'custom-div-icon',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8]
+});
+
+// Map Controller component to handle view changes externally
+const MapController = ({ center, zoom, bounds, selectedItem }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (bounds) {
+      map.fitBounds(bounds);
+    } else if (center) {
+      map.setView(center, zoom || 8);
+    }
+  }, [map, center, zoom, bounds, selectedItem]);
+  
+  return null;
+};
 
 const InteractiveMap = ({ 
   onLocationSelect, 
@@ -16,98 +105,33 @@ const InteractiveMap = ({
   objectsData
 }) => {
   // State
-  const [mapMode, setMapMode] = useState('locations'); // 'locations', 'events', 'characters', 'objects'
+  const [mapMode, setMapMode] = useState('all'); // 'all', 'locations', 'events', 'characters', 'objects'
   const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'early', 'mid', 'late'
   const [mapView, setMapView] = useState('uk'); // 'uk', 'europe'
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
-  const [hoveredItem, setHoveredItem] = useState(null);
-  const [zoomTransform, setZoomTransform] = useState({ x: 0, y: 0, scale: 1 });
-  const [mapDimensions, setMapDimensions] = useState({ width: 800, height: 600 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [mapCenter, setMapCenter] = useState([52.3555, -1.1743]); // Default to UK center
+  const [mapZoom, setMapZoom] = useState(6);
+  const [mapBounds, setMapBounds] = useState(null);
   
-  // Refs
-  const svgRef = useRef(null);
-  const mapContainerRef = useRef(null);
-  
-  // Helper functions for coordinate calculations
-  const latLonToXY = (lat, lon, mapBoundary, width, height) => {
-    const { minLat, maxLat, minLon, maxLon } = mapBoundary;
-    
-    // Calculate X coordinate (longitude)
-    const x = ((lon - minLon) / (maxLon - minLon)) * width;
-    
-    // Calculate Y coordinate (latitude) - note we invert because SVG y increases downward
-    const y = ((maxLat - lat) / (maxLat - minLat)) * height;
-    
-    return { x, y };
-  };
-
-  const getLocationPosition = (locationId, mapBoundary, width, height) => {
-    const location = locationPositions[locationId];
-    if (!location) return null;
-    
-    return latLonToXY(location.lat, location.lon, mapBoundary, width, height);
-  };
-
-  const getEventPosition = (eventId, mapBoundary, width, height) => {
-    const event = eventPositions[eventId];
-    if (!event) return null;
-    
-    // If event has a single location
-    if (event.locationId) {
-      return getLocationPosition(event.locationId, mapBoundary, width, height);
+  // Get map view settings based on selected view
+  useEffect(() => {
+    if (mapView === 'uk') {
+      setMapCenter([54, -4]);
+      setMapZoom(6);
+      setMapBounds([
+        [49.5, -8.0], // Southwest
+        [59.0, 2.0]   // Northeast
+      ]);
+    } else if (mapView === 'europe') {
+      setMapCenter([50, 4]);
+      setMapZoom(5);
+      setMapBounds([
+        [47.0, -8.0], // Southwest
+        [59.0, 15.0]  // Northeast
+      ]);
     }
-    
-    // If event has a path (like train journey)
-    if (event.path && event.path.length > 0) {
-      // Return the midpoint of the path as the event marker
-      const midpointIndex = Math.floor(event.path.length / 2);
-      const midpoint = event.path[midpointIndex];
-      return latLonToXY(midpoint.lat, midpoint.lon, mapBoundary, width, height);
-    }
-    
-    return null;
-  };
-
-  const getEventPath = (eventId, mapBoundary, width, height) => {
-    const event = eventPositions[eventId];
-    if (!event || !event.path) return null;
-    
-    return event.path.map(point => {
-      const { x, y } = latLonToXY(point.lat, point.lon, mapBoundary, width, height);
-      return { x, y, label: point.label };
-    });
-  };
-
-  const getCharacterPosition = (characterId, mapBoundary, width, height) => {
-    const character = characterPositions[characterId];
-    if (!character || !character.locationId) return null;
-    
-    return getLocationPosition(character.locationId, mapBoundary, width, height);
-  };
-
-  const getObjectPosition = (objectId, mapBoundary, width, height) => {
-    const object = objectPositions[objectId];
-    if (!object || !object.locationId) return null;
-    
-    return getLocationPosition(object.locationId, mapBoundary, width, height);
-  };
-
-  const findLocationByCoordinates = (x, y, mapBoundary, width, height, threshold = 10) => {
-    for (const [id, location] of Object.entries(locationPositions)) {
-      const position = getLocationPosition(id, mapBoundary, width, height);
-      if (!position) continue;
-      
-      const distance = Math.sqrt(Math.pow(position.x - x, 2) + Math.pow(position.y - y, 2));
-      if (distance <= threshold) {
-        return { id, ...location };
-      }
-    }
-    
-    return null;
-  };
+  }, [mapView]);
   
   // Filter events based on time period
   const filteredEvents = eventsData.filter(event => {
@@ -117,100 +141,6 @@ const InteractiveMap = ({
     if (timeFilter === 'late' && (event.date.includes('1943') || event.date.includes('1944'))) return true;
     return false;
   });
-  
-  // Effect to update map dimensions on resize
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (mapContainerRef.current) {
-        // Get the container width and maintain aspect ratio
-        const width = mapContainerRef.current.clientWidth;
-        const height = width * 0.75; // 4:3 aspect ratio
-        setMapDimensions({ width, height });
-      }
-    };
-    
-    // Initial set
-    updateDimensions();
-    
-    // Add resize listener
-    window.addEventListener('resize', updateDimensions);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, []);
-  
-  // Helper to get current map boundary
-  const getCurrentMapBoundary = () => {
-    return mapBoundaries[mapView];
-  };
-  
-  // Zoom handlers
-  const handleZoomIn = () => {
-    setZoomTransform(prev => ({
-      ...prev,
-      scale: Math.min(prev.scale * 1.2, 5) // Limit max zoom
-    }));
-  };
-  
-  const handleZoomOut = () => {
-    setZoomTransform(prev => ({
-      ...prev,
-      scale: Math.max(prev.scale / 1.2, 0.5) // Limit min zoom
-    }));
-  };
-  
-  const handleResetView = () => {
-    setZoomTransform({ x: 0, y: 0, scale: 1 });
-  };
-  
-  // Pan handlers
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({ 
-      x: e.clientX - zoomTransform.x, 
-      y: e.clientY - zoomTransform.y 
-    });
-  };
-  
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      setZoomTransform(prev => ({
-        ...prev,
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      }));
-    }
-  };
-  
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-  
-  // Wheel zoom handler
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const scaleAmount = e.deltaY > 0 ? 0.9 : 1.1;
-    const newScale = Math.min(Math.max(zoomTransform.scale * scaleAmount, 0.5), 5);
-    
-    // Get mouse position relative to SVG
-    const svgRect = svgRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - svgRect.left;
-    const mouseY = e.clientY - svgRect.top;
-    
-    // Calculate new position to zoom towards mouse
-    const newX = mouseX - ((mouseX - zoomTransform.x) * (newScale / zoomTransform.scale));
-    const newY = mouseY - ((mouseY - zoomTransform.y) * (newScale / zoomTransform.scale));
-    
-    setZoomTransform({
-      x: newX,
-      y: newY,
-      scale: newScale
-    });
-  };
   
   // Handle location click
   const handleLocationClick = (locationId) => {
@@ -232,63 +162,86 @@ const InteractiveMap = ({
     }
   };
   
-  // Handle change of selected item from dropdowns
-  const handleItemSelect = (item, type) => {
-    if (!item) {
+  // Handle selection from dropdowns
+  const handleItemSelect = (itemId, type) => {
+    if (!itemId) {
       setSelectedItem(null);
       setSelectedItemType(null);
       return;
     }
     
-    setSelectedItem(item);
+    setSelectedItem(itemId);
     setSelectedItemType(type);
     
     // Focus map on selected item
-    focusMapOnItem(item, type);
+    focusMapOnItem(itemId, type);
     
     // Trigger appropriate selection handler
     if (type === 'location') {
-      const location = locationsData.find(loc => loc.id === item);
+      const location = locationsData.find(loc => loc.id === itemId);
       if (location) onLocationSelect(location);
     } else if (type === 'event') {
-      const event = eventsData.find(e => e.id === item);
+      const event = eventsData.find(e => e.id === itemId);
       if (event) onEventSelect(event);
     }
   };
   
-  // Focus map on a specific item
+  // Focus map on an item
   const focusMapOnItem = (itemId, type) => {
-    const boundary = getCurrentMapBoundary();
-    let position;
+    let latLng = null;
     
     switch (type) {
-      case 'location':
-        position = getLocationPosition(itemId, boundary, mapDimensions.width, mapDimensions.height);
+      case 'location': {
+        const location = locationPositions[itemId];
+        if (location) {
+          latLng = [location.lat, location.lon];
+        }
         break;
-      case 'event':
-        position = getEventPosition(itemId, boundary, mapDimensions.width, mapDimensions.height);
+      }
+      case 'event': {
+        const event = eventPositions[itemId];
+        if (event) {
+          if (event.locationId) {
+            const location = locationPositions[event.locationId];
+            if (location) {
+              latLng = [location.lat, location.lon];
+            }
+          } else if (event.path && event.path.length > 0) {
+            // Use midpoint of path
+            const midIndex = Math.floor(event.path.length / 2);
+            latLng = [event.path[midIndex].lat, event.path[midIndex].lon];
+          }
+        }
         break;
-      case 'character':
-        position = getCharacterPosition(itemId, boundary, mapDimensions.width, mapDimensions.height);
+      }
+      case 'character': {
+        const character = characterPositions[itemId];
+        if (character && character.locationId) {
+          const location = locationPositions[character.locationId];
+          if (location) {
+            latLng = [location.lat, location.lon];
+          }
+        }
         break;
-      case 'object':
-        position = getObjectPosition(itemId, boundary, mapDimensions.width, mapDimensions.height);
+      }
+      case 'object': {
+        const object = objectPositions[itemId];
+        if (object && object.locationId) {
+          const location = locationPositions[object.locationId];
+          if (location) {
+            latLng = [location.lat, location.lon];
+          }
+        }
         break;
+      }
       default:
-        return;
+        break;
     }
     
-    if (position) {
-      // Center map on item position with increased zoom
-      const newScale = 2.5;
-      const centerX = mapDimensions.width / 2;
-      const centerY = mapDimensions.height / 2;
-      
-      setZoomTransform({
-        x: centerX - (position.x * newScale),
-        y: centerY - (position.y * newScale),
-        scale: newScale
-      });
+    if (latLng) {
+      setMapCenter(latLng);
+      setMapZoom(11); // Zoom in closer on selected item
+      setMapBounds(null); // Clear any existing bounds
     }
   };
   
@@ -310,18 +263,24 @@ const InteractiveMap = ({
     }
   };
   
+  // Get location color
+  const getLocationColor = (locationType) => {
+    switch (locationType) {
+      case 'german':
+        return "#d69e2e"; // Yellow/gold for German
+      case 'irish':
+        return "#38a169"; // Green for Irish
+      default:
+        return "#3182ce"; // Blue for UK
+    }
+  };
+  
   // Prepare dropdown options
   const getLocationOptions = () => {
     return [
       { value: '', label: 'Select a location' },
       ...locationsData
-        .filter(loc => {
-          const position = locationPositions[loc.id];
-          if (!position) return false;
-          return (mapView === 'uk' && position.type === 'uk') || 
-                 (mapView === 'europe') || 
-                 (mapView === 'uk' && position.type === 'irish');
-        })
+        .filter(loc => locationPositions[loc.id])
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(loc => ({ value: loc.id, label: loc.name }))
     ];
@@ -342,14 +301,7 @@ const InteractiveMap = ({
       ...charactersData
         .filter(char => {
           const position = characterPositions[char.id];
-          if (!position || !position.locationId) return false;
-          
-          const location = locationPositions[position.locationId];
-          if (!location) return false;
-          
-          return (mapView === 'uk' && location.type === 'uk') || 
-                 (mapView === 'europe') || 
-                 (mapView === 'uk' && location.type === 'irish');
+          return position && position.locationId && locationPositions[position.locationId];
         })
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(char => ({ value: char.id, label: char.name }))
@@ -362,315 +314,229 @@ const InteractiveMap = ({
       ...objectsData
         .filter(obj => {
           const position = objectPositions[obj.id];
-          if (!position || !position.locationId) return false;
-          
-          const location = locationPositions[position.locationId];
-          if (!location) return false;
-          
-          return (mapView === 'uk' && location.type === 'uk') || 
-                 (mapView === 'europe') || 
-                 (mapView === 'uk' && location.type === 'irish');
+          return position && position.locationId && locationPositions[position.locationId];
         })
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(obj => ({ value: obj.id, label: obj.name }))
     ];
   };
-
-  // Render map content based on mode
-  const renderMapContent = () => {
-    const boundary = getCurrentMapBoundary();
+  
+  // Render locations as markers
+  const renderLocations = () => {
+    if (mapMode !== 'locations' && mapMode !== 'all') return null;
     
-    return (
-      <>
-        {/* Render UK outline */}
-        <path 
-          d="M270,176 L287,179 L292,168 L300,168 L295,151 L310,119 L307,109 L318,86 L309,69 L315,59 L311,51 L320,39 L311,32 L293,35 L280,26 L270,40 L258,51 L248,70 L220,81 L209,91 L199,110 L204,124 L191,146 L194,157 L185,168 L198,191 L196,200 L237,182 L254,187 L270,176"
-          fill="#e5e5e5" 
-          stroke="#999"
-          strokeWidth="1.5"
-          transform={`scale(${zoomTransform.scale})`}
-        />
+    return Object.entries(locationPositions).map(([id, location]) => {
+      // Skip if location doesn't match view mode
+      if ((mapView === 'uk' && location.type === 'german') || 
+          (mapView === 'europe' && location.type === 'irish')) {
+        return null;
+      }
+      
+      const isSelected = selectedItem === id && selectedItemType === 'location';
+      const color = getLocationColor(location.type);
+      
+      return (
+        <Marker 
+          key={`loc-${id}`}
+          position={[location.lat, location.lon]}
+          icon={locationIcon(color)}
+          eventHandlers={{
+            click: () => handleLocationClick(id)
+          }}
+        >
+          <Tooltip>{location.label}</Tooltip>
+          {isSelected && <Popup><strong>{location.label}</strong></Popup>}
+        </Marker>
+      );
+    });
+  };
+  
+  // Render events as markers
+  const renderEvents = () => {
+    if (mapMode !== 'events' && mapMode !== 'all') return null;
+    
+    return filteredEvents.map(event => {
+      const eventData = eventPositions[event.id];
+      if (!eventData) return null;
+      
+      let position;
+      
+      // For events with a single location
+      if (eventData.locationId) {
+        const location = locationPositions[eventData.locationId];
+        if (!location) return null;
         
-        {/* Render Ireland outline */}
-        <path 
-          d="M182,110 L176,121 L166,126 L156,120 L143,129 L142,141 L153,155 L158,168 L170,166 L180,152 L190,145 L187,130 L182,110"
-          fill="#e5e5e5" 
-          stroke="#999"
-          strokeWidth="1.5"
-          transform={`scale(${zoomTransform.scale})`}
-        />
+        // Skip if event location doesn't match view mode
+        if ((mapView === 'uk' && location.type === 'german') || 
+            (mapView === 'europe' && location.type === 'irish')) {
+          return null;
+        }
         
-        {/* English Channel */}
-        <path 
-          d="M270,176 L320,210"
-          stroke="#a4caf5"
-          strokeWidth="3"
-          transform={`scale(${zoomTransform.scale})`}
-        />
-        
-        {/* Render simplified mainland Europe if in Europe view */}
-        {mapView === 'europe' && (
-          <path 
-            d="M320,210 L340,190 L360,170 L400,150 L420,120 L415,90 L390,70 L380,50 L350,40 L340,60 L370,80 L385,100 L380,130 L340,150 L320,180 L320,210"
-            fill="#f0f0f0" 
-            stroke="#999"
-            strokeWidth="1.5"
-            transform={`scale(${zoomTransform.scale})`}
-          />
-        )}
-        
-        {/* Render locations */}
-        {(mapMode === 'locations' || mapMode === 'all') && Object.entries(locationPositions).map(([id, location]) => {
-          // Skip if location type doesn't match current map view
-          if ((mapView === 'uk' && location.type !== 'uk' && location.type !== 'irish') || 
-              (mapView === 'europe' && location.type === 'irish')) {
-            return null;
-          }
-          
-          const position = getLocationPosition(id, boundary, mapDimensions.width, mapDimensions.height);
-          if (!position) return null;
-          
-          // Different colors based on location type
-          let fillColor = "#3182ce"; // Default blue for UK
-          if (location.type === 'german') fillColor = "#d69e2e";
-          if (location.type === 'irish') fillColor = "#38a169";
-          
-          // Highlight selected location
-          if (selectedItem === id && selectedItemType === 'location') {
-            fillColor = "#e53e3e"; // Red for selected
-          }
-          
-          return (
-            <g 
-              key={`loc-${id}`}
-              transform={`translate(${position.x * zoomTransform.scale}, ${position.y * zoomTransform.scale})`}
-              onClick={() => handleLocationClick(id)}
-              onMouseEnter={() => setHoveredItem({ id, type: 'location', name: location.label })}
-              onMouseLeave={() => setHoveredItem(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              <circle 
-                r={selectedItem === id && selectedItemType === 'location' ? 6 : 4} 
-                fill={fillColor}
-                stroke="#fff"
-                strokeWidth="1"
-              />
-            </g>
-          );
-        })}
-        
-        {/* Render events */}
-        {(mapMode === 'events' || mapMode === 'all') && filteredEvents.map(event => {
-          const position = getEventPosition(event.id, boundary, mapDimensions.width, mapDimensions.height);
-          if (!position) return null;
-          
-          // Skip if event location doesn't match current map view
-          const eventLocation = event.location ? locationPositions[event.location] : null;
-          if (eventLocation && 
-             ((mapView === 'uk' && eventLocation.type !== 'uk' && eventLocation.type !== 'irish') || 
-              (mapView === 'europe' && eventLocation.type === 'irish'))) {
-            return null;
-          }
-          
-          // Highlight selected event
-          const isSelected = selectedItem === event.id && selectedItemType === 'event';
-          
-          return (
-            <g 
-              key={`event-${event.id}`}
-              transform={`translate(${position.x * zoomTransform.scale}, ${position.y * zoomTransform.scale})`}
-              onClick={() => handleEventClick(event.id)}
-              onMouseEnter={() => setHoveredItem({ id: event.id, type: 'event', name: event.title })}
-              onMouseLeave={() => setHoveredItem(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              <rect 
-                x="-4" 
-                y="-4" 
-                width="8" 
-                height="8" 
-                fill={isSelected ? "#9f1239" : "#e53e3e"}
-                stroke="#fff"
-                strokeWidth="1"
-              />
-            </g>
-          );
-        })}
-        
-        {/* Render event paths (like the train journey) */}
-        {(mapMode === 'events' || mapMode === 'all') && filteredEvents.map(event => {
-          const path = getEventPath(event.id, boundary, mapDimensions.width, mapDimensions.height);
-          if (!path) return null;
-          
-          // Generate SVG path string
-          const pathData = path.reduce((acc, point, i) => {
-            const command = i === 0 ? 'M' : 'L';
-            return `${acc} ${command} ${point.x * zoomTransform.scale} ${point.y * zoomTransform.scale}`;
-          }, '');
-          
-          // Highlight selected event path
-          const isSelected = selectedItem === event.id && selectedItemType === 'event';
-          
-          return (
-            <g key={`path-${event.id}`}>
-              <path
-                d={pathData}
-                stroke={isSelected ? "#9f1239" : "#e53e3e"}
-                strokeWidth={isSelected ? "3" : "2"}
-                strokeDasharray="5,5"
-                fill="none"
-                onClick={() => handleEventClick(event.id)}
-                style={{ cursor: 'pointer' }}
-              />
-              
-              {/* Add dots at each point in the path */}
-              {path.map((point, i) => (
-                <circle
-                  key={`path-point-${event.id}-${i}`}
-                  cx={point.x * zoomTransform.scale}
-                  cy={point.y * zoomTransform.scale}
-                  r="3"
-                  fill={isSelected ? "#9f1239" : "#e53e3e"}
-                  stroke="#fff"
-                  strokeWidth="1"
-                />
-              ))}
-            </g>
-          );
-        })}
-        
-        {/* Render characters */}
-        {(mapMode === 'characters' || mapMode === 'all') && Object.entries(characterPositions).map(([id, character]) => {
-          if (!character.locationId) return null;
-          
-          // Get the location
-          const location = locationPositions[character.locationId];
-          if (!location) return null;
-          
-          // Skip if character location doesn't match current map view
-          if ((mapView === 'uk' && location.type !== 'uk' && location.type !== 'irish') || 
-              (mapView === 'europe' && location.type === 'irish')) {
-            return null;
-          }
-          
-          const position = getCharacterPosition(id, boundary, mapDimensions.width, mapDimensions.height);
-          if (!position) return null;
-          
-          // Get character color from group
-          const fillColor = getCharacterGroupColor(id);
-          
-          // Highlight selected character
-          const isSelected = selectedItem === id && selectedItemType === 'character';
-          
-          return (
-            <g 
-              key={`char-${id}`}
-              transform={`translate(${position.x * zoomTransform.scale}, ${position.y * zoomTransform.scale})`}
-              onClick={() => handleItemSelect(id, 'character')}
-              onMouseEnter={() => {
-                const charData = charactersData.find(c => c.id === id);
-                setHoveredItem({ id, type: 'character', name: charData ? charData.name : id });
-              }}
-              onMouseLeave={() => setHoveredItem(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              <polygon 
-                points="0,-6 4,4 -4,4" 
-                fill={fillColor}
-                stroke="#fff"
-                strokeWidth="1"
-                transform={isSelected ? "scale(1.3)" : ""}
-              />
-            </g>
-          );
-        })}
-        
-        {/* Render objects */}
-        {(mapMode === 'objects' || mapMode === 'all') && Object.entries(objectPositions).map(([id, object]) => {
-          if (!object.locationId) return null;
-          
-          // Get the location
-          const location = locationPositions[object.locationId];
-          if (!location) return null;
-          
-          // Skip if object location doesn't match current map view
-          if ((mapView === 'uk' && location.type !== 'uk' && location.type !== 'irish') || 
-              (mapView === 'europe' && location.type === 'irish')) {
-            return null;
-          }
-          
-          const position = getObjectPosition(id, boundary, mapDimensions.width, mapDimensions.height);
-          if (!position) return null;
-          
-          // Highlight selected object
-          const isSelected = selectedItem === id && selectedItemType === 'object';
-          
-          return (
-            <g 
-              key={`obj-${id}`}
-              transform={`translate(${position.x * zoomTransform.scale}, ${position.y * zoomTransform.scale})`}
-              onClick={() => handleItemSelect(id, 'object')}
-              onMouseEnter={() => {
-                const objData = objectsData.find(o => o.id === id);
-                setHoveredItem({ id, type: 'object', name: objData ? objData.name : id });
-              }}
-              onMouseLeave={() => setHoveredItem(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              <circle 
-                r="3" 
-                fill="#805ad5" // Purple for objects
-                stroke="#fff"
-                strokeWidth="1"
-                transform={isSelected ? "scale(1.5)" : ""}
-              />
-              {isSelected && (
-                <circle 
-                  r="6" 
-                  fill="none"
-                  stroke="#805ad5"
-                  strokeWidth="1"
-                  strokeDasharray="2,2"
-                />
-              )}
-            </g>
-          );
-        })}
-        
-        {/* Tooltip for hovered item */}
-        {hoveredItem && (
-          <g 
-            className="tooltip" 
-            style={{ 
-              pointerEvents: 'none',
-              filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.2))'
-            }}
-          >
-            <foreignObject
-              x={10}
-              y={10}
-              width={200}
-              height={40}
-            >
-              <div 
-                style={{
-                  backgroundColor: 'white',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  maxWidth: '200px',
-                  wordWrap: 'break-word'
-                }}
-              >
-                <div style={{ fontWeight: 'bold' }}>{hoveredItem.name}</div>
-                <div style={{ color: '#666' }}>{hoveredItem.type}</div>
+        position = [location.lat, location.lon];
+      } 
+      // For events with paths (like train journeys)
+      else if (eventData.path && eventData.path.length > 0) {
+        // Use midpoint of path for marker
+        const midIndex = Math.floor(eventData.path.length / 2);
+        position = [eventData.path[midIndex].lat, eventData.path[midIndex].lon];
+      } else {
+        return null; // Skip if no position
+      }
+      
+      const isSelected = selectedItem === event.id && selectedItemType === 'event';
+      
+      return (
+        <Marker 
+          key={`event-${event.id}`}
+          position={position}
+          icon={eventIcon(isSelected)}
+          eventHandlers={{
+            click: () => handleEventClick(event.id)
+          }}
+        >
+          <Tooltip>{event.title}</Tooltip>
+          {isSelected && (
+            <Popup>
+              <div>
+                <strong>{event.title}</strong>
+                <div>{event.date}</div>
               </div>
-            </foreignObject>
-          </g>
-        )}
-      </>
-    );
+            </Popup>
+          )}
+        </Marker>
+      );
+    });
+  };
+  
+  // Render event paths (like train journeys)
+  const renderEventPaths = () => {
+    if (mapMode !== 'events' && mapMode !== 'all') return null;
+    
+    return filteredEvents.map(event => {
+      const eventData = eventPositions[event.id];
+      if (!eventData || !eventData.path || eventData.path.length < 2) return null;
+      
+      const pathPositions = eventData.path.map(point => [point.lat, point.lon]);
+      const isSelected = selectedItem === event.id && selectedItemType === 'event';
+      
+      return (
+        <React.Fragment key={`path-${event.id}`}>
+          <Polyline 
+            positions={pathPositions}
+            color={isSelected ? '#9f1239' : '#e53e3e'}
+            weight={isSelected ? 3 : 2}
+            dashArray="5,5"
+            eventHandlers={{
+              click: () => handleEventClick(event.id)
+            }}
+          />
+          
+          {/* Add circles at each point in the path */}
+          {eventData.path.map((point, i) => (
+            <CircleMarker
+              key={`path-point-${event.id}-${i}`}
+              center={[point.lat, point.lon]}
+              radius={3}
+              color="#ffffff"
+              fillColor={isSelected ? '#9f1239' : '#e53e3e'}
+              fillOpacity={1}
+              weight={1}
+            >
+              <Tooltip>{point.label || `Point ${i+1}`}</Tooltip>
+            </CircleMarker>
+          ))}
+        </React.Fragment>
+      );
+    });
+  };
+  
+  // Render characters
+  const renderCharacters = () => {
+    if (mapMode !== 'characters' && mapMode !== 'all') return null;
+    
+    return Object.entries(characterPositions).map(([id, character]) => {
+      if (!character.locationId) return null;
+      
+      const location = locationPositions[character.locationId];
+      if (!location) return null;
+      
+      // Skip if character location doesn't match view mode
+      if ((mapView === 'uk' && location.type === 'german') || 
+          (mapView === 'europe' && location.type === 'irish')) {
+        return null;
+      }
+      
+      const charData = charactersData.find(c => c.id === id);
+      if (!charData) return null;
+      
+      const isSelected = selectedItem === id && selectedItemType === 'character';
+      const color = getCharacterGroupColor(id);
+      
+      return (
+        <Marker 
+          key={`char-${id}`}
+          position={[location.lat, location.lon]}
+          icon={characterIcon(color, isSelected)}
+          eventHandlers={{
+            click: () => handleItemSelect(id, 'character')
+          }}
+        >
+          <Tooltip>{charData.name}</Tooltip>
+          {isSelected && (
+            <Popup>
+              <div>
+                <strong>{charData.name}</strong>
+                <div>{charData.role}</div>
+              </div>
+            </Popup>
+          )}
+        </Marker>
+      );
+    });
+  };
+  
+  // Render objects
+  const renderObjects = () => {
+    if (mapMode !== 'objects' && mapMode !== 'all') return null;
+    
+    return Object.entries(objectPositions).map(([id, object]) => {
+      if (!object.locationId) return null;
+      
+      const location = locationPositions[object.locationId];
+      if (!location) return null;
+      
+      // Skip if object location doesn't match view mode
+      if ((mapView === 'uk' && location.type === 'german') || 
+          (mapView === 'europe' && location.type === 'irish')) {
+        return null;
+      }
+      
+      const objData = objectsData.find(o => o.id === id);
+      if (!objData) return null;
+      
+      const isSelected = selectedItem === id && selectedItemType === 'object';
+      
+      return (
+        <Marker 
+          key={`obj-${id}`}
+          position={[location.lat, location.lon]}
+          icon={objectIcon(isSelected)}
+          eventHandlers={{
+            click: () => handleItemSelect(id, 'object')
+          }}
+        >
+          <Tooltip>{objData.name}</Tooltip>
+          {isSelected && (
+            <Popup>
+              <div>
+                <strong>{objData.name}</strong>
+                <div>{objData.type}</div>
+              </div>
+            </Popup>
+          )}
+        </Marker>
+      );
+    });
   };
 
   return (
@@ -682,13 +548,13 @@ const InteractiveMap = ({
           <div className="flex">
             <button 
               className={`px-3 py-1 text-sm rounded-l ${mapView === 'uk' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => { setMapView('uk'); handleResetView(); }}
+              onClick={() => setMapView('uk')}
             >
               UK
             </button>
             <button 
               className={`px-3 py-1 text-sm rounded-r ${mapView === 'europe' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => { setMapView('europe'); handleResetView(); }}
+              onClick={() => setMapView('europe')}
             >
               Europe
             </button>
@@ -762,31 +628,6 @@ const InteractiveMap = ({
             </button>
           </div>
         </div>
-        
-        {/* Zoom controls */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Zoom</label>
-          <div className="flex">
-            <button 
-              className="px-3 py-1 text-sm rounded-l bg-gray-200 hover:bg-gray-300"
-              onClick={handleZoomIn}
-            >
-              +
-            </button>
-            <button 
-              className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300"
-              onClick={handleZoomOut}
-            >
-              -
-            </button>
-            <button 
-              className="px-3 py-1 text-sm rounded-r bg-gray-200 hover:bg-gray-300"
-              onClick={handleResetView}
-            >
-              Reset
-            </button>
-          </div>
-        </div>
       </div>
       
       {/* Item selection controls */}
@@ -844,23 +685,37 @@ const InteractiveMap = ({
         </div>
       </div>
       
-      <div className="relative border rounded overflow-hidden" style={{ height: '500px' }} ref={mapContainerRef}>
-        {/* SVG Map */}
-        <svg 
-          ref={svgRef}
-          width={mapDimensions.width} 
-          height={mapDimensions.height}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onWheel={handleWheel}
-          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      {/* Leaflet Map */}
+      <div className="border rounded overflow-hidden" style={{ height: '500px' }}>
+        <MapContainer 
+          center={mapCenter}
+          zoom={mapZoom}
+          style={{ height: '100%', width: '100%' }}
+          zoomControl={false} // We'll add it in a better position
         >
-          <g transform={`translate(${zoomTransform.x}, ${zoomTransform.y})`}>
-            {renderMapContent()}
-          </g>
-        </svg>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          
+          {/* Add zoom control to top-right instead of default top-left */}
+          <ZoomControl position="topright" />
+          
+          {/* Dynamic map controller */}
+          <MapController 
+            center={mapCenter}
+            zoom={mapZoom}
+            bounds={mapBounds}
+            selectedItem={selectedItem}
+          />
+          
+          {/* Map elements */}
+          {renderLocations()}
+          {renderEvents()}
+          {renderEventPaths()}
+          {renderCharacters()}
+          {renderObjects()}
+        </MapContainer>
       </div>
       
       {/* Map Legend */}
@@ -931,7 +786,7 @@ const InteractiveMap = ({
       </div>
       
       <div className="mt-4 text-sm text-gray-500 p-2 border-t">
-        <p>Interactive map showing key locations, events, characters, and objects from "Stitched Up". Use mouse wheel to zoom, drag to pan, and selection controls to focus on specific items.</p>
+        <p>Interactive map showing key locations, events, characters, and objects from "Stitched Up". Click on markers for details and use the controls to filter content.</p>
       </div>
     </div>
   );
