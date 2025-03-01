@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import 'leaflet/dist/leaflet.css';
 
 // Import components
 import CharacterExplorer from './components/CharacterExplorer';
