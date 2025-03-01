@@ -212,7 +212,216 @@ export const characters = [
       name: 'Jim',
       group: 'Supporting Characters',
       role: 'George\'s colleague at Special Branch'
-    }
+    },
+    {
+      id: 'montgomery',
+      name: 'Lieutenant General Bernard Montgomery',
+      title: 'Lieutenant General',
+      group: 'Military',
+      role: 'Target of assassination plot',
+      background: 'Senior British Army officer, commander of the Eighth Army in North Africa and Italy. Known for his victory at El Alamein and distinctive beret with two badges.',
+      personality: 'Confident, meticulous, sometimes arrogant. Known for boosting troop morale through personal visits.',
+      traits: ['Strategic', 'Charismatic', 'Methodical', 'Recognizable'],
+      significance: 'Primary target of the assassination plot. His death was intended to disrupt Allied invasion planning.',
+      key_scenes: ['montgomery_visit', 'assassination_attempt']
+    },
+    {
+      id: 'gladys',
+      name: 'Gladys',
+      group: 'Supporting Characters',
+      role: 'Village postmistress and inadvertent intelligence asset',
+      background: 'Long-time resident and postmistress in Cynthia\'s village. Knows everyone and observes everything.',
+      personality: 'Observant, gossipy but reliable, loyal to the community',
+      traits: ['Vigilant', 'Knowledgeable about local affairs', 'Trusted'],
+      relations: [
+        { characterId: 'cynthia_childreth', type: 'village_contact', description: 'Trusted local who provides information about strangers in the village' }
+      ],
+      significance: 'Provides crucial intelligence about unknown visitors and watchers in the village',
+      key_scenes: ['village_surveillance']
+    },
+    {
+      id: 'alison',
+      name: 'Alison',
+      group: 'Protagonists',
+      role: 'Intelligence agent',
+      background: 'MI5 operative specializing in surveillance and disguise',
+      personality: 'Adaptable, quick-thinking, resourceful',
+      traits: ['Master of disguise', 'Observant', 'Resilient'],
+      relations: [
+        { characterId: 'bill_laurie', type: 'subordinate', description: 'Works under Bill\'s direction' }
+      ],
+      aliases: ['Sarah (to Cynthia)', 'Rambler (on train)'],
+      key_scenes: ['train_journey', 'house_protection']
+    },
+    {
+      id: 'felicity',
+      name: 'Felicity',
+      group: 'Protagonists',
+      role: 'Bill\'s secretary who becomes field operative',
+      background: 'Office worker who transitions to field operations',
+      personality: 'Resourceful, adaptable, enthusiastic about field work',
+      traits: ['Observant', 'Diligent', 'Versatile'],
+      aliases: ['Writer (in Aldworth)'],
+      key_scenes: ['cottage_surveillance']
+    },
+    {
+      id: 'don',
+      name: 'Don',
+      group: 'Protagonists',
+      role: 'Intelligence operative who trains Cynthia',
+      background: 'Experienced agent specializing in tradecraft',
+      personality: 'Professional, direct, methodical',
+      traits: ['Experienced operative', 'Good teacher', 'Practical'],
+      key_scenes: ['tradecraft_training']
+    },
+    {
+      id: 'jack',
+      name: 'Jack',
+      group: 'Fifth Columnists',
+      role: 'Shopkeeper in Aldworth working with Nazi sympathizers',
+      background: 'Local shopkeeper and postmaster secretly supporting fifth columnists',
+      personality: 'Outwardly friendly, inwardly scheming',
+      traits: ['Deceptive', 'Observant', 'Connected'],
+      relations: [
+        { characterId: 'louise_harrington', type: 'co-conspirator', description: 'Provides local intelligence and assistance to Louise' }
+      ],
+      key_scenes: ['cottage_surveillance', 'house_occupation']
+    },
+    {
+      id: 'keith',
+      name: 'Keith',
+      group: 'Protagonists',
+      role: 'Intelligence operative and artist cover',
+      background: 'Agent who assumes cover as artist for surveillance',
+      personality: 'Observant, detail-oriented, patient',
+      traits: ['Artistic', 'Discreet'],
+      key_scenes: ['surveillance_operation', 'final_operation']
+    },
+    {
+      id: 'bert',
+      name: 'Bert',
+      group: 'Protagonists',
+      role: 'Intelligence operative who discovers Edwards\' body',
+      background: 'Special Branch officer with artistic talent',
+      personality: 'Resourceful, observant, resilient',
+      traits: ['Artistic', 'Adaptable'],
+      key_scenes: ['edwards_discovery', 'surveillance_operation']
+    },
+    {
+      id: 'mike',
+      name: 'Mike',
+      group: 'Protagonists',
+      role: 'Intelligence operative',
+      background: 'Special Branch officer',
+      personality: 'Analytical, thorough',
+      traits: ['Detail-oriented', 'Methodical'],
+      key_scenes: ['surveillance_operation', 'final_operation']
+    },
+    {
+      id: 'patrick',
+      name: 'Patrick',
+      group: 'Supporting Characters',
+      role: 'Butler at Denleigh Manor',
+      background: 'Professional butler serving the Wyndholmes',
+      personality: 'Formal, discreet',
+      traits: ['Professional', 'Observant']
+    },
+    {
+      id: 'sheila',
+      name: 'Sheila',
+      group: 'Supporting Characters',
+      role: 'Maid at Denleigh Manor',
+      background: 'Household staff',
+      personality: 'Attentive, proper',
+      traits: ['Efficient', 'Proper']
+    },
+    {
+      id: 'horace_wyndholme',
+      name: 'Horace Wyndholme',
+      group: 'Supporting Characters',
+      role: 'Amy\'s husband, works for Foreign Office',
+      background: 'Amy\'s husband who actually works in intelligence',
+      traits: ['Connected', 'Intelligence officer']
+    },
+    {
+      id: 'oswald_mosley',
+      name: 'Sir Oswald Mosley',
+      title: 'Sir',
+      group: 'Historical Figures',
+      role: 'Leader of British Union of Fascists',
+      background: 'Former Member of Parliament who founded the British Union of Fascists in 1932',
+      personality: 'Charismatic, authoritarian, ambitious',
+      traits: ['Oratorical', 'Fascist', 'Ambitious'],
+      key_scenes: ['second_party']
+    },
+    {
+      id: 'helmut_schnitter',
+      name: 'Helmut Schnitter',
+      group: 'German Connection',
+      role: 'German agent in preface',
+      background: 'Originally from Hamburg, infiltrates UK via Scilly Isles',
+      traits: ['Determined', 'Disciplined'],
+      key_scenes: ['german_infiltration']
+    },
+    {
+    id: 'montys_adc',
+    name: 'Montgomery\'s ADC',
+    group: 'Military',
+    role: 'Montgomery\'s aide-de-camp, liaison with intelligence team',
+    background: 'Military officer serving as Montgomery\'s personal assistant',
+    traits: ['Efficient', 'Discreet', 'Cooperative'],
+    significance: 'Coordinates security arrangements with Bill, arranges "three Montgomerys" decoy',
+    key_scenes: ['intelligence_meeting', 'montgomery_visit']
+  },
+  {
+    id: 'inspector_williams',
+    name: 'Inspector Williams',
+    group: 'Supporting Characters',
+    role: 'Police inspector in Pembrokeshire investigating Davies',
+    background: 'Local police officer who assists with tracking Davies\' escape to Ireland',
+    traits: ['Thorough', 'Cooperative'],
+    key_scenes: ['davies_ireland_investigation']
+  },
+  {
+    id: 'paul_holness',
+    name: 'Paul Holness',
+    group: 'Supporting Characters',
+    role: 'Publishing company owner acting as intelligence intermediary',
+    background: 'Former RAF colleague of Bill\'s who runs publishing company',
+    personality: 'Reliable, discreet, supportive of intelligence operations',
+    traits: ['Trustworthy', 'Efficient'],
+    relations: [
+      { characterId: 'bill_laurie', type: 'former_colleague', description: 'Former RAF colleague who assists with intelligence operations' },
+      { characterId: 'felicity', type: 'cover_provider', description: 'Provides publishing cover for Felicity\'s reports' }
+    ],
+    key_scenes: ['felicity_reports_handling']
+  },
+  {
+    id: 'jacobs',
+    name: 'Jacobs',
+    group: 'Supporting Characters',
+    role: 'Intelligence service armorer',
+    background: 'Weapons expert who identifies the 7.92mm shell casing',
+    traits: ['Knowledgeable', 'Technical'],
+    key_scenes: ['shell_casing_identification']
+  },
+  {
+    id: 'ken',
+    name: 'Ken',
+    group: 'Protagonists',
+    role: 'Intelligence operative stationed at vehicle during final operation',
+    traits: ['Reliable', 'Alert'],
+    key_scenes: ['final_operation']
+  },
+  {
+    id: 'chief_inspector',
+    name: 'Chief Inspector (St. Johns)',
+    group: 'Supporting Characters',
+    role: 'Police officer initially handling Edwards murder case',
+    personality: 'Professional but territorial about jurisdiction',
+    traits: ['Professional', 'By-the-book'],
+    key_scenes: ['edwards_murder_investigation']
+  }
   ];
   
   // Location data
@@ -375,6 +584,310 @@ export const characters = [
         'Where Edwards was murdered'
       ],
       description: 'Small flat in London where the German agent Edwards was staying.'
+    },
+    {
+      id: 'felicity_cottage',
+      name: 'Felicity\'s Cottage',
+      area: 'Aldworth, Berkshire',
+      type: 'Surveillance post',
+      features: [
+        'Small cottage with view of village square',
+        'Basic amenities (no electricity or gas)',
+        'Wood-burning stove',
+        'Large bow window for observation'
+      ],
+      significance: [
+        'Surveillance post for watching Harringtons',
+        'Cover location for intelligence operations'
+      ],
+      description: 'Small, basic cottage rented as surveillance post to observe the Harringtons. Positioned with good view of village activities.',
+      events: [
+        { eventId: 'cottage_surveillance', role: 'setting' }
+      ],
+      occupants: [
+        { characterId: 'felicity', relationship: 'temporary_resident' }
+      ]
+    },
+    {
+      id: 'national_gallery',
+      name: 'National Gallery',
+      area: 'London',
+      type: 'Meeting place',
+      features: [
+        'Public art gallery',
+        'Meeting rooms off main areas',
+        'Dame Myra Hess concerts during wartime',
+        'Multiple entrances and exits'
+      ],
+      significance: [
+        'Secure meeting place for intelligence team',
+        'Public venue allowing inconspicuous meetings'
+      ],
+      description: 'Art gallery used as meeting place for intelligence operations. The lunchtime concerts provided cover for meetings.',
+      events: [
+        { eventId: 'intelligence_meeting', role: 'setting' }
+      ]
+    },
+    {
+      id: 'blenheim_palace',
+      name: 'Blenheim Palace',
+      area: 'Woodstock, Oxfordshire',
+      type: 'Intelligence headquarters',
+      features: [
+        'Historic palace',
+        'MI5 wartime location',
+        'Secluded and secure grounds'
+      ],
+      significance: [
+        'Wartime headquarters for MI5 operations',
+        'Location of intelligence meeting between George and Bill'
+      ],
+      description: 'Historic palace serving as MI5 headquarters during part of the war. Location of meeting between George Bennet and Bill Laurie.',
+      events: [
+        { eventId: 'intelligence_meeting_blenheim', role: 'setting' }
+      ]
+    },
+    {
+      id: 'the_ritz',
+      name: 'The Ritz Hotel',
+      area: 'London',
+      type: 'Meeting place',
+      features: [
+        'Luxury hotel',
+        'Palm Court for afternoon tea',
+        'Public yet exclusive space'
+      ],
+      significance: [
+        'Location of meeting between Cynthia and Hannah (disguised)'
+      ],
+      description: 'Prestigious London hotel used for intelligence meeting between Cynthia and disguised Hannah.',
+      events: [
+        { eventId: 'ritz_meeting', role: 'setting' }
+      ]
+    },
+    {
+      id: 'long_boat_inn',
+      name: 'Long Boat Inn',
+      area: 'Penzance, Cornwall',
+      type: 'Accommodation',
+      features: [
+        'Inn located opposite Penzance station',
+        'Frequented by travelers'
+      ],
+      significance: [
+        'Where Edwards stays after arriving from Scilly Isles',
+        'Where he pays with the distinctive cheque'
+      ],
+      description: 'Inn near Penzance station where Edwards stays overnight before taking the train to London.',
+      events: [
+        { eventId: 'edwards_penzance_stay', role: 'setting' }
+      ]
+    },
+    {
+      id: 'queens_head_pub',
+      name: 'The Queen\'s Head Pub',
+      area: 'Near Bucklebury, Berkshire',
+      type: 'Meeting place',
+      features: [
+        'Country pub',
+        'Private meeting space'
+      ],
+      significance: [
+        'Meeting place for final operation planning'
+      ],
+      description: 'Country pub where Bill, George and team meet to plan final operation.',
+      events: [
+        { eventId: 'final_planning', role: 'setting' }
+      ]
+    },
+    {
+      id: 'reading_hotel',
+      name: 'Great Western Hotel',
+      area: 'Reading, Berkshire',
+      type: 'Accommodation',
+      features: [
+        'Hotel opposite Reading station',
+        'Sandy colored building'
+      ],
+      significance: [
+        'Where Davies/Young stays when visiting the area',
+        'Where Alison conducts surveillance'
+      ],
+      description: 'Hotel in Reading where Davies (as Young) stays overnight and where Alison conducts surveillance.',
+      events: [
+        { eventId: 'davies_reading_stay', role: 'setting' }
+      ]
+    },
+    {
+      id: 'aldworth_village',
+      name: 'Aldworth Village',
+      area: 'Berkshire',
+      type: 'Village',
+      features: [
+        'Small country village',
+        'Bell pub',
+        'Village shop/post office',
+        'Church'
+      ],
+      significance: [
+        'Home of the Harringtons',
+        'Site of surveillance operation',
+        'Where Louise dies in gas explosion'
+      ],
+      description: 'Small Berkshire village where the Harringtons live and where surveillance operations are conducted.',
+      events: [
+        { eventId: 'cottage_surveillance', role: 'setting' },
+        { eventId: 'louise_death', role: 'setting' }
+      ]
+    },
+    {
+      id: 'thames_house',
+      name: 'Thames House',
+      area: 'London, Millbank',
+      type: 'Intelligence headquarters',
+      features: [
+        'Former MI5 headquarters',
+        'South Block, top floor'
+      ],
+      significance: [
+        'Meeting location for intelligence team'
+      ],
+      description: 'Former MI5 headquarters on Millbank, used for meetings between George and Bill.',
+      events: [
+        { eventId: 'thames_house_meeting', role: 'setting' }
+      ]
+    },
+    {
+      id: 'croydon_airport',
+      name: 'Croydon Airport',
+      area: 'London',
+      type: 'Transportation hub',
+      features: [
+        'First airport with air traffic control',
+        'World\'s only airport hotel on-site',
+        'Terminal with wooden benches and multi-paned glass doors',
+        'Central hexagonal structure with clocks showing times in various countries'
+      ],
+      significance: [
+        'Departure point for Richard and Cynthia\'s Berlin trip',
+        'Entry/exit point for international travel',
+        'Connection between UK and continental operations'
+      ],
+      description: 'Modern airport south of London, departure point for flights to Europe including Cynthia and Richard\'s mission to Berlin.',
+      events: [
+        { eventId: 'berlin_departure', role: 'setting' }
+      ]
+    },
+    {
+      id: 'tempelhof_airport',
+      name: 'Tempelhof Airport',
+      area: 'Berlin, Germany',
+      type: 'Transportation hub',
+      features: [
+        'First airport with underground railway',
+        'Imposing architecture',
+        'Customs and immigration control'
+      ],
+      significance: [
+        'Arrival point in Berlin for Richard and Cynthia',
+        'First exposure to German efficiency and control'
+      ],
+      description: 'Berlin\'s main airport where Richard and Cynthia first arrive in Germany, met by their driver.',
+      events: [
+        { eventId: 'berlin_arrival', role: 'setting' }
+      ]
+    },
+    {
+      id: 'fishguard_harbor',
+      name: 'Fishguard Harbor',
+      area: 'Pembrokeshire, Wales',
+      type: 'Ferry terminal',
+      features: [
+        'Harbor facilities',
+        'Ferry connections to Ireland',
+        'Booking office where Edwards\' cheque was used'
+      ],
+      significance: [
+        'Escape route for Davies and Megan to Ireland',
+        'Location where Edwards\' cheque book was used'
+      ],
+      description: 'Welsh ferry terminal where Davies and Megan escaped to Ireland, paying with Edwards\' cheque.',
+      events: [
+        { eventId: 'davies_ireland_escape', role: 'setting' }
+      ]
+    },
+    {
+      id: 'goring_station',
+      name: 'Goring & Streatley Station',
+      area: 'Berkshire',
+      type: 'Railway station',
+      features: [
+        'Small country railway station',
+        'Platform where Louise alighted from train'
+      ],
+      significance: [
+        'Where Louise (disguised as elderly woman) exited train with switched case',
+        'Critical transfer point in assassination weapon smuggling'
+      ],
+      description: 'Railway station where Louise Harrington (disguised as elderly woman) alighted from the train with the switched suitcase.',
+      events: [
+        { eventId: 'train_journey', role: 'setting' }
+      ]
+    },
+    {
+      id: 'box_tunnel',
+      name: 'Box Tunnel',
+      area: 'Wiltshire/Somerset',
+      type: 'Railway tunnel',
+      features: [
+        '1.8 mile long railway tunnel',
+        'Complete darkness during passage'
+      ],
+      significance: [
+        'Location where suitcase switch occurred during train journey',
+        'Critical moment in smuggling operation'
+      ],
+      description: 'Long railway tunnel where the suitcase switch between Edwards, Davies and Louise took place in darkness.',
+      events: [
+        { eventId: 'train_journey', role: 'critical_location' }
+      ]
+    },
+    {
+      id: 'admiral_duncan',
+      name: 'Admiral Duncan Pub',
+      area: 'Soho, London',
+      type: 'Meeting place',
+      features: [
+        'Small pub in Soho',
+        'Public yet discreet meeting location'
+      ],
+      significance: [
+        'Meeting place for Bill and George',
+        'Location for strategy discussions'
+      ],
+      description: 'Small London pub where Bill and George meet to discuss the investigation.',
+      events: [
+        { eventId: 'investigation_meeting', role: 'setting' }
+      ]
+    },
+    {
+      id: 'martins_bank',
+      name: 'Martins Bank',
+      area: 'Lombard Street, London',
+      type: 'Financial institution',
+      features: [
+        'Bank at 68 Lombard Street',
+        'Location of Edwards account',
+        'Grasshopper logo and Liver Bird emblem on cheques'
+      ],
+      significance: [
+        'Source of Edwards\' cheque book',
+        'Financial connection between German intelligence and UK operations'
+      ],
+      description: 'London bank where the T.G. Edwards account was established for German intelligence operations.',
+      events: [
+        { eventId: 'bank_account_investigation', role: 'setting' }
+      ]
     }
   ];
   
@@ -675,6 +1188,288 @@ export const characters = [
         'Louise and neighbor killed',
         'No official suspicion of foul play'
       ]
+    },
+    {
+      id: 'tradecraft_training',
+      title: 'Cynthia\'s Tradecraft Training',
+      date: 'Unspecified',
+      description: 'Don visits Cynthia to teach her surveillance detection and other tradecraft skills',
+      location: 'cynthia_house',
+      characters: [
+        { characterId: 'cynthia_childreth', role: 'trainee' },
+        { characterId: 'don', role: 'trainer' },
+        { characterId: 'mary', role: 'observer' }
+      ],
+      significance: 'Cynthia learns essential skills for her role, including counter-surveillance techniques',
+      keyActions: [
+        'Don teaches "back doubles" technique',
+        'Instruction on using reflections to detect surveillance',
+        'Travel arrangement methods',
+        'General tradecraft principles'
+      ]
+    },
+    {
+      id: 'secure_line_installation',
+      title: 'Secure Phone Line Installation',
+      date: 'Unspecified',
+      description: 'Intelligence team installs a separate secure telephone line at Cynthia\'s house',
+      location: 'cynthia_house',
+      characters: [
+        { characterId: 'cynthia_childreth', role: 'resident' },
+        { characterId: 'mary', role: 'assistant' }
+      ],
+      significance: 'Creates secure communication channel that becomes vital during the final operation',
+      keyActions: [
+        'Technicians install separate phone line',
+        'Line connected directly to intelligence headquarters',
+        'Phone placed in bedroom away from potential eavesdroppers'
+      ]
+    },
+    {
+      id: 'edwards_discovery',
+      title: 'Discovery of Edwards\' Body',
+      date: '1943',
+      description: 'Bert, disguised as gas inspector, discovers Edwards\' body in London flat',
+      location: 'crawford_place',
+      characters: [
+        { characterId: 'bert', role: 'discoverer' },
+        { characterId: 'george_bennet', role: 'investigator' },
+        { characterId: 'jim', role: 'assistant' }
+      ],
+      significance: 'Confirms murder of Edwards and begins focus on assassination plot investigation',
+      keyActions: [
+        'Bert enters flat disguised as gas man',
+        'Discovery of body with single shot to head',
+        'Identification of books in suitcase instead of radio',
+        'Beginning of deeper investigation'
+      ]
+    },
+    {
+      id: 'intelligence_meeting',
+      title: 'Intelligence Meeting at National Gallery',
+      date: 'December 1943',
+      description: 'Bill gathers team at National Gallery to plan response to emerging assassination threat',
+      location: 'national_gallery',
+      characters: [
+        { characterId: 'bill_laurie', role: 'leader' },
+        { characterId: 'cynthia_childreth', role: 'informant' },
+        { characterId: 'george_bennet', role: 'investigator' },
+        { characterId: 'jane_maclean', role: 'agent' },
+        { characterId: 'hannah_park', role: 'agent' }
+      ],
+      significance: 'Critical planning meeting that identifies Montgomery as likely target',
+      keyActions: [
+        'Team discusses possible targets',
+        'Sharing of intelligence about fifth columnists',
+        'Development of counter-strategy',
+        'Decision to focus on Montgomery\'s visits'
+      ]
+    },
+    {
+      id: 'intelligence_meeting_blenheim',
+      title: 'Meeting at Blenheim Palace',
+      date: '1943',
+      description: 'George meets Bill at Blenheim Palace MI5 headquarters to discuss Edwards investigation',
+      location: 'blenheim_palace',
+      characters: [
+        { characterId: 'bill_laurie', role: 'host' },
+        { characterId: 'george_bennet', role: 'visitor' }
+      ],
+      significance: 'Connects Special Branch investigation with MI5 operation, sharing critical information',
+      keyActions: [
+        'George shares details of Edwards murder investigation',
+        'Bill reveals background of fifth columnist operation',
+        'Decision to collaborate on investigation',
+        'Discussion of possible assassination targets'
+      ]
+    },
+    {
+      id: 'ritz_meeting',
+      title: 'Cynthia and Hannah Meet at The Ritz',
+      date: '1943',
+      description: 'Cynthia meets Hannah (disguised as blonde society lady) at The Ritz while under surveillance',
+      location: 'the_ritz',
+      characters: [
+        { characterId: 'cynthia_childreth', role: 'operative' },
+        { characterId: 'hannah_park', role: 'operative', disguise: 'Blonde society lady' },
+        { characterId: 'marjorie_snowden', role: 'surveillance' }
+      ],
+      significance: 'Planning meeting that reveals Cynthia is under surveillance by fifth columnists',
+      keyActions: [
+        'Hannah appears in completely new disguise',
+        'Identification of Snowdens conducting surveillance',
+        'Discussion of Mosley invitation plan',
+        'Counter-surveillance measures practiced'
+      ]
+    },
+    {
+      id: 'cottage_surveillance',
+      title: 'Felicity\'s Cottage Surveillance',
+      date: 'December 1943',
+      description: 'Felicity poses as writer to rent cottage in Aldworth for surveillance of Harringtons',
+      location: 'felicity_cottage',
+      characters: [
+        { characterId: 'felicity', role: 'operative', disguise: 'Writer' },
+        { characterId: 'bob_harrington', role: 'target' },
+        { characterId: 'louise_harrington', role: 'target/double_agent' },
+        { characterId: 'jack', role: 'suspicious_local' }
+      ],
+      significance: 'Establishes close surveillance of Harringtons before assassination attempt',
+      keyActions: [
+        'Felicity establishes cover as writer',
+        'Observation of Harringtons\' activities',
+        'Reports sent via postal system',
+        'Identification of Jack as fifth columnist supporter'
+      ]
+    },
+    {
+      id: 'final_planning',
+      title: 'Final Operation Planning',
+      date: 'December 6, 1943',
+      description: 'Intelligence team meets at Queen\'s Head pub to plan intervention at Cynthia\'s house',
+      location: 'queens_head_pub',
+      characters: [
+        { characterId: 'bill_laurie', role: 'leader' },
+        { characterId: 'george_bennet', role: 'planner' },
+        { characterId: 'jim', role: 'operative' },
+        { characterId: 'bert', role: 'operative' },
+        { characterId: 'mike', role: 'operative' },
+        { characterId: 'keith', role: 'operative' }
+      ],
+      significance: 'Detailed planning for the operation to prevent Montgomery assassination',
+      keyActions: [
+        'Team reviews intelligence',
+        'Assignment of roles',
+        'Planning of approach and entry methods',
+        'Coordination with Montgomery\'s security team'
+      ]
+    },
+    {
+      id: 'cynthia_diversion_call',
+      title: 'Cynthia\'s Diversion Phone Call',
+      date: 'Late 1943',
+      description: 'Cynthia makes deliberate call on open line to Richard expressing concerns about surveillance',
+      location: 'cynthia_house',
+      characters: [
+        { characterId: 'cynthia_childreth', role: 'caller' },
+        { characterId: 'richard_childreth', role: 'receiver' }
+      ],
+      significance: 'Strategic move to test fifth columnist reaction and potentially draw away watchers',
+      keyActions: [
+        'Deliberate call on unsecured line',
+        'Expression of concern about surveillance',
+        'Richard\'s scripted reassuring response',
+        'Results in withdrawal of some watchers'
+      ]
+    },
+    {
+      id: 'summerhouse_hiding',
+      title: 'Alison Hides in Summerhouse',
+      date: 'December 5-7, 1943',
+      description: 'Alison hides in Cynthia\'s summerhouse after escaping detection during house search',
+      location: 'cynthia_house',
+      characters: [
+        { characterId: 'alison', role: 'agent in hiding' },
+        { characterId: 'cynthia_childreth', role: 'supporter' },
+        { characterId: 'louise_harrington', role: 'searcher' }
+      ],
+      significance: 'Maintains intelligence presence during house occupation',
+      keyActions: [
+        'Alison escapes initial house search',
+        'Hides in summerhouse overnight',
+        'Cynthia provides covert food drops',
+        'Later relocates to cellar for better position'
+      ]
+    },
+    {
+      id: 'berlin_departure',
+      title: 'Departure for Berlin Mission',
+      date: '1932',
+      description: 'Richard and Cynthia depart from Croydon Airport for their mission to Berlin',
+      location: 'croydon_airport',
+      characters: [
+        { characterId: 'cynthia_childreth', role: 'operative' },
+        { characterId: 'richard_childreth', role: 'operative' }
+      ],
+      significance: 'Beginning of the Berlin infiltration mission, first stage of establishing Nazi sympathizer cover',
+      keyActions: [
+        'Briefing on airport procedures',
+        'First-time flyers experiencing anxiety',
+        'Boarding the Junkers G38 aircraft',
+        'Uncomfortable flight to Berlin'
+      ]
+    },
+    {
+      id: 'suitcase_opening',
+      title: 'Opening of the Mysterious Suitcase',
+      date: 'Late 1943',
+      description: 'Edwin unlocks the suitcase left by Davies/Young to reveal women\'s clothes and disguise elements',
+      location: 'cynthia_house',
+      characters: [
+        { characterId: 'edwin', role: 'lockpicker' },
+        { characterId: 'cynthia_childreth', role: 'observer' },
+        { characterId: 'mary', role: 'assistant' }
+      ],
+      significance: 'Revelation of suitcase contents, confirming its role in preparing for the assassination',
+      keyActions: [
+        'Edwin picks lock without leaving traces',
+        'Discovery of women\'s clothes and disguise elements',
+        'Realization of deception regarding radio equipment',
+        'Careful resealing of case'
+      ]
+    },
+    {
+      id: 'bank_account_investigation',
+      title: 'Investigation of Edwards\' Bank Account',
+      date: '1943',
+      description: 'Richard investigates the T.G. Edwards account at Martins Bank',
+      location: 'martins_bank',
+      characters: [
+        { characterId: 'richard_childreth', role: 'investigator' }
+      ],
+      significance: 'Reveals financial arrangements behind German operations and status of Edwards\' account',
+      keyActions: [
+        'Checking account history',
+        'Discovery of substantial funds',
+        'Confirmation of Reichsbank deposits',
+        'Setting up monitoring for future transactions'
+      ]
+    },
+    {
+      id: 'three_montgomerys_arrangement',
+      title: 'Arrangement of "Three Montgomerys" Decoy',
+      date: 'December 1943',
+      description: 'Bill coordinates with Montgomery\'s ADC to arrange multiple decoys for the convoy',
+      location: 'thames_house',
+      characters: [
+        { characterId: 'bill_laurie', role: 'planner' },
+        { characterId: 'montys_adc', role: 'facilitator' }
+      ],
+      significance: 'Critical deception plan that ultimately confuses assassin and contributes to foiling the attempt',
+      keyActions: [
+        'Bill explains assassination threat',
+        'Development of decoy strategy',
+        'Arrangement of three similar jeeps',
+        'Recruiting and briefing of Montgomery lookalikes'
+      ]
+    },
+    {
+      id: 'shell_casing_identification',
+      title: 'Identification of Shell Casing',
+      date: 'December 1943',
+      description: 'Jacobs identifies the spent shell casing as from a German FG42 rifle',
+      location: 'thames_house',
+      characters: [
+        { characterId: 'jacobs', role: 'expert' },
+        { characterId: 'mike', role: 'investigator' }
+      ],
+      significance: 'Confirms German weapon type, providing crucial evidence linking to assassination plot',
+      keyActions: [
+        'Technical examination of shell casing',
+        'Identification of German manufacture',
+        'Confirmation of FG42 as source weapon',
+        'Assessment of weapon capabilities'
+      ]
     }
   ];
   
@@ -803,6 +1598,189 @@ export const characters = [
         'davies_ireland_escape'
       ],
       image_description: 'A 1940s cheque book from Martins Bank with handwritten entries.'
+    },
+    {
+      id: 'secure_phone_line',
+      name: 'Secure Telephone Line',
+      type: 'Communication device',
+      description: 'Special dedicated telephone line installed at Cynthia\'s house for secure communications with intelligence headquarters.',
+      physical_details: 'Standard-looking telephone with direct secure line separate from normal house phone system.',
+      technical_details: [
+        'Dedicated wire directly to intelligence headquarters',
+        'Not connected to main telephone exchange',
+        'Required special installation by disguised engineers',
+        'Located in master bedroom away from normal phone'
+      ],
+      significance: [
+        'Secure communication method for sensitive information',
+        'Protected from fifth columnist wire-tapping',
+        'Critical lifeline during the final operation',
+        'Demonstrated intelligence service foresight'
+      ],
+      history: [
+        { event: 'Installation', details: 'Installed by intelligence service engineers disguised as telephone workers' },
+        { event: 'Regular Use', details: 'Used by Cynthia for reporting to Bill' },
+        { event: 'Line Cut', details: 'Cut by conspirators during house occupation' }
+      ],
+      possessors: [
+        { characterId: 'cynthia_childreth', period: 'entire story' }
+      ],
+      appearances: [
+        'secure_line_installation',
+        'cynthia_diversion_call'
+      ],
+      image_description: 'A 1940s-style black bakelite telephone with rotary dial.'
+    },
+    {
+      id: 'shell_casing',
+      name: '7.92mm Shell Casing',
+      type: 'Evidence',
+      description: 'Spent cartridge from German FG42 rifle found at Churn range, providing critical evidence linking conspirators to assassination plot.',
+      physical_details: 'Brass casing from 7.92mm round, non-standard caliber for British weapons.',
+      technical_details: [
+        'German manufacture',
+        'Specifically designed for FG42 rifle',
+        'Distinctive markings different from British ammunition',
+        'Missed during conspirators\' clean-up'
+      ],
+      significance: [
+        'Physical evidence linking conspirators to German weapon',
+        'Confirmation of assassination preparations',
+        'Key investigative breakthrough'
+      ],
+      history: [
+        { event: 'Fired at Churn', details: 'Discharged during rifle testing by Harringtons' },
+        { event: 'Discovery', details: 'Found by Keith and Mike during range investigation' },
+        { event: 'Analysis', details: 'Identified as from German FG42 rifle by armorer Jacobs' }
+      ],
+      appearances: [
+        'rifle_testing'
+      ],
+      image_description: 'A tarnished brass shell casing with German manufacturer markings.'
+    },
+    {
+      id: 'berts_painting',
+      name: 'Bert\'s Surveillance Painting',
+      type: 'Cover prop',
+      description: 'Watercolor painting created by Bert while conducting surveillance in Ashampstead.',
+      physical_details: 'Watercolor landscape painting of cottages in Ashampstead, including Snowdens\' residence.',
+      significance: [
+        'Cover for surveillance operation',
+        'Eventually purchased by Marjorie Snowden, ironically funding intelligence operation',
+        'Demonstration of creative surveillance techniques'
+      ],
+      history: [
+        { event: 'Creation', details: 'Painted by Bert during surveillance of Snowdens' },
+        { event: 'Interaction', details: 'Marjorie Snowden discusses the painting with Bert' },
+        { event: 'Sale', details: 'Purchased by Marjorie Snowden, unaware of Bert\'s true purpose' }
+      ],
+      possessors: [
+        { characterId: 'bert', period: 'creation' },
+        { characterId: 'marjorie_snowden', period: 'end' }
+      ],
+      appearances: [
+        'surveillance_operation'
+      ],
+      image_description: 'A watercolor painting of a row of country cottages.'
+    },
+    {
+      id: 'montys_beret',
+      name: 'Montgomery\'s Distinctive Beret',
+      type: 'Identification item',
+      description: 'General Montgomery\'s trademark black beret with two cap badges that made him instantly recognizable.',
+      physical_details: 'Black beret with Royal Tank Regiment badge and British General Officer\'s badge side by side.',
+      significance: [
+        'Montgomery\'s recognizable trademark',
+        'Symbol of his leadership style',
+        'Critical identification element for assassination targeting',
+        'Replicated for decoy operation'
+      ],
+      history: [
+        { event: 'Montgomery\'s Visits', details: 'Worn during troop inspections and public appearances' },
+        { event: 'Decoy Operation', details: 'Replicated for Montgomery lookalikes in decoy jeeps' }
+      ],
+      possessors: [
+        { characterId: 'montgomery', period: 'throughout' }
+      ],
+      appearances: [
+        'three_montgomerys_arrangement',
+        'assassination_attempt'
+      ],
+      image_description: 'Black military beret with two distinct cap badges side by side.'
+    },
+    {
+      id: 'blockade_car',
+      name: 'Blockade Car',
+      type: 'Vehicle',
+      description: 'Car parked across Cynthia\'s drive to prevent access or escape during occupation.',
+      physical_details: 'Car positioned tightly against gate to block entrance/exit.',
+      significance: [
+        'Physical mechanism for isolating Cynthia\'s house',
+        'Part of conspirators\' control tactics',
+        'Symbol of captivity'
+      ],
+      history: [
+        { event: 'House Occupation', details: 'Positioned by Louise across drive entrance' }
+      ],
+      possessors: [
+        { characterId: 'john_davies', period: 'during occupation' }
+      ],
+      appearances: [
+        'house_occupation'
+      ],
+      image_description: 'Car positioned sideways across driveway entrance, blocking access.'
+    },
+    {
+      id: 'auburn_wig',
+      name: 'Bob\'s Auburn Wig',
+      type: 'Disguise',
+      description: 'Auburn wig intended for Bob Harrington\'s female disguise during escape after assassination.',
+      physical_details: 'Auburn-colored woman\'s wig, part of disguise from suitcase.',
+      significance: [
+        'Key element of escape plan',
+        'Evidence of meticulous planning',
+        'Symbol of deception',
+        'Ultimately unused when plot foiled'
+      ],
+      history: [
+        { event: 'Suitcase Delivery', details: 'Brought in suitcase delivered by Davies/Young' },
+        { event: 'Assassination Attempt', details: 'Prepared for use but never employed due to Louise\'s intervention' }
+      ],
+      possessors: [
+        { characterId: 'john_davies', period: 'delivery', alias: 'Young' },
+        { characterId: 'bob_harrington', period: 'attempt' }
+      ],
+      appearances: [
+        'house_occupation',
+        'assassination_attempt'
+      ],
+      image_description: 'Auburn-colored woman\'s wig with shoulder-length styled hair.'
+    },
+    {
+      id: 'secure_briefcase',
+      name: 'Bill\'s Secure Briefcase',
+      type: 'Equipment',
+      description: 'Specially designed briefcase used by Bill for transporting sensitive documents and planning materials.',
+      physical_details: 'Standard-looking leather briefcase with hidden compartments and security features.',
+      technical_details: [
+        'Hidden compartments for sensitive documents',
+        'Special lock mechanisms',
+        'Potentially booby-trapped if forced open',
+        'Unmarked exterior to avoid attention'
+      ],
+      significance: [
+        'Secure transport for operation plans',
+        'Symbol of official intelligence work',
+        'Contains maps and operational details'
+      ],
+      possessors: [
+        { characterId: 'bill_laurie', period: 'throughout' }
+      ],
+      appearances: [
+        'intelligence_meeting',
+        'final_planning'
+      ],
+      image_description: 'Ordinary-looking brown leather briefcase with brass fittings.'
     }
   ];
   
@@ -941,6 +1919,142 @@ export const characters = [
         'Communicating through cutouts and intermediaries'
       ],
       bookScenes: ['don_training', 'final_approach']
+    },
+    {
+      id: 'cover_identities',
+      title: 'Cover Identities',
+      description: 'The creation and maintenance of false identities to conceal an agent\'s true purpose or affiliation.',
+      historicalContext: 'Intelligence services developed sophisticated methods for creating believable cover identities during WWII, often supported by false documentation and careful background construction.',
+      examples: [
+        'Felicity posing as a writer in Aldworth cottage',
+        'Bill appearing as "Mr. Newton" at Denleigh Manor',
+        'Intelligence officers disguised as telephone engineers',
+        'Bert and Keith posing as artists for surveillance'
+      ],
+      techniques: [
+        'Selecting identities that explain presence in an area',
+        'Choosing covers that allow for observation without suspicion',
+        'Creating supporting documentation and props',
+        'Establishing routines consistent with chosen identity',
+        'Developing appropriate knowledge for the assumed role'
+      ],
+      bookScenes: ['cottage_surveillance', 'denleigh_recruitment', 'secure_line_installation']
+    },
+    {
+      id: 'secure_communication',
+      title: 'Secure Communications',
+      description: 'Methods used to transmit information without risk of interception or compromise.',
+      historicalContext: 'During WWII, secure communication was critical for intelligence operations. Methods ranged from dedicated phone lines to coded messages through seemingly innocent channels.',
+      examples: [
+        'Dedicated phone line at Cynthia\'s house',
+        'Felicity\'s reports sent via publisher intermediary',
+        'Use of cutouts and dead drops',
+        'Recognition phrases for phone calls'
+      ],
+      techniques: [
+        'Dedicated lines bypassing public exchanges',
+        'Communications through innocent-appearing channels (publishers, businesses)',
+        'Verification codes at start of conversations',
+        'Regular changes of communication methods'
+      ],
+      bookScenes: ['secure_line_installation', 'cottage_surveillance']
+    },
+    {
+      id: 'counter_surveillance',
+      title: 'Counter-Surveillance',
+      description: 'Techniques used to detect and evade hostile surveillance.',
+      historicalContext: 'Intelligence operatives needed to be constantly aware of potential surveillance and developed sophisticated methods to detect and counter it.',
+      examples: [
+        'Don teaching Cynthia about "back doubles"',
+        'Using reflections in shop windows',
+        'Deliberate phone call to test fifth columnist reactions',
+        'Jim\'s careful approach to Cynthia\'s house'
+      ],
+      techniques: [
+        'Indirect routes to detect followers',
+        'Using reflective surfaces to observe without turning around',
+        'Testing reactions through deliberate actions',
+        'Varying routines and behaviors',
+        'Strategic use of public spaces where followers would be conspicuous'
+      ],
+      bookScenes: ['tradecraft_training', 'cynthia_diversion_call']
+    },
+    {
+      id: 'infiltration',
+      title: 'Infiltration Techniques',
+      description: 'Methods for covertly entering secure areas or gaining the trust of target groups.',
+      historicalContext: 'Intelligence services developed sophisticated infiltration methods during WWII, particularly for gaining access to enemy-occupied areas or hostile groups.',
+      examples: [
+        'Cynthia and Richard infiltrating Nazi sympathizer circles',
+        'Team infiltrating Cynthia\'s house during final operation',
+        'Agents entering German-held territory'
+      ],
+      techniques: [
+        'Long-term identity establishment',
+        'Gradual trust-building through incremental steps',
+        'Demonstration of shared beliefs or objectives',
+        'Use of existing contacts for introduction',
+        'Physical infiltration methods (leopard crawling, covert approaches)'
+      ],
+      bookScenes: ['berlin_trip', 'first_party', 'final_operation']
+    },
+    {
+      id: 'deception_operations',
+      title: 'Deception Operations',
+      description: 'Tactical deceptions designed to mislead enemy agents or operatives.',
+      historicalContext: 'The British excelled at deception operations during WWII, from the famous "Operation Mincemeat" to countless smaller tactical deceptions.',
+      examples: [
+        'The "Three Montgomerys" decoy operation',
+        'Cynthia\'s deliberate phone call to test reactions',
+        'Use of artists as surveillance cover',
+        'Felicity\'s writer cover in the village'
+      ],
+      techniques: [
+        'Creating multiple identical targets to confuse attackers',
+        'Deliberate actions designed to provoke revealing responses',
+        'Use of mundane covers to hide surveillance',
+        'Creating distractions to mask main operation'
+      ],
+      bookScenes: ['three_montgomerys_arrangement', 'cynthia_diversion_call']
+    },
+    {
+      id: 'covert_entry',
+      title: 'Covert Entry',
+      description: 'Techniques for gaining entry to secured locations without detection.',
+      historicalContext: 'Intelligence agents needed skills to access locked rooms, buildings and containers without leaving evidence.',
+      examples: [
+        'Edwin picking the lock on the mysterious suitcase',
+        'Bert entering Edwards\' flat',
+        'Intelligence team entering Cynthia\'s house via cellar',
+        'George and Jim entering Davies\' empty house'
+      ],
+      techniques: [
+        'Lock picking without leaving marks',
+        'Disguised entry under false pretenses',
+        'Using alternative or overlooked access points',
+        'Resealing containers to hide entry evidence'
+      ],
+      bookScenes: ['suitcase_opening', 'edwards_discovery', 'final_operation']
+    },
+    {
+      id: 'double_agent_handling',
+      title: 'Double Agent Handling',
+      description: 'Methods for managing, protecting, and communicating with agents working inside hostile organizations.',
+      historicalContext: 'The British Double-Cross System was one of the most successful intelligence operations of WWII, requiring sophisticated handling techniques.',
+      examples: [
+        'Bill\'s management of Louise as an insider',
+        'Secret communications and support',
+        'Providing emergency equipment (gun)',
+        'Maintaining complete secrecy about identity'
+      ],
+      techniques: [
+        'Extremely limited contact to prevent exposure',
+        'Provision of emergency equipment through covert channels',
+        'Total compartmentalization of knowledge about agent',
+        'Development of emergency extraction plans',
+        'Accepting agent-initiated timing for critical actions'
+      ],
+      bookScenes: ['louise_revelation', 'assassination_attempt']
     }
   ];
 
@@ -1089,6 +2203,54 @@ export const characters = [
       relatedCharacters: ['bob_harrington', 'john_davies'],
       relatedEvents: ['rifle_testing', 'house_occupation', 'assassination_attempt'],
       status: 'major_plot'
+    },
+    {
+      id: 'phone_tap',
+      title: 'The Tapped Phone',
+      description: 'The discovery that Cynthia\'s regular phone has been tapped by fifth columnists.',
+      firstMentioned: 'chapter9',
+      revealedInChapter: 'chapter9',
+      relatedCharacters: ['jack', 'peter_snowden'],
+      relatedEvents: ['secure_line_installation'],
+      status: 'revealed'
+    },
+    {
+      id: 'gladys_role',
+      title: 'Gladys\' Informal Intelligence Role',
+      description: 'The village postmistress\'s role as an inadvertent intelligence source through her natural observation.',
+      firstMentioned: 'chapter8',
+      revealedInChapter: 'chapter10',
+      relatedCharacters: ['gladys', 'cynthia_childreth'],
+      status: 'background'
+    },
+    {
+      id: 'three_montys',
+      title: 'The Three Montgomerys Decoy',
+      description: 'Bill\'s clever plan to confuse assassins by having three similar jeeps with Montgomery lookalikes.',
+      firstMentioned: 'chapter11',
+      revealedInChapter: 'chapter11',
+      relatedCharacters: ['bill_laurie', 'montgomery'],
+      relatedEvents: ['assassination_attempt'],
+      status: 'twist'
+    },
+    {
+      id: 'bills_secret_contact',
+      title: 'Bill\'s Secret Contact with Louise',
+      description: 'The revelation that Bill had been in contact with Louise as a double agent for a long time.',
+      firstMentioned: 'chapter11',
+      revealedInChapter: 'chapter11',
+      relatedCharacters: ['bill_laurie', 'louise_harrington'],
+      status: 'major_twist'
+    },
+    {
+      id: 'megan_postman',
+      title: 'The Postman\'s True Identity',
+      description: 'The revelation that Megan Davies was the "postman" who murdered Edwards.',
+      firstMentioned: 'chapter7',
+      revealedInChapter: 'chapter11',
+      relatedCharacters: ['megan_davies', 'edwards'],
+      relatedEvents: ['edwards_murder'],
+      status: 'twist'
     }
   ];
   
@@ -1137,6 +2299,67 @@ export const characters = [
         'Historical reference to "les tricoteuses" - women who knit during French Revolution executions'
       ],
       relatedCharacters: ['louise_harrington', 'gerda_stammer', 'lena_weber']
+    },
+    {
+      id: 'observation_perception',
+      title: 'Observation and Perception',
+      description: 'The importance of careful observation and the frequent gap between perception and reality.',
+      examples: [
+        'Edwards\' suitcase believed to contain radio actually holding women\'s clothes',
+        'The unnoticed significance of Louise\'s knitting',
+        'Village watchers who see but don\'t understand',
+        'Surveillance through art (paintings)'
+      ],
+      relatedCharacters: ['gladys', 'cynthia_childreth', 'louise_harrington', 'bert']
+    },
+    {
+      id: 'shadow_war',
+      title: 'The Shadow War',
+      description: 'The unseen intelligence conflict alongside the conventional war, fought without public knowledge.',
+      examples: [
+        'Intelligence operations conducted in public spaces',
+        'Fifth columnist networks operating in seeming normalcy',
+        'Country houses and village settings concealing espionage activities',
+        'Cynthia\'s deliberately understated OBE award'
+      ],
+      relatedCharacters: ['bill_laurie', 'cynthia_childreth', 'peter_snowden']
+    },
+    {
+      id: 'appearance_reality',
+      title: 'Appearance vs. Reality',
+      description: 'The contrast between how people and situations appear and what they truly are.',
+      examples: [
+        'Louise\'s outward commitment to the cause while secretly working against it',
+        'Snowden\'s exaggerated rank and performance',
+        'Montgomery decoys during final operation',
+        'Seemingly innocent village life concealing espionage'
+      ],
+      relatedCharacters: ['louise_harrington', 'peter_snowden', 'jack']
+    },
+    {
+      id: 'gender_expectations',
+      title: 'Gender Roles and Expectations',
+      description: 'The novel\'s exploration of gender expectations and their subversion in intelligence work.',
+      examples: [
+        'Louise as the actual leader despite appearing secondary to her husband',
+        'Cynthia using her aristocratic lady status as cover',
+        'Hannah\'s provocative masculine dress as Miss Gilchrist',
+        'Megan\'s deadly effectiveness despite seeming "mousey"',
+        'Bob disguising as a woman for escape'
+      ],
+      relatedCharacters: ['louise_harrington', 'cynthia_childreth', 'hannah_park', 'megan_davies']
+    },
+    {
+      id: 'professional_competence',
+      title: 'Professional Expertise vs. Amateur Enthusiasm',
+      description: 'The contrast between trained intelligence professionals and amateur fifth columnists.',
+      examples: [
+        'The methodical approach of Bill\'s team vs. the passionate but less disciplined approach of the fifth columnists',
+        'The fifth columnists\' failure to notice surveillance',
+        'Professional techniques (lock picking, surveillance) vs. amateur efforts',
+        'Successful intelligence planning contrasted with fifth columnist mistakes'
+      ],
+      relatedCharacters: ['bill_laurie', 'bob_harrington', 'edwin', 'peter_snowden']
     }
   ];
   
