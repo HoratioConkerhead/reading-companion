@@ -81,19 +81,30 @@ const objectIcon = (isSelected = false) => L.divIcon({
 });
 
 // Map Controller component to handle view changes externally
-const MapController = ({ center, zoom, bounds, selectedItem }) => {
+const MapController = ({ center, zoom, bounds, selectedItem, currentZoomRef }) => {
   const map = useMap();
   
   useEffect(() => {
+    // Only track zoom changes, don't reset the view
+    const handleZoomEnd = () => {
+      currentZoomRef.current = map.getZoom();
+    };
+    
+    map.on('zoomend', handleZoomEnd);
+    
+    // Only apply bounds if they exist - for initial view
     if (bounds) {
       map.fitBounds(bounds);
-    } else if (center) {
-      map.setView(center, zoom || 8);
     }
-  }, [map, center, zoom, bounds, selectedItem]);
+    
+    return () => {
+      map.off('zoomend', handleZoomEnd);
+    };
+  }, [map, bounds, currentZoomRef]); // Remove center, zoom, selectedItem
   
   return null;
 };
+
 
 const InteractiveMap = ({ 
   onLocationSelect, 
@@ -116,9 +127,12 @@ const InteractiveMap = ({
   const [mapZoom, setMapZoom] = useState(6);
   const [mapBounds, setMapBounds] = useState(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
-  
+
+  const currentZoom = useRef(mapZoom);
+  const mapRef = useRef(null);  
   // Get map view settings based on selected view
   useEffect(() => {
+/*
     if (mapView === 'uk') {
       setMapCenter([54, -4]);
       setMapZoom(6);
@@ -133,9 +147,25 @@ const InteractiveMap = ({
         [47.0, -8.0], // Southwest
         [59.0, 15.0]  // Northeast
       ]);
-    }
-  }, [mapView]);
-  
+
+      }
+  */
+    }, [mapView]);
+
+
+  // capture the map instance:
+  const MapInstanceCapture = () => {
+    const map = useMap();
+    
+    useEffect(() => {
+      mapRef.current = map;
+      // Set initial reference for zoom
+      currentZoom.current = map.getZoom();
+    }, [map]);
+    
+    return null;
+  };
+
   // Filter events based on time period
   const filteredEvents = eventsData.filter(event => {
     if (timeFilter === 'all') return true;
@@ -183,17 +213,32 @@ const InteractiveMap = ({
       setSelectedItemType('location');
       setSelectedItemData(location);
       setShowDetailPanel(true);
+
+      // Use direct map manipulation
+      const locationPos = locationPositions[locationId];
+      if (locationPos && mapRef.current) {
+        mapRef.current.panTo([locationPos.lat, locationPos.lon]);
+      }
     }
   };
   
   // Handle event click
-  const handleEventClick = (eventId) => {
-    const event = eventsData.find(e => e.id === eventId);
+  const handleEventClick = (itemId) => {
+    const event = eventsData.find(e => e.id === itemId);
     if (event) {
-      setSelectedItem(eventId);
+      setSelectedItem(itemId);
       setSelectedItemType('event');
       setSelectedItemData(event);
       setShowDetailPanel(true);
+
+      // Get position from character position data
+      const itemPosition = eventPositions[itemId];
+      if (itemPosition && itemPosition.locationId) {
+        const location = locationPositions[itemPosition.locationId];
+        if (location && mapRef.current) {
+          mapRef.current.panTo([location.lat, location.lon]);
+        }
+      }
     }
   };
 
@@ -205,65 +250,145 @@ const InteractiveMap = ({
       setSelectedItemType('character');
       setSelectedItemData(character);
       setShowDetailPanel(true);
+      
+      // Get position from character position data
+      const itemPosition = characterPositions[characterId];
+      if (itemPosition && itemPosition.locationId) {
+        const location = locationPositions[itemPosition.locationId];
+        if (location && mapRef.current) {
+          mapRef.current.panTo([location.lat, location.lon]);
+        }
+      }
     }
   };
 
   // Handle object click
-  const handleObjectClick = (objectId) => {
-    const object = objectsData.find(o => o.id === objectId);
+  const handleObjectClick = (itemId) => {
+    const object = objectsData.find(o => o.id === itemId);
     if (object) {
-      setSelectedItem(objectId);
+      setSelectedItem(itemId);
       setSelectedItemType('object');
       setSelectedItemData(object);
       setShowDetailPanel(true);
-    }
-  };
-  
-  // Handle selection from dropdowns
-  const handleItemSelect = (itemId, type) => {
-    if (!itemId) {
-      setSelectedItem(null);
-      setSelectedItemType(null);
-      setSelectedItemData(null);
-      setShowDetailPanel(false);
-      return;
-    }
-    
-    setSelectedItem(itemId);
-    setSelectedItemType(type);
-    
-    // Focus map on selected item
-    focusMapOnItem(itemId, type);
-    
-    // Find selected item data and set detail panel
-    let itemData = null;
-    switch (type) {
-      case 'location':
-        itemData = locationsData.find(loc => loc.id === itemId);
-        if (itemData) onLocationSelect(itemData);
-        break;
-      case 'event':
-        itemData = eventsData.find(e => e.id === itemId);
-        if (itemData) onEventSelect(itemData);
-        break;
-      case 'character':
-        itemData = charactersData.find(c => c.id === itemId);
-        if (itemData && onCharacterSelect) onCharacterSelect(itemData);
-        break;
-      case 'object':
-        itemData = objectsData.find(o => o.id === itemId);
-        if (itemData && onObjectSelect) onObjectSelect(itemData);
-        break;
-      default:
-        break;
-    }
 
-    setSelectedItemData(itemData);
-    setShowDetailPanel(!!itemData);
+      // Get position from character position data
+      const itemPosition = objectPositions[itemId];
+      if (itemPosition && itemPosition.locationId) {
+        const location = locationPositions[itemPosition.locationId];
+        if (location && mapRef.current) {
+          mapRef.current.panTo([location.lat, location.lon]);
+        }
+      }
+
+    }
   };
   
+// Handle selection from dropdowns
+const handleItemSelect = (itemId, type) => {
+  if (!itemId) {
+    setSelectedItem(null);
+    setSelectedItemType(null);
+    setSelectedItemData(null);
+    setShowDetailPanel(false);
+    return;
+  }
+  
+  setSelectedItem(itemId);
+  setSelectedItemType(type);
+  
+  // Find selected item data and set detail panel
+  let latLng = null;
+  let itemData = null;
+  
+  switch (type) {
+    case 'location': {
+      // For locations, get coordinates directly
+      const location = locationPositions[itemId];
+      if (location) {
+        latLng = [location.lat, location.lon];
+      }
+      itemData = locationsData.find(loc => loc.id === itemId);
+      //if (itemData) onLocationSelect(itemData);
+      break;
+    }
+    case 'event': {
+      // For events, either use location or path
+      const event = eventPositions[itemId];
+      if (event) {
+        if (event.locationId) {
+          // Get coordinates from referenced location
+          const location = locationPositions[event.locationId];
+          if (location) {
+            latLng = [location.lat, location.lon];
+          }
+        } else if (event.path && event.path.length > 0) {
+          // Use midpoint of path for positioning
+          const midIndex = Math.floor(event.path.length / 2);
+          latLng = [event.path[midIndex].lat, event.path[midIndex].lon];
+        }
+      }
+      itemData = eventsData.find(e => e.id === itemId);
+      //if (itemData) onEventSelect(itemData);
+      break;
+    }
+    case 'character': {
+      // For characters, get location from the character's position data
+      const character = characterPositions[itemId];
+      if (character && character.locationId) {
+        const location = locationPositions[character.locationId];
+        if (location) {
+          latLng = [location.lat, location.lon];
+        }
+      }
+      itemData = charactersData.find(c => c.id === itemId);
+      //if (itemData && onCharacterSelect) onCharacterSelect(itemData);
+      break;
+    }
+    case 'object': {
+      // For objects, get location from the object's position data
+      const object = objectPositions[itemId];
+      if (object && object.locationId) {
+        const location = locationPositions[object.locationId];
+        if (location) {
+          latLng = [location.lat, location.lon];
+        }
+      }
+      itemData = objectsData.find(o => o.id === itemId);
+      //if (itemData && onObjectSelect) onObjectSelect(itemData);
+      break;
+    }
+    default:
+      break;
+  }
+
+  setSelectedItemData(itemData);
+  setShowDetailPanel(!!itemData);
+  
+  // Now pan to the position if we have valid coordinates
+  if (latLng && mapRef.current) {
+    const mapSize = mapRef.current.getSize();
+
+//    mapRef.current.panTo(latLng);
+
+//    if (showDetailPanel) {
+      // Calculate offset based on panel width (1/6 of map width to the left)
+      // This moves the center point left so the selected item isn't hidden behind the panel
+      const offsetX = mapSize.x / 3; // Adjust this value as needed
+//      mapRef.current.panTo([latLng[0], latLng[1] + offsetX/1]);
+//      setTimeout(() => {
+        //mapRef.current.panBy([-offsetX, 0]);
+//      }, 10);
+    //} else {
+//      mapRef.current.panTo(latLng);
+    //}
+
+  }
+};
+
+
   // Focus map on an item
   const focusMapOnItem = (itemId, type) => {
+
     let latLng = null;
     
     switch (type) {
@@ -314,10 +439,10 @@ const InteractiveMap = ({
         break;
     }
     
-    if (latLng) {
-      setMapCenter(latLng);
-      setMapZoom(11); // Zoom in closer on selected item
-      setMapBounds(null); // Clear any existing bounds
+    if (latLng && mapRef.current) {
+        mapRef.current.panTo(latLng);
+      } else {
+        setMapCenter(latLng);
     }
   };
   
@@ -644,7 +769,7 @@ const InteractiveMap = ({
 
   // Render detail panel
   const renderDetailPanel = () => {
-    if (!showDetailPanel || !selectedItemData) return null;
+    //if (!showDetailPanel || !selectedItemData) return null;
 
     const getTitleByType = () => {
       switch (selectedItemType) {
@@ -859,15 +984,27 @@ const InteractiveMap = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Map View</label>
           <div className="flex">
+
+
             <button 
               className={`px-3 py-1 text-sm rounded-l ${mapView === 'uk' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setMapView('uk')}
+              onClick={() => {
+                setMapView('uk');
+                if (mapRef.current) {
+                  mapRef.current.setView([54, -4], 6);
+                }
+              }}
             >
               UK
             </button>
             <button 
               className={`px-3 py-1 text-sm rounded-r ${mapView === 'europe' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setMapView('europe')}
+              onClick={() => {
+                setMapView('europe');
+                if (mapRef.current) {
+                  mapRef.current.setView([50, 4], 5);
+                }
+              }}
             >
               Europe
             </button>
@@ -1017,6 +1154,8 @@ const InteractiveMap = ({
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             
+            <MapInstanceCapture />
+
             {/* Add zoom control to top-right instead of default top-left */}
             <ZoomControl position="topright" />
             
@@ -1026,8 +1165,8 @@ const InteractiveMap = ({
               zoom={mapZoom}
               bounds={mapBounds}
               selectedItem={selectedItem}
-            />
-            
+              currentZoomRef={currentZoom}
+            />            
             {/* Map elements */}
             {renderLocations()}
             {renderEvents()}
