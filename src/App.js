@@ -233,7 +233,7 @@ const StitchedUpApp = () => {
         </Tabs>
         
         {/* Current Selection Summary - Quick Cross-Reference */}
-        <div className="bg-white p-4 rounded shadow mb-6">
+        <div className="bg-white p-4 rounded shadow mb-6 current-selections">
           <h2 className="text-lg font-bold mb-2">Current Selections</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {selectedCharacter && (
