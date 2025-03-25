@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Tour from 'reactour';
 
 const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
@@ -8,57 +8,46 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
       selector: '.app-container',
       content: 'Welcome to the "Stitched Up" Interactive Companion! This app helps you explore the world of Matt Parry\'s novel. Let\'s take a quick tour to discover its features.',
       position: 'center',
-      action: () => {}
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(1)',
-      content: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.',
-      action: () => currentTab !== 0 && onTabChange(0)
+      content: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(2)',
-      content: 'Visualize the complex connections between characters with this interactive network diagram.',
-      action: () => currentTab !== 1 && onTabChange(1)
+      content: 'Visualize the complex connections between characters with this interactive network diagram.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(3)',
-      content: 'Follow the chronological events of the story from beginning to end.',
-      action: () => currentTab !== 2 && onTabChange(2)
+      content: 'Follow the chronological events of the story from beginning to end.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(4)',
-      content: 'Discover key locations where the story takes place and their significance.',
-      action: () => currentTab !== 3 && onTabChange(3)
+      content: 'Discover key locations where the story takes place and their significance.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(5)',
-      content: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.',
-      action: () => currentTab !== 4 && onTabChange(4)
+      content: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(6)',
-      content: 'Understand the structure of the plot and explore key themes and mystery elements.',
-      action: () => currentTab !== 5 && onTabChange(5)
+      content: 'Understand the structure of the plot and explore key themes and mystery elements.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(7)',
-      content: 'Browse important items and artifacts that play a role in the story.',
-      action: () => currentTab !== 6 && onTabChange(6)
+      content: 'Browse important items and artifacts that play a role in the story.'
     },
     {
       selector: 'ul.react-tabs__tab-list > li:nth-child(8)',
-      content: 'Learn about spy techniques and tradecraft mentioned in the novel.',
-      action: () => currentTab !== 7 && onTabChange(7)
+      content: 'Learn about spy techniques and tradecraft mentioned in the novel.'
     },
     {
       selector: '.current-selections',
-      content: 'This panel shows your currently selected items for quick cross-reference. Click any item to jump to its detailed view.',
-      action: () => {}
+      content: 'This panel shows your currently selected items for quick cross-reference. Click any item to jump to its detailed view.'
     },
     {
       selector: 'header .container',
-      content: 'You\'re now ready to explore the world of "Stitched Up"! Click any tab to begin your adventure or take the tour again anytime from the button in the header.',
-      action: () => {}
+      content: 'You\'re now ready to explore the world of "Stitched Up"! Click any tab to begin your adventure or take the tour again anytime from the button in the header.'
     },
   ];
 
@@ -76,13 +65,17 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
     opacity: 0.7
   };
 
-  // Function to handle step changes - execute step's action
-  const handleStepChange = (step) => {
-    const currentStep = steps[step];
-    if (currentStep && currentStep.action) {
-      currentStep.action();
+  // Function to handle step changes - switch tabs based on the current step
+  const handleStepChange = useCallback((step) => {
+    // Switch tabs based on the current step
+    if (step >= 1 && step <= 8) {
+      // Steps 1-8 correspond to tabs 0-7
+      const tabIndex = step - 1;
+      if (currentTab !== tabIndex) {
+        onTabChange(tabIndex);
+      }
     }
-  };
+  }, [currentTab, onTabChange]);
 
   return (
     <Tour
@@ -92,12 +85,18 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
       onAfterOpen={() => {}}
       onBeforeClose={() => {}}
       startAt={0}
-      getCurrentStep={(curr) => handleStepChange(curr)}
-      closeWithMask={false}
-      maskClassName="mask"
-      className="helper"
+      showNavigation={true}
+      showButtons={true}
+      showNumber={true}
+      disableDotsNavigation={false}
+      disableInteraction={false}
+      update={currentTab.toString()}
+      updateDelay={200}
       rounded={8}
       accentColor="#3B82F6" // Tailwind blue-500
+      onAfterStepChange={handleStepChange}
+      maskClassName="mask"
+      className="helper"
       styles={{
         helper: tourStyles,
         mask: maskStyles,
