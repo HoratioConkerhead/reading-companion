@@ -1,0 +1,90 @@
+/* Enhanced Tab Styling for Stitched Up Companion */
+
+/* Custom Tab Styling - Override react-tabs defaults */
+.react-tabs__tab-list {
+  border-bottom: none !important;
+  display: flex;
+  background: linear-gradient(to right, #2c3e50, #4a5568);
+  border-radius: 8px 8px 0 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+.react-tabs__tab {
+  border: none !important;
+  padding: 12px 18px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  border-radius: 0 !important;
+  position: relative;
+  margin: 0 !important;
+  bottom: 0 !important;
+}
+
+.react-tabs__tab:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.react-tabs__tab--selected {
+  background-color: white !important;
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) !important;
+  position: relative;
+}
+
+/* Indicator for selected tab */
+.react-tabs__tab--selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #aa9b77; /* Using your secondary color from :root */
+}
+
+/* Focus outline */
+.react-tabs__tab:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.react-tabs__tab:focus::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(170, 155, 119, 0.5); /* Secondary color with opacity */
+}
+
+/* Tab panel styling */
+.react-tabs__tab-panel {
+  background-color: white;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .react-tabs__tab {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Spy tab specific styling - for the "Spy Encyclopedia" tab */
+.react-tabs__tab:last-child {
+  position: relative;
+}
+
+.react-tabs__tab:last-child::after {
+  content: '🔍';
+  margin-left: 5px;
+  font-size: 12px;
+}

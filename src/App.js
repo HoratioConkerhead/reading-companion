@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import 'leaflet/dist/leaflet.css';
+import './styles/enhanced-tabs.css';
 
 // Import components
 import AppTour from './components/AppTour';
@@ -129,18 +130,18 @@ const StitchedUpApp = () => {
       
       <main className="container mx-auto p-4">
         <Tabs selectedIndex={activeTab} onSelect={index => setActiveTab(index)}>
-          <TabList className="flex bg-white p-2 rounded-t shadow overflow-x-auto">
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Characters</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Relationship Web</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Timeline</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Locations</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Map</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Plot Navigator</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded mr-2 whitespace-nowrap">Objects</Tab>
-            <Tab className="px-4 py-2 cursor-pointer hover:bg-gray-200 focus:outline-none rounded whitespace-nowrap">Spy Encyclopedia</Tab>
+          <TabList>
+            <Tab>Characters</Tab>
+            <Tab>Relationship Web</Tab>
+            <Tab>Timeline</Tab>
+            <Tab>Locations</Tab>
+            <Tab>Map</Tab>
+            <Tab>Plot Navigator</Tab>
+            <Tab>Objects</Tab>
+            <Tab>Spy Encyclopedia</Tab>
           </TabList>
 
-          <div className="bg-white p-6 rounded-b shadow mb-6">
+          <div className="p-6 mb-6">
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
