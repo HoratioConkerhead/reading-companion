@@ -141,7 +141,7 @@ const StitchedUpApp = () => {
             <Tab>Spy Encyclopedia</Tab>
           </TabList>
 
-          <div className="p-6 mb-6">
+          <div className="mb-8">
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
