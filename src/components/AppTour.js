@@ -1,113 +1,111 @@
-import React, { useCallback } from 'react';
-import Tour from 'reactour';
+import React, { useEffect } from 'react';
+import { Steps } from 'intro.js-react';
+import 'intro.js/introjs.css';
+import './AppTour.css'; // Import our custom styles
 
 const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
-  // Define tour steps with content and selectors for elements to highlight
+  // Track when tab changes are needed based on steps
+  useEffect(() => {
+    // If the tour is open and we're on steps that need specific tabs
+    if (isOpen) {
+      // Match step index to tab index for steps 1-8
+      // We'll do this in the onBeforeChange handler
+    }
+  }, [isOpen, currentTab, onTabChange]);
+
+  // Array of steps for the tour
   const steps = [
     {
-      selector: '.app-container',
-      content: 'Welcome to the "Stitched Up" Interactive Companion! This app helps you explore the world of Matt Parry\'s novel. Let\'s take a quick tour to discover its features.',
-      position: 'center',
+      element: 'header',
+      intro: 'Welcome to the "Stitched Up" Interactive Companion! This app helps you explore the world of Matt Parry\'s novel.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(1)',
-      content: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.'
+      element: '.react-tabs__tab-list',
+      intro: 'These tabs let you navigate through different aspects of the novel.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(2)',
-      content: 'Visualize the complex connections between characters with this interactive network diagram.'
+      element: '.react-tabs__tab:nth-child(1)',
+      intro: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(3)',
-      content: 'Follow the chronological events of the story from beginning to end.'
+      element: '.react-tabs__tab:nth-child(2)',
+      intro: 'Visualize the complex connections between characters with this interactive network diagram.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(4)',
-      content: 'Discover key locations where the story takes place and their significance.'
+      element: '.react-tabs__tab:nth-child(3)',
+      intro: 'Follow the chronological events of the story from beginning to end.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(5)',
-      content: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.'
+      element: '.react-tabs__tab:nth-child(4)',
+      intro: 'Discover key locations where the story takes place and their significance.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(6)',
-      content: 'Understand the structure of the plot and explore key themes and mystery elements.'
+      element: '.react-tabs__tab:nth-child(5)',
+      intro: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(7)',
-      content: 'Browse important items and artifacts that play a role in the story.'
+      element: '.react-tabs__tab:nth-child(6)',
+      intro: 'Understand the structure of the plot and explore key themes and mystery elements.',
+      position: 'bottom'
     },
     {
-      selector: 'ul.react-tabs__tab-list > li:nth-child(8)',
-      content: 'Learn about spy techniques and tradecraft mentioned in the novel.'
+      element: '.react-tabs__tab:nth-child(7)',
+      intro: 'Browse important items and artifacts that play a role in the story.',
+      position: 'bottom'
     },
     {
-      selector: '.current-selections',
-      content: 'This panel shows your currently selected items for quick cross-reference. Click any item to jump to its detailed view.'
+      element: '.react-tabs__tab:nth-child(8)',
+      intro: 'Learn about spy techniques and tradecraft mentioned in the novel.',
+      position: 'bottom'
     },
     {
-      selector: 'header .container',
-      content: 'You\'re now ready to explore the world of "Stitched Up"! Click any tab to begin your adventure or take the tour again anytime from the button in the header.'
+      element: '.current-selections',
+      intro: 'This panel shows your currently selected items for quick cross-reference. Click any item to jump to its detailed view.',
+      position: 'top'
     },
+    {
+      element: 'footer',
+      intro: 'You\'re now ready to explore the world of "Stitched Up"! Click any tab to begin your adventure.',
+      position: 'top'
+    }
   ];
 
-  // Custom styles for the tour
-  const tourStyles = {
-    backgroundColor: '#fff',
-    borderRadius: '0.5rem',
-    boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.15)',
-    padding: '1.5rem',
-    maxWidth: '450px',
-  };
-
-  const maskStyles = {
-    color: '#000',
-    opacity: 0.7
-  };
-
-  // Function to handle step changes - switch tabs based on the current step
-  const handleStepChange = useCallback((step) => {
-    // Switch tabs based on the current step
-    if (step >= 1 && step <= 8) {
-      // Steps 1-8 correspond to tabs 0-7
-      const tabIndex = step - 1;
+  // Called before each step change
+  const onBeforeChange = (nextStepIndex) => {
+    // Change tabs appropriately based on the next step
+    if (nextStepIndex >= 2 && nextStepIndex <= 9) {
+      // Steps 2-9 correspond to tabs 0-7
+      const tabIndex = nextStepIndex - 2;
       if (currentTab !== tabIndex) {
         onTabChange(tabIndex);
       }
     }
-  }, [currentTab, onTabChange]);
+  };
 
   return (
-    <Tour
+    <Steps
+      enabled={isOpen}
       steps={steps}
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      onAfterOpen={() => {}}
-      onBeforeClose={() => {}}
-      startAt={0}
-      showNavigation={true}
-      showButtons={true}
-      showNumber={true}
-      disableDotsNavigation={false}
-      disableInteraction={false}
-      update={currentTab.toString()}
-      updateDelay={200}
-      rounded={8}
-      accentColor="#3B82F6" // Tailwind blue-500
-      onAfterStepChange={handleStepChange}
-      maskClassName="mask"
-      className="helper"
-      styles={{
-        helper: tourStyles,
-        mask: maskStyles,
-        buttons: {
-          primary: {
-            backgroundColor: '#3B82F6',
-            color: '#fff',
-            padding: '0.5rem 1rem',
-            borderRadius: '0.25rem',
-          }
-        }
+      initialStep={0}
+      onExit={onClose}
+      onBeforeChange={onBeforeChange}
+      options={{
+        doneLabel: 'Finish',
+        showStepNumbers: true,
+        showBullets: true,
+        showProgress: true,
+        scrollToElement: true,
+        highlightClass: 'intro-highlight',
+        tooltipClass: 'customTooltip',
+        disableInteraction: false,
+        overlayOpacity: 0.3  // Set a low opacity for better visibility
       }}
     />
   );
