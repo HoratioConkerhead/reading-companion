@@ -1,6 +1,14 @@
 /* Enhanced Tab Styling for Stitched Up Companion */
 
 /* Custom Tab Styling - Override react-tabs defaults */
+/* Tab container for perfect alignment */
+.react-tabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .react-tabs__tab-list {
   border-bottom: none !important;
   display: flex;
@@ -9,6 +17,7 @@
   padding: 0 !important;
   margin: 0 !important;
   overflow: hidden;
+  width: 95%;
 }
 
 .react-tabs__tab {
@@ -69,7 +78,7 @@
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 28px 32px; /* Increased padding for more whitespace */
-  max-width: 95%;
+  width: 95%;
   margin: 0 auto; /* Center the panel */
 }
 
