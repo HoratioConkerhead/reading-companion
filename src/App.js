@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import 'leaflet/dist/leaflet.css';
 
 // Import components
+import AppTour from './components/AppTour';
 import CharacterExplorer from './components/CharacterExplorer';
 import RelationshipWeb from './components/RelationshipWeb';
 import Timeline from './components/Timeline';
@@ -30,7 +31,7 @@ const StitchedUpApp = () => {
     const hasVisited = localStorage.getItem('stitchedUpVisited');
     if (!hasVisited) {
       setFirstVisit(true);
-      // In a full app, we might auto-start the tour here
+      // We could auto-start the tour here for first time visitors
       localStorage.setItem('stitchedUpVisited', 'true');
     } else {
       setFirstVisit(false);
@@ -70,8 +71,17 @@ const StitchedUpApp = () => {
   // Start app tour
   const startTour = () => {
     setAppTour(true);
-    // In a full implementation, this would trigger a guided tour
   };
+  
+  // Close app tour
+  const closeTour = useCallback(() => {
+    setAppTour(false);
+  }, []);
+  
+  // Handle tab change from tour
+  const handleTabChangeFromTour = useCallback((tabIndex) => {
+    setActiveTab(tabIndex);
+  }, []);
   
   // Close first visit message
   const closeFirstVisitMessage = () => {
@@ -180,8 +190,8 @@ const StitchedUpApp = () => {
               <InteractiveMap
                 onLocationSelect={handleLocationSelect}
                 onEventSelect={handleEventSelect}
-                onCharacterSelect={handleCharacterSelect} // If you have this handler
-                onObjectSelect={handleObjectSelect} // If you have this handler
+                onCharacterSelect={handleCharacterSelect}
+                onObjectSelect={handleObjectSelect}
                 locationsData={stitchedUp.locations}
                 eventsData={stitchedUp.events}
                 charactersData={stitchedUp.characters}
@@ -301,26 +311,13 @@ const StitchedUpApp = () => {
         </div>
       </footer>
       
-      {/* App Tour Modal - Would be implemented in a full version */}
-      {appTour && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-lg">
-            <h2 className="text-xl font-bold mb-4">App Tour</h2>
-            <p>
-              In a full implementation, this would be an interactive guided tour of the app's 
-              features, walking users through each tab and functionality.
-            </p>
-            <div className="mt-4 flex justify-end">
-              <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded"
-                onClick={() => setAppTour(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* App Tour Component */}
+      <AppTour 
+        isOpen={appTour} 
+        onClose={closeTour}
+        currentTab={activeTab}
+        onTabChange={handleTabChangeFromTour}
+      />
     </div>
   );
 };
