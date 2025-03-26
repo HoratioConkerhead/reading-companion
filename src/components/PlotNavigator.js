@@ -53,7 +53,7 @@ const PlotNavigator = ({
   };
   
   return (
-    <div className="plot-navigator">
+    <div className="plot-navigator" style={{width: '100%', maxWidth: '100%'}}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-4">Plot Navigator</h2>
         <p className="text-gray-600">

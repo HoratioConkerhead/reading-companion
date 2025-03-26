@@ -6,6 +6,7 @@ import './styles/enhanced-tabs.css';
 
 // Import components
 import AppTour from './components/AppTour';
+import DarkModeToggle from './components/DarkModeToggle';
 import CharacterExplorer from './components/CharacterExplorer';
 import RelationshipWeb from './components/RelationshipWeb';
 import Timeline from './components/Timeline';
@@ -26,6 +27,7 @@ const StitchedUpApp = () => {
   const [selectedObject, setSelectedObject] = useState(null);
   const [appTour, setAppTour] = useState(false);
   const [firstVisit, setFirstVisit] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   
   // Check for first visit to potentially show tutorial
   useEffect(() => {
@@ -37,7 +39,30 @@ const StitchedUpApp = () => {
     } else {
       setFirstVisit(false);
     }
+    
+    // Check for dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
+    if (savedDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
+  
+  // Dark mode toggle handler
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    // Update the document class for Tailwind dark mode
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
   
   // Character selection handler
   const handleCharacterSelect = (character) => {
@@ -90,14 +115,15 @@ const StitchedUpApp = () => {
   };
 
   return (
-    <div className="app-container bg-gray-100 min-h-screen">
-      <header className="bg-gray-800 text-white p-4">
+    <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+      <header className="bg-gray-800 dark:bg-gray-900 text-white p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-serif">Stitched Up</h1>
             <p className="text-sm mt-1">An Interactive Companion to Matt Parry's Novel</p>
           </div>
-          <div>
+          <div className="flex items-center space-x-4">
+            <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
             <button 
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white text-sm"
               onClick={startTour}
@@ -109,17 +135,17 @@ const StitchedUpApp = () => {
       </header>
       
       {firstVisit && (
-        <div className="bg-blue-50 border-b border-blue-200 p-4">
+        <div className={`p-4 border-b ${darkMode ? 'bg-blue-900 border-blue-800 text-blue-100' : 'bg-blue-50 border-blue-200 text-blue-800'}`}>
           <div className="container mx-auto flex justify-between items-center">
             <div className="pr-8">
-              <h2 className="text-lg font-bold text-blue-800">Welcome to the "Stitched Up" Interactive Companion!</h2>
-              <p className="mt-1 text-blue-700">
+              <h2 className="text-lg font-bold">Welcome to the "Stitched Up" Interactive Companion!</h2>
+              <p className="mt-1">
                 This app helps you explore characters, relationships, locations, and plot elements from the novel. 
                 Use the tabs below to navigate different aspects of the story.
               </p>
             </div>
             <button 
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-white text-sm"
+              className={`px-3 py-1 rounded text-white text-sm ${darkMode ? 'bg-blue-700 hover:bg-blue-800' : 'bg-blue-600 hover:bg-blue-700'}`}
               onClick={closeFirstVisitMessage}
             >
               Got it
@@ -234,47 +260,47 @@ const StitchedUpApp = () => {
         </Tabs>
         
         {/* Current Selection Summary - Quick Cross-Reference */}
-        <div className="bg-white p-4 rounded shadow mb-6 current-selections">
+        <div className={`p-4 rounded shadow mb-6 current-selections ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`} style={{ backgroundColor: 'var(--color-panel-bg)', borderColor: 'var(--color-panel-border)' }}>
           <h2 className="text-lg font-bold mb-2">Current Selections</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {selectedCharacter && (
-              <div className="border p-3 rounded hover:bg-blue-50 cursor-pointer" onClick={() => setActiveTab(0)}>
-                <div className="text-sm text-gray-500">Character</div>
+              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(0)}>
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Character</div>
                 <div className="font-medium">{selectedCharacter.name}</div>
-                <div className="text-xs mt-1 text-blue-600">Click to view details</div>
+                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
               </div>
             )}
             
             {selectedEvent && (
-              <div className="border p-3 rounded hover:bg-blue-50 cursor-pointer" onClick={() => setActiveTab(2)}>
-                <div className="text-sm text-gray-500">Event</div>
+              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(2)}>
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Event</div>
                 <div className="font-medium">{selectedEvent.title}</div>
-                <div className="text-xs text-gray-500">{selectedEvent.date}</div>
-                <div className="text-xs mt-1 text-blue-600">Click to view details</div>
+                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedEvent.date}</div>
+                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
               </div>
             )}
             
             {selectedLocation && (
-              <div className="border p-3 rounded hover:bg-blue-50 cursor-pointer" onClick={() => setActiveTab(3)}>
-                <div className="text-sm text-gray-500">Location</div>
+              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(3)}>
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Location</div>
                 <div className="font-medium">{selectedLocation.name}</div>
-                <div className="text-xs text-gray-500">{selectedLocation.area}</div>
-                <div className="text-xs mt-1 text-blue-600">Click to view details</div>
+                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedLocation.area}</div>
+                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
               </div>
             )}
             
             {selectedObject && (
-              <div className="border p-3 rounded hover:bg-blue-50 cursor-pointer" onClick={() => setActiveTab(6)}>
-                <div className="text-sm text-gray-500">Object</div>
+              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(6)}>
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Object</div>
                 <div className="font-medium">{selectedObject.name}</div>
-                <div className="text-xs mt-1 text-blue-600">Click to view details</div>
+                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
               </div>
             )}
           </div>
         </div>
       </main>
       
-      <footer className="bg-gray-700 text-white p-4 mt-8">
+      <footer className="bg-gray-700 dark:bg-gray-900 text-white p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -327,13 +353,13 @@ const StitchedUpApp = () => {
 export const getGroupColor = (group) => {
   switch (group) {
     case 'Protagonists':
-      return 'bg-blue-200 text-blue-800';
+      return 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200';
     case 'Fifth Columnists':
-      return 'bg-red-200 text-red-800';
+      return 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200';
     case 'German Connection':
-      return 'bg-yellow-200 text-yellow-800';
+      return 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200';
     default:
-      return 'bg-gray-200 text-gray-800';
+      return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
   }
 };
 

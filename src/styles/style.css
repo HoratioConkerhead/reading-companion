@@ -6,6 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 
 :root {
+  /* Light mode (default) */
   --color-primary: #3b4d61;
   --color-secondary: #aa9b77;
   --color-background: #f5f3ed;
@@ -16,6 +17,36 @@
   --color-fifth-columnists: #e53e3e;
   --color-german-connection: #d69e2e;
   --color-supporting: #718096;
+  
+  /* Header, footer, and UI elements */
+  --color-header-bg: #1f2937; /* gray-800 */
+  --color-header-text: #ffffff;
+  --color-footer-bg: #374151; /* gray-700 */
+  --color-footer-text: #ffffff;
+  --color-panel-bg: #ffffff;
+  --color-panel-border: #e5e7eb; /* gray-200 */
+  --color-tab-bg: #ffffff;
+  --color-tab-text: #1f2937;
+}
+
+.dark {
+  /* Dark mode overrides - much darker now */
+  --color-primary: #60a5fa; /* blue-400 */
+  --color-secondary: #fbbf24; /* amber-400 */
+  --color-background: #111827; /* gray-900 */
+  --color-text: #f3f4f6; /* gray-100 */
+  --color-light: #1f2937; /* gray-800 */
+  --color-border: #4b5563; /* gray-600 */
+  
+  /* Header, footer, and UI elements */
+  --color-header-bg: #0f172a; /* slate-900 */
+  --color-header-text: #f8fafc; /* slate-50 */
+  --color-footer-bg: #0f172a; /* slate-900 */
+  --color-footer-text: #f8fafc; /* slate-50 */
+  --color-panel-bg: #1e293b; /* slate-800 */
+  --color-panel-border: #334155; /* slate-700 */
+  --color-tab-bg: #1e293b; /* slate-800 */
+  --color-tab-text: #f3f4f6; /* gray-100 */
 }
 
 body {
@@ -44,10 +75,20 @@ code {
 
 /* Custom Tab Styling */
 .react-tabs__tab--selected {
-  background-color: #fff;
+  background-color: var(--color-tab-bg);
   border-radius: 5px 5px 0 0;
   border-color: var(--color-border);
   color: var(--color-primary);
+}
+
+.react-tabs__tab {
+  color: var(--color-tab-text);
+}
+
+.react-tabs__tab-panel {
+  background-color: var(--color-panel-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
 }
 
 .react-tabs__tab:focus {
@@ -102,7 +143,7 @@ code {
 }
 
 .character-node:hover {
-  stroke: #000;
+  stroke: var(--color-text);
   stroke-width: 1.5px;
 }
 
@@ -132,4 +173,55 @@ code {
 
 .border-supporting {
   border-color: var(--color-supporting);
+}
+
+/* Dark mode specific overrides */
+.dark .react-tabs__tab-panel {
+  background-color: var(--color-panel-bg);
+  color: var(--color-text);
+}
+
+.dark .react-tabs__tab--selected {
+  background-color: var(--color-panel-bg);
+  color: var(--color-primary);
+}
+
+.dark .character-node:hover {
+  stroke: #fff;
+}
+
+/* Dark mode toggle */
+.dark-mode-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-track {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  background-color: #4a5568;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.dark .toggle-track {
+  background-color: #6366f1;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.dark .toggle-thumb {
+  left: 28px;
 }

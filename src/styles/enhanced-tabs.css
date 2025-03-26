@@ -80,6 +80,8 @@
   padding: 28px 32px; /* Increased padding for more whitespace */
   width: 95%;
   margin: 0 auto; /* Center the panel */
+  max-height: 85vh; /* Maximum height for panels */
+  overflow-y: auto; /* Allow scrolling within panels */
 }
 
 /* Add more space for headings in tab panels */
@@ -107,3 +109,4 @@
   margin-left: 5px;
   font-size: 12px;
 }
+

@@ -11,6 +11,7 @@ const Timeline = ({
   const [timelineFilter, setTimelineFilter] = useState('all');
   const [characterFilter, setCharacterFilter] = useState('all');
   const [layoutMode, setLayoutMode] = useState('chronological'); // 'chronological' or 'parallel'
+  const [zoomLevel, setZoomLevel] = useState(50); // Default zoom level at 50%
   
   // Refs for scrolling
   const timelineRef = useRef(null);
@@ -180,7 +181,7 @@ const Timeline = ({
   const hasNextEvent = selectedEvent && sortedEvents.findIndex(e => e.id === selectedEvent.id) < sortedEvents.length - 1;
   
   return (
-    <div className="timeline-container">
+    <div className="timeline-container w-full overflow-hidden">
       <div className="mb-6" ref={timelineRef}>
         <h2 className="text-2xl font-bold mb-4">Event Timeline</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -281,8 +282,8 @@ const Timeline = ({
             3. Dot position: change "top-24" in the dot style to align with the line
             4. Label position: change "pt-6" to adjust the vertical position of date labels
           */}
-          <div className="overflow-x-auto mb-4 relative h-40 border bg-white rounded"> {/* Container height - change h-32 to adjust */}
-            <div className="min-w-max h-full">
+          <div className="overflow-x-auto mb-4 relative h-40 border bg-white rounded w-full"> {/* Added width constraint */}
+            <div className="w-max h-full max-w-[2000px]"> {/* Changed min-w-max to w-max with a max width */}
               <div className="relative h-full">
                 {/* Timeline line - positioned near the bottom */}
                 <div className="absolute left-0 right-0 h-1 bg-gray-300 top-28"></div> {/* Line position - change top-24 to move up/down */}
@@ -292,7 +293,7 @@ const Timeline = ({
                   {sortedEvents.map((event, index) => (
                     <div 
                       key={event.id} 
-                      className="relative px-8 h-full" /* Reduced horizontal spacing */
+                      className="relative px-4 h-full" /* Further reduced horizontal spacing */
                       onClick={() => handleEventSelect(event)}
                     >
                       {/* Dot - positioned to match the line */}
@@ -305,7 +306,7 @@ const Timeline = ({
                       ></div>
                       
                       {/* Date label - positioned below the line */}
-                      <div className={`text-xs absolute top-16 pt-6 w-20 cursor-pointer transform -rotate-45 origin-bottom-left ${
+                      <div className={`text-xs absolute top-16 pt-6 w-16 cursor-pointer transform -rotate-45 origin-bottom-left text-center ${
                         selectedEvent?.id === event.id ? 'font-bold' : ''
                       }`}>
                         {event.date}

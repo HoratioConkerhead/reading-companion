@@ -153,6 +153,115 @@ const InteractiveMap = ({
     }, [mapView]);
 
 
+
+  // Get position for any item type
+  const getItemPosition = (itemId, itemType) => {
+    if (!itemId || !itemType) return null;
+    
+    switch (itemType) {
+      case 'location': {
+        const location = locationPositions[itemId];
+        return location ? [location.lat, location.lon] : null;
+      }
+      case 'event': {
+        const event = eventPositions[itemId];
+        if (!event) return null;
+        
+        if (event.locationId) {
+          const location = locationPositions[event.locationId];
+          return location ? [location.lat, location.lon] : null;
+        } else if (event.path && event.path.length > 0) {
+          const midIndex = Math.floor(event.path.length / 2);
+          return [event.path[midIndex].lat, event.path[midIndex].lon];
+        }
+        return null;
+      }
+      case 'character': {
+        const character = characterPositions[itemId];
+        if (!character || !character.locationId) return null;
+        
+        const location = locationPositions[character.locationId];
+        return location ? [location.lat, location.lon] : null;
+      }
+      case 'object': {
+        const object = objectPositions[itemId];
+        if (!object || !object.locationId) return null;
+        
+        const location = locationPositions[object.locationId];
+        return location ? [location.lat, location.lon] : null;
+      }
+      default:
+        return null;
+    }
+  };
+
+  // Get item data for any type
+  const getItemData = (itemId, itemType) => {
+    switch (itemType) {
+      case 'location':
+        return locationsData.find(loc => loc.id === itemId);
+      case 'event':
+        return eventsData.find(e => e.id === itemId);
+      case 'character':
+        return charactersData.find(c => c.id === itemId);
+      case 'object':
+        return objectsData.find(o => o.id === itemId);
+      default:
+        return null;
+    }
+  };
+
+  // Pan to item position
+  const panToItem = (position) => {
+    if (!position || !mapRef.current) return;
+    
+    // Get the current map container size
+    const mapSize = mapRef.current.getSize();
+    
+    // If the panel is shown, adjust the center point
+    if (showDetailPanel) {
+      // Calculate offset based on panel width (adjust as needed)
+      const offsetX = mapSize.x / 6;
+      
+      // First pan to the position
+      mapRef.current.panTo(position);
+      
+      // Then offset to account for the panel
+      setTimeout(() => {
+        mapRef.current.panBy([-offsetX, 0]);
+      }, 10);
+    } else {
+      // Just pan to the position if no panel is shown
+      mapRef.current.panTo(position);
+    }
+  };
+
+  // Simplify select handler for any item type
+  const selectItem = (itemId, itemType) => {
+    if (!itemId) {
+      setSelectedItem(null);
+      setSelectedItemType(null);
+      setSelectedItemData(null);
+      setShowDetailPanel(false);
+      return;
+    }
+    
+    // Get item data
+    const itemData = getItemData(itemId, itemType);
+    if (!itemData) return;
+    
+    // Update state
+    setSelectedItem(itemId);
+    setSelectedItemType(itemType);
+    setSelectedItemData(itemData);
+    setShowDetailPanel(true);
+    
+    // Pan to item position
+    const position = getItemPosition(itemId, itemType);
+    panToItem(position);
+  };
+
+
   // capture the map instance:
   const MapInstanceCapture = () => {
     const map = useMap();
@@ -809,12 +918,9 @@ const handleItemSelect = (itemId, type) => {
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">Features:</h4>
                   <ul className="list-disc pl-4 text-sm">
-                    {selectedItemData.features.slice(0, 3).map((feature, i) => (
+                    {selectedItemData.features.map((feature, i) => (
                       <li key={i}>{feature}</li>
                     ))}
-                    {selectedItemData.features.length > 3 && (
-                      <li>+ {selectedItemData.features.length - 3} more features</li>
-                    )}
                   </ul>
                 </div>
               )}
@@ -829,12 +935,9 @@ const handleItemSelect = (itemId, type) => {
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">Key Actions:</h4>
                   <ul className="list-disc pl-4 text-sm">
-                    {selectedItemData.keyActions.slice(0, 2).map((action, i) => (
+                  {selectedItemData.keyActions.map((action, i) => (
                       <li key={i}>{action}</li>
                     ))}
-                    {selectedItemData.keyActions.length > 2 && (
-                      <li>+ {selectedItemData.keyActions.length - 2} more actions</li>
-                    )}
                   </ul>
                 </div>
               )}
