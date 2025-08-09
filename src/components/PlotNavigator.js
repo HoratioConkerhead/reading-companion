@@ -57,7 +57,7 @@ const PlotNavigator = ({
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-4">Plot Navigator</h2>
         <p className="text-gray-600">
-          Explore the narrative structure, mysteries, and themes of "Stitched Up" to enhance your understanding of the novel.
+          Explore the narrative structure, mysteries, and themes of the book to enhance your understanding of the novel.
         </p>
       </div>
       
@@ -361,7 +361,7 @@ const PlotNavigator = ({
       {viewMode === 'themes' && (
         <div className="space-y-6">
           <p className="text-gray-600">
-            Explore the major themes and motifs running through "Stitched Up" and how they connect 
+            Explore the major themes and motifs running through the book and how they connect 
             to characters and events in the novel.
           </p>
           
@@ -401,14 +401,14 @@ const PlotNavigator = ({
           <div className="border rounded p-4 bg-gray-50 mt-6">
             <h3 className="font-bold text-lg mb-2">Literary Analysis</h3>
             <p>
-              "Stitched Up" uses the spy thriller genre to explore broader themes of loyalty, 
+              The book uses the spy thriller genre to explore broader themes of loyalty, 
               deception, class division, and the moral compromises made during wartime. The novel's 
               structure mirrors the complexity of intelligence work itself, with information revealed 
               gradually and perspectives shifting as characters' true motivations come to light.
             </p>
             <p className="mt-2">
               The book's title operates on multiple levels, referring both to the knitting motif 
-              throughout the story and the way characters find themselves "stitched up" (betrayed or 
+                              throughout the story and the way characters find themselves betrayed or 
               trapped) by circumstances and the actions of others.
             </p>
           </div>

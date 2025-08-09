@@ -1,6 +1,6 @@
-# Stitched Up Companion - Project Architecture
+# Interactive Reading Companion - Project Architecture
 
-This diagram illustrates the architecture of the Stitched Up Companion app, showing the main components, data flow, and relationships between different parts of the application.
+This diagram illustrates the architecture of the Interactive Reading Companion app, showing the main components, data flow, and relationships between different parts of the application.
 
 ```mermaid
 graph TD
@@ -15,7 +15,7 @@ graph TD
     A --> J[AppTour]
 
     %% Data Structure and Flow
-    K[Data Layer] --> K1[stitchedUp/index.js]
+    K[Data Layer] --> K1[bookName/index.js]
     K1 --> K2[characters.js]
     K1 --> K3[locations.js]
     K1 --> K4[events.js]

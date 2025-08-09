@@ -1,8 +1,8 @@
-# Stitched Up Interactive Companion
+# Interactive Reading Companion
 
-An interactive web application to explore Matt Parry's spy thriller novel "Stitched Up", helping readers navigate the complex web of characters, locations, events, and plot elements.
+An interactive web application to explore complex novels and book series, helping readers navigate the web of characters, locations, events, and plot elements.
 
-![Stitched Up Interactive App](https://via.placeholder.com/800x400?text=Stitched+Up+Interactive+App)
+![Interactive Reading Companion](https://via.placeholder.com/800x400?text=Interactive+Reading+Companion)
 
 ## Table of Contents
 
@@ -20,9 +20,9 @@ An interactive web application to explore Matt Parry's spy thriller novel "Stitc
 
 ## Overview
 
-"Stitched Up" is a spy thriller set during World War II that follows Lady Cynthia Childreth's recruitment into intelligence work and her efforts to thwart a Nazi assassination plot. This companion app helps readers track characters, understand relationships, follow locations, and navigate the intricate plot.
+The Interactive Reading Companion is designed to enhance the reading experience of complex novels and book series. It helps readers track characters, understand relationships, follow locations, and navigate intricate plots through an interactive interface.
 
-The app serves as both a reading companion and a post-reading exploration tool, offering different perspectives on the novel's narrative.
+The app serves as both a reading companion and a post-reading exploration tool, offering different perspectives on a novel's narrative structure.
 
 ## Features
 
@@ -48,7 +48,7 @@ Understand the narrative structure through chapter progression, mystery elements
 Examine important objects from the story, their significance, and their movement between characters throughout the plot.
 
 ### Spy Encyclopedia
-Learn about espionage techniques referenced in the novel and their historical context in WWII intelligence operations.
+Learn about espionage techniques referenced in the novel and their historical context in intelligence operations.
 
 ## Getting Started
 
@@ -60,8 +60,8 @@ Learn about espionage techniques referenced in the novel and their historical co
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/stitched-up-companion.git
-   cd stitched-up-companion
+   git clone https://github.com/yourusername/interactive-reading-companion.git
+   cd interactive-reading-companion
    ```
 
 2. Install dependencies:
@@ -99,7 +99,16 @@ Learn about espionage techniques referenced in the novel and their historical co
     ├── data/              # Data files
     │   ├── index.js
     │   └── stitchedUp/
-    │       ├── datapycraftEncyclopedia.js
+    │       ├── characters.js
+    │       ├── locations.js
+    │       ├── events.js
+    │       ├── objects.js
+    │       ├── relationships.js
+    │       ├── positions.js
+    │       ├── mysteryElements.js
+    │       ├── chapters.js
+    │       ├── spycraftEntries.js
+    │       ├── themeElements.js
     │       └── index.js
     ├── styles/            # CSS and styling
     │   └── style.css
@@ -151,7 +160,7 @@ The application uses a structured data model organized by domain in separate fil
 - `spycraftEntries.js`: Information about espionage techniques
 - `themeElements.js`: Thematic elements and motifs from the novel
 
-The data structure is designed to reflect the XML schema defined in `docs/stitchedup.xml` and is organized for better maintainability and extensibility.
+The data structure is designed to be easily extensible for different books and series, with each data type organized in its own file for better maintainability.
 
 ## Technologies Used
 
@@ -201,6 +210,10 @@ The app can be deployed to:
    - Lazy loading of components
    - Data caching strategies
 
+6. **Multi-Book Support**
+   - Support for multiple books in a series
+   - Cross-book character and plot connections
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -217,4 +230,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-This project was created as an interactive companion to Matt Parry's novel "Stitched Up", designed to enhance the reading experience by providing additional context and exploration tools.
+This project was created as an interactive companion for complex novels and book series, designed to enhance the reading experience by providing additional context and exploration tools.

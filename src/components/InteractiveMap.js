@@ -1,26 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  MapContainer, 
-  TileLayer, 
-  Marker, 
-  Popup, 
-  Tooltip, 
-  Polyline, 
-  CircleMarker,
-  useMap,
-  ZoomControl
-} from 'react-leaflet';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { defaultBook } from '../data';
 
-// Import position data
-import { 
+// Import position data from the default book
+const { 
   locationPositions, 
   eventPositions, 
   characterPositions, 
   objectPositions,
   mapBoundaries
-} from '../data/stitchedUp/positions';
+} = defaultBook;
 
 // Fix Leaflet's default icon paths
 delete L.Icon.Default.prototype._getIconUrl;
@@ -681,7 +672,7 @@ const handleItemSelect = (itemId, type) => {
             click: () => handleLocationClick(id)
           }}
         >
-          <Tooltip>{location.label}</Tooltip>
+          <Popup>{location.label}</Popup>
           {isSelected && <Popup><strong>{location.label}</strong></Popup>}
         </Marker>
       );
@@ -731,7 +722,7 @@ const handleItemSelect = (itemId, type) => {
             click: () => handleEventClick(event.id)
           }}
         >
-          <Tooltip>{event.title}</Tooltip>
+          <Popup>{event.title}</Popup>
           {isSelected && (
             <Popup>
               <div>
@@ -818,7 +809,7 @@ const handleItemSelect = (itemId, type) => {
             click: () => handleCharacterClick(id)
           }}
         >
-          <Tooltip>{charData.name}</Tooltip>
+          <Popup>{charData.name}</Popup>
           {isSelected && (
             <Popup>
               <div>
@@ -862,7 +853,7 @@ const handleItemSelect = (itemId, type) => {
             click: () => handleObjectClick(id)
           }}
         >
-          <Tooltip>{objData.name}</Tooltip>
+          <Popup>{objData.name}</Popup>
           {isSelected && (
             <Popup>
               <div>
@@ -1355,7 +1346,7 @@ const handleItemSelect = (itemId, type) => {
       </div>
       
       <div className="mt-4 text-sm text-gray-500 p-2 border-t">
-        <p>Interactive map showing key locations, events, characters, and objects from "Stitched Up". Click on markers for details or use the dropdowns to select specific items. The detail panel will show a summary with the option to view full details.</p>
+        <p>Interactive map showing key locations, events, characters, and objects from the book. Click on markers for details or use the dropdowns to select specific items. The detail panel will show a summary with the option to view full details.</p>
       </div>
     </div>
   );

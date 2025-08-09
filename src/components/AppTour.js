@@ -3,7 +3,7 @@ import { Steps } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import './AppTour.css'; // Import our custom styles
 
-const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
+const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => {
   // Track when tab changes are needed based on steps
   useEffect(() => {
     // If the tour is open and we're on steps that need specific tabs
@@ -17,7 +17,7 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
   const steps = [
     {
       element: 'header',
-      intro: 'Welcome to the "Stitched Up" Interactive Companion! This app helps you explore the world of Matt Parry\'s novel.',
+      intro: bookMetadata?.tourWelcome || 'Welcome to the Interactive Reading Companion! This app helps you explore the world of the book.',
       position: 'bottom'
     },
     {
@@ -72,7 +72,7 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab }) => {
     },
     {
       element: 'footer',
-      intro: 'You\'re now ready to explore the world of "Stitched Up"! Click any tab to begin your adventure.',
+      intro: bookMetadata?.tourConclusion || 'You\'re now ready to explore the world of the book! Click any tab to begin your adventure.',
       position: 'top'
     }
   ];

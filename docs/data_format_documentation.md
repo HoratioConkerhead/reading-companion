@@ -1,6 +1,6 @@
-# "Stitched Up" Interactive App - Data Format Documentation
+# Interactive Reading Companion - Data Format Documentation
 
-This document describes the data format for the "Stitched Up" interactive app and provides guidance for adding new books to the series.
+This document describes the data format for the Interactive Reading Companion app and provides guidance for adding new books to the series.
 
 ## Data Structure
 
@@ -8,7 +8,7 @@ The app uses a modular data structure organized by book with domain-specific fil
 
 ```
 /src/data/
-  /stitchedUp/
+  /bookName/
     index.js              // Re-exports all data from this book
     characters.js         // Character data
     locations.js          // Location data
@@ -44,7 +44,7 @@ export const characters = [
     id: 'character_id',           // Unique identifier
     name: 'Character Name',       // Full character name
     title: 'Title',               // Optional: Character's title (e.g., 'Lady', 'Colonel')
-    group: 'Group',               // Character affiliation ('Protagonists', 'Fifth Columnists', etc.)
+    group: 'Group',               // Character affiliation ('Protagonists', 'Antagonists', etc.)
     role: 'Description of role',  // Character's role in the story
     background: 'Background...',  // Character's background information
     personality: 'Personality traits description',
@@ -235,7 +235,6 @@ export { mysteryElements } from './mysteryElements.js';
 export { themeElements } from './themeElements.js';
 
 // /src/data/index.js
-export * as stitchedUp from './stitchedUp';
 export * as bookName from './bookName';
 ```
 
@@ -245,13 +244,13 @@ Components can import data in two ways:
 
 1. Import all data from a specific book:
 ```javascript
-import { stitchedUp } from '../data';
-// Use: stitchedUp.characters, stitchedUp.events, etc.
+import { bookName } from '../data';
+// Use: bookName.characters, bookName.events, etc.
 ```
 
 2. Import specific data types directly:
 ```javascript
-import { characters, events } from '../data/stitchedUp';
+import { characters, events } from '../data/bookName';
 // Use: characters, events directly
 ```
 

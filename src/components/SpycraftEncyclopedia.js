@@ -20,7 +20,7 @@ const SpycraftEncyclopedia = ({
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">Spy Tradecraft Encyclopedia</h2>
         <p className="text-gray-600">
-          Explore the spy techniques and methods used in "Stitched Up" and learn about their historical context in WWII espionage.
+          Explore the spy techniques and methods used in the book and learn about their historical context in WWII espionage.
         </p>
       </div>
       
@@ -67,7 +67,7 @@ const SpycraftEncyclopedia = ({
               </div>
               
               <div className="mt-4">
-                <h3 className="font-bold text-lg border-b pb-2 mb-2">Examples in "Stitched Up"</h3>
+                <h3 className="font-bold text-lg border-b pb-2 mb-2">Examples in the Book</h3>
                 <ul className="list-disc pl-5 space-y-1">
                   {selectedEntry.examples.map((example, index) => (
                     <li key={index}>{example}</li>
@@ -97,7 +97,7 @@ const SpycraftEncyclopedia = ({
                 <h3 className="font-bold text-lg">Historical Note</h3>
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 mt-2">
                   <p className="text-sm italic">
-                    The intelligence tactics portrayed in "Stitched Up" are based on real methods used during WWII. The British intelligence services were particularly adept at counter-espionage and the running of double agents.
+                    The intelligence tactics portrayed in the book are based on real methods used during WWII. The British intelligence services were particularly adept at counter-espionage and the running of double agents.
                   </p>
                 </div>
               </div>

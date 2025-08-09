@@ -706,7 +706,7 @@ const RelationshipWeb = ({
       </div>
       
       <div className="mt-4 text-sm text-gray-500 p-2 border-t">
-        <p>This interactive network graph visualizes character relationships in "Stitched Up". Nodes represent characters and edges show relationships between them. Drag nodes to explore the network structure, and use the filters to focus on specific character groups or relationship types.</p>
+        <p>This interactive network graph visualizes character relationships in the book. Nodes represent characters and edges show relationships between them. Drag nodes to explore the network structure, and use the filters to focus on specific character groups or relationship types.</p>
       </div>
     </div>
   );

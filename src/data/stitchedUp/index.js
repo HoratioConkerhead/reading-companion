@@ -9,3 +9,5 @@ export { spycraftEntries } from './spycraftEntries.js';
 export { chapters } from './chapters.js';
 export { mysteryElements } from './mysteryElements.js';
 export { themeElements } from './themeElements.js';
+export { bookMetadata } from './metadata.js';
+export { locationPositions, eventPositions, characterPositions, objectPositions, mapBoundaries } from './positions.js';

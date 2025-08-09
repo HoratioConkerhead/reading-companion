@@ -50,7 +50,7 @@ const LocationExplorer = ({
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">Location Explorer</h2>
         <p className="text-gray-600">
-          Explore the significant locations in "Stitched Up" where key events took place.
+          Explore the significant locations in the book where key events took place.
         </p>
       </div>
       
@@ -280,7 +280,7 @@ const LocationExplorer = ({
               <p className="text-gray-500 mb-4">Select a location from the list to view details</p>
               <p className="text-sm text-gray-400">
                 Locations include country houses, hotels, military facilities, and other sites 
-                central to the "Stitched Up" narrative.
+                central to the book's narrative.
               </p>
             </div>
           )}
