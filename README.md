@@ -60,8 +60,8 @@ Learn about espionage techniques referenced in the novel and their historical co
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/stitched-up-interactive.git
-   cd stitched-up-interactive
+   git clone https://github.com/yourusername/stitched-up-companion.git
+   cd stitched-up-companion
    ```
 
 2. Install dependencies:
