@@ -98,146 +98,143 @@ const Timeline = ({
       // Determine primary group for this event
       const characterGroups = event.characters.map(c => getCharacterGroup(c.characterId));
       const primaryGroup = (() => {
-        if (characterGroups.includes('Protagonists') && characterGroups.includes('Fifth Columnists')) {
-          // If both major groups are involved, check roles
-          const protagonistRoles = event.characters
-            .filter(c => getCharacterGroup(c.characterId) === 'Protagonists')
-            .map(c => c.role || '');
-          
-          const isProtagonistFocused = protagonistRoles.some(role => 
-            ['host', 'operative', 'recruiter', 'surveillance'].includes(role)
-          );
-          
-          return isProtagonistFocused ? 'Protagonists' : 'Fifth Columnists';
-        }
+        const groupCounts = {};
+        characterGroups.forEach(group => {
+          groupCounts[group] = (groupCounts[group] || 0) + 1;
+        });
         
-        if (characterGroups.includes('Protagonists')) return 'Protagonists';
-        if (characterGroups.includes('Fifth Columnists')) return 'Fifth Columnists';
-        if (characterGroups.includes('German Connection')) return 'German Connection';
-        return 'Unknown';
+        // Return the most common group, or 'Protagonists' as default
+        const maxGroup = Object.keys(groupCounts).reduce((a, b) => 
+          groupCounts[a] > groupCounts[b] ? a : b
+        );
+        return groups[maxGroup] ? maxGroup : 'Protagonists';
       })();
       
-      if (groups[primaryGroup]) groups[primaryGroup].push(event);
+      if (groups[primaryGroup]) {
+        groups[primaryGroup].push(event);
+      }
     });
     
     return groups;
   })();
   
-  // Handle event selection and scrolling
+  // Handle event selection
   const handleEventSelect = (event) => {
-    // Store current scroll position before selecting event
-    timelinePosition.current = window.scrollY;
-    
-    // Call the parent's event selection handler
     onEventSelect(event);
-    
-    // Scroll to event details after a short delay to allow for rendering
-    setTimeout(() => {
-      if (eventDetailsRef.current) {
-        eventDetailsRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }
-    }, 100);
   };
   
-  // Handle back button click
+  // Handle back to timeline view
   const handleBackToTimeline = () => {
-    if (timelinePosition.current !== null) {
-      window.scrollTo({
-        top: timelinePosition.current,
-        behavior: 'smooth'
-      });
-    } else if (timelineRef.current) {
-      timelineRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-    }
+    onEventSelect(null);
   };
   
-  // Handle navigation between events
+  // Handle previous event navigation
   const handlePreviousEvent = () => {
     if (!selectedEvent) return;
     
     const currentIndex = sortedEvents.findIndex(e => e.id === selectedEvent.id);
     if (currentIndex > 0) {
-      handleEventSelect(sortedEvents[currentIndex - 1]);
+      onEventSelect(sortedEvents[currentIndex - 1]);
     }
   };
   
+  // Handle next event navigation
   const handleNextEvent = () => {
     if (!selectedEvent) return;
     
     const currentIndex = sortedEvents.findIndex(e => e.id === selectedEvent.id);
     if (currentIndex < sortedEvents.length - 1) {
-      handleEventSelect(sortedEvents[currentIndex + 1]);
+      onEventSelect(sortedEvents[currentIndex + 1]);
     }
   };
   
-  // Determine if previous/next navigation is possible
-  const hasPreviousEvent = selectedEvent && sortedEvents.findIndex(e => e.id === selectedEvent.id) > 0;
-  const hasNextEvent = selectedEvent && sortedEvents.findIndex(e => e.id === selectedEvent.id) < sortedEvents.length - 1;
-  
   return (
-    <div className="timeline-container w-full overflow-hidden">
-      <div className="mb-6" ref={timelineRef}>
-        <h2 className="text-2xl font-bold mb-4">Event Timeline</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Time Period</label>
-            <div className="flex">
-              <button 
-                className={`px-3 py-1 text-sm rounded-l ${timelineFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setTimelineFilter('all')}
-              >
-                All Events
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm ${timelineFilter === 'early' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setTimelineFilter('early')}
-              >
-                1932-1939
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm ${timelineFilter === 'mid' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setTimelineFilter('mid')}
-              >
-                1940-1942
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm rounded-r ${timelineFilter === 'late' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setTimelineFilter('late')}
-              >
-                1943-1944
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">View</label>
-            <div className="flex">
-              <button 
-                className={`px-3 py-1 text-sm rounded-l ${layoutMode === 'chronological' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setLayoutMode('chronological')}
-              >
-                Chronological
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm rounded-r ${layoutMode === 'parallel' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                onClick={() => setLayoutMode('parallel')}
-              >
-                Parallel Storylines
-              </button>
-            </div>
+    <div className="timeline-container">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Timeline</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Explore the chronological sequence of events in the book.
+        </p>
+      </div>
+      
+      {/* Timeline Controls */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
+          <div className="flex">
+            <button 
+              className={`px-3 py-1 text-sm rounded-l transition-colors ${
+                timelineFilter === 'all' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setTimelineFilter('all')}
+            >
+              All
+            </button>
+            <button 
+              className={`px-3 py-1 text-sm transition-colors ${
+                timelineFilter === 'early' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setTimelineFilter('early')}
+            >
+              1932-1939
+            </button>
+            <button 
+              className={`px-3 py-1 text-sm transition-colors ${
+                timelineFilter === 'mid' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setTimelineFilter('mid')}
+            >
+              1940-1942
+            </button>
+            <button 
+              className={`px-3 py-1 text-sm rounded-r transition-colors ${
+                timelineFilter === 'late' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setTimelineFilter('late')}
+            >
+              1943-1944
+            </button>
           </div>
         </div>
         
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Character</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">View</label>
+          <div className="flex">
+            <button 
+              className={`px-3 py-1 text-sm rounded-l transition-colors ${
+                layoutMode === 'chronological' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setLayoutMode('chronological')}
+            >
+              Chronological
+            </button>
+            <button 
+              className={`px-3 py-1 text-sm rounded-r transition-colors ${
+                layoutMode === 'parallel' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              onClick={() => setLayoutMode('parallel')}
+            >
+              Parallel Storylines
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Character</label>
           <select 
-            className="w-full md:w-auto p-2 border rounded"
+            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={characterFilter}
             onChange={(e) => setCharacterFilter(e.target.value)}
           >
@@ -282,11 +279,11 @@ const Timeline = ({
             3. Dot position: change "top-24" in the dot style to align with the line
             4. Label position: change "pt-6" to adjust the vertical position of date labels
           */}
-          <div className="overflow-x-auto mb-4 relative h-40 border bg-white rounded w-full"> {/* Added width constraint */}
+          <div className="overflow-x-auto mb-4 relative h-40 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded w-full"> {/* Added width constraint */}
             <div className="w-max h-full max-w-[2000px]"> {/* Changed min-w-max to w-max with a max width */}
               <div className="relative h-full">
                 {/* Timeline line - positioned near the bottom */}
-                <div className="absolute left-0 right-0 h-1 bg-gray-300 top-28"></div> {/* Line position - change top-24 to move up/down */}
+                <div className="absolute left-0 right-0 h-1 bg-gray-300 dark:bg-gray-600 top-28"></div> {/* Line position - change top-24 to move up/down */}
                 
                 {/* Timeline events */}
                 <div className="flex h-full">
@@ -298,18 +295,27 @@ const Timeline = ({
                     >
                       {/* Dot - positioned to match the line */}
                       <div 
-                        className={`w-3 h-3 rounded-full absolute top-28 transform -translate-y-1/2 z-10 cursor-pointer ${
+                        className={`absolute w-4 h-4 rounded-full cursor-pointer transition-all duration-200 hover:scale-125 ${
                           selectedEvent?.id === event.id 
-                            ? 'bg-blue-600 border-2 border-white' 
-                            : getEventColor(event, charactersData)
+                            ? 'ring-4 ring-blue-400 dark:ring-blue-500' 
+                            : ''
                         }`}
+                        style={{
+                          top: '26px', /* Dot position - change to align with line */
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          backgroundColor: getEventColor(event, charactersData)
+                        }}
                       ></div>
                       
-                      {/* Date label - positioned below the line */}
-                      <div className={`text-xs absolute top-16 pt-6 w-16 cursor-pointer transform -rotate-45 origin-bottom-left text-center ${
-                        selectedEvent?.id === event.id ? 'font-bold' : ''
-                      }`}>
-                        {event.date}
+                      {/* Event label */}
+                      <div className="absolute pt-6 text-center w-full">
+                        <div className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
+                          {event.title}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {event.date}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -318,269 +324,175 @@ const Timeline = ({
             </div>
           </div>
           
-          <div className="space-y-4">
-            {Object.entries(groupedEvents).map(([year, events]) => (
-              <div key={year} className="border-l-4 border-blue-200 pl-4">
-                <h3 className="text-lg font-bold mb-2">{year}</h3>
-                <div className="space-y-3"> {/* Reduced vertical spacing */}
-                  {events.map(event => (
-                    <div 
-                      key={event.id}
-                      className={`p-3 border rounded cursor-pointer hover:bg-gray-100 ${
-                        selectedEvent?.id === event.id ? 'bg-blue-100 border-blue-300' : ''
-                      }`}
-                      onClick={() => handleEventSelect(event)}
-                    >
-                      <div className="text-sm text-gray-600">{event.date}</div>
-                      <h3 className="font-bold">{event.title}</h3>
-                      <div className="text-sm mt-1 truncate">{event.description}</div>
-                      <div className="flex mt-2">
-                        {event.location && (
-                          <span className="text-xs px-2 py-1 rounded bg-gray-200 mr-2">
-                            {getLocationName(event.location, locationsData)}
-                          </span>
-                        )}
-                        {event.characters && event.characters.length > 0 && (
-                          <span className="text-xs px-2 py-1 rounded bg-gray-200">
-                            {event.characters.length} characters
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+          {/* Event Details Panel */}
+          {selectedEvent ? (
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{selectedEvent.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{selectedEvent.date}</p>
+                </div>
+                <div className="flex space-x-2">
+                  <button 
+                    className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    onClick={handlePreviousEvent}
+                    disabled={sortedEvents.findIndex(e => e.id === selectedEvent.id) === 0}
+                  >
+                    Previous
+                  </button>
+                  <button 
+                    className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    onClick={handleNextEvent}
+                    disabled={sortedEvents.findIndex(e => e.id === selectedEvent.id) === sortedEvents.length - 1}
+                  >
+                    Next
+                  </button>
+                  <button 
+                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    onClick={handleBackToTimeline}
+                  >
+                    Back to Timeline
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Description</h4>
+                  <p className="text-gray-700 dark:text-gray-300">{selectedEvent.description}</p>
+                  
+                  {selectedEvent.location && (
+                    <div className="mt-4">
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Location</h4>
+                      <div className="p-2 border border-gray-200 dark:border-gray-700 rounded bg-gray-50 dark:bg-gray-700">
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {getLocationName(selectedEvent.location, locationsData)}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {getLocationArea(selectedEvent.location, locationsData)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  {selectedEvent.characters && selectedEvent.characters.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Characters Involved</h4>
+                      <div className="space-y-2">
+                        {selectedEvent.characters.map((charRef, index) => {
+                          const character = charactersData.find(c => c.id === charRef.characterId);
+                          return character ? (
+                            <div 
+                              key={index}
+                              className="p-2 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                              onClick={() => onCharacterSelect(character)}
+                            >
+                              <div className="font-medium text-gray-900 dark:text-gray-100">{character.name}</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">{charRef.role || 'Participant'}</div>
+                            </div>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedEvent.consequences && selectedEvent.consequences.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Consequences</h4>
+                      <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
+                        {selectedEvent.consequences.map((consequence, index) => (
+                          <li key={index}>{consequence}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <p className="text-lg">Select an event from the timeline to view details</p>
+              </div>
+            </div>
+          )}
         </>
       )}
       
       {/* Parallel Storylines View */}
       {layoutMode === 'parallel' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-3"> {/* Reduced spacing */}
-            <h3 className="font-bold text-lg text-blue-700 border-b pb-2">Protagonists</h3>
-            {parallelEvents['Protagonists'].map(event => (
-              <div 
-                key={event.id}
-                className={`p-3 border-l-4 border-blue-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
-                  selectedEvent?.id === event.id ? 'bg-blue-100' : ''
-                }`}
-                onClick={() => handleEventSelect(event)}
-              >
-                <div className="text-sm text-gray-600">{event.date}</div>
-                <h3 className="font-bold">{event.title}</h3>
-                <div className="text-sm mt-1 truncate">{event.description}</div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="space-y-3"> {/* Reduced spacing */}
-            <h3 className="font-bold text-lg text-red-700 border-b pb-2">Fifth Columnists</h3>
-            {parallelEvents['Fifth Columnists'].map(event => (
-              <div 
-                key={event.id}
-                className={`p-3 border-l-4 border-red-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
-                  selectedEvent?.id === event.id ? 'bg-red-100' : ''
-                }`}
-                onClick={() => handleEventSelect(event)}
-              >
-                <div className="text-sm text-gray-600">{event.date}</div>
-                <h3 className="font-bold">{event.title}</h3>
-                <div className="text-sm mt-1 truncate">{event.description}</div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="space-y-3"> {/* Reduced spacing */}
-            <h3 className="font-bold text-lg text-yellow-700 border-b pb-2">German Connection</h3>
-            {parallelEvents['German Connection'].map(event => (
-              <div 
-                key={event.id}
-                className={`p-3 border-l-4 border-yellow-500 rounded shadow-sm cursor-pointer hover:bg-gray-100 ${
-                  selectedEvent?.id === event.id ? 'bg-yellow-100' : ''
-                }`}
-                onClick={() => handleEventSelect(event)}
-              >
-                <div className="text-sm text-gray-600">{event.date}</div>
-                <h3 className="font-bold">{event.title}</h3>
-                <div className="text-sm mt-1 truncate">{event.description}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {/* Event Details Panel */}
-      {selectedEvent && (
-        <div className="mt-8 border rounded p-6 bg-gray-50" ref={eventDetailsRef}>
-          {/* Navigation controls with Previous/Next buttons */}
-          <div className="flex items-center justify-between mb-4">
-            <button 
-              className="flex items-center text-blue-600 hover:text-blue-800"
-              onClick={handleBackToTimeline}
-            >
-              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-              </svg>
-              Back to timeline
-            </button>
-            
-            <div className="flex space-x-3">
-              <button
-                className={`flex items-center px-3 py-1 rounded ${hasPreviousEvent ? 'bg-gray-200 hover:bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
-                onClick={handlePreviousEvent}
-                disabled={!hasPreviousEvent}
-              >
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Previous Event
-              </button>
-              
-              <button
-                className={`flex items-center px-3 py-1 rounded ${hasNextEvent ? 'bg-gray-200 hover:bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
-                onClick={handleNextEvent}
-                disabled={!hasNextEvent}
-              >
-                Next Event
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <h2 className="text-2xl font-bold">{selectedEvent.title}</h2>
-          <div className="text-gray-600 mb-4">{selectedEvent.date}</div>
-          
-          <p className="mb-4">{selectedEvent.description}</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-bold text-lg mb-2">Location</h3>
-              <div className="p-3 bg-gray-100 rounded">
-                {selectedEvent.location ? (
-                  <div>
-                    <div className="font-medium">{getLocationName(selectedEvent.location, locationsData)}</div>
-                    <div className="text-sm text-gray-600">
-                      {getLocationArea(selectedEvent.location, locationsData)}
+        <div className="space-y-6">
+          {Object.entries(parallelEvents).map(([group, events]) => (
+            <div key={group} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">{group}</h3>
+              <div className="space-y-3">
+                {events.map(event => (
+                  <div 
+                    key={event.id}
+                    className="p-3 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    onClick={() => handleEventSelect(event)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-gray-100">{event.title}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{event.date}</div>
+                      </div>
+                      <div 
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: getEventColor(event, charactersData) }}
+                      ></div>
                     </div>
                   </div>
-                ) : (
-                  <div>Multiple or unspecified locations</div>
-                )}
-              </div>
-              
-              {selectedEvent.significance && (
-                <div className="mt-4">
-                  <h3 className="font-bold text-lg mb-2">Significance</h3>
-                  <div className="p-3 bg-gray-100 rounded">
-                    {selectedEvent.significance}
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <div>
-              <h3 className="font-bold text-lg mb-2">Key Characters</h3>
-              {selectedEvent.characters && selectedEvent.characters.length > 0 ? (
-                <div className="space-y-2">
-                  {selectedEvent.characters.map((charRef, index) => {
-                    const character = charactersData.find(c => c.id === charRef.characterId);
-                    return character ? (
-                      <div key={index} className="p-2 bg-gray-100 rounded flex items-center justify-between">
-                        <div>
-                          <span className="font-medium">{character.name}</span>
-                          {charRef.role && (
-                            <span className="ml-2 text-xs bg-blue-100 px-1 rounded">
-                              {charRef.role}
-                            </span>
-                          )}
-                          {charRef.disguise && (
-                            <span className="ml-2 text-xs bg-purple-100 px-1 rounded">
-                              as {charRef.disguise}
-                            </span>
-                          )}
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${getGroupColor(character.group)}`}>
-                          {character.group}
-                        </span>
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              ) : (
-                <div className="p-3 bg-gray-100 rounded">No character information available</div>
-              )}
-            </div>
-          </div>
-          
-          {selectedEvent.keyActions && selectedEvent.keyActions.length > 0 && (
-            <div className="mt-4">
-              <h3 className="font-bold text-lg mb-2">Key Actions</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {selectedEvent.keyActions.map((action, index) => (
-                  <li key={index}>{action}</li>
                 ))}
-              </ul>
+              </div>
             </div>
-          )}
-          
-          {selectedEvent.chapter && (
-            <div className="mt-4 text-sm text-gray-600">
-              <span className="font-medium">Chapter reference:</span> {selectedEvent.chapter}
-            </div>
-          )}
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-// Helper function to get location name from ID
+// Helper functions
 const getLocationName = (locationId, locationsData) => {
   const location = locationsData.find(l => l.id === locationId);
   return location ? location.name : locationId;
 };
 
-// Helper function to get location area from ID
 const getLocationArea = (locationId, locationsData) => {
   const location = locationsData.find(l => l.id === locationId);
   return location ? location.area : '';
 };
 
-// Helper function to get event color based on primary character group
 const getEventColor = (event, charactersData) => {
-  if (!event.characters || event.characters.length === 0) {
-    return 'bg-gray-400';
-  }
+  if (!event.characters || event.characters.length === 0) return '#6b7280';
   
-  const characterIds = event.characters.map(c => c.characterId);
-  const characters = charactersData.filter(c => characterIds.includes(c.id));
+  // Determine color based on character groups involved
+  const groups = event.characters.map(c => {
+    const character = charactersData.find(char => char.id === c.characterId);
+    return character ? character.group : 'Unknown';
+  });
   
-  if (characters.some(c => c.group === 'Protagonists')) {
-    return 'bg-blue-500';
-  } else if (characters.some(c => c.group === 'Fifth Columnists')) {
-    return 'bg-red-500';
-  } else if (characters.some(c => c.group === 'German Connection')) {
-    return 'bg-yellow-500';
-  }
+  // Return color based on primary group
+  if (groups.includes('Protagonists')) return '#3182ce'; // Blue
+  if (groups.includes('Fifth Columnists')) return '#e53e3e'; // Red
+  if (groups.includes('German Connection')) return '#d69e2e'; // Yellow
   
-  return 'bg-gray-400';
+  return '#6b7280'; // Gray
 };
 
-// Helper function to get the CSS class for a character group
 const getGroupColor = (group) => {
   switch (group) {
     case 'Protagonists':
-      return 'bg-blue-200 text-blue-800';
+      return 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200';
     case 'Fifth Columnists':
-      return 'bg-red-200 text-red-800';
+      return 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200';
     case 'German Connection':
-      return 'bg-yellow-200 text-yellow-800';
+      return 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200';
     default:
-      return 'bg-gray-200 text-gray-800';
+      return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
   }
 };
 

@@ -1076,7 +1076,7 @@ const handleItemSelect = (itemId, type) => {
       <div className="mb-4 flex flex-wrap gap-4">
         {/* View controls */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Map View</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Map View</label>
           <div className="flex">
 
 
@@ -1107,7 +1107,7 @@ const handleItemSelect = (itemId, type) => {
         
         {/* Display Mode controls */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Display</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display</label>
           <div className="flex flex-wrap">
             <button 
               className={`px-3 py-1 text-sm rounded-l ${mapMode === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
@@ -1144,7 +1144,7 @@ const handleItemSelect = (itemId, type) => {
         
         {/* Time Period filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Time Period</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
           <div className="flex">
             <button 
               className={`px-3 py-1 text-sm rounded-l ${timeFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
@@ -1177,9 +1177,9 @@ const handleItemSelect = (itemId, type) => {
       {/* Item selection controls */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location</label>
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={selectedItemType === 'location' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'location')}
             title={selectedItemType === 'location' && selectedItemData ? selectedItemData.name : ''}
@@ -1191,9 +1191,9 @@ const handleItemSelect = (itemId, type) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Event</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Event</label>
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={selectedItemType === 'event' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'event')}
             title={selectedItemType === 'event' && selectedItemData ? selectedItemData.title : ''}
@@ -1205,9 +1205,9 @@ const handleItemSelect = (itemId, type) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Character</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Character</label>
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={selectedItemType === 'character' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'character')}
             title={selectedItemType === 'character' && selectedItemData ? selectedItemData.name : ''}
@@ -1219,9 +1219,9 @@ const handleItemSelect = (itemId, type) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Object</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Object</label>
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={selectedItemType === 'object' ? selectedItem : ''}
             onChange={(e) => handleItemSelect(e.target.value, 'object')}
             title={selectedItemType === 'object' && selectedItemData ? selectedItemData.name : ''}
@@ -1234,7 +1234,7 @@ const handleItemSelect = (itemId, type) => {
       </div>
       
       {/* Map and Detail Panel Container */}
-      <div className="flex flex-col md:flex-row border rounded overflow-hidden" style={{ height: '600px' }}>
+      <div className="flex flex-col md:flex-row border border-gray-200 dark:border-gray-700 rounded overflow-hidden" style={{ height: '600px' }}>
         {/* Leaflet Map - Adjusts width based on panel visibility */}
         <div className={`${showDetailPanel ? 'w-full md:w-2/3' : 'w-full'} h-full transition-all duration-300`}>
           <MapContainer 
@@ -1272,34 +1272,34 @@ const handleItemSelect = (itemId, type) => {
         
         {/* Detail Panel - Conditionally shown */}
         {showDetailPanel && (
-          <div className="w-full md:w-1/3 h-full border-l overflow-hidden bg-white">
+          <div className="w-full md:w-1/3 h-full border-l border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
             {renderDetailPanel()}
           </div>
         )}
       </div>
       
       {/* Map Legend */}
-      <div className="mt-4 p-4 border rounded bg-white">
-        <h3 className="text-sm font-bold mb-2">Legend</h3>
+      <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
+        <h3 className="text-sm font-bold mb-2 text-gray-900 dark:text-gray-100">Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 rounded-full bg-blue-500"></div>
-            <span className="text-xs">UK Locations</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">UK Locations</span>
           </div>
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 rounded-full bg-yellow-500"></div>
-            <span className="text-xs">German Locations</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">German Locations</span>
           </div>
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 rounded-full bg-green-500"></div>
-            <span className="text-xs">Irish Locations</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">Irish Locations</span>
           </div>
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 bg-red-500"></div>
-            <span className="text-xs">Events</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">Events</span>
           </div>
           
           <div className="flex items-center">
@@ -1311,7 +1311,7 @@ const handleItemSelect = (itemId, type) => {
               borderBottom: '10px solid blue',
               marginLeft: '4px'
             }}></div>
-            <span className="text-xs">Protagonists</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">Protagonists</span>
           </div>
           
           <div className="flex items-center">
@@ -1323,7 +1323,7 @@ const handleItemSelect = (itemId, type) => {
               borderBottom: '10px solid #e53e3e',
               marginLeft: '4px'
             }}></div>
-            <span className="text-xs">Fifth Columnists</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">Fifth Columnists</span>
           </div>
           
           <div className="flex items-center">
@@ -1335,17 +1335,17 @@ const handleItemSelect = (itemId, type) => {
               borderBottom: '10px solid #d69e2e',
               marginLeft: '4px'
             }}></div>
-            <span className="text-xs">German Connection</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">German Connection</span>
           </div>
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 rounded-full bg-purple-500"></div>
-            <span className="text-xs">Objects</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">Objects</span>
           </div>
         </div>
       </div>
       
-      <div className="mt-4 text-sm text-gray-500 p-2 border-t">
+      <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 p-2 border-t border-gray-200 dark:border-gray-700">
         <p>Interactive map showing key locations, events, characters, and objects from the book. Click on markers for details or use the dropdowns to select specific items. The detail panel will show a summary with the option to view full details.</p>
       </div>
     </div>

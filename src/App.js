@@ -120,7 +120,7 @@ const InteractiveReadingCompanion = () => {
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
-      <header className="bg-gray-800 dark:bg-gray-900 text-white p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
+      <header className="p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-serif">{metadata.appTitle}</h1>
@@ -158,19 +158,19 @@ const InteractiveReadingCompanion = () => {
       )}
       
       <main className="container mx-auto p-4">
-        <Tabs selectedIndex={activeTab} onSelect={index => setActiveTab(index)}>
+        <Tabs selectedIndex={activeTab} onSelect={(index) => setActiveTab(index)}>
           <TabList>
             <Tab>Characters</Tab>
-            <Tab>Relationship Web</Tab>
+            <Tab>Relationships</Tab>
             <Tab>Timeline</Tab>
             <Tab>Locations</Tab>
             <Tab>Map</Tab>
-            <Tab>Plot Navigator</Tab>
+            <Tab>Plot</Tab>
             <Tab>Objects</Tab>
-            <Tab>Spy Encyclopedia</Tab>
+            <Tab>Spycraft</Tab>
           </TabList>
-
-          <div className="mb-8">
+          
+          <div className="mt-6">
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
@@ -205,7 +205,7 @@ const InteractiveReadingCompanion = () => {
             
             {/* Locations Tab */}
             <TabPanel>
-              <LocationExplorer 
+              <LocationExplorer
                 onLocationSelect={handleLocationSelect}
                 selectedLocation={selectedLocation}
                 onEventSelect={handleEventSelect}
@@ -228,10 +228,10 @@ const InteractiveReadingCompanion = () => {
                 objectsData={bookData.objects}
               />
             </TabPanel>
-
+            
             {/* Plot Navigator Tab */}
             <TabPanel>
-              <PlotNavigator 
+              <PlotNavigator
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
                 eventsData={bookData.events}
@@ -244,7 +244,7 @@ const InteractiveReadingCompanion = () => {
             
             {/* Objects Tab */}
             <TabPanel>
-              <ObjectGallery 
+              <ObjectGallery
                 onObjectSelect={handleObjectSelect}
                 selectedObject={selectedObject}
                 objectsData={bookData.objects}
@@ -253,7 +253,7 @@ const InteractiveReadingCompanion = () => {
               />
             </TabPanel>
             
-            {/* Spy Encyclopedia Tab */}
+            {/* Spycraft Encyclopedia Tab */}
             <TabPanel>
               <SpycraftEncyclopedia 
                 spycraftEntries={bookData.spycraftEntries}
@@ -303,7 +303,7 @@ const InteractiveReadingCompanion = () => {
         </div>
       </main>
       
-      <footer className="bg-gray-700 dark:bg-gray-900 text-white p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
+      <footer className="p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>

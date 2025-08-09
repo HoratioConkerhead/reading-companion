@@ -12,6 +12,19 @@
 /* Make sure tooltips are readable */
 .introjs-tooltip {
   min-width: 300px;
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dark mode tooltip styling */
+.dark .introjs-tooltip {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Make the background less opaque */
@@ -19,9 +32,16 @@
   opacity: 0.3 !important;
 }
 
+.dark .introjs-overlay {
+  opacity: 0.5 !important;
+}
+
 /* Improve button styling */
 .introjs-button {
   text-shadow: none !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
 }
 
 .introjs-nextbutton {
@@ -31,11 +51,75 @@
   box-shadow: none !important;
 }
 
+.introjs-nextbutton:hover {
+  background-color: #2563eb !important;
+}
+
 .introjs-prevbutton {
   color: #333 !important;
+  background-color: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.dark .introjs-prevbutton {
+  color: #f1f5f9 !important;
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.introjs-prevbutton:hover {
+  background-color: #e5e7eb !important;
+}
+
+.dark .introjs-prevbutton:hover {
+  background-color: #4b5563 !important;
 }
 
 /* Make steps more visible */
 .introjs-helperLayer {
   background-color: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 4px !important;
+}
+
+.dark .introjs-helperLayer {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Tooltip arrow styling */
+.introjs-arrow {
+  border-color: #ffffff !important;
+}
+
+.dark .introjs-arrow {
+  border-color: #1e293b !important;
+}
+
+/* Tooltip title styling */
+.introjs-tooltiptext {
+  color: inherit !important;
+}
+
+.introjs-tooltip-title {
+  color: inherit !important;
+  font-weight: 600 !important;
+}
+
+/* Skip button styling */
+.introjs-skipbutton {
+  color: #6b7280 !important;
+  background: none !important;
+  border: none !important;
+  font-size: 12px !important;
+}
+
+.dark .introjs-skipbutton {
+  color: #9ca3af !important;
+}
+
+.introjs-skipbutton:hover {
+  color: #374151 !important;
+}
+
+.dark .introjs-skipbutton:hover {
+  color: #d1d5db !important;
 }
