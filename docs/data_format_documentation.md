@@ -4,17 +4,35 @@ This document describes the data format for the "Stitched Up" interactive app an
 
 ## Data Structure
 
-The app uses a modular data structure organized by book:
+The app uses a modular data structure organized by book with domain-specific files:
 
 ```
 /src/data/
   /stitchedUp/
-    index.js         // Re-exports all data from this book
-    data.js          // All data for "Stitched Up"
+    index.js              // Re-exports all data from this book
+    characters.js         // Character data
+    locations.js          // Location data
+    events.js             // Event data
+    objects.js            // Object data
+    relationships.js      // Character relationship data
+    positions.js          // Position/role data
+    mysteryElements.js    // Mystery-specific elements
+    chapters.js           // Chapter information
+    spycraftEntries.js    // Spycraft technique data
+    themeElements.js      // Thematic elements
   /book2Name/
     index.js
-    data.js
-  index.js           // Exports all books' data
+    characters.js
+    locations.js
+    events.js
+    objects.js
+    relationships.js
+    positions.js
+    mysteryElements.js
+    chapters.js
+    spycraftEntries.js
+    themeElements.js
+  index.js                // Exports all books' data
 ```
 
 ## Data Format Per Type
@@ -182,20 +200,39 @@ export const spycraftEntries = [
 To add a new book to the series:
 
 1. Create a new folder in `/src/data/` with the book's name (e.g., `/src/data/bookName/`)
-2. Create a `data.js` file in that folder with the book's data following the formats above
-3. Create an `index.js` file that re-exports all data from `data.js`
+2. Create separate files for each data type following the formats above:
+   - `characters.js`
+   - `locations.js`
+   - `events.js`
+   - `objects.js`
+   - `relationships.js`
+   - `positions.js`
+   - `mysteryElements.js`
+   - `chapters.js`
+   - `spycraftEntries.js`
+   - `themeElements.js`
+3. Create an `index.js` file that re-exports all data from the separate files
 4. Update the main `/src/data/index.js` to include the new book
 
 Example for new book:
 
 ```javascript
-// /src/data/bookName/data.js
+// /src/data/bookName/characters.js
 export const characters = [...];
-export const events = [...];
-// etc.
+
+// /src/data/bookName/locations.js
+export const locations = [...];
 
 // /src/data/bookName/index.js
-export * from './data';
+export { characters } from './characters.js';
+export { locations } from './locations.js';
+export { events } from './events.js';
+export { relationships } from './relationships.js';
+export { objects } from './objects.js';
+export { spycraftEntries } from './spycraftEntries.js';
+export { chapters } from './chapters.js';
+export { mysteryElements } from './mysteryElements.js';
+export { themeElements } from './themeElements.js';
 
 // /src/data/index.js
 export * as stitchedUp from './stitchedUp';

@@ -39,9 +39,17 @@ graph TD
     SrcData --> StitchedUp["stitchedUp/"]
     SrcData --> XMLFile["stitchedup-incomplete.xml"]
     
-    StitchedUp --> SUData["data.js"]
     StitchedUp --> SUIndex["index.js"]
+    StitchedUp --> SUCharacters["characters.js"]
+    StitchedUp --> SULocations["locations.js"]
+    StitchedUp --> SUEvents["events.js"]
+    StitchedUp --> SUObjects["objects.js"]
+    StitchedUp --> SURelationships["relationships.js"]
     StitchedUp --> SUPositions["positions.js"]
+    StitchedUp --> SUMysteryElements["mysteryElements.js"]
+    StitchedUp --> SUChapters["chapters.js"]
+    StitchedUp --> SUSpycraftEntries["spycraftEntries.js"]
+    StitchedUp --> SUThemeElements["themeElements.js"]
     
     SrcStyles --> EnhancedTabs["enhanced-tabs.css"]
     
@@ -53,7 +61,7 @@ graph TD
     
     class Root,Src,SrcComponents,SrcData,StitchedUp primaryNodes
     class Public,Docs,SrcAssets,SrcStyles,Build secondaryNodes
-    class CharExplorer,RelationshipWeb,Timeline,LocExplorer,InteractiveMap,PlotNavigator,ObjectGallery,SpycraftEncyclopedia,AppTour,AppTourCSS,DataIndex,XMLFile,SUData,SUIndex,SUPositions,EnhancedTabs,PackageJSON,PCSS,TCSS,README,DataFormat,DesignDoc,Analysis fileNodes
+    class CharExplorer,RelationshipWeb,Timeline,LocExplorer,InteractiveMap,PlotNavigator,ObjectGallery,SpycraftEncyclopedia,AppTour,AppTourCSS,DataIndex,XMLFile,SUIndex,SUCharacters,SULocations,SUEvents,SUObjects,SURelationships,SUPositions,SUMysteryElements,SUChapters,SUSpycraftEntries,SUThemeElements,EnhancedTabs,PackageJSON,PCSS,TCSS,README,DataFormat,DesignDoc,Analysis fileNodes
 ```
 
 ## Key Directory Structure
@@ -75,13 +83,21 @@ Each tab in the application has its own component file in the components directo
 
 ## Data Organization
 
-The data is organized in a modular structure:
+The data is organized in a modular structure with domain-specific files:
 
 - **index.js**: Exports all data as a namespace
 - **stitchedUp/**: Contains data specific to the "Stitched Up" novel
-  - **data.js**: Main data file with characters, locations, events, and other content
+  - **characters.js**: Character data and relationships
+  - **locations.js**: Location data and descriptions
+  - **events.js**: Event data and timeline information
+  - **objects.js**: Object data and significance
+  - **relationships.js**: Character relationship mappings
   - **positions.js**: Geographic coordinates for map visualization
-  - **index.js**: Exports all data from data.js
+  - **mysteryElements.js**: Mystery-specific plot elements
+  - **chapters.js**: Chapter information and structure
+  - **spycraftEntries.js**: Spycraft technique data
+  - **themeElements.js**: Thematic elements and motifs
+  - **index.js**: Exports all data from the separate files
 
 ## Configuration Files
 
@@ -89,4 +105,4 @@ The data is organized in a modular structure:
 - **postcss.config.js**: Configuration for PostCSS
 - **tailwind.config.js**: Configuration for Tailwind CSS
 
-This structure is designed to be easily extensible for additional books or content in the future.
+This structure is designed to be easily extensible for additional books or content in the future, with each data type organized in its own file for better maintainability.

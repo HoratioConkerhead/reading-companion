@@ -138,15 +138,20 @@ Explains espionage techniques referenced in the novel.
 
 ## Data Model
 
-The application uses a structured data model defined in the following files:
+The application uses a structured data model organized by domain in separate files:
 
 - `characters.js`: Character information including relationships, background, personality traits
 - `events.js`: Timeline events with dates, descriptions, and involved characters
 - `locations.js`: Settings from the novel with features and significance
+- `objects.js`: Key items from the story with their history and significance
+- `relationships.js`: Character relationship mappings and types
+- `positions.js`: Geographic coordinates for map visualization
+- `mysteryElements.js`: Mystery-specific plot elements and clues
+- `chapters.js`: Chapter information and narrative structure
 - `spycraftEntries.js`: Information about espionage techniques
-- `mockData.js`: Consolidated data for development
+- `themeElements.js`: Thematic elements and motifs from the novel
 
-The data structure is designed to reflect the XML schema defined in `docs/stitchedup.xml`.
+The data structure is designed to reflect the XML schema defined in `docs/stitchedup.xml` and is organized for better maintainability and extensibility.
 
 ## Technologies Used
 
