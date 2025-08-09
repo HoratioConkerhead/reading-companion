@@ -19,7 +19,8 @@ const RelationshipWeb = ({
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
   const [springForce, setSpringForce] = useState(0.05);
-  const [repulsionForce, setRepulsionForce] = useState(800);
+  const [repulsionForce, setRepulsionForce] = useState(50000);
+  const [isFullPage, setIsFullPage] = useState(false);
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
@@ -31,24 +32,61 @@ const RelationshipWeb = ({
     return character ? character.name : characterId;
   };
 
-  // Get character group color
-  const getGroupColor = (group) => {
+  // Count relationships for a character
+  const getRelationshipCount = (characterId) => {
+    return relationshipsData.filter(rel => 
+      rel.from === characterId || rel.to === characterId
+    ).length;
+  };
+
+  // Get character group color with brightness based on relationship count
+  const getGroupColor = (group, relationshipCount = 0) => {
+    // Base colors for each group
+    let baseColor;
     switch (group) {
       case 'Protagonists':
-        return '#3182CE'; // blue
+        baseColor = '#3182CE'; // blue
+        break;
       case 'Fifth Columnists':
-        return '#E53E3E'; // red
+        baseColor = '#E53E3E'; // red
+        break;
       case 'German Connection':
-        return '#D69E2E'; // yellow/gold
+        baseColor = '#D69E2E'; // yellow/gold
+        break;
       case 'Supporting Characters':
-        return '#38A169'; // green
+        baseColor = '#38A169'; // green
+        break;
       case 'Military':
-        return '#4A5568'; // gray-blue
+        baseColor = '#4A5568'; // gray-blue
+        break;
       case 'Historical Figures':
-        return '#805AD5'; // purple
+        baseColor = '#805AD5'; // purple
+        break;
       default:
-        return '#718096'; // gray
+        baseColor = '#718096'; // gray
     }
+
+    // If no relationship count provided, return base color
+    if (relationshipCount === 0) return baseColor;
+
+    // Convert hex to RGB for manipulation
+    const hex = baseColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    // Calculate brightness factor based on relationship count
+    // More relationships = brighter color (up to 50% brighter)
+    const maxRelationships = 10; // Adjust this based on your data
+    const brightnessFactor = Math.min(1.5, 1 + (relationshipCount / maxRelationships) * 0.5);
+
+    // Apply brightness
+    const newR = Math.min(255, Math.round(r * brightnessFactor));
+    const newG = Math.min(255, Math.round(g * brightnessFactor));
+    const newB = Math.min(255, Math.round(b * brightnessFactor));
+
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   };
 
   // Get relationship color
@@ -225,38 +263,42 @@ const RelationshipWeb = ({
     const centerY = 300;
     const radius = Math.max(200, filteredCharacters.length * 30); // Increased base radius and multiplier
 
-    const newNodes = filteredCharacters.map((character, index) => {
-      if (character.id === focusedCharacter) {
-        // Place focused character in center
-        return {
-          id: character.id,
-          name: character.name,
-          role: character.role,
-          group: character.group,
-          position: { x: centerX, y: centerY },
-          color: getGroupColor(character.group),
-          isFocused: true
-        };
-      } else {
-        // Place other characters in a circle around the focused character
-        // Use index - 1 to skip the focused character in the circle calculation
-        const circleIndex = index > 0 ? index - 1 : 0;
-        const totalInCircle = filteredCharacters.length - 1;
-        const angle = (circleIndex * 2 * Math.PI) / totalInCircle;
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
+         const newNodes = filteredCharacters.map((character, index) => {
+       const relationshipCount = getRelationshipCount(character.id);
+       
+       if (character.id === focusedCharacter) {
+         // Place focused character in center
+         return {
+           id: character.id,
+           name: character.name,
+           role: character.role,
+           group: character.group,
+           position: { x: centerX, y: centerY },
+           color: getGroupColor(character.group, relationshipCount),
+           relationshipCount,
+           isFocused: true
+         };
+       } else {
+         // Place other characters in a circle around the focused character
+         // Use index - 1 to skip the focused character in the circle calculation
+         const circleIndex = index > 0 ? index - 1 : 0;
+         const totalInCircle = filteredCharacters.length - 1;
+         const angle = (circleIndex * 2 * Math.PI) / totalInCircle;
+         const x = centerX + radius * Math.cos(angle);
+         const y = centerY + radius * Math.sin(angle);
 
-        return {
-          id: character.id,
-          name: character.name,
-          role: character.role,
-          group: character.group,
-          position: { x, y },
-          color: getGroupColor(character.group),
-          isFocused: false
-        };
-      }
-    });
+         return {
+           id: character.id,
+           name: character.name,
+           role: character.role,
+           group: character.group,
+           position: { x, y },
+           color: getGroupColor(character.group, relationshipCount),
+           relationshipCount,
+           isFocused: false
+         };
+       }
+     });
 
     setNodes(newNodes);
   }, [charactersData, relationshipsData, focusedCharacter]);
@@ -431,46 +473,56 @@ const RelationshipWeb = ({
     wasClick.current = true;
   };
 
-     // Handle node drag
-   const handleNodeMouseMove = useCallback((e) => {
-     if (!isDragging || !draggedNode) return;
+       // Track if auto arrange was on before dragging
+  const wasAutoArrangeOn = useRef(false);
 
-     const deltaX = e.clientX - dragStart.x;
-     const deltaY = e.clientY - dragStart.y;
+  // Handle node drag
+  const handleNodeMouseMove = useCallback((e) => {
+    if (!isDragging || !draggedNode) return;
 
-     // Check if we've moved enough to consider it a drag (not a click)
-     const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-     if (moveDistance > 5) {
-       wasClick.current = false;
-     }
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
 
-     // Stop auto arrange when dragging starts
-     if (isAutoArrangeOn) {
-       setIsAutoArrangeOn(false);
-     }
+    // Check if we've moved enough to consider it a drag (not a click)
+    const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (moveDistance > 5) {
+      wasClick.current = false;
+    }
 
-     setNodes(prevNodes => 
-       prevNodes.map(node => 
-         node.id === draggedNode 
-           ? {
-               ...node,
-               position: {
-                 x: node.position.x + deltaX,
-                 y: node.position.y + deltaY
-               }
-             }
-           : node
-       )
-     );
+    // Stop auto arrange when dragging starts and remember it was on
+    if (isAutoArrangeOn) {
+      wasAutoArrangeOn.current = true;
+      setIsAutoArrangeOn(false);
+    }
 
-     setDragStart({ x: e.clientX, y: e.clientY });
-   }, [isDragging, draggedNode, dragStart, isAutoArrangeOn]);
+    setNodes(prevNodes => 
+      prevNodes.map(node => 
+        node.id === draggedNode 
+          ? {
+              ...node,
+              position: {
+                x: node.position.x + deltaX,
+                y: node.position.y + deltaY
+              }
+            }
+          : node
+      )
+    );
+
+    setDragStart({ x: e.clientX, y: e.clientY });
+  }, [isDragging, draggedNode, dragStart, isAutoArrangeOn]);
 
   // Handle node drag end
   const handleNodeMouseUp = () => {
     // If it was a click (not a drag), add relationships
     if (wasClick.current && draggedNode) {
       handleNodeClick(draggedNode);
+    }
+    
+    // Turn auto arrange back on if it was on before dragging
+    if (wasAutoArrangeOn.current) {
+      setIsAutoArrangeOn(true);
+      wasAutoArrangeOn.current = false;
     }
     
     setIsDragging(false);
@@ -534,15 +586,17 @@ const RelationshipWeb = ({
          if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
        } while (attempts <= 15);
        
-       return {
-         id: char.id,
-         name: char.name,
-         role: char.role,
-         group: char.group,
-         position: { x, y },
-         color: getGroupColor(char.group),
-         isFocused: false
-       };
+                const relationshipCount = getRelationshipCount(char.id);
+         return {
+           id: char.id,
+           name: char.name,
+           role: char.role,
+           group: char.group,
+           position: { x, y },
+           color: getGroupColor(char.group, relationshipCount),
+           relationshipCount,
+           isFocused: false
+         };
      });
     
     // Calculate what the updated nodes will be
@@ -638,6 +692,7 @@ const RelationshipWeb = ({
     setNodes([]);
     setEdges([]);
     setIsAutoArrangeOn(false);
+    setIsFullPage(false);
   };
 
   // Add event listeners
@@ -657,16 +712,18 @@ const RelationshipWeb = ({
   }, [isDragging, handleNodeMouseMove]);
 
   return (
-    <div className="relationship-web">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Character Relationship Web</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Explore character connections. Drag nodes to rearrange, select a character to focus, and choose a chapter to avoid spoilers.
-        </p>
-      </div>
+    <div className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}>
+      {!isFullPage && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Character Relationship Web</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Explore character connections. Drag nodes to rearrange, select a character to focus, and choose a chapter to avoid spoilers.
+          </p>
+        </div>
+      )}
 
-             {/* Controls */}
-       <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                     {/* Controls */}
+        <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-3 gap-4`}>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Focus on Character
@@ -704,12 +761,22 @@ const RelationshipWeb = ({
                  </div>
 
          <div className="flex gap-2 items-end">
-           <button
-             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-             onClick={resetView}
-           >
-             Reset View
-           </button>
+                       <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              onClick={resetView}
+            >
+              Reset View
+            </button>
+            <button
+              className={`px-4 py-2 text-white rounded transition-colors ${
+                isFullPage 
+                  ? 'bg-gray-500 hover:bg-gray-600' 
+                  : 'bg-indigo-500 hover:bg-indigo-600'
+              }`}
+              onClick={() => setIsFullPage(!isFullPage)}
+            >
+              {isFullPage ? 'Exit Full Page' : 'Full Page'}
+            </button>
                        <button
               className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
               onClick={() => {
@@ -740,13 +807,15 @@ const RelationshipWeb = ({
                    const x = centerX + radius * Math.cos(angle);
                    const y = centerY + radius * Math.sin(angle);
                    
+                   const relationshipCount = getRelationshipCount(character.id);
                    return {
                      id: character.id,
                      name: character.name,
                      role: character.role,
                      group: character.group,
                      position: { x, y },
-                     color: getGroupColor(character.group),
+                     color: getGroupColor(character.group, relationshipCount),
+                     relationshipCount,
                      isFocused: character.id === focusedCharacter
                    };
                  });
@@ -775,8 +844,8 @@ const RelationshipWeb = ({
                   </div>
        </div>
 
-       {/* Physics Controls */}
-       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+               {/* Physics Controls */}
+        <div className={`${isFullPage ? 'px-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-2 gap-4`}>
          <div>
            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
              Spring Force
@@ -810,16 +879,18 @@ const RelationshipWeb = ({
          </div>
        </div>
 
-       {/* Relationship Graph */}
-      <div 
-        ref={containerRef}
-        className="border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800"
-        style={{ height: '600px' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onWheel={handleWheel}
-      >
+               {/* Relationship Graph */}
+       <div 
+         ref={containerRef}
+         className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
+           isFullPage ? 'flex-1' : ''
+         }`}
+         style={{ height: isFullPage ? 'calc(100vh - 200px)' : '600px' }}
+         onMouseDown={handleMouseDown}
+         onMouseMove={handleMouseMove}
+         onMouseUp={handleMouseUp}
+         onWheel={handleWheel}
+       >
         <svg
           ref={svgRef}
           width="100%"
@@ -901,50 +972,63 @@ const RelationshipWeb = ({
               );
             })}
 
-            {/* Nodes */}
-            {nodes.map(node => (
-              <g key={node.id}>
-                                 <circle
-                   cx={node.position.x}
-                   cy={node.position.y}
-                   r={node.isFocused ? 35 : 30}
-                   fill={node.color}
-                   stroke={node.isFocused ? "#000" : "#fff"}
-                   strokeWidth={node.isFocused ? 3 : 2}
-                   className="cursor-pointer hover:opacity-80 transition-opacity"
-                   onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                 />
-                <text
-                  x={node.position.x}
-                  y={node.position.y - 45}
-                  textAnchor="middle"
-                  fontSize="12"
-                  fontWeight="bold"
-                  fill="#fff"
-                  className="select-none pointer-events-none"
-                >
-                  {node.name}
-                </text>
-                {node.role && (
-                  <text
-                    x={node.position.x}
-                    y={node.position.y + 45}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#fff"
-                    className="select-none pointer-events-none"
-                  >
-                    {node.role}
-                  </text>
-                )}
-              </g>
-            ))}
+                         {/* Nodes */}
+             {nodes.map(node => (
+               <g key={node.id}>
+                                  <circle
+                    cx={node.position.x}
+                    cy={node.position.y}
+                    r={node.isFocused ? 35 : 30}
+                    fill={node.color}
+                    stroke={node.isFocused ? "#000" : "#fff"}
+                    strokeWidth={node.isFocused ? 3 : 2}
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                  />
+                 {/* Relationship count in center */}
+                 <text
+                   x={node.position.x}
+                   y={node.position.y}
+                   textAnchor="middle"
+                   dominantBaseline="middle"
+                   fontSize={node.isFocused ? "14" : "12"}
+                   fontWeight="bold"
+                   fill="#fff"
+                   className="select-none pointer-events-none"
+                 >
+                   {node.relationshipCount || 0}
+                 </text>
+                 <text
+                   x={node.position.x}
+                   y={node.position.y - 45}
+                   textAnchor="middle"
+                   fontSize="12"
+                   fontWeight="bold"
+                   fill="#fff"
+                   className="select-none pointer-events-none"
+                 >
+                   {node.name}
+                 </text>
+                 {node.role && (
+                   <text
+                     x={node.position.x}
+                     y={node.position.y + 45}
+                     textAnchor="middle"
+                     fontSize="10"
+                     fill="#fff"
+                     className="select-none pointer-events-none"
+                   >
+                     {node.role}
+                   </text>
+                 )}
+               </g>
+             ))}
           </g>
         </svg>
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
+             {/* Legend */}
+       <div className={`${isFullPage ? 'p-4' : 'mt-4 p-4'} border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800`}>
         <h3 className="text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Character Groups</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {['Protagonists', 'Fifth Columnists', 'German Connection', 'Supporting Characters', 'Military', 'Historical Figures'].map(group => (
@@ -959,8 +1043,8 @@ const RelationshipWeb = ({
         </div>
       </div>
 
-      {/* Instructions */}
-      <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 p-2 border-t border-gray-200 dark:border-gray-700">
+             {/* Instructions */}
+       <div className={`${isFullPage ? 'p-4' : 'mt-4'} text-sm text-gray-500 dark:text-gray-400 p-2 border-t border-gray-200 dark:border-gray-700`}>
         <p>
           <strong>How to use:</strong> Start by selecting a character to focus on their relationships. 
           Choose a chapter to avoid spoilers. Drag characters to rearrange, or use "Auto Arrange" for automatic layout. 
