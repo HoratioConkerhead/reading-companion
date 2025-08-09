@@ -157,7 +157,7 @@ const InteractiveReadingCompanion = () => {
         </div>
       )}
       
-      <main className="container mx-auto p-4">
+      <main className="p-4">
         <Tabs selectedIndex={activeTab} onSelect={(index) => setActiveTab(index)}>
           <TabList>
             <Tab>Characters</Tab>
@@ -170,7 +170,7 @@ const InteractiveReadingCompanion = () => {
             <Tab>Spycraft</Tab>
           </TabList>
           
-          <div className="mt-6">
+          <div>
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
