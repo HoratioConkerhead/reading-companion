@@ -188,6 +188,7 @@ const InteractiveReadingCompanion = () => {
                 selectedCharacter={selectedCharacter}
                 charactersData={bookData.characters}
                 relationshipsData={bookData.relationships}
+                chaptersData={bookData.chapters}
               />
             </TabPanel>
             
