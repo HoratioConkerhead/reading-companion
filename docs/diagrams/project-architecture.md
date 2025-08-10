@@ -1,6 +1,6 @@
-# Stitched Up Companion - Project Architecture
+# Interactive Reading Companion - Project Architecture
 
-This diagram illustrates the architecture of the Stitched Up Companion app, showing the main components, data flow, and relationships between different parts of the application.
+This diagram illustrates the architecture of the Interactive Reading Companion app, showing the main components, data flow, and relationships between different parts of the application.
 
 ```mermaid
 graph TD
@@ -15,15 +15,16 @@ graph TD
     A --> J[AppTour]
 
     %% Data Structure and Flow
-    K[Data Layer] --> K1[stitchedUp/data.js]
-    K1 --> K2[characters]
-    K1 --> K3[locations]
-    K1 --> K4[events]
-    K1 --> K5[objects]
-    K1 --> K6[relationships]
-    K1 --> K7[spycraftEntries]
-    K1 --> K8[chapters]
-    K1 --> K9[mysteryElements]
+    K[Data Layer] --> K1[bookName/index.js]
+    K1 --> K2[characters.js]
+    K1 --> K3[locations.js]
+    K1 --> K4[events.js]
+    K1 --> K5[objects.js]
+    K1 --> K6[relationships.js]
+    K1 --> K7[spycraftEntries.js]
+    K1 --> K8[chapters.js]
+    K1 --> K9[mysteryElements.js]
+    K1 --> K10[themeElements.js]
     
     %% Map positions 
     L[Map Data] --> L1[positions.js]
@@ -44,6 +45,7 @@ graph TD
     K7 --> I
     K8 --> G
     K9 --> G
+    K10 --> G
     
     L2 --> F
     L3 --> F
@@ -116,7 +118,7 @@ graph TD
     classDef feature fill:#ffe,stroke:#333,stroke-width:1px
     
     class A,M core
-    class K,K1,K2,K3,K4,K5,K6,K7,K8,K9,L,L1,L2,L3,L4,L5 data
+    class K,K1,K2,K3,K4,K5,K6,K7,K8,K9,K10,L,L1,L2,L3,L4,L5 data
     class B,C,D,E,F,G,H,I,J,X component
     class B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3,F4,G1,G2,G3,H1,H2,H3,I1,I2,I3,M1,M2,M3,M4,Z1,Z2,Z3,Z4,Z5,Y1,Y2,Y3 feature
 ```
@@ -125,10 +127,10 @@ graph TD
 
 - **App.js (Main Container)**: Central component that manages the application state and navigation
 - **Tab Components**: Specialized views for different aspects of the novel (Characters, Timeline, etc.)
-- **Data Layer**: Structured data in JavaScript modules that power the application
+- **Data Layer**: Structured data in separate JavaScript modules organized by domain (characters, locations, events, etc.)
 - **State Management**: Handles cross-component communication and selection state
 - **Current Selections Panel**: Provides cross-reference between different views
 
 ## Data Flow
 
-The diagram shows how data flows from the data files into the various components, and how user interactions with these components affect the application state.
+The diagram shows how data flows from the separate data files (characters.js, locations.js, events.js, etc.) into the various components, and how user interactions with these components affect the application state. The modular data structure allows for better organization and maintainability.

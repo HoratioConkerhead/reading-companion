@@ -18,19 +18,44 @@
   --color-german-connection: #d69e2e;
   --color-supporting: #718096;
   
-  /* Header, footer, and UI elements */
-  --color-header-bg: #1f2937; /* gray-800 */
-  --color-header-text: #ffffff;
-  --color-footer-bg: #374151; /* gray-700 */
-  --color-footer-text: #ffffff;
+  /* Header, footer, and UI elements - dark backgrounds with light text */
+  --color-header-bg: #1f2937; /* gray-800 - dark background */
+  --color-header-text: #ffffff; /* white text */
+  --color-footer-bg: #374151; /* gray-700 - dark background */
+  --color-footer-text: #ffffff; /* white text */
   --color-panel-bg: #ffffff;
   --color-panel-border: #e5e7eb; /* gray-200 */
   --color-tab-bg: #ffffff;
   --color-tab-text: #1f2937;
+  
+  /* Form elements */
+  --color-input-bg: #ffffff;
+  --color-input-border: #d1d5db;
+  --color-input-text: #374151;
+  --color-button-primary: #3b82f6;
+  --color-button-primary-hover: #2563eb;
+  --color-button-secondary: #6b7280;
+  --color-button-secondary-hover: #4b5563;
+  
+  /* Card and content areas */
+  --color-card-bg: #ffffff;
+  --color-card-border: #e5e7eb;
+  --color-card-hover: #f9fafb;
+  
+  /* Text colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  
+  /* Status colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 }
 
 .dark {
-  /* Dark mode overrides - much darker now */
+  /* Dark mode overrides - comprehensive dark theme */
   --color-primary: #60a5fa; /* blue-400 */
   --color-secondary: #fbbf24; /* amber-400 */
   --color-background: #111827; /* gray-900 */
@@ -38,15 +63,40 @@
   --color-light: #1f2937; /* gray-800 */
   --color-border: #4b5563; /* gray-600 */
   
-  /* Header, footer, and UI elements */
-  --color-header-bg: #0f172a; /* slate-900 */
-  --color-header-text: #f8fafc; /* slate-50 */
-  --color-footer-bg: #0f172a; /* slate-900 */
-  --color-footer-text: #f8fafc; /* slate-50 */
+  /* Header, footer, and UI elements - dark backgrounds for contrast */
+  --color-header-bg: #0f172a; /* slate-900 - dark background */
+  --color-header-text: #f8fafc; /* slate-50 - light text */
+  --color-footer-bg: #0f172a; /* slate-900 - dark background */
+  --color-footer-text: #f8fafc; /* slate-50 - light text */
   --color-panel-bg: #1e293b; /* slate-800 */
   --color-panel-border: #334155; /* slate-700 */
   --color-tab-bg: #1e293b; /* slate-800 */
   --color-tab-text: #f3f4f6; /* gray-100 */
+  
+  /* Form elements */
+  --color-input-bg: #1e293b; /* slate-800 */
+  --color-input-border: #475569; /* slate-600 */
+  --color-input-text: #f1f5f9; /* slate-100 */
+  --color-button-primary: #3b82f6;
+  --color-button-primary-hover: #2563eb;
+  --color-button-secondary: #64748b; /* slate-500 */
+  --color-button-secondary-hover: #475569; /* slate-600 */
+  
+  /* Card and content areas */
+  --color-card-bg: #1e293b; /* slate-800 */
+  --color-card-border: #334155; /* slate-700 */
+  --color-card-hover: #334155; /* slate-700 */
+  
+  /* Text colors */
+  --color-text-primary: #f8fafc; /* slate-50 */
+  --color-text-secondary: #cbd5e1; /* slate-300 */
+  --color-text-muted: #94a3b8; /* slate-400 */
+  
+  /* Status colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 }
 
 body {
@@ -58,10 +108,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-background);
   color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif;
+  color: var(--color-text-primary);
+}
+
+/* Header and footer text should use their specific colors */
+header h1, header h2, header h3, header h4, header h5, header h6,
+header p, header span {
+  color: var(--color-header-text) !important;
+}
+
+footer h1, footer h2, footer h3, footer h4, footer h5, footer h6,
+footer p, footer span {
+  color: var(--color-footer-text) !important;
 }
 
 code {
@@ -71,6 +134,8 @@ code {
 
 .app-container {
   min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 /* Custom Tab Styling */
@@ -83,12 +148,14 @@ code {
 
 .react-tabs__tab {
   color: var(--color-tab-text);
+  transition: all 0.3s ease;
 }
 
 .react-tabs__tab-panel {
   background-color: var(--color-panel-bg);
   color: var(--color-text);
   border-color: var(--color-border);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .react-tabs__tab:focus {
@@ -220,8 +287,131 @@ code {
   background-color: white;
   border-radius: 50%;
   transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .dark .toggle-thumb {
   left: 28px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode toggle text styling */
+.dark-mode-toggle span {
+  transition: color 0.3s ease;
+}
+
+/* Dark mode toggle hover effects */
+.dark-mode-toggle:hover .toggle-track {
+  opacity: 0.8;
+}
+
+.dark-mode-toggle:hover .toggle-thumb {
+  transform: scale(1.05);
+}
+
+/* Form elements dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: var(--color-input-bg);
+  border-color: var(--color-input-border);
+  color: var(--color-input-text);
+}
+
+.dark input::placeholder,
+.dark select::placeholder,
+.dark textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Card and panel dark mode */
+.dark .bg-white {
+  background-color: var(--color-card-bg);
+  border-color: var(--color-card-border);
+}
+
+.dark .border-gray-200 {
+  border-color: var(--color-card-border);
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: var(--color-card-hover);
+}
+
+/* Text colors dark mode */
+.dark .text-gray-700 {
+  color: var(--color-text-primary);
+}
+
+.dark .text-gray-600 {
+  color: var(--color-text-secondary);
+}
+
+.dark .text-gray-500 {
+  color: var(--color-text-muted);
+}
+
+/* Button dark mode */
+.dark .bg-gray-200 {
+  background-color: var(--color-button-secondary);
+  color: var(--color-text-primary);
+}
+
+.dark .bg-gray-200:hover {
+  background-color: var(--color-button-secondary-hover);
+}
+
+/* Map container dark mode */
+.dark .leaflet-container {
+  background-color: var(--color-background);
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+  border: 2px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border: 2px solid #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.dark * {
+  scrollbar-color: #6b7280 #374151;
 }

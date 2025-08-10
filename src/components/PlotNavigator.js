@@ -5,9 +5,9 @@ const PlotNavigator = ({
   onCharacterSelect,
   eventsData,
   charactersData,
-  chaptersData,       // Add this prop
-  mysteryElements,    // Add this prop
-  themeElements       // Add this prop
+  chaptersData,
+  mysteryElements,
+  themeElements
 }) => {
   const [viewMode, setViewMode] = useState('chapters'); // 'chapters', 'mysteries', 'themes'
   const [readerKnowledge, setReaderKnowledge] = useState('full'); // 'progressive', 'full'
@@ -53,60 +53,80 @@ const PlotNavigator = ({
   };
   
   return (
-    <div className="plot-navigator" style={{width: '100%', maxWidth: '100%'}}>
+    <div className="plot-navigator">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4">Plot Navigator</h2>
-        <p className="text-gray-600">
-          Explore the narrative structure, mysteries, and themes of "Stitched Up" to enhance your understanding of the novel.
+        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Plot Navigator</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Explore the narrative structure, mysteries, and themes of the book to enhance your understanding of the novel.
         </p>
       </div>
       
       <div className="flex mb-4">
         <button 
-          className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 ${viewMode === 'chapters' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 transition-colors ${
+            viewMode === 'chapters' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
           onClick={() => setViewMode('chapters')}
         >
           Chapter Progression
         </button>
         <button 
-          className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 ${viewMode === 'mysteries' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 transition-colors ${
+            viewMode === 'mysteries' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
           onClick={() => setViewMode('mysteries')}
         >
           Mystery Elements
         </button>
         <button 
-          className={`px-4 py-2 cursor-pointer focus:outline-none rounded ${viewMode === 'themes' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          className={`px-4 py-2 cursor-pointer focus:outline-none rounded transition-colors ${
+            viewMode === 'themes' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
           onClick={() => setViewMode('themes')}
         >
           Theme Analysis
         </button>
       </div>
       
+      <div className="flex mb-4">
+        <button 
+          className={`px-4 py-2 text-sm rounded-l transition-colors ${
+            readerKnowledge === 'progressive' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
+          onClick={() => setReaderKnowledge('progressive')}
+        >
+          Reader's View
+        </button>
+        <button 
+          className={`px-4 py-2 text-sm rounded-r transition-colors ${
+            readerKnowledge === 'full' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
+          onClick={() => setReaderKnowledge('full')}
+        >
+          Full Overview
+        </button>
+      </div>
+      
       {viewMode === 'chapters' && (
         <>
           {readerKnowledge === 'progressive' && (
-            <div className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-sm">
-              <p>
+            <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 text-sm">
+              <p className="text-gray-700 dark:text-gray-300">
                 <strong>Progressive Reader Mode:</strong> Chapters are revealed as if you were reading the 
                 novel for the first time. Expand each chapter to continue the story.
               </p>
             </div>
           )}
-          
-          <div className="flex mb-4">
-            <button 
-              className={`px-4 py-2 text-sm rounded-l ${readerKnowledge === 'progressive' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setReaderKnowledge('progressive')}
-            >
-              Reader's View
-            </button>
-            <button 
-              className={`px-4 py-2 text-sm rounded-r ${readerKnowledge === 'full' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setReaderKnowledge('full')}
-            >
-              Full Overview
-            </button>
-          </div>
           
           <div className="space-y-4">
             {chaptersData.map((chapter, index) => {
@@ -118,44 +138,52 @@ const PlotNavigator = ({
               }
               
               const isExpanded = expandedChapter === chapter.id;
-              const chapterEvents = chapter.events.map(eventId => 
+              const chapterEvents = chapter.events ? chapter.events.map(eventId => 
                 eventsData.find(e => e.id === eventId)
-              ).filter(Boolean);
+              ).filter(Boolean) : [];
               
               return (
                 <div 
                   key={chapter.id}
-                  className={`border-l-4 pl-4 ${isExpanded ? 'border-blue-500' : 'border-gray-300'}`}
+                  className={`border-l-4 pl-4 transition-colors ${
+                    isExpanded 
+                      ? 'border-blue-500' 
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
                 >
                   <div 
-                    className={`font-bold cursor-pointer ${isExpanded ? 'text-blue-600' : ''}`}
+                    className={`font-bold cursor-pointer transition-colors ${
+                      isExpanded 
+                        ? 'text-blue-600 dark:text-blue-400' 
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}
                     onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
                   >
                     {chapter.title}
-                    <span className="text-sm text-gray-600 ml-2">{chapter.timeframe}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">{chapter.timeframe || chapter.date}</span>
                   </div>
                   
                   {!isExpanded && (
-                    <p className="text-sm text-gray-600 mt-1">{chapter.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{chapter.description || chapter.summary}</p>
                   )}
                   
                   {isExpanded && (
                     <div className="mt-2 pl-2">
-                      <p className="mb-3">{chapter.description}</p>
+                      <p className="mb-3 text-gray-700 dark:text-gray-300">{chapter.description || chapter.summary}</p>
                       
                       {chapterEvents.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="font-medium text-sm">Key Events:</h4>
+                          <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">Key Events:</h4>
                           <div className="space-y-2 mt-2">
                             {chapterEvents.map(event => (
                               <div 
                                 key={event.id}
-                                className="p-2 border rounded cursor-pointer hover:bg-gray-100"
+                                className="p-2 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 onClick={() => handleEventClick(event.id)}
                               >
-                                <div className="font-medium">{event.title}</div>
-                                <div className="text-sm text-gray-600">{event.date}</div>
-                                <p className="text-sm mt-1">{event.description}</p>
+                                <div className="font-medium text-gray-900 dark:text-gray-100">{event.title}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">{event.date}</div>
+                                <p className="text-sm mt-1 text-gray-700 dark:text-gray-300">{event.description}</p>
                               </div>
                             ))}
                           </div>
@@ -167,18 +195,18 @@ const PlotNavigator = ({
                         {mysteryElements.filter(m => 
                           m.firstMentioned === chapter.id || m.revealedInChapter === chapter.id
                         ).length > 0 && (
-                          <div className="p-3 border rounded bg-pink-50">
-                            <h4 className="font-medium text-sm mb-2">Mystery Elements Introduced:</h4>
+                          <div className="p-3 border border-gray-200 dark:border-gray-700 rounded bg-pink-50 dark:bg-pink-900/20">
+                            <h4 className="font-medium text-sm mb-2 text-gray-900 dark:text-gray-100">Mystery Elements Introduced:</h4>
                             <div className="space-y-2">
                               {mysteryElements.filter(m => 
                                 m.firstMentioned === chapter.id || m.revealedInChapter === chapter.id
                               ).map(mystery => (
                                 <div key={mystery.id} className="text-sm">
-                                  <div className="font-medium">{mystery.title}</div>
+                                  <div className="font-medium text-gray-900 dark:text-gray-100">{mystery.title}</div>
                                   {mystery.revealedInChapter === chapter.id ? (
-                                    <div className="text-green-600">Revealed in this chapter</div>
+                                    <div className="text-green-600 dark:text-green-400">Revealed in this chapter</div>
                                   ) : (
-                                    <div className="text-blue-600">First mentioned, revealed later</div>
+                                    <div className="text-blue-600 dark:text-blue-400">First mentioned, revealed later</div>
                                   )}
                                 </div>
                               ))}
@@ -187,8 +215,8 @@ const PlotNavigator = ({
                         )}
                         
                         {/* Character development */}
-                        <div className="p-3 border rounded">
-                          <h4 className="font-medium text-sm mb-2">Character Focus:</h4>
+                        <div className="p-3 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
+                          <h4 className="font-medium text-sm mb-2 text-gray-900 dark:text-gray-100">Character Focus:</h4>
                           <div className="space-y-1">
                             {chapterEvents.flatMap(event => 
                               event.characters?.map(charRef => ({
@@ -208,9 +236,9 @@ const PlotNavigator = ({
                                   className="flex items-center cursor-pointer hover:underline"
                                   onClick={() => handleCharacterClick(character.id)}
                                 >
-                                  <span className="text-sm">{character.name}</span>
+                                  <span className="text-sm text-gray-900 dark:text-gray-100">{character.name}</span>
                                   {charRef.role && (
-                                    <span className="text-xs bg-gray-200 rounded px-1 ml-2">{charRef.role}</span>
+                                    <span className="text-xs bg-gray-200 dark:bg-gray-700 rounded px-1 ml-2 text-gray-700 dark:text-gray-300">{charRef.role}</span>
                                   )}
                                 </div>
                               ) : null;
@@ -221,7 +249,7 @@ const PlotNavigator = ({
                       
                       {index < chaptersData.length - 1 && readerKnowledge === 'progressive' && (
                         <button 
-                          className="mt-4 px-3 py-1 bg-blue-500 text-white text-sm rounded"
+                          className="mt-4 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
                           onClick={() => setExpandedChapter(chaptersData[index + 1].id)}
                         >
                           Continue to {chaptersData[index + 1].title.split(':')[0]}
@@ -239,16 +267,16 @@ const PlotNavigator = ({
       {viewMode === 'mysteries' && (
         <div className="space-y-4">
           {readerKnowledge === 'progressive' && (
-            <div className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-sm">
-              <p>
+            <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 text-sm">
+              <p className="text-gray-700 dark:text-gray-300">
                 <strong>Progressive Reader Mode:</strong> Mystery elements are unlocked as they're 
                 revealed in the story. Select a chapter to see which mysteries have been revealed.
               </p>
               
               <div className="mt-2">
-                <label className="block text-sm font-medium mb-1">Current Chapter:</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Current Chapter:</label>
                 <select 
-                  className="w-full md:w-auto p-2 border rounded"
+                  className="w-full md:w-auto p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                   value={expandedChapter || ''}
                   onChange={(e) => setExpandedChapter(e.target.value || null)}
                 >
@@ -271,34 +299,34 @@ const PlotNavigator = ({
               return (
                 <div 
                   key={mystery.id}
-                  className={`border p-3 rounded ${
+                  className={`border border-gray-200 dark:border-gray-700 p-3 rounded transition-colors ${
                     isUnlocked 
                       ? mystery.status === 'twist' 
-                        ? 'bg-purple-50' 
+                        ? 'bg-purple-50 dark:bg-purple-900/20' 
                         : mystery.status === 'major_plot' 
-                          ? 'bg-blue-50'
-                          : 'bg-green-50'
-                      : 'bg-gray-100'
+                          ? 'bg-blue-50 dark:bg-blue-900/20'
+                          : 'bg-green-50 dark:bg-green-900/20'
+                      : 'bg-gray-100 dark:bg-gray-800'
                   }`}
                 >
-                  <h4 className="font-bold">{mystery.title}</h4>
-                  <p className="text-sm">First introduced: Chapter {
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100">{mystery.title}</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">First introduced: Chapter {
                     chaptersData.findIndex(ch => ch.id === mystery.firstMentioned) + 1
                   }</p>
                   
                   {isUnlocked ? (
                     <>
-                      <p className="mt-1">{mystery.description}</p>
+                      <p className="mt-1 text-gray-700 dark:text-gray-300">{mystery.description}</p>
                       
                       {/* Related characters */}
                       {mystery.relatedCharacters && mystery.relatedCharacters.length > 0 && (
                         <div className="mt-2">
-                          <div className="text-sm font-medium">Related Characters:</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Related Characters:</div>
                           <div className="flex flex-wrap gap-2 mt-1">
                             {mystery.relatedCharacters.map(charId => (
                               <button
                                 key={charId}
-                                className="text-xs px-2 py-1 bg-white border rounded hover:bg-gray-100"
+                                className="text-xs px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
                                 onClick={() => handleCharacterClick(charId)}
                               >
                                 {getCharacterName(charId)}
@@ -311,12 +339,12 @@ const PlotNavigator = ({
                       {/* Related events */}
                       {mystery.relatedEvents && mystery.relatedEvents.length > 0 && (
                         <div className="mt-2">
-                          <div className="text-sm font-medium">Key Events:</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Events:</div>
                           <div className="flex flex-wrap gap-2 mt-1">
                             {mystery.relatedEvents.map(eventId => (
                               <button
                                 key={eventId}
-                                className="text-xs px-2 py-1 bg-white border rounded hover:bg-gray-100"
+                                className="text-xs px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
                                 onClick={() => handleEventClick(eventId)}
                               >
                                 {getEventTitle(eventId)}
@@ -329,10 +357,10 @@ const PlotNavigator = ({
                       <div className="mt-2 flex">
                         <span className={`text-xs px-2 py-1 rounded ${
                           mystery.status === 'twist' 
-                            ? 'bg-purple-200 text-purple-800' 
+                            ? 'bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200' 
                             : mystery.status === 'major_plot'
-                              ? 'bg-blue-200 text-blue-800'
-                              : 'bg-green-200 text-green-800'
+                              ? 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200'
+                              : 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
                         }`}>
                           {mystery.status === 'twist' 
                             ? 'Major Plot Twist' 
@@ -344,7 +372,7 @@ const PlotNavigator = ({
                     </>
                   ) : (
                     <div className="mt-2 flex items-center">
-                      <span className="bg-gray-200 text-sm px-2 py-1 rounded">
+                      <span className="bg-gray-200 dark:bg-gray-700 text-sm px-2 py-1 rounded text-gray-700 dark:text-gray-300">
                         Locked until Chapter {
                           chaptersData.findIndex(ch => ch.id === mystery.revealedInChapter) + 1
                         }
@@ -360,19 +388,19 @@ const PlotNavigator = ({
       
       {viewMode === 'themes' && (
         <div className="space-y-6">
-          <p className="text-gray-600">
-            Explore the major themes and motifs running through "Stitched Up" and how they connect 
+          <p className="text-gray-600 dark:text-gray-400">
+            Explore the major themes and motifs running through the book and how they connect 
             to characters and events in the novel.
           </p>
           
           {themeElements.map(theme => (
-            <div key={theme.id} className="border rounded p-4">
-              <h3 className="font-bold text-lg text-blue-700">{theme.title}</h3>
-              <p className="mt-1">{theme.description}</p>
+            <div key={theme.id} className="border border-gray-200 dark:border-gray-700 rounded p-4 bg-white dark:bg-gray-800">
+              <h3 className="font-bold text-lg text-blue-700 dark:text-blue-400 mb-2">{theme.title}</h3>
+              <p className="mt-1 text-gray-700 dark:text-gray-300">{theme.description}</p>
               
               <div className="mt-4">
-                <div className="text-sm font-medium">Key Examples:</div>
-                <ul className="list-disc pl-5 text-sm mt-1">
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Examples:</div>
+                <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
                   {theme.examples.map((example, index) => (
                     <li key={index}>{example}</li>
                   ))}
@@ -381,12 +409,12 @@ const PlotNavigator = ({
               
               {theme.relatedCharacters && theme.relatedCharacters.length > 0 && (
                 <div className="mt-4">
-                  <div className="text-sm font-medium">Key Characters:</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Characters:</div>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {theme.relatedCharacters.map(charId => (
                       <button
                         key={charId}
-                        className="text-sm px-2 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                        className="text-sm px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
                         onClick={() => handleCharacterClick(charId)}
                       >
                         {getCharacterName(charId)}
@@ -398,18 +426,18 @@ const PlotNavigator = ({
             </div>
           ))}
           
-          <div className="border rounded p-4 bg-gray-50 mt-6">
-            <h3 className="font-bold text-lg mb-2">Literary Analysis</h3>
-            <p>
-              "Stitched Up" uses the spy thriller genre to explore broader themes of loyalty, 
+          <div className="border border-gray-200 dark:border-gray-700 rounded p-4 bg-gray-50 dark:bg-gray-800 mt-6">
+            <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">Literary Analysis</h3>
+            <p className="text-gray-700 dark:text-gray-300">
+              The book uses the spy thriller genre to explore broader themes of loyalty, 
               deception, class division, and the moral compromises made during wartime. The novel's 
               structure mirrors the complexity of intelligence work itself, with information revealed 
               gradually and perspectives shifting as characters' true motivations come to light.
             </p>
-            <p className="mt-2">
+            <p className="mt-2 text-gray-700 dark:text-gray-300">
               The book's title operates on multiple levels, referring both to the knitting motif 
-              throughout the story and the way characters find themselves "stitched up" (betrayed or 
-              trapped) by circumstances and the actions of others.
+              throughout the story and the way characters find themselves betrayed or 
+              trapped by circumstances and the actions of others.
             </p>
           </div>
         </div>

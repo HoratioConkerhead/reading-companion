@@ -17,9 +17,9 @@ import ObjectGallery from './components/ObjectGallery';
 import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 
 // Import data from new structure - using the namespace approach
-import { stitchedUp } from './data';
+import { defaultBook } from './data';
 
-const StitchedUpApp = () => {
+const InteractiveReadingCompanion = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -29,13 +29,17 @@ const StitchedUpApp = () => {
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   
+  // Get book metadata
+  const bookData = defaultBook;
+  const metadata = bookData.bookMetadata;
+  
   // Check for first visit to potentially show tutorial
   useEffect(() => {
-    const hasVisited = localStorage.getItem('stitchedUpVisited');
+    const hasVisited = localStorage.getItem('interactiveReadingCompanionVisited');
     if (!hasVisited) {
       setFirstVisit(true);
       // We could auto-start the tour here for first time visitors
-      localStorage.setItem('stitchedUpVisited', 'true');
+      localStorage.setItem('interactiveReadingCompanionVisited', 'true');
     } else {
       setFirstVisit(false);
     }
@@ -116,11 +120,11 @@ const StitchedUpApp = () => {
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
-      <header className="bg-gray-800 dark:bg-gray-900 text-white p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
+      <header className="p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
         <div className="container mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-serif">Stitched Up</h1>
-            <p className="text-sm mt-1">An Interactive Companion to Matt Parry's Novel</p>
+            <h1 className="text-3xl font-serif">{metadata.appTitle}</h1>
+            <p className="text-sm mt-1">{metadata.appSubtitle}</p>
           </div>
           <div className="flex items-center space-x-4">
             <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -138,10 +142,9 @@ const StitchedUpApp = () => {
         <div className={`p-4 border-b ${darkMode ? 'bg-blue-900 border-blue-800 text-blue-100' : 'bg-blue-50 border-blue-200 text-blue-800'}`}>
           <div className="container mx-auto flex justify-between items-center">
             <div className="pr-8">
-              <h2 className="text-lg font-bold">Welcome to the "Stitched Up" Interactive Companion!</h2>
+              <h2 className="text-lg font-bold">{metadata.welcomeMessage}</h2>
               <p className="mt-1">
-                This app helps you explore characters, relationships, locations, and plot elements from the novel. 
-                Use the tabs below to navigate different aspects of the story.
+                {metadata.welcomeDescription}
               </p>
             </div>
             <button 
@@ -154,38 +157,40 @@ const StitchedUpApp = () => {
         </div>
       )}
       
-      <main className="container mx-auto p-4">
-        <Tabs selectedIndex={activeTab} onSelect={index => setActiveTab(index)}>
+      <main className="p-4">
+        <Tabs selectedIndex={activeTab} onSelect={(index) => setActiveTab(index)}>
           <TabList>
             <Tab>Characters</Tab>
-            <Tab>Relationship Web</Tab>
+            <Tab>Relationships</Tab>
             <Tab>Timeline</Tab>
             <Tab>Locations</Tab>
             <Tab>Map</Tab>
-            <Tab>Plot Navigator</Tab>
+            <Tab>Plot</Tab>
             <Tab>Objects</Tab>
-            <Tab>Spy Encyclopedia</Tab>
+            <Tab>Spycraft</Tab>
           </TabList>
-
-          <div className="mb-8">
+          
+          <div>
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
                 onCharacterSelect={handleCharacterSelect} 
                 selectedCharacter={selectedCharacter}
-                charactersData={stitchedUp.characters}
-                relationshipsData={stitchedUp.relationships}
+                charactersData={bookData.characters}
+                relationshipsData={bookData.relationships}
               />
             </TabPanel>
             
             {/* Relationship Web Tab */}
             <TabPanel>
-              <RelationshipWeb 
-                onCharacterSelect={handleCharacterSelect}
-                selectedCharacter={selectedCharacter}
-                charactersData={stitchedUp.characters}
-                relationshipsData={stitchedUp.relationships}
-              />
+                          <RelationshipWeb
+              onCharacterSelect={handleCharacterSelect}
+              selectedCharacter={selectedCharacter}
+              charactersData={bookData.characters}
+              relationshipsData={bookData.relationships}
+              chaptersData={bookData.chapters}
+              darkMode={darkMode}
+            />
             </TabPanel>
             
             {/* Timeline Tab */}
@@ -194,21 +199,21 @@ const StitchedUpApp = () => {
                 onEventSelect={handleEventSelect}
                 selectedEvent={selectedEvent}
                 onCharacterSelect={handleCharacterSelect}
-                eventsData={stitchedUp.events}
-                charactersData={stitchedUp.characters}
-                locationsData={stitchedUp.locations}
+                eventsData={bookData.events}
+                charactersData={bookData.characters}
+                locationsData={bookData.locations}
               />
             </TabPanel>
             
             {/* Locations Tab */}
             <TabPanel>
-              <LocationExplorer 
+              <LocationExplorer
                 onLocationSelect={handleLocationSelect}
                 selectedLocation={selectedLocation}
                 onEventSelect={handleEventSelect}
-                locationsData={stitchedUp.locations}
-                eventsData={stitchedUp.events}
-                charactersData={stitchedUp.characters}
+                locationsData={bookData.locations}
+                eventsData={bookData.events}
+                charactersData={bookData.characters}
               />
             </TabPanel>
             
@@ -219,41 +224,41 @@ const StitchedUpApp = () => {
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
                 onObjectSelect={handleObjectSelect}
-                locationsData={stitchedUp.locations}
-                eventsData={stitchedUp.events}
-                charactersData={stitchedUp.characters}
-                objectsData={stitchedUp.objects}
+                locationsData={bookData.locations}
+                eventsData={bookData.events}
+                charactersData={bookData.characters}
+                objectsData={bookData.objects}
               />
             </TabPanel>
-
+            
             {/* Plot Navigator Tab */}
             <TabPanel>
-              <PlotNavigator 
+              <PlotNavigator
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
-                eventsData={stitchedUp.events}
-                charactersData={stitchedUp.characters}
-                chaptersData={stitchedUp.chapters}
-                mysteryElements={stitchedUp.mysteryElements}
-                themeElements={stitchedUp.themeElements}
+                eventsData={bookData.events}
+                charactersData={bookData.characters}
+                chaptersData={bookData.chapters}
+                mysteryElements={bookData.mysteryElements}
+                themeElements={bookData.themeElements}
               />
             </TabPanel>
             
             {/* Objects Tab */}
             <TabPanel>
-              <ObjectGallery 
+              <ObjectGallery
                 onObjectSelect={handleObjectSelect}
                 selectedObject={selectedObject}
-                objectsData={stitchedUp.objects}
-                charactersData={stitchedUp.characters}
-                eventsData={stitchedUp.events}
+                objectsData={bookData.objects}
+                charactersData={bookData.characters}
+                eventsData={bookData.events}
               />
             </TabPanel>
             
-            {/* Spy Encyclopedia Tab */}
+            {/* Spycraft Encyclopedia Tab */}
             <TabPanel>
               <SpycraftEncyclopedia 
-                spycraftEntries={stitchedUp.spycraftEntries}
+                spycraftEntries={bookData.spycraftEntries}
               />
             </TabPanel>
           </div>
@@ -300,15 +305,13 @@ const StitchedUpApp = () => {
         </div>
       </main>
       
-      <footer className="bg-gray-700 dark:bg-gray-900 text-white p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
+      <footer className="p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <h3 className="text-lg font-bold mb-2">About this App</h3>
               <p className="text-sm">
-                The "Stitched Up" Interactive Companion is designed to enhance your reading experience
-                by providing detailed information about characters, locations, events, and spy techniques
-                featured in Matt Parry's novel.
+                {metadata.aboutApp}
               </p>
             </div>
             
@@ -323,17 +326,15 @@ const StitchedUpApp = () => {
             </div>
             
             <div>
-              <h3 className="text-lg font-bold mb-2">About the Novel</h3>
+              <h3 className="text-lg font-bold mb-2">About the Book</h3>
               <p className="text-sm">
-                "Stitched Up" is a historical spy thriller set during World War II, following 
-                Lady Cynthia Childreth's recruitment into intelligence work and her efforts to 
-                thwart a Nazi assassination plot.
+                {metadata.aboutBook}
               </p>
             </div>
           </div>
           
           <div className="mt-6 pt-4 border-t border-gray-600 text-center text-sm">
-            <p>"Stitched Up" Interactive Companion © {new Date().getFullYear()}</p>
+            <p>{metadata.copyright} © {new Date().getFullYear()}</p>
           </div>
         </div>
       </footer>
@@ -344,6 +345,7 @@ const StitchedUpApp = () => {
         onClose={closeTour}
         currentTab={activeTab}
         onTabChange={handleTabChangeFromTour}
+        bookMetadata={metadata}
       />
     </div>
   );
@@ -363,4 +365,4 @@ export const getGroupColor = (group) => {
   }
 };
 
-export default StitchedUpApp;
+export default InteractiveReadingCompanion;

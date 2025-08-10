@@ -1,6 +1,6 @@
-# Stitched Up Companion - Directory Structure
+# Interactive Reading Companion - Directory Structure
 
-This diagram shows the organization of files and directories in the Stitched Up Companion project, providing an overview of the codebase structure.
+This diagram shows the organization of files and directories in the Interactive Reading Companion project, providing an overview of the codebase structure.
 
 ```mermaid
 graph TD
@@ -15,7 +15,7 @@ graph TD
     
     Docs --> DataFormat["data_format_documentation.md"]
     Docs --> DesignDoc["design_document.md"]
-    Docs --> Analysis["stitchedUpAnalysis.md"]
+    Docs --> Analysis["bookAnalysis.md"]
     
     Src --> SrcAssets["assets/"]
     Src --> SrcComponents["components/"]
@@ -36,24 +36,32 @@ graph TD
     SrcComponents --> AppTourCSS["AppTour.css"]
     
     SrcData --> DataIndex["index.js"]
-    SrcData --> StitchedUp["stitchedUp/"]
-    SrcData --> XMLFile["stitchedup-incomplete.xml"]
+    SrcData --> BookData["bookName/"]
+    SrcData --> XMLFile["book-incomplete.xml"]
     
-    StitchedUp --> SUData["data.js"]
-    StitchedUp --> SUIndex["index.js"]
-    StitchedUp --> SUPositions["positions.js"]
+    BookData --> BookIndex["index.js"]
+    BookData --> BookCharacters["characters.js"]
+    BookData --> BookLocations["locations.js"]
+    BookData --> BookEvents["events.js"]
+    BookData --> BookObjects["objects.js"]
+    BookData --> BookRelationships["relationships.js"]
+    BookData --> BookPositions["positions.js"]
+    BookData --> BookMysteryElements["mysteryElements.js"]
+    BookData --> BookChapters["chapters.js"]
+    BookData --> BookSpycraftEntries["spycraftEntries.js"]
+    BookData --> BookThemeElements["themeElements.js"]
     
     SrcStyles --> EnhancedTabs["enhanced-tabs.css"]
     
-    class Root,Src,SrcComponents,SrcData,StitchedUp primaryNodes
+    class Root,Src,SrcComponents,SrcData,BookData primaryNodes
     
     classDef primaryNodes fill:#f9d,stroke:#333,stroke-width:2px
     classDef secondaryNodes fill:#ddf,stroke:#333,stroke-width:1px
     classDef fileNodes fill:#dfd,stroke:#333,stroke-width:1px
     
-    class Root,Src,SrcComponents,SrcData,StitchedUp primaryNodes
+    class Root,Src,SrcComponents,SrcData,BookData primaryNodes
     class Public,Docs,SrcAssets,SrcStyles,Build secondaryNodes
-    class CharExplorer,RelationshipWeb,Timeline,LocExplorer,InteractiveMap,PlotNavigator,ObjectGallery,SpycraftEncyclopedia,AppTour,AppTourCSS,DataIndex,XMLFile,SUData,SUIndex,SUPositions,EnhancedTabs,PackageJSON,PCSS,TCSS,README,DataFormat,DesignDoc,Analysis fileNodes
+    class CharExplorer,RelationshipWeb,Timeline,LocExplorer,InteractiveMap,PlotNavigator,ObjectGallery,SpycraftEncyclopedia,AppTour,AppTourCSS,DataIndex,XMLFile,BookIndex,BookCharacters,BookLocations,BookEvents,BookObjects,BookRelationships,BookPositions,BookMysteryElements,BookChapters,BookSpycraftEntries,BookThemeElements,EnhancedTabs,PackageJSON,PCSS,TCSS,README,DataFormat,DesignDoc,Analysis fileNodes
 ```
 
 ## Key Directory Structure
@@ -64,7 +72,7 @@ The project follows a standard React application structure:
 - **src/**: Contains all the source code
   - **components/**: React components for each aspect of the application
   - **data/**: Data files for the novel content
-    - **stitchedUp/**: Directory with data specific to the "Stitched Up" novel
+    - **bookName/**: Directory with data specific to a particular book
   - **styles/**: CSS and styling files
   - **App.js**: Main application component
   - **index.js**: Entry point of the application
@@ -75,13 +83,21 @@ Each tab in the application has its own component file in the components directo
 
 ## Data Organization
 
-The data is organized in a modular structure:
+The data is organized in a modular structure with domain-specific files:
 
 - **index.js**: Exports all data as a namespace
-- **stitchedUp/**: Contains data specific to the "Stitched Up" novel
-  - **data.js**: Main data file with characters, locations, events, and other content
+- **bookName/**: Contains data specific to a particular book
+  - **characters.js**: Character data and relationships
+  - **locations.js**: Location data and descriptions
+  - **events.js**: Event data and timeline information
+  - **objects.js**: Object data and significance
+  - **relationships.js**: Character relationship mappings
   - **positions.js**: Geographic coordinates for map visualization
-  - **index.js**: Exports all data from data.js
+  - **mysteryElements.js**: Mystery-specific plot elements
+  - **chapters.js**: Chapter information and structure
+  - **spycraftEntries.js**: Spycraft technique data
+  - **themeElements.js**: Thematic elements and motifs
+  - **index.js**: Exports all data from the separate files
 
 ## Configuration Files
 
@@ -89,4 +105,4 @@ The data is organized in a modular structure:
 - **postcss.config.js**: Configuration for PostCSS
 - **tailwind.config.js**: Configuration for Tailwind CSS
 
-This structure is designed to be easily extensible for additional books or content in the future.
+This structure is designed to be easily extensible for additional books or content in the future, with each data type organized in its own file for better maintainability.

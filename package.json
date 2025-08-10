@@ -1,6 +1,6 @@
 {
-  "homepage": "http://HoratioConkerhead.github.io/stitched-up-companion",
-  "name": "stitched-up-interactive",
+  "homepage": "http://HoratioConkerhead.github.io/interactive-reading-companion",
+  "name": "interactive-reading-companion",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

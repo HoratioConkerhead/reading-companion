@@ -48,9 +48,9 @@ const LocationExplorer = ({
   return (
     <div className="location-explorer">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Location Explorer</h2>
-        <p className="text-gray-600">
-          Explore the significant locations in "Stitched Up" where key events took place.
+        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Location Explorer</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Explore the significant locations in the book where key events took place.
         </p>
       </div>
       
@@ -60,7 +60,7 @@ const LocationExplorer = ({
             <input 
               type="text" 
               placeholder="Search locations..." 
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -68,9 +68,9 @@ const LocationExplorer = ({
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location Type</label>
               <select 
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 value={locationTypeFilter}
                 onChange={(e) => setLocationTypeFilter(e.target.value)}
               >
@@ -82,9 +82,9 @@ const LocationExplorer = ({
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Area</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Area</label>
               <select 
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 value={areaFilter}
                 onChange={(e) => setAreaFilter(e.target.value)}
               >
@@ -100,17 +100,21 @@ const LocationExplorer = ({
             {filteredLocations.map(location => (
               <div 
                 key={location.id}
-                className={`p-3 mb-3 border rounded cursor-pointer hover:bg-gray-100 ${selectedLocation?.id === location.id ? 'bg-blue-100 border-blue-300' : ''}`}
+                className={`p-3 mb-3 border rounded cursor-pointer transition-colors ${
+                  selectedLocation?.id === location.id 
+                    ? 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-600' 
+                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
                 onClick={() => onLocationSelect(location)}
               >
-                <h3 className="font-bold">{location.name}</h3>
-                <div className="text-xs px-2 py-1 rounded bg-gray-200 inline-block mt-1">
+                <h3 className="font-bold text-gray-900 dark:text-gray-100">{location.name}</h3>
+                <div className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 inline-block mt-1">
                   {location.type}
                 </div>
-                <div className="text-sm text-gray-600 mt-1">{location.area}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{location.area}</div>
                 
                 {getLocationEvents(location.id).length > 0 && (
-                  <div className="mt-2 text-xs text-blue-600">
+                  <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">
                     {getLocationEvents(location.id).length} related events
                   </div>
                 )}
@@ -122,17 +126,17 @@ const LocationExplorer = ({
         <div className="md:col-span-2">
           {selectedLocation ? (
             <div>
-              <div className="border rounded p-4 mb-4 bg-gray-100">
-                <h2 className="text-2xl font-bold">{selectedLocation.name}</h2>
-                <div className="text-gray-600">{selectedLocation.area}</div>
-                <div className="mt-2 px-2 py-1 inline-block rounded bg-gray-200 text-sm">
+              <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4 bg-white dark:bg-gray-800">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{selectedLocation.name}</h2>
+                <div className="text-gray-600 dark:text-gray-400">{selectedLocation.area}</div>
+                <div className="mt-2 px-2 py-1 inline-block rounded bg-gray-200 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
                   {selectedLocation.type}
                 </div>
               </div>
               
-              <div className="border rounded mb-4 overflow-hidden">
-                <div className="h-64 bg-gray-300 flex items-center justify-center">
-                  <p className="text-gray-500 p-4 text-center">
+              <div className="border border-gray-200 dark:border-gray-700 rounded mb-4 overflow-hidden">
+                <div className="h-64 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                  <p className="text-gray-500 dark:text-gray-400 p-4 text-center">
                     Location image would be displayed here in a full implementation. This would show a 
                     period-appropriate illustration or photo of {selectedLocation.name}.
                   </p>
@@ -141,13 +145,13 @@ const LocationExplorer = ({
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-bold text-lg border-b pb-2 mb-2">Description</h3>
-                  <p>{selectedLocation.description || "No detailed description available."}</p>
+                  <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Description</h3>
+                  <p className="text-gray-700 dark:text-gray-300">{selectedLocation.description || "No detailed description available."}</p>
                   
                   {selectedLocation.features && selectedLocation.features.length > 0 && (
                     <>
-                      <h3 className="font-bold text-lg border-b pb-2 mb-2 mt-4">Key Features</h3>
-                      <ul className="list-disc pl-5 space-y-1">
+                      <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Key Features</h3>
+                      <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
                         {selectedLocation.features.map((feature, index) => (
                           <li key={index}>{feature}</li>
                         ))}
@@ -157,12 +161,12 @@ const LocationExplorer = ({
                   
                   {selectedLocation.rooms && selectedLocation.rooms.length > 0 && (
                     <>
-                      <h3 className="font-bold text-lg border-b pb-2 mb-2 mt-4">Notable Rooms/Areas</h3>
+                      <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Notable Rooms/Areas</h3>
                       <div className="space-y-2">
                         {selectedLocation.rooms.map((room, index) => (
-                          <div key={index} className="border-l-4 border-blue-200 pl-3">
-                            <div className="font-medium">{room.name}</div>
-                            <div className="text-sm text-gray-600">{room.significance}</div>
+                          <div key={index} className="border-l-4 border-blue-200 dark:border-blue-600 pl-3">
+                            <div className="font-medium text-gray-900 dark:text-gray-100">{room.name}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">{room.significance}</div>
                           </div>
                         ))}
                       </div>
@@ -173,8 +177,8 @@ const LocationExplorer = ({
                 <div>
                   {selectedLocation.significance && selectedLocation.significance.length > 0 && (
                     <>
-                      <h3 className="font-bold text-lg border-b pb-2 mb-2">Significance</h3>
-                      <ul className="list-disc pl-5 space-y-1">
+                      <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Significance</h3>
+                      <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
                         {selectedLocation.significance.map((point, index) => (
                           <li key={index}>{point}</li>
                         ))}
@@ -182,40 +186,18 @@ const LocationExplorer = ({
                     </>
                   )}
                   
-                  {selectedLocation.proximity && selectedLocation.proximity.length > 0 && (
+                  {getLocationEvents(selectedLocation.id).length > 0 && (
                     <>
-                      <h3 className="font-bold text-lg border-b pb-2 mb-2 mt-4">Nearby Locations</h3>
+                      <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Related Events</h3>
                       <div className="space-y-2">
-                        {selectedLocation.proximity.map((item, index) => {
-                          const connectedLocation = locationsData.find(l => l.id === item.locationId);
-                          return connectedLocation ? (
-                            <div 
-                              key={index} 
-                              className="p-2 border rounded hover:bg-gray-100 cursor-pointer"
-                              onClick={() => onLocationSelect(connectedLocation)}
-                            >
-                              <div className="font-medium">{connectedLocation.name}</div>
-                              <div className="text-sm text-gray-600">{item.description}</div>
-                            </div>
-                          ) : (
-                            <div key={index} className="p-2 border rounded">
-                              <div className="font-medium">{item.locationId}</div>
-                              <div className="text-sm text-gray-600">{item.description}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-                  
-                  {selectedLocation.occupants && selectedLocation.occupants.length > 0 && (
-                    <>
-                      <h3 className="font-bold text-lg border-b pb-2 mb-2 mt-4">Occupants</h3>
-                      <div className="space-y-2">
-                        {selectedLocation.occupants.map((occupant, index) => (
-                          <div key={index} className="p-2 border rounded">
-                            <div className="font-medium">{getCharacterName(occupant.characterId)}</div>
-                            <div className="text-sm text-gray-600">{occupant.relationship}</div>
+                        {getLocationEvents(selectedLocation.id).map(event => (
+                          <div 
+                            key={event.id}
+                            className="p-2 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => onEventSelect(event)}
+                          >
+                            <div className="font-medium text-gray-900 dark:text-gray-100">{event.title}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">{event.date}</div>
                           </div>
                         ))}
                       </div>
@@ -223,65 +205,12 @@ const LocationExplorer = ({
                   )}
                 </div>
               </div>
-              
-              {/* Events at this location */}
-              {getLocationEvents(selectedLocation.id).length > 0 && (
-                <div className="mt-6">
-                  <h3 className="font-bold text-lg border-b pb-2 mb-2">Key Events at This Location</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {getLocationEvents(selectedLocation.id).map(event => (
-                      <div 
-                        key={event.id}
-                        className="p-3 border rounded cursor-pointer hover:bg-gray-100"
-                        onClick={() => onEventSelect(event)}
-                      >
-                        <div className="text-sm text-gray-600">{event.date}</div>
-                        <h4 className="font-bold">{event.title}</h4>
-                        <p className="text-sm mt-1 line-clamp-2">{event.description}</p>
-                        
-                        {event.characters && event.characters.length > 0 && (
-                          <div className="mt-2 text-xs text-gray-500">
-                            Characters: {event.characters.length}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Location in the Story */}
-              {selectedLocation.events && selectedLocation.events.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="font-bold text-lg border-b pb-2 mb-2">Role in Story</h3>
-                  <div className="space-y-2">
-                    {selectedLocation.events.map((eventRef, index) => {
-                      const event = eventsData.find(e => e.id === eventRef.eventId);
-                      return event ? (
-                        <div 
-                          key={index}
-                          className="p-3 border-l-4 border-blue-300 pl-3 hover:bg-blue-50 cursor-pointer"
-                          onClick={() => onEventSelect(event)}
-                        >
-                          <div className="flex justify-between">
-                            <div className="font-medium">{event.title}</div>
-                            <div className="text-sm text-gray-600">{event.date}</div>
-                          </div>
-                          <div className="text-sm text-blue-600">{eventRef.role || "Setting"}</div>
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full border rounded p-12 text-center">
-              <p className="text-gray-500 mb-4">Select a location from the list to view details</p>
-              <p className="text-sm text-gray-400">
-                Locations include country houses, hotels, military facilities, and other sites 
-                central to the "Stitched Up" narrative.
-              </p>
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <p className="text-lg">Select a location to view details</p>
+              </div>
             </div>
           )}
         </div>

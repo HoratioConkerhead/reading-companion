@@ -1,20 +1,38 @@
-# "Stitched Up" Interactive App - Data Format Documentation
+# Interactive Reading Companion - Data Format Documentation
 
-This document describes the data format for the "Stitched Up" interactive app and provides guidance for adding new books to the series.
+This document describes the data format for the Interactive Reading Companion app and provides guidance for adding new books to the series.
 
 ## Data Structure
 
-The app uses a modular data structure organized by book:
+The app uses a modular data structure organized by book with domain-specific files:
 
 ```
 /src/data/
-  /stitchedUp/
-    index.js         // Re-exports all data from this book
-    data.js          // All data for "Stitched Up"
+  /bookName/
+    index.js              // Re-exports all data from this book
+    characters.js         // Character data
+    locations.js          // Location data
+    events.js             // Event data
+    objects.js            // Object data
+    relationships.js      // Character relationship data
+    positions.js          // Position/role data
+    mysteryElements.js    // Mystery-specific elements
+    chapters.js           // Chapter information
+    spycraftEntries.js    // Spycraft technique data
+    themeElements.js      // Thematic elements
   /book2Name/
     index.js
-    data.js
-  index.js           // Exports all books' data
+    characters.js
+    locations.js
+    events.js
+    objects.js
+    relationships.js
+    positions.js
+    mysteryElements.js
+    chapters.js
+    spycraftEntries.js
+    themeElements.js
+  index.js                // Exports all books' data
 ```
 
 ## Data Format Per Type
@@ -26,7 +44,7 @@ export const characters = [
     id: 'character_id',           // Unique identifier
     name: 'Character Name',       // Full character name
     title: 'Title',               // Optional: Character's title (e.g., 'Lady', 'Colonel')
-    group: 'Group',               // Character affiliation ('Protagonists', 'Fifth Columnists', etc.)
+    group: 'Group',               // Character affiliation ('Protagonists', 'Antagonists', etc.)
     role: 'Description of role',  // Character's role in the story
     background: 'Background...',  // Character's background information
     personality: 'Personality traits description',
@@ -182,23 +200,41 @@ export const spycraftEntries = [
 To add a new book to the series:
 
 1. Create a new folder in `/src/data/` with the book's name (e.g., `/src/data/bookName/`)
-2. Create a `data.js` file in that folder with the book's data following the formats above
-3. Create an `index.js` file that re-exports all data from `data.js`
+2. Create separate files for each data type following the formats above:
+   - `characters.js`
+   - `locations.js`
+   - `events.js`
+   - `objects.js`
+   - `relationships.js`
+   - `positions.js`
+   - `mysteryElements.js`
+   - `chapters.js`
+   - `spycraftEntries.js`
+   - `themeElements.js`
+3. Create an `index.js` file that re-exports all data from the separate files
 4. Update the main `/src/data/index.js` to include the new book
 
 Example for new book:
 
 ```javascript
-// /src/data/bookName/data.js
+// /src/data/bookName/characters.js
 export const characters = [...];
-export const events = [...];
-// etc.
+
+// /src/data/bookName/locations.js
+export const locations = [...];
 
 // /src/data/bookName/index.js
-export * from './data';
+export { characters } from './characters.js';
+export { locations } from './locations.js';
+export { events } from './events.js';
+export { relationships } from './relationships.js';
+export { objects } from './objects.js';
+export { spycraftEntries } from './spycraftEntries.js';
+export { chapters } from './chapters.js';
+export { mysteryElements } from './mysteryElements.js';
+export { themeElements } from './themeElements.js';
 
 // /src/data/index.js
-export * as stitchedUp from './stitchedUp';
 export * as bookName from './bookName';
 ```
 
@@ -208,13 +244,13 @@ Components can import data in two ways:
 
 1. Import all data from a specific book:
 ```javascript
-import { stitchedUp } from '../data';
-// Use: stitchedUp.characters, stitchedUp.events, etc.
+import { bookName } from '../data';
+// Use: bookName.characters, bookName.events, etc.
 ```
 
 2. Import specific data types directly:
 ```javascript
-import { characters, events } from '../data/stitchedUp';
+import { characters, events } from '../data/bookName';
 // Use: characters, events directly
 ```
 
