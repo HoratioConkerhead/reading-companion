@@ -183,13 +183,14 @@ const InteractiveReadingCompanion = () => {
             
             {/* Relationship Web Tab */}
             <TabPanel>
-              <RelationshipWeb 
-                onCharacterSelect={handleCharacterSelect}
-                selectedCharacter={selectedCharacter}
-                charactersData={bookData.characters}
-                relationshipsData={bookData.relationships}
-                chaptersData={bookData.chapters}
-              />
+                          <RelationshipWeb
+              onCharacterSelect={handleCharacterSelect}
+              selectedCharacter={selectedCharacter}
+              charactersData={bookData.characters}
+              relationshipsData={bookData.relationships}
+              chaptersData={bookData.chapters}
+              darkMode={darkMode}
+            />
             </TabPanel>
             
             {/* Timeline Tab */}

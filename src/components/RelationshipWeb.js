@@ -5,7 +5,8 @@ const RelationshipWeb = ({
   selectedCharacter,
   charactersData,
   relationshipsData,
-  chaptersData = [] // Add chapters data for filtering
+  chaptersData = [], // Add chapters data for filtering
+  darkMode = false // Add darkMode prop for theme-aware colors
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -18,13 +19,16 @@ const RelationshipWeb = ({
   const [currentChapter, setCurrentChapter] = useState(null);
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
-  const [springForce, setSpringForce] = useState(0.05);
+  const [springForce, setSpringForce] = useState(0.1);
   const [repulsionForce, setRepulsionForce] = useState(50000);
   const [isFullPage, setIsFullPage] = useState(false);
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const animationRef = useRef(null);
+  const wasClick = useRef(false);
+  const clickStartPos = useRef({ x: 0, y: 0 });
+  const wasAutoArrangeOn = useRef(false);
 
   // Get character name from ID
   const getCharacterName = (characterId) => {
@@ -87,6 +91,43 @@ const RelationshipWeb = ({
 
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  };
+
+  // Get appropriate text color based on theme
+  const getTextColor = (isDark = false) => {
+    return isDark ? '#ffffff' : '#000000';
+  };
+
+  // Get text color with good contrast against a background color
+  const getContrastTextColor = (backgroundColor, isDark = false) => {
+    // For dark mode, always use white text
+    if (isDark) return '#ffffff';
+    
+    // For light mode, use black text for light backgrounds, white for dark backgrounds
+    // Convert hex to RGB and calculate luminance
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Use black text on light backgrounds, white on dark backgrounds
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  };
+
+  // Calculate approximate text width for relationship labels
+  const getTextWidth = (text, fontSize = 10) => {
+    // Approximate width based on character count and font size
+    // This is a rough estimate - for more accuracy, you could use canvas.measureText
+    const avgCharWidth = fontSize * 0.6; // Rough estimate
+    return text.length * avgCharWidth;
+  };
+
+  // Get appropriate stroke color for nodes based on theme
+  const getNodeStrokeColor = (isDark = false) => {
+    return isDark ? '#ffffff' : '#000000';
   };
 
   // Get relationship color
@@ -338,6 +379,16 @@ const RelationshipWeb = ({
     initializeEdges();
   }, [initializeEdges]);
 
+  // Sync with external selectedCharacter prop
+  useEffect(() => {
+    if (selectedCharacter && selectedCharacter.id !== focusedCharacter) {
+      setFocusedCharacter(selectedCharacter.id);
+      // Clear all nodes and edges when changing focus
+      setNodes([]);
+      setEdges([]);
+    }
+  }, [selectedCharacter, focusedCharacter]);
+
      // Auto arrange simulation - runs continuously when enabled
    const runAutoArrange = useCallback(() => {
      if (!isAutoArrangeOn || nodes.length === 0) return;
@@ -465,74 +516,77 @@ const RelationshipWeb = ({
 
   // Handle node drag start
   const handleNodeMouseDown = (e, nodeId) => {
+    e.preventDefault();
     e.stopPropagation();
-    setDraggedNode(nodeId);
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
-    clickStartPos.current = { x: e.clientX, y: e.clientY };
+    
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    
+    // Reset click detection for this interaction
     wasClick.current = true;
-  };
-
-       // Track if auto arrange was on before dragging
-  const wasAutoArrangeOn = useRef(false);
-
-  // Handle node drag
-  const handleNodeMouseMove = useCallback((e) => {
-    if (!isDragging || !draggedNode) return;
-
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
-
-    // Check if we've moved enough to consider it a drag (not a click)
-    const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    if (moveDistance > 5) {
-      wasClick.current = false;
-    }
-
-    // Stop auto arrange when dragging starts and remember it was on
+    clickStartPos.current = { x: e.clientX, y: e.clientY };
+    
+    setIsDragging(true);
+    setDraggedNode(nodeId);
+    setDragStart({ x: e.clientX - node.position.x, y: e.clientY - node.position.y });
+    
+    // Stop auto arrange if it's running
     if (isAutoArrangeOn) {
       wasAutoArrangeOn.current = true;
       setIsAutoArrangeOn(false);
     }
-
-    setNodes(prevNodes => 
-      prevNodes.map(node => 
-        node.id === draggedNode 
-          ? {
-              ...node,
-              position: {
-                x: node.position.x + deltaX,
-                y: node.position.y + deltaY
-              }
-            }
-          : node
-      )
-    );
-
-    setDragStart({ x: e.clientX, y: e.clientY });
-  }, [isDragging, draggedNode, dragStart, isAutoArrangeOn]);
-
-  // Handle node drag end
-  const handleNodeMouseUp = () => {
-    // If it was a click (not a drag), add relationships
-    if (wasClick.current && draggedNode) {
-      handleNodeClick(draggedNode);
-    }
-    
-    // Turn auto arrange back on if it was on before dragging
-    if (wasAutoArrangeOn.current) {
-      setIsAutoArrangeOn(true);
-      wasAutoArrangeOn.current = false;
-    }
-    
-    setIsDragging(false);
-    setDraggedNode(null);
-    // No automatic simulation restart
   };
 
-  // Check if it was a click (not a drag)
-  const wasClick = useRef(false);
-  const clickStartPos = useRef({ x: 0, y: 0 });
+  // Handle node drag
+  const handleNodeMouseMove = useCallback((e) => {
+    if (!isDragging) return;
+    
+    if (isDragging && draggedNode) {
+      const node = nodes.find(n => n.id === draggedNode);
+      if (!node) return;
+      
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+      
+      // Check if mouse moved enough to not be a click
+      const moveDistance = Math.sqrt(
+        Math.pow(e.clientX - clickStartPos.current.x, 2) + 
+        Math.pow(e.clientY - clickStartPos.current.y, 2)
+      );
+      
+      // Increase threshold to make click detection more reliable
+      if (moveDistance > 8) {
+        wasClick.current = false;
+      }
+      
+      setNodes(prevNodes => 
+        prevNodes.map(n => 
+          n.id === draggedNode 
+            ? { ...n, position: { x: newX, y: newY } }
+            : n
+        )
+      );
+    }
+  }, [isDragging, draggedNode, dragStart]);
+
+  // Handle node drag end
+  const handleNodeMouseUp = (e, nodeId) => {
+    if (isDragging) {
+      setIsDragging(false);
+      setDraggedNode(null);
+      
+      // Restore auto arrange if it was on before dragging
+      if (wasAutoArrangeOn.current) {
+        setIsAutoArrangeOn(true);
+        wasAutoArrangeOn.current = false;
+      }
+    }
+    
+    // Handle click to add relationships
+    if (wasClick.current && nodeId) {
+      handleNodeClick(nodeId);
+    }
+  };
 
   // Handle node click - add character's relationships
   const handleNodeClick = (nodeId) => {
@@ -677,10 +731,13 @@ const RelationshipWeb = ({
 
   // Focus on character - clears everything and shows just that character
   const focusOnCharacter = (characterId) => {
-    setFocusedCharacter(characterId);
-    // Clear all nodes and edges when changing focus
-    setNodes([]);
-    setEdges([]);
+    // Only clear if we're actually changing focus, not during initial load
+    if (focusedCharacter !== characterId) {
+      setFocusedCharacter(characterId);
+      // Clear all nodes and edges when changing focus
+      setNodes([]);
+      setEdges([]);
+    }
   };
 
   // Reset view
@@ -698,7 +755,23 @@ const RelationshipWeb = ({
   // Add event listeners
   useEffect(() => {
     const handleGlobalMouseMove = (e) => handleNodeMouseMove(e);
-    const handleGlobalMouseUp = () => handleNodeMouseUp();
+    const handleGlobalMouseUp = (e) => {
+      // If we were dragging a node, handle the mouse up on that node
+      if (draggedNode) {
+        handleNodeMouseUp(e, draggedNode);
+      }
+      
+      if (isDragging) {
+        setIsDragging(false);
+        setDraggedNode(null);
+        
+        // Restore auto arrange if it was on before dragging
+        if (wasAutoArrangeOn.current) {
+          setIsAutoArrangeOn(true);
+          wasAutoArrangeOn.current = false;
+        }
+      }
+    };
 
     if (isDragging) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
@@ -709,7 +782,7 @@ const RelationshipWeb = ({
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [isDragging, handleNodeMouseMove]);
+  }, [isDragging, draggedNode, handleNodeMouseMove, handleNodeMouseUp]);
 
   return (
     <div className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}>
@@ -906,35 +979,37 @@ const RelationshipWeb = ({
               refY="3.5"
               orient="auto"
             >
-              <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+              <polygon points="0 0, 10 3.5, 0 7" fill={darkMode ? "#ccc" : "#666"} />
             </marker>
           </defs>
 
           {/* Transform for zoom and pan */}
           <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
             {/* Edges */}
-            {edges.map(edge => {
+            {edges.map((edge) => {
               const sourceNode = nodes.find(n => n.id === edge.from);
               const targetNode = nodes.find(n => n.id === edge.to);
               
               if (!sourceNode || !targetNode) return null;
-
+              
+              const nodeRadius = sourceNode.isFocused ? 35 : 30;
+              const targetRadius = targetNode.isFocused ? 35 : 30;
+              
+              // Calculate angle between nodes
               const dx = targetNode.position.x - sourceNode.position.x;
               const dy = targetNode.position.y - sourceNode.position.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              
-              // Calculate edge position (avoiding node center)
-              const nodeRadius = 30;
               const angle = Math.atan2(dy, dx);
+              
+              // Calculate start and end points (on the edge of the circles)
               const startX = sourceNode.position.x + nodeRadius * Math.cos(angle);
               const startY = sourceNode.position.y + nodeRadius * Math.sin(angle);
-              const endX = targetNode.position.x - nodeRadius * Math.cos(angle);
-              const endY = targetNode.position.y - nodeRadius * Math.sin(angle);
-
+              const endX = targetNode.position.x - targetRadius * Math.cos(angle);
+              const endY = targetNode.position.y - targetRadius * Math.sin(angle);
+              
               // Calculate label position (middle of the line)
               const labelX = (startX + endX) / 2;
               const labelY = (startY + endY) / 2;
-
+              
               return (
                 <g key={edge.id}>
                   <line
@@ -946,13 +1021,13 @@ const RelationshipWeb = ({
                     strokeWidth="2"
                     markerEnd="url(#arrowhead)"
                   />
-                  {/* Background for label */}
+                  {/* Background rectangle with dynamic width */}
                   <rect
-                    x={labelX - 40}
+                    x={labelX - Math.max(40, getTextWidth(edge.label) / 2 + 5)}
                     y={labelY - 8}
-                    width="80"
+                    width={Math.max(80, getTextWidth(edge.label) + 10)}
                     height="16"
-                    fill="rgba(255, 255, 255, 0.9)"
+                    fill={darkMode ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.9)"}
                     stroke={edge.color}
                     strokeWidth="1"
                     rx="3"
@@ -963,8 +1038,13 @@ const RelationshipWeb = ({
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontSize="10"
-                    fill="#333"
+                    fill={getTextColor(darkMode)}
                     className="select-none font-medium"
+                    style={{
+                      textShadow: darkMode
+                        ? '1px 1px 2px rgba(0,0,0,0.8)'
+                        : '1px 1px 2px rgba(255,255,255,0.8)'
+                    }}
                   >
                     {edge.label}
                   </text>
@@ -980,7 +1060,7 @@ const RelationshipWeb = ({
                     cy={node.position.y}
                     r={node.isFocused ? 35 : 30}
                     fill={node.color}
-                    stroke={node.isFocused ? "#000" : "#fff"}
+                    stroke={node.isFocused ? getNodeStrokeColor(darkMode) : getNodeStrokeColor(darkMode)}
                     strokeWidth={node.isFocused ? 3 : 2}
                     className="cursor-pointer hover:opacity-80 transition-opacity"
                     onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
@@ -993,8 +1073,13 @@ const RelationshipWeb = ({
                    dominantBaseline="middle"
                    fontSize={node.isFocused ? "14" : "12"}
                    fontWeight="bold"
-                   fill="#fff"
+                   fill={getContrastTextColor(node.color, darkMode)}
                    className="select-none pointer-events-none"
+                   style={{
+                     textShadow: darkMode 
+                       ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                       : '1px 1px 2px rgba(255,255,255,0.8)'
+                   }}
                  >
                    {node.relationshipCount || 0}
                  </text>
@@ -1004,8 +1089,13 @@ const RelationshipWeb = ({
                    textAnchor="middle"
                    fontSize="12"
                    fontWeight="bold"
-                   fill="#fff"
+                   fill={getTextColor(darkMode)}
                    className="select-none pointer-events-none"
+                   style={{
+                     textShadow: darkMode 
+                       ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                       : '1px 1px 2px rgba(255,255,255,0.8)'
+                   }}
                  >
                    {node.name}
                  </text>
@@ -1015,10 +1105,41 @@ const RelationshipWeb = ({
                      y={node.position.y + 45}
                      textAnchor="middle"
                      fontSize="10"
-                     fill="#fff"
+                     fill={getTextColor(darkMode)}
                      className="select-none pointer-events-none"
+                     style={{
+                       textShadow: darkMode
+                         ? '1px 1px 2px rgba(0,0,0,0.8)'
+                         : '1px 1px 2px rgba(255,255,255,0.8)'
+                     }}
                    >
-                     {node.role}
+                     {/* Simple text wrapping - split by spaces and create multiple lines */}
+                     {(() => {
+                       const maxWidth = (node.isFocused ? 70 : 60) * 2; // 2x node diameter
+                       const words = node.role.split(' ');
+                       const lines = [];
+                       let currentLine = '';
+                       
+                       words.forEach(word => {
+                         const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                         const testWidth = getTextWidth(testLine, 10);
+                         
+                         if (testWidth <= maxWidth) {
+                           currentLine = testLine;
+                         } else {
+                           if (currentLine) lines.push(currentLine);
+                           currentLine = word;
+                         }
+                       });
+                       
+                       if (currentLine) lines.push(currentLine);
+                       
+                       return lines.map((line, index) => (
+                         <tspan key={index} x={node.position.x} dy={index === 0 ? 0 : 12}>
+                           {line}
+                         </tspan>
+                       ));
+                     })()}
                    </text>
                  )}
                </g>
@@ -1050,6 +1171,10 @@ const RelationshipWeb = ({
           Choose a chapter to avoid spoilers. Drag characters to rearrange, or use "Auto Arrange" for automatic layout. 
           Click on any character to view their details. Use mouse wheel to zoom, and drag the background to pan.
         </p>
+      </div>
+      {/* Instructions */}
+      <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+        <p>Drag nodes to move them • Click nodes to add their relationships • Shift+drag to stretch relationship lines</p>
       </div>
     </div>
   );
