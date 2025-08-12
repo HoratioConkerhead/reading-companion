@@ -19,8 +19,8 @@ const RelationshipWeb = ({
   const [currentChapter, setCurrentChapter] = useState(null);
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
-  const [springForce, setSpringForce] = useState(0.1);
-  const [repulsionForce, setRepulsionForce] = useState(50000);
+  const [springForce, setSpringForce] = useState(10);
+  const [repulsionForce, setRepulsionForce] = useState(8000);
   const [isFullPage, setIsFullPage] = useState(false);
   
   const svgRef = useRef(null);
@@ -231,9 +231,9 @@ const RelationshipWeb = ({
             const dy = targetNode.position.y - sourceNode.position.y;
             const distance = Math.sqrt(dx * dx + dy * dy) || 1;
             
-            // Spring force (attraction with ideal length)
-            const displacement = distance - this.springLength;
-            const force = this.springForce * displacement;
+                         // Spring force (attraction with ideal length)
+             const displacement = distance - this.springLength;
+             const force = (this.springForce / 1000) * displacement;
             
             sourceNode.force.x += (dx / distance) * force;
             sourceNode.force.y += (dy / distance) * force;
@@ -302,11 +302,11 @@ const RelationshipWeb = ({
 
     const centerX = 400;
     const centerY = 300;
-    const radius = Math.max(200, filteredCharacters.length * 30); // Increased base radius and multiplier
+    const radius = 200; // Fixed radius of 200 pixels
 
          const newNodes = filteredCharacters.map((character, index) => {
        const relationshipCount = getRelationshipCount(character.id);
-       
+
        if (character.id === focusedCharacter) {
          // Place focused character in center
          return {
@@ -322,11 +322,14 @@ const RelationshipWeb = ({
        } else {
          // Place other characters in a circle around the focused character
          // Use index - 1 to skip the focused character in the circle calculation
-         const circleIndex = index > 0 ? index - 1 : 0;
+         //const circleIndex = index > 0 ? index - 1 : 0;
+         const circleIndex = index ;
          const totalInCircle = filteredCharacters.length - 1;
          const angle = (circleIndex * 2 * Math.PI) / totalInCircle;
          const x = centerX + radius * Math.cos(angle);
          const y = centerY + radius * Math.sin(angle);
+         console.log("Angle", angle, "Index", index);
+         
 
          return {
            id: character.id,
@@ -448,7 +451,7 @@ const RelationshipWeb = ({
              
              // Spring force (attraction with ideal length)
              const displacement = distance - this.springLength;
-             const force = this.springForce * displacement;
+             const force = (this.springForce / 1000) * displacement;
              
              sourceNode.force.x += (dx / distance) * force;
              sourceNode.force.y += (dy / distance) * force;
@@ -923,16 +926,16 @@ const RelationshipWeb = ({
            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
              Spring Force
            </label>
-           <input
-             type="range"
-             min="0.0"
-             max="0.02"
-             step="0.001"
-             value={springForce}
-             onChange={(e) => setSpringForce(parseFloat(e.target.value))}
-             className="w-full"
-           />
-           <div className="text-xs text-gray-500 mt-1">{springForce.toFixed(2)}</div>
+                       <input
+              type="range"
+              min="0"
+              max="20"
+              step="1"
+              value={springForce}
+              onChange={(e) => setSpringForce(parseInt(e.target.value))}
+              className="w-full"
+            />
+            <div className="text-xs text-gray-500 mt-1">{springForce}</div>
          </div>
 
          <div>

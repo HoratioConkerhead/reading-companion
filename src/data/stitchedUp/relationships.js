@@ -22,7 +22,6 @@ export const relationships = [
     { from: 'gerda_stammer', to: 'lena_weber', type: 'colleague' },
     { from: 'hannah_park', to: 'jane_maclean', type: 'colleague-partner' },
     { from: 'louise_harrington', to: 'gerda_stammer', type: 'associate' },
-    { from: 'richard_childreth', to: 'bill_laurie', type: 'asset-handler' },
     { from: 'megan_davies', to: 'edwards', type: 'assassin-victim' },
 
     // Montgomery relationships
@@ -58,7 +57,6 @@ export const relationships = [
     { from: 'george_bennet', to: 'mike', type: 'superior-subordinate' },
     { from: 'george_bennet', to: 'keith', type: 'superior-subordinate' },
     { from: 'george_bennet', to: 'ken', type: 'superior-subordinate' },
-    { from: 'bill_laurie', to: 'edwin', type: 'superior-subordinate' },
     { from: 'bert', to: 'marjorie_snowden', type: 'surveillance-target' },
     { from: 'keith', to: 'john_davies', type: 'surveillance-target' },
     { from: 'mike', to: 'peter_snowden', type: 'surveillance-target' },
@@ -87,7 +85,6 @@ export const relationships = [
     { from: 'george_bennet', to: 'inspector_williams', type: 'superior-cooperator' },
     
     // Davies-Edwards-Megan connections
-    { from: 'megan_davies', to: 'edwards', type: 'assassin-victim' },
     { from: 'john_davies', to: 'edwards', type: 'conspirator' },
     
     // Additional connections for original characters
