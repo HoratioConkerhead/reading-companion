@@ -745,8 +745,28 @@ const RelationshipWeb = ({
   // Handle zoom
   const handleWheel = (e) => {
     e.preventDefault();
+    
+    // Get the container's bounding rectangle
+    const containerRect = containerRef.current.getBoundingClientRect();
+    
+    // Calculate mouse position relative to the container
+    const mouseX = e.clientX - containerRect.left;
+    const mouseY = e.clientY - containerRect.top;
+    
+    // Calculate mouse position relative to the current pan and zoom
+    const worldMouseX = (mouseX - pan.x) / zoom;
+    const worldMouseY = (mouseY - pan.y) / zoom;
+    
+    // Calculate zoom factor
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setZoom(prev => Math.min(Math.max(prev * delta, 0.5), 2));
+    const newZoom = Math.min(Math.max(zoom * delta, 0.5), 2);
+    
+    // Calculate new pan to keep the mouse position fixed
+    const newPanX = mouseX - worldMouseX * newZoom;
+    const newPanY = mouseY - worldMouseY * newZoom;
+    
+    setZoom(newZoom);
+    setPan({ x: newPanX, y: newPanY });
   };
 
   // Focus on character - clears everything and shows just that character
@@ -793,19 +813,34 @@ const RelationshipWeb = ({
       }
     };
 
+    // Global wheel event handler to prevent scrolling when over the relationship web
+    const handleGlobalWheel = (e) => {
+      if (containerRef.current && containerRef.current.contains(e.target)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+
     if (isDragging) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
     }
 
+    // Add global wheel listener with passive: false to ensure preventDefault works
+    document.addEventListener('wheel', handleGlobalWheel, { passive: false });
+
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('wheel', handleGlobalWheel);
     };
   }, [isDragging, draggedNode, handleNodeMouseMove, handleNodeMouseUp]);
 
   return (
-    <div className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}>
+    <div 
+      className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}
+    >
       {!isFullPage && (
         <div className="mb-6">
           <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Character Relationship Web</h2>
@@ -973,17 +1008,19 @@ const RelationshipWeb = ({
        </div>
 
                {/* Relationship Graph */}
-       <div 
-         ref={containerRef}
-         className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
-           isFullPage ? 'flex-1' : ''
-         }`}
-         style={{ height: isFullPage ? 'calc(100vh - 200px)' : '600px' }}
-         onMouseDown={handleMouseDown}
-         onMouseMove={handleMouseMove}
-         onMouseUp={handleMouseUp}
-         onWheel={handleWheel}
-       >
+                                       <div 
+          ref={containerRef}
+          className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
+            isFullPage ? 'flex-1' : ''
+          }`}
+          style={{ 
+            height: isFullPage ? 'calc(100vh - 200px)' : '600px'
+          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onWheel={handleWheel}
+        >
         <svg
           ref={svgRef}
           width="100%"
