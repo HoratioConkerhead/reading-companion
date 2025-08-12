@@ -18,6 +18,7 @@ const RelationshipWeb = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [currentChapter, setCurrentChapter] = useState(null);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
+  const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [springForce, setSpringForce] = useState(10);
   const [repulsionForce, setRepulsionForce] = useState(8000);
   const [isFullPage, setIsFullPage] = useState(false);
@@ -33,6 +34,57 @@ const RelationshipWeb = ({
   const getCharacterName = (characterId) => {
     const character = charactersData.find(c => c.id === characterId);
     return character ? character.name : characterId;
+  };
+
+  // Find the largest connected component in the graph
+  const findLargestConnectedComponent = (currentNodes, currentEdges) => {
+    if (currentNodes.length === 0) return [];
+    
+    // Build adjacency list
+    const adjacencyList = new Map();
+    currentNodes.forEach(node => {
+      adjacencyList.set(node.id, new Set());
+    });
+    
+    currentEdges.forEach(edge => {
+      if (adjacencyList.has(edge.from) && adjacencyList.has(edge.to)) {
+        adjacencyList.get(edge.from).add(edge.to);
+        adjacencyList.get(edge.to).add(edge.from);
+      }
+    });
+    
+    // Find all connected components using DFS
+    const visited = new Set();
+    const components = [];
+    
+    const dfs = (nodeId, component) => {
+      visited.add(nodeId);
+      component.push(nodeId);
+      
+      const neighbors = adjacencyList.get(nodeId) || new Set();
+      neighbors.forEach(neighborId => {
+        if (!visited.has(neighborId)) {
+          dfs(neighborId, component);
+        }
+      });
+    };
+    
+    currentNodes.forEach(node => {
+      if (!visited.has(node.id)) {
+        const component = [];
+        dfs(node.id, component);
+        components.push(component);
+      }
+    });
+    
+    // Return the largest component
+    if (components.length === 0) return [];
+    
+    const largestComponent = components.reduce((largest, current) => 
+      current.length > largest.length ? current : largest
+    );
+    
+    return largestComponent;
   };
 
   // Count relationships for a character
@@ -624,11 +676,33 @@ const RelationshipWeb = ({
     }
   };
 
-  // Handle node click - add character's relationships
+    // Handle node click - add character's relationships or remove node
   const handleNodeClick = (nodeId) => {
-    // Don't call onCharacterSelect - we want to add relationships instead
+    if (isRemoveMode) {
+      // Remove mode: remove the clicked node and keep only the largest connected component
+      setNodes(currentNodes => {
+        const remainingNodes = currentNodes.filter(n => n.id !== nodeId);
+        
+        // Find the largest connected component among remaining nodes
+        const largestComponentIds = findLargestConnectedComponent(remainingNodes, edges);
+        
+        // Keep only nodes in the largest component
+        const filteredNodes = remainingNodes.filter(n => largestComponentIds.includes(n.id));
+        
+        // Update edges to only show relationships between remaining nodes
+        setEdges(currentEdges => {
+          const remainingNodeIds = new Set(filteredNodes.map(n => n.id));
+          return currentEdges.filter(edge => 
+            remainingNodeIds.has(edge.from) && remainingNodeIds.has(edge.to)
+          );
+        });
+        
+        return filteredNodes;
+      });
+      return;
+    }
     
-    
+    // Normal mode: add character's relationships
     setNodes(currentNodes => {
       
       // Add this character's relationships to the current view
@@ -692,7 +766,7 @@ const RelationshipWeb = ({
           isFocused: false
         };
       })] : currentNodes;
-            
+             
       // Update edges to show ALL relationships between visible characters
       setEdges(currentEdges => {
         const existingEdgeIds = new Set(currentEdges.map(e => e.id));
@@ -983,6 +1057,16 @@ const RelationshipWeb = ({
              >
                {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
              </button>
+             <button
+               className={`px-4 py-2 text-white rounded transition-colors ${
+                 isRemoveMode 
+                   ? 'bg-red-500 hover:bg-red-600' 
+                   : 'bg-gray-500 hover:bg-gray-600'
+               }`}
+               onClick={() => setIsRemoveMode(!isRemoveMode)}
+             >
+               {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
+             </button>
                   </div>
        </div>
 
@@ -1237,16 +1321,17 @@ const RelationshipWeb = ({
 
              {/* Instructions */}
        <div className={`${isFullPage ? 'p-4' : 'mt-4'} text-sm text-gray-500 dark:text-gray-400 p-2 border-t border-gray-200 dark:border-gray-700`}>
-        <p>
-          <strong>How to use:</strong> Start by selecting a character to focus on their relationships. 
-          Choose a chapter to avoid spoilers. Drag characters to rearrange, or use "Auto Arrange" for automatic layout. 
-          Click on any character to view their details. Use mouse wheel to zoom, and drag the background to pan.
-        </p>
+                 <p>
+           <strong>How to use:</strong> Start by selecting a character to focus on their relationships. 
+           Choose a chapter to avoid spoilers. Drag characters to rearrange, or use "Auto Arrange" for automatic layout. 
+           Click on any character to view their details. Use mouse wheel to zoom, and drag the background to pan.
+           <strong>Remove Mode:</strong> Toggle "Remove Mode" to click and remove characters. Only the largest connected component will be kept.
+         </p>
       </div>
       {/* Instructions */}
-      <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
-        <p>Drag nodes to move them • Click nodes to add their relationships • Shift+drag to stretch relationship lines</p>
-      </div>
+             <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+         <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
+       </div>
     </div>
   );
 };
