@@ -288,7 +288,7 @@ const RelationshipWeb = ({
          animationRef.current = requestAnimationFrame(animate);
    }, [nodes, edges, isSimulationRunning, springForce, repulsionForce]);
 
-  // Initialize nodes in a circular layout with focused character in center
+    // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
     const filteredCharacters = focusedCharacter 
       ? charactersData.filter(char => 
@@ -304,45 +304,50 @@ const RelationshipWeb = ({
     const centerY = 300;
     const radius = 200; // Fixed radius of 200 pixels
 
-         const newNodes = filteredCharacters.map((character, index) => {
-       const relationshipCount = getRelationshipCount(character.id);
-
-       if (character.id === focusedCharacter) {
-         // Place focused character in center
-         return {
-           id: character.id,
-           name: character.name,
-           role: character.role,
-           group: character.group,
-           position: { x: centerX, y: centerY },
-           color: getGroupColor(character.group, relationshipCount),
-           relationshipCount,
-           isFocused: true
-         };
-       } else {
-         // Place other characters in a circle around the focused character
-         // Use index - 1 to skip the focused character in the circle calculation
-         //const circleIndex = index > 0 ? index - 1 : 0;
-         const circleIndex = index ;
-         const totalInCircle = filteredCharacters.length - 1;
-         const angle = (circleIndex * 2 * Math.PI) / totalInCircle;
-         const x = centerX + radius * Math.cos(angle);
-         const y = centerY + radius * Math.sin(angle);
-         console.log("Angle", angle, "Index", index);
-         
-
-         return {
-           id: character.id,
-           name: character.name,
-           role: character.role,
-           group: character.group,
-           position: { x, y },
-           color: getGroupColor(character.group, relationshipCount),
-           relationshipCount,
-           isFocused: false
-         };
-       }
-     });
+    // Separate focused character from others for proper circle calculation
+    const focusedChar = filteredCharacters.find(char => char.id === focusedCharacter);
+    const otherCharacters = filteredCharacters.filter(char => char.id !== focusedCharacter);
+    
+    const newNodes = [];
+    
+    // Add focused character in center
+    if (focusedChar) {
+      const relationshipCount = getRelationshipCount(focusedChar.id);
+      newNodes.push({
+        id: focusedChar.id,
+        name: focusedChar.name,
+        role: focusedChar.role,
+        group: focusedChar.group,
+        position: { x: centerX, y: centerY },
+        color: getGroupColor(focusedChar.group, relationshipCount),
+        relationshipCount,
+        isFocused: true
+      });
+    }
+    
+    // Place other characters in a circle around the focused character
+    otherCharacters.forEach((character, index) => {
+      const relationshipCount = getRelationshipCount(character.id);
+      const totalInCircle = otherCharacters.length;
+      
+      // Calculate angle evenly around the circle
+      const angle = (index * 2 * Math.PI) / totalInCircle;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      
+      console.log("Character:", character.name, "Angle:", angle, "Index:", index, "Total in circle:", totalInCircle);
+      
+      newNodes.push({
+        id: character.id,
+        name: character.name,
+        role: character.role,
+        group: character.group,
+        position: { x, y },
+        color: getGroupColor(character.group, relationshipCount),
+        relationshipCount,
+        isFocused: false
+      });
+    });
 
     setNodes(newNodes);
   }, [charactersData, relationshipsData, focusedCharacter]);
