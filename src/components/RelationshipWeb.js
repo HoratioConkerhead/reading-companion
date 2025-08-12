@@ -17,7 +17,6 @@ const RelationshipWeb = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [currentChapter, setCurrentChapter] = useState(null);
-  const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
   const [springForce, setSpringForce] = useState(10);
   const [repulsionForce, setRepulsionForce] = useState(8000);
@@ -188,8 +187,7 @@ const RelationshipWeb = ({
     setNodes(currentNodes => {
       if (currentNodes.length === 0) return currentNodes;
       
-      // Reset simulation state and start fresh
-      setIsSimulationRunning(true);
+      
       
       const simulation = {
         nodes: currentNodes.map(node => ({
@@ -203,8 +201,8 @@ const RelationshipWeb = ({
         repulsionForce: repulsionForce, // Nodes repel each other
         springForce: springForce, // Connected nodes attract (spring)
         springLength: 120, // Ideal distance between connected nodes
-        damping: 0.85, // Friction
-        maxVelocity: 8,
+        damping: 0.0, // Friction
+        maxVelocity: 800,
         
         // Run simulation step
         step: function() {
@@ -290,12 +288,11 @@ const RelationshipWeb = ({
             frameCount++;
             if (frameCount < maxFrames) {
               animationRef.current = requestAnimationFrame(animate);
-            } else {
-              setIsSimulationRunning(false);
-              if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-              }
-            }
+                         } else {
+               if (animationRef.current) {
+                 cancelAnimationFrame(animationRef.current);
+               }
+             }
             return simulation.nodes;
           }
           return prevNodes;
@@ -536,8 +533,7 @@ const RelationshipWeb = ({
           cancelAnimationFrame(animationRef.current);
           animationRef.current = null;
         }
-        // Reset simulation state
-        setIsSimulationRunning(false);
+
       }
     }, [isAutoArrangeOn, runAutoArrange]);
 
@@ -933,70 +929,60 @@ const RelationshipWeb = ({
             >
               {isFullPage ? 'Exit Full Page' : 'Full Page'}
             </button>
-                       <button
-              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
-              onClick={() => {
-                // Get all characters that are currently visible or connected to visible characters
-                const visibleCharacterIds = new Set(nodes.map(n => n.id));
-                
-                // Add all characters connected to currently visible ones
-                const connectedCharacterIds = new Set();
-                relationshipsData.forEach(rel => {
-                  if (visibleCharacterIds.has(rel.from) || visibleCharacterIds.has(rel.to)) {
-                    connectedCharacterIds.add(rel.from);
-                    connectedCharacterIds.add(rel.to);
-                  }
-                });
-                
-                // Get all characters that should be visible
-                const allVisibleCharacters = charactersData.filter(char => 
-                  connectedCharacterIds.has(char.id) || visibleCharacterIds.has(char.id)
-                );
-                
-                                 // Position them to fill the window better with better spacing
-                 const centerX = 400;
-                 const centerY = 300;
-                 const radius = Math.max(200, Math.min(350, allVisibleCharacters.length * 25));
-                 
-                 const allCharacters = allVisibleCharacters.map((character, index) => {
-                   const angle = (index * 2 * Math.PI) / allVisibleCharacters.length;
-                   const x = centerX + radius * Math.cos(angle);
-                   const y = centerY + radius * Math.sin(angle);
-                   
-                   const relationshipCount = getRelationshipCount(character.id);
-                   return {
-                     id: character.id,
-                     name: character.name,
-                     role: character.role,
-                     group: character.group,
-                     position: { x, y },
-                     color: getGroupColor(character.group, relationshipCount),
-                     relationshipCount,
-                     isFocused: character.id === focusedCharacter
-                   };
-                 });
-                setNodes(allCharacters);
-              }}
-            >
-              Auto Fill
-            </button>
-                       <button
-              className={`px-4 py-2 text-white rounded transition-colors ${
-                isAutoArrangeOn 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-green-500 hover:bg-green-600'
-              }`}
-              onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
-            >
-              {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
-            </button>
             <button
-              className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
-              onClick={runForceSimulation}
-              disabled={isSimulationRunning}
-            >
-              {isSimulationRunning ? 'Running...' : 'Quick Arrange'}
-            </button>
+  className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
+  onClick={() => {
+    if (nodes.length === 0) return;
+    
+    // Calculate the bounding box of all current nodes
+    const minX = Math.min(...nodes.map(n => n.position.x));
+    const maxX = Math.max(...nodes.map(n => n.position.x));
+    const minY = Math.min(...nodes.map(n => n.position.y));
+    const maxY = Math.max(...nodes.map(n => n.position.y));
+    
+    // Add some padding around the nodes
+    const padding = 100;
+    const nodeWidth = maxX - minX + padding * 2;
+    const nodeHeight = maxY - minY + padding * 2;
+    
+    // Get the container dimensions
+    const containerWidth = containerRef.current.clientWidth;
+    const containerHeight = containerRef.current.clientHeight;
+    
+    // Calculate the zoom level needed to fit all nodes
+    const scaleX = containerWidth / nodeWidth;
+    const scaleY = containerHeight / nodeHeight;
+    const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
+    
+    // Calculate the center of the nodes
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    
+    // Calculate the center of the container
+    const containerCenterX = containerWidth / 2;
+    const containerCenterY = containerHeight / 2;
+    
+    // Calculate the pan needed to center the nodes
+    const newPanX = containerCenterX - centerX * newZoom;
+    const newPanY = containerCenterY - centerY * newZoom;
+    
+    // Apply the new zoom and pan
+    setZoom(newZoom);
+    setPan({ x: newPanX, y: newPanY });
+  }}
+>
+  Fit to View
+</button>
+                                    <button
+               className={`px-4 py-2 text-white rounded transition-colors ${
+                 isAutoArrangeOn 
+                   ? 'bg-red-500 hover:bg-red-600' 
+                   : 'bg-green-500 hover:bg-green-600'
+               }`}
+               onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
+             >
+               {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
+             </button>
                   </div>
        </div>
 
@@ -1009,7 +995,7 @@ const RelationshipWeb = ({
                        <input
               type="range"
               min="0"
-              max="20"
+              max="40"
               step="1"
               value={springForce}
               onChange={(e) => setSpringForce(parseInt(e.target.value))}
