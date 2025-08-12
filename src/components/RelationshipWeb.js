@@ -143,7 +143,7 @@ const RelationshipWeb = ({
   };
 
   // Get relationship color
-  const getRelationshipColor = (type) => {
+  const getRelationshipColor = useCallback((type) => {
     if (type.includes('spouse')) return '#805AD5'; // purple
     if (type.includes('handler') || type.includes('asset')) return '#3182CE'; // blue
     if (type.includes('conspirator')) return '#E53E3E'; // red
@@ -153,18 +153,18 @@ const RelationshipWeb = ({
     if (type.includes('informant') || type.includes('double-agent')) return '#D53F8C'; // pink
     if (type.includes('enemy') || type.includes('target') || type.includes('victim')) return '#E53E3E'; // red
     return '#718096'; // gray
-  };
+  }, []);
 
   // Format relationship type
-  const formatRelationshipType = (type) => {
+  const formatRelationshipType = useCallback((type) => {
     return type
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' - ');
-  };
+  }, []);
 
   // Filter relationships by chapter
-  const filterRelationshipsByChapter = (relationships, chapterId) => {
+  const filterRelationshipsByChapter = useCallback((relationships, chapterId) => {
     if (!chapterId) return relationships;
     
     const chapterIndex = chaptersData.findIndex(ch => ch.id === chapterId);
@@ -181,124 +181,134 @@ const RelationshipWeb = ({
       // Otherwise, show all relationships (you can customize this logic)
       return true;
     });
-  };
+  }, [chaptersData]);
 
   // Simple spring-based layout simulation
   const runForceSimulation = useCallback(() => {
-    if (nodes.length === 0) return;
-    
-    // Reset simulation state and start fresh
-    setIsSimulationRunning(true);
-    
-    const simulation = {
-      nodes: nodes.map(node => ({
-        ...node,
-        velocity: { x: 0, y: 0 },
-        force: { x: 0, y: 0 }
-      })),
-      edges: edges,
+    setNodes(currentNodes => {
+      if (currentNodes.length === 0) return currentNodes;
       
-      // Physics constants - use state values
-      repulsionForce: repulsionForce, // Nodes repel each other
-      springForce: springForce, // Connected nodes attract (spring)
-      springLength: 120, // Ideal distance between connected nodes
-      damping: 0.85, // Friction
-      maxVelocity: 8,
+      // Reset simulation state and start fresh
+      setIsSimulationRunning(true);
       
-      // Run simulation step
-      step: function() {
-        // Reset forces
-        this.nodes.forEach(node => {
-          node.force.x = 0;
-          node.force.y = 0;
-        });
+      const simulation = {
+        nodes: currentNodes.map(node => ({
+          ...node,
+          velocity: { x: 0, y: 0 },
+          force: { x: 0, y: 0 }
+        })),
+        edges: edges,
         
-        // Repulsion between all nodes (push them apart)
-        for (let i = 0; i < this.nodes.length; i++) {
-          for (let j = i + 1; j < this.nodes.length; j++) {
-            const node1 = this.nodes[i];
-            const node2 = this.nodes[j];
-            
-            const dx = node2.position.x - node1.position.x;
-            const dy = node2.position.y - node1.position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-            
-            // Repulsion force (stronger when closer)
-            const force = this.repulsionForce / (distance * distance);
-            
-            node1.force.x -= (dx / distance) * force;
-            node1.force.y -= (dy / distance) * force;
-            node2.force.x += (dx / distance) * force;
-            node2.force.y += (dy / distance) * force;
+        // Physics constants - use state values
+        repulsionForce: repulsionForce, // Nodes repel each other
+        springForce: springForce, // Connected nodes attract (spring)
+        springLength: 120, // Ideal distance between connected nodes
+        damping: 0.85, // Friction
+        maxVelocity: 8,
+        
+        // Run simulation step
+        step: function() {
+          // Reset forces
+          this.nodes.forEach(node => {
+            node.force.x = 0;
+            node.force.y = 0;
+          });
+          
+          // Repulsion between all nodes (push them apart)
+          for (let i = 0; i < this.nodes.length; i++) {
+            for (let j = i + 1; j < this.nodes.length; j++) {
+              const node1 = this.nodes[i];
+              const node2 = this.nodes[j];
+              
+              const dx = node2.position.x - node1.position.x;
+              const dy = node2.position.y - node1.position.y;
+              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+              
+              // Repulsion force (stronger when closer)
+              const force = this.repulsionForce / (distance * distance);
+              
+              node1.force.x -= (dx / distance) * force;
+              node1.force.y -= (dy / distance) * force;
+              node2.force.x += (dx / distance) * force;
+              node2.force.y += (dy / distance) * force;
+            }
           }
+          
+          // Spring attraction along edges (pull connected nodes together)
+          this.edges.forEach(edge => {
+            const sourceNode = this.nodes.find(n => n.id === edge.from);
+            const targetNode = this.nodes.find(n => n.id === edge.to);
+            
+            if (sourceNode && targetNode) {
+              const dx = targetNode.position.x - sourceNode.position.x;
+              const dy = targetNode.position.y - sourceNode.position.y;
+              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+              
+              // Spring force (attraction with ideal length)
+              const displacement = distance - this.springLength;
+              const force = (this.springForce / 1000) * displacement;
+              
+              sourceNode.force.x += (dx / distance) * force;
+              sourceNode.force.y += (dy / distance) * force;
+              targetNode.force.x -= (dx / distance) * force;
+              targetNode.force.y -= (dy / distance) * force;
+            }
+          });
+          
+          // Apply forces to velocities
+          this.nodes.forEach(node => {
+            node.velocity.x += node.force.x;
+            node.velocity.y += node.force.y;
+            
+            // Apply damping
+            node.velocity.x *= this.damping;
+            node.velocity.y *= this.damping;
+            
+            // Limit velocity
+            const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
+            if (speed > this.maxVelocity) {
+              node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
+              node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
+            }
+            
+            // Update position
+            node.position.x += node.velocity.x;
+            node.position.y += node.velocity.y;
+          });
         }
-        
-        // Spring attraction along edges (pull connected nodes together)
-        this.edges.forEach(edge => {
-          const sourceNode = this.nodes.find(n => n.id === edge.from);
-          const targetNode = this.nodes.find(n => n.id === edge.to);
-          
-          if (sourceNode && targetNode) {
-            const dx = targetNode.position.x - sourceNode.position.x;
-            const dy = targetNode.position.y - sourceNode.position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-            
-                         // Spring force (attraction with ideal length)
-             const displacement = distance - this.springLength;
-             const force = (this.springForce / 1000) * displacement;
-            
-            sourceNode.force.x += (dx / distance) * force;
-            sourceNode.force.y += (dy / distance) * force;
-            targetNode.force.x -= (dx / distance) * force;
-            targetNode.force.y -= (dy / distance) * force;
-          }
-        });
-        
-        // Apply forces to velocities
-        this.nodes.forEach(node => {
-          node.velocity.x += node.force.x;
-          node.velocity.y += node.force.y;
-          
-          // Apply damping
-          node.velocity.x *= this.damping;
-          node.velocity.y *= this.damping;
-          
-          // Limit velocity
-          const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
-          if (speed > this.maxVelocity) {
-            node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
-            node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
-          }
-          
-          // Update position
-          node.position.x += node.velocity.x;
-          node.position.y += node.velocity.y;
-        });
-      }
-    };
-    
-    let frameCount = 0;
-    const maxFrames = 180; // 3 seconds at 60fps
-    
-    // Animation loop
-    const animate = () => {
-      simulation.step();
-      setNodes([...simulation.nodes]);
-      frameCount++;
+      };
       
-      // Continue animation if not reached max frames
-      if (frameCount < maxFrames) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else {
-        setIsSimulationRunning(false);
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-      }
-    };
-    
-         animationRef.current = requestAnimationFrame(animate);
-   }, [nodes, edges, isSimulationRunning, springForce, repulsionForce]);
+      let frameCount = 0;
+      const maxFrames = 180; // 3 seconds at 60fps
+      
+      // Animation loop
+      const animate = () => {
+        simulation.step();
+        setNodes(prevNodes => {
+          // Only update if we're still running
+          if (frameCount < maxFrames) {
+            frameCount++;
+            if (frameCount < maxFrames) {
+              animationRef.current = requestAnimationFrame(animate);
+            } else {
+              setIsSimulationRunning(false);
+              if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+              }
+            }
+            return simulation.nodes;
+          }
+          return prevNodes;
+        });
+      };
+      
+      // Start the animation
+      animationRef.current = requestAnimationFrame(animate);
+      
+      // Return initial nodes for now
+      return currentNodes;
+    });
+  }, [edges, springForce, repulsionForce]);
 
     // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
@@ -347,8 +357,6 @@ const RelationshipWeb = ({
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
       
-      console.log("Character:", character.name, "Angle:", angle, "Index:", index, "Total in circle:", totalInCircle);
-      
       newNodes.push({
         id: character.id,
         name: character.name,
@@ -368,15 +376,15 @@ const RelationshipWeb = ({
   const initializeEdges = useCallback(() => {
     const filteredRelationships = filterRelationshipsByChapter(relationshipsData, currentChapter);
     
-    const relevantRelationships = focusedCharacter
-      ? filteredRelationships.filter(rel => 
-          rel.from === focusedCharacter || rel.to === focusedCharacter ||
-          nodes.some(node => 
-            (rel.from === node.id && rel.to === focusedCharacter) ||
-            (rel.to === node.id && rel.from === focusedCharacter)
-          )
-        )
-      : filteredRelationships;
+    // Show ALL relationships between the initially visible characters
+    const relevantRelationships = filteredRelationships.filter(rel => {
+      // Check if both characters in this relationship are visible
+      const fromVisible = nodes.some(node => node.id === rel.from);
+      const toVisible = nodes.some(node => node.id === rel.to);
+      
+      // Only show relationships where both characters are visible
+      return fromVisible && toVisible;
+    });
 
     const newEdges = relevantRelationships.map((relationship, index) => ({
       id: `${relationship.from}-${relationship.to}-${index}`,
@@ -388,16 +396,19 @@ const RelationshipWeb = ({
     }));
 
     setEdges(newEdges);
-  }, [relationshipsData, focusedCharacter, currentChapter]); // Removed nodes dependency
+  }, [relationshipsData, currentChapter, nodes, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
 
   // Initialize graph when focused character or chapter changes
   useEffect(() => {
     initializeNodes();
   }, [initializeNodes]);
 
+  // Initialize edges after nodes are set
   useEffect(() => {
-    initializeEdges();
-  }, [initializeEdges]);
+    if (nodes.length > 0) {
+      initializeEdges();
+    }
+  }, [nodes, initializeEdges]);
 
   // Sync with external selectedCharacter prop
   useEffect(() => {
@@ -409,106 +420,111 @@ const RelationshipWeb = ({
     }
   }, [selectedCharacter, focusedCharacter]);
 
-     // Auto arrange simulation - runs continuously when enabled
-   const runAutoArrange = useCallback(() => {
-     if (!isAutoArrangeOn || nodes.length === 0) return;
-     
-     const simulation = {
-       nodes: nodes.map(node => ({
-         ...node,
-         velocity: { x: 0, y: 0 },
-         force: { x: 0, y: 0 }
-       })),
-       edges: edges,
-       
-       // Physics constants - use state values
-       repulsionForce: repulsionForce,
-       springForce: springForce,
-       springLength: 120,
-       damping: 0.85,
-       maxVelocity: 8,
-       
-       // Run simulation step
-       step: function() {
-         // Reset forces
-         this.nodes.forEach(node => {
-           node.force.x = 0;
-           node.force.y = 0;
-         });
-         
-         // Repulsion between all nodes (push them apart)
-         for (let i = 0; i < this.nodes.length; i++) {
-           for (let j = i + 1; j < this.nodes.length; j++) {
-             const node1 = this.nodes[i];
-             const node2 = this.nodes[j];
-             
-             const dx = node2.position.x - node1.position.x;
-             const dy = node2.position.y - node1.position.y;
-             const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-             
-             // Repulsion force (stronger when closer)
-             const force = this.repulsionForce / (distance * distance);
-             
-             node1.force.x -= (dx / distance) * force;
-             node1.force.y -= (dy / distance) * force;
-             node2.force.x += (dx / distance) * force;
-             node2.force.y += (dy / distance) * force;
-           }
-         }
-         
-         // Spring attraction along edges (pull connected nodes together)
-         this.edges.forEach(edge => {
-           const sourceNode = this.nodes.find(n => n.id === edge.from);
-           const targetNode = this.nodes.find(n => n.id === edge.to);
-           
-           if (sourceNode && targetNode) {
-             const dx = targetNode.position.x - sourceNode.position.x;
-             const dy = targetNode.position.y - sourceNode.position.y;
-             const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-             
-             // Spring force (attraction with ideal length)
-             const displacement = distance - this.springLength;
-             const force = (this.springForce / 1000) * displacement;
-             
-             sourceNode.force.x += (dx / distance) * force;
-             sourceNode.force.y += (dy / distance) * force;
-             targetNode.force.x -= (dx / distance) * force;
-             targetNode.force.y -= (dy / distance) * force;
-           }
-         });
-         
-         // Apply forces to velocities
-         this.nodes.forEach(node => {
-           node.velocity.x += node.force.x;
-           node.velocity.y += node.force.y;
-           
-           // Apply damping
-           node.velocity.x *= this.damping;
-           node.velocity.y *= this.damping;
-           
-           // Limit velocity
-           const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
-           if (speed > this.maxVelocity) {
-             node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
-             node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
-           }
-           
-           // Update position
-           node.position.x += node.velocity.x;
-           node.position.y += node.velocity.y;
-         });
-       }
-     };
-     
-     // Run one step
-     simulation.step();
-     setNodes([...simulation.nodes]);
-     
-           // Schedule next step if still enabled
-      if (isAutoArrangeOn && animationRef.current) {
-        animationRef.current = requestAnimationFrame(runAutoArrange);
-      }
-   }, [nodes, edges, isAutoArrangeOn, springForce, repulsionForce]);
+       // Auto arrange simulation - runs continuously when enabled
+    const runAutoArrange = useCallback(() => {
+      if (!isAutoArrangeOn) return;
+      
+      setNodes(currentNodes => {
+        if (currentNodes.length === 0) return currentNodes;
+        
+        const simulation = {
+          nodes: currentNodes.map(node => ({
+            ...node,
+            velocity: { x: 0, y: 0 },
+            force: { x: 0, y: 0 }
+          })),
+          edges: edges,
+          
+          // Physics constants - use state values
+          repulsionForce: repulsionForce,
+          springForce: springForce,
+          springLength: 120,
+          damping: 0.85,
+          maxVelocity: 8,
+          
+          // Run simulation step
+          step: function() {
+            // Reset forces
+            this.nodes.forEach(node => {
+              node.force.x = 0;
+              node.force.y = 0;
+            });
+            
+            // Repulsion between all nodes (push them apart)
+            for (let i = 0; i < this.nodes.length; i++) {
+              for (let j = i + 1; j < this.nodes.length; j++) {
+                const node1 = this.nodes[i];
+                const node2 = this.nodes[j];
+                
+                const dx = node2.position.x - node1.position.x;
+                const dy = node2.position.y - node1.position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+                
+                // Repulsion force (stronger when closer)
+                const force = this.repulsionForce / (distance * distance);
+                
+                node1.force.x -= (dx / distance) * force;
+                node1.force.y -= (dy / distance) * force;
+                node2.force.x += (dx / distance) * force;
+                node2.force.y += (dy / distance) * force;
+              }
+            }
+            
+            // Spring attraction along edges (pull connected nodes together)
+            this.edges.forEach(edge => {
+              const sourceNode = this.nodes.find(n => n.id === edge.from);
+              const targetNode = this.nodes.find(n => n.id === edge.to);
+              
+              if (sourceNode && targetNode) {
+                const dx = targetNode.position.x - sourceNode.position.x;
+                const dy = targetNode.position.y - sourceNode.position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+                
+                // Spring force (attraction with ideal length)
+                const displacement = distance - this.springLength;
+                const force = (this.springForce / 1000) * displacement;
+                
+                sourceNode.force.x += (dx / distance) * force;
+                sourceNode.force.y += (dy / distance) * force;
+                targetNode.force.x -= (dx / distance) * force;
+                targetNode.force.y -= (dy / distance) * force;
+              }
+            });
+            
+            // Apply forces to velocities
+            this.nodes.forEach(node => {
+              node.velocity.x += node.force.x;
+              node.velocity.y += node.force.y;
+              
+              // Apply damping
+              node.velocity.x *= this.damping;
+              node.velocity.y *= this.damping;
+              
+              // Limit velocity
+              const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
+              if (speed > this.maxVelocity) {
+                node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
+                node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
+              }
+              
+              // Update position
+              node.position.x += node.velocity.x;
+              node.position.y += node.velocity.y;
+            });
+          }
+        };
+        
+        // Run one step
+        simulation.step();
+        
+        // Schedule next step if still enabled
+        if (isAutoArrangeOn && animationRef.current) {
+          animationRef.current = requestAnimationFrame(runAutoArrange);
+        }
+        
+        return simulation.nodes;
+      });
+    }, [isAutoArrangeOn, edges, springForce, repulsionForce]);
   
            // Run auto arrange when enabled
     useEffect(() => {
@@ -539,22 +555,26 @@ const RelationshipWeb = ({
     e.preventDefault();
     e.stopPropagation();
     
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return;
-    
-    // Reset click detection for this interaction
-    wasClick.current = true;
-    clickStartPos.current = { x: e.clientX, y: e.clientY };
-    
-    setIsDragging(true);
-    setDraggedNode(nodeId);
-    setDragStart({ x: e.clientX - node.position.x, y: e.clientY - node.position.y });
-    
-    // Stop auto arrange if it's running
-    if (isAutoArrangeOn) {
-      wasAutoArrangeOn.current = true;
-      setIsAutoArrangeOn(false);
-    }
+    setNodes(currentNodes => {
+      const node = currentNodes.find(n => n.id === nodeId);
+      if (!node) return currentNodes;
+      
+      // Reset click detection for this interaction
+      wasClick.current = true;
+      clickStartPos.current = { x: e.clientX, y: e.clientY };
+      
+      setIsDragging(true);
+      setDraggedNode(nodeId);
+      setDragStart({ x: e.clientX - node.position.x, y: e.clientY - node.position.y });
+      
+      // Stop auto arrange if it's running
+      if (isAutoArrangeOn) {
+        wasAutoArrangeOn.current = true;
+        setIsAutoArrangeOn(false);
+      }
+      
+      return currentNodes;
+    });
   };
 
   // Handle node drag
@@ -562,30 +582,30 @@ const RelationshipWeb = ({
     if (!isDragging) return;
     
     if (isDragging && draggedNode) {
-      const node = nodes.find(n => n.id === draggedNode);
-      if (!node) return;
-      
-      const newX = e.clientX - dragStart.x;
-      const newY = e.clientY - dragStart.y;
-      
-      // Check if mouse moved enough to not be a click
-      const moveDistance = Math.sqrt(
-        Math.pow(e.clientX - clickStartPos.current.x, 2) + 
-        Math.pow(e.clientY - clickStartPos.current.y, 2)
-      );
-      
-      // Increase threshold to make click detection more reliable
-      if (moveDistance > 8) {
-        wasClick.current = false;
-      }
-      
-      setNodes(prevNodes => 
-        prevNodes.map(n => 
+      setNodes(prevNodes => {
+        const node = prevNodes.find(n => n.id === draggedNode);
+        if (!node) return prevNodes;
+        
+        const newX = e.clientX - dragStart.x;
+        const newY = e.clientY - dragStart.y;
+        
+        // Check if mouse moved enough to not be a click
+        const moveDistance = Math.sqrt(
+          Math.pow(e.clientX - clickStartPos.current.x, 2) + 
+          Math.pow(e.clientY - clickStartPos.current.y, 2)
+        );
+        
+        // Increase threshold to make click detection more reliable
+        if (moveDistance > 8) {
+          wasClick.current = false;
+        }
+        
+        return prevNodes.map(n => 
           n.id === draggedNode 
             ? { ...n, position: { x: newX, y: newY } }
             : n
-        )
-      );
+        );
+      });
     }
   }, [isDragging, draggedNode, dragStart]);
 
@@ -612,106 +632,114 @@ const RelationshipWeb = ({
   const handleNodeClick = (nodeId) => {
     // Don't call onCharacterSelect - we want to add relationships instead
     
-    // Add this character's relationships to the current view
-    const characterRelationships = relationshipsData.filter(rel => 
-      rel.from === nodeId || rel.to === nodeId
-    );
     
-    // Get all characters connected to this one
-    const connectedCharacterIds = new Set();
-    characterRelationships.forEach(rel => {
-      connectedCharacterIds.add(rel.from);
-      connectedCharacterIds.add(rel.to);
+    setNodes(currentNodes => {
+      
+      // Add this character's relationships to the current view
+      const characterRelationships = relationshipsData.filter(rel => 
+        rel.from === nodeId || rel.to === nodeId
+      );
+      
+      // Get all characters connected to this one
+      const connectedCharacterIds = new Set();
+      characterRelationships.forEach(rel => {
+        connectedCharacterIds.add(rel.from);
+        connectedCharacterIds.add(rel.to);
+      });
+      
+      // Find new characters to add
+      const existingIds = new Set(currentNodes.map(n => n.id));
+
+      const newCharacters = charactersData.filter(char => 
+        connectedCharacterIds.has(char.id) && !existingIds.has(char.id)
+      );
+      
+      // Always update edges to show relationships for the clicked character
+      // Get the clicked node for positioning new characters
+      const clickedNode = currentNodes.find(n => n.id === nodeId);
+      if (!clickedNode) return currentNodes;
+      
+      // Calculate what the updated nodes will be (including any new ones)
+      const updatedNodes = newCharacters.length > 0 ? [...currentNodes, ...newCharacters.map((char, index) => {
+        // Try to find a good position that doesn't overlap
+        let attempts = 0;
+        let x, y;
+        const minDistance = 120; // Increased minimum distance between nodes
+        
+        do {
+          const angle = (index * 2 * Math.PI) / newCharacters.length + (attempts * 0.3);
+          const radius = 150 + (attempts * 25); // Start with larger radius and increase more
+          x = clickedNode.position.x + radius * Math.cos(angle);
+          y = clickedNode.position.y + radius * Math.sin(angle);
+          attempts++;
+          
+          // Check if this position overlaps with any existing node
+          const overlaps = currentNodes.some(existingNode => {
+            const dx = existingNode.position.x - x;
+            const dy = existingNode.position.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < minDistance;
+          });
+          
+          if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
+        } while (attempts <= 15);
+        
+        const relationshipCount = getRelationshipCount(char.id);
+        return {
+          id: char.id,
+          name: char.name,
+          role: char.role,
+          group: char.group,
+          position: { x, y },
+          color: getGroupColor(char.group, relationshipCount),
+          relationshipCount,
+          isFocused: false
+        };
+      })] : currentNodes;
+            
+      // Update edges to show ALL relationships between visible characters
+      setEdges(currentEdges => {
+        const existingEdgeIds = new Set(currentEdges.map(e => e.id));
+        
+        // Get all characters that will be visible after adding new ones
+        const allVisibleIds = new Set(updatedNodes.map(n => n.id));
+        
+        // Find all relationships between visible characters
+        const allVisibleRelationships = relationshipsData.filter(rel => 
+          allVisibleIds.has(rel.from) && allVisibleIds.has(rel.to)
+        );
+                
+        // Filter by chapter if needed
+        const filteredRelationships = filterRelationshipsByChapter(allVisibleRelationships, currentChapter);
+        
+        const newEdges = filteredRelationships
+          .filter(rel => {
+            // Check if we already have any edge between these two characters
+            const baseEdgeId = `${rel.from}-${rel.to}`;
+            const hasExistingEdge = Array.from(existingEdgeIds).some(existingId => 
+              existingId.startsWith(baseEdgeId)
+            );
+            return !hasExistingEdge;
+          })
+          .map((relationship, index) => ({
+            id: `${relationship.from}-${relationship.to}-${Date.now()}-${index}`,
+            from: relationship.from,
+            to: relationship.to,
+            type: relationship.type,
+            color: getRelationshipColor(relationship.type),
+            label: formatRelationshipType(relationship.type)
+          }));
+        
+        // Always update edges, even if no new characters were added
+        if (newEdges.length > 0) {
+          return [...currentEdges, ...newEdges];
+        } else {
+          return currentEdges;
+        }
+      });
+      
+      return updatedNodes;
     });
-    
-    // Find new characters to add
-    const existingIds = new Set(nodes.map(n => n.id));
-    const newCharacters = charactersData.filter(char => 
-      connectedCharacterIds.has(char.id) && !existingIds.has(char.id)
-    );
-    
-    if (newCharacters.length === 0) return;
-    
-    // Position new characters to avoid overlap with existing ones
-    const clickedNode = nodes.find(n => n.id === nodeId);
-    if (!clickedNode) return;
-    
-         const newNodes = newCharacters.map((char, index) => {
-       // Try to find a good position that doesn't overlap
-       let attempts = 0;
-       let x, y;
-       const minDistance = 120; // Increased minimum distance between nodes
-       
-       do {
-         const angle = (index * 2 * Math.PI) / newCharacters.length + (attempts * 0.3);
-         const radius = 150 + (attempts * 25); // Start with larger radius and increase more
-         x = clickedNode.position.x + radius * Math.cos(angle);
-         y = clickedNode.position.y + radius * Math.sin(angle);
-         attempts++;
-         
-         // Check if this position overlaps with any existing node
-         const overlaps = nodes.some(existingNode => {
-           const dx = existingNode.position.x - x;
-           const dy = existingNode.position.y - y;
-           const distance = Math.sqrt(dx * dx + dy * dy);
-           return distance < minDistance;
-         });
-         
-         if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
-       } while (attempts <= 15);
-       
-                const relationshipCount = getRelationshipCount(char.id);
-         return {
-           id: char.id,
-           name: char.name,
-           role: char.role,
-           group: char.group,
-           position: { x, y },
-           color: getGroupColor(char.group, relationshipCount),
-           relationshipCount,
-           isFocused: false
-         };
-     });
-    
-    // Calculate what the updated nodes will be
-    const updatedNodes = [...nodes, ...newNodes];
-    
-    // Update both nodes and edges together
-    setNodes(updatedNodes);
-    
-    // Update edges to show ALL relationships between visible characters
-    const existingEdgeIds = new Set(edges.map(e => e.id));
-    
-    // Get all characters that will be visible after adding new ones
-    const allVisibleIds = new Set(updatedNodes.map(n => n.id));
-    
-    // Find all relationships between visible characters
-    const allVisibleRelationships = relationshipsData.filter(rel => 
-      allVisibleIds.has(rel.from) && allVisibleIds.has(rel.to)
-    );
-    
-    // Filter by chapter if needed
-    const filteredRelationships = filterRelationshipsByChapter(allVisibleRelationships, currentChapter);
-    
-         const newEdges = filteredRelationships
-       .filter(rel => {
-         // Check if we already have any edge between these two characters
-         const baseEdgeId = `${rel.from}-${rel.to}`;
-         const hasExistingEdge = Array.from(existingEdgeIds).some(existingId => 
-           existingId.startsWith(baseEdgeId)
-         );
-         return !hasExistingEdge;
-       })
-       .map((relationship, index) => ({
-         id: `${relationship.from}-${relationship.to}-${Date.now()}-${index}`,
-         from: relationship.from,
-         to: relationship.to,
-         type: relationship.type,
-         color: getRelationshipColor(relationship.type),
-         label: formatRelationshipType(relationship.type)
-       }));
-    
-    setEdges([...edges, ...newEdges]);
   };
 
   // Handle pan
@@ -1008,19 +1036,19 @@ const RelationshipWeb = ({
        </div>
 
                {/* Relationship Graph */}
-                                       <div 
-          ref={containerRef}
-          className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
-            isFullPage ? 'flex-1' : ''
-          }`}
-          style={{ 
-            height: isFullPage ? 'calc(100vh - 200px)' : '600px'
-          }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onWheel={handleWheel}
-        >
+                                                <div 
+           ref={containerRef}
+           className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
+             isFullPage ? 'flex-1' : ''
+           }`}
+           style={{ 
+             height: isFullPage ? 'calc(100vh - 200px)' : '600px'
+           }}
+           onMouseDown={handleMouseDown}
+           onMouseMove={handleMouseMove}
+           onMouseUp={handleMouseUp}
+           onWheel={handleWheel}
+         >
         <svg
           ref={svgRef}
           width="100%"
