@@ -19,8 +19,8 @@ const RelationshipWeb = ({
   const [currentChapter, setCurrentChapter] = useState(null);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
   const [isRemoveMode, setIsRemoveMode] = useState(false);
-  const [springForce, setSpringForce] = useState(10);
-  const [repulsionForce, setRepulsionForce] = useState(8000);
+  const [springForce, setSpringForce] = useState(100);
+  const [repulsionForce, setRepulsionForce] = useState(100000);
   const [isFullPage, setIsFullPage] = useState(false);
   
   const svgRef = useRef(null);
@@ -29,6 +29,7 @@ const RelationshipWeb = ({
   const wasClick = useRef(false);
   const clickStartPos = useRef({ x: 0, y: 0 });
   const wasAutoArrangeOn = useRef(false);
+  const textWidthCache = useRef(new Map());
 
   // Get character name from ID
   const getCharacterName = (characterId) => {
@@ -88,14 +89,14 @@ const RelationshipWeb = ({
   };
 
   // Count relationships for a character
-  const getRelationshipCount = (characterId) => {
+  const getRelationshipCount = useCallback((characterId) => {
     return relationshipsData.filter(rel => 
       rel.from === characterId || rel.to === characterId
     ).length;
-  };
+  }, [relationshipsData]);
 
   // Get character group color with brightness based on relationship count
-  const getGroupColor = (group, relationshipCount = 0) => {
+  const getGroupColor = useCallback((group, relationshipCount = 0) => {
     // Base colors for each group
     let baseColor;
     switch (group) {
@@ -142,7 +143,7 @@ const RelationshipWeb = ({
 
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-  };
+  }, []);
 
   // Get appropriate text color based on theme
   const getTextColor = (isDark = false) => {
@@ -169,14 +170,21 @@ const RelationshipWeb = ({
   };
 
   // Calculate text width using canvas.measureText with fallback to estimation
-  const getTextWidth = (text, fontSize = 10) => {
+  const getTextWidth = useCallback((text, fontSize = 10) => {
+    const cacheKey = `${text}-${fontSize}`;
+    if (textWidthCache.current.has(cacheKey)) {
+      return textWidthCache.current.get(cacheKey);
+    }
+    
     // Try to use canvas.measureText if available (most accurate)
     if (typeof document !== 'undefined' && document.createElement) {
       try {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         context.font = `${fontSize}px Arial`; // Match your SVG font family
-        return context.measureText(text).width;
+        const width = context.measureText(text).width;
+        textWidthCache.current.set(cacheKey, width);
+        return width;
       } catch (e) {
         // Fall back to estimation if canvas fails
         console.warn('Canvas text measurement failed, using estimation:', e);
@@ -185,13 +193,42 @@ const RelationshipWeb = ({
     
     // Fallback: improved estimation
     const avgCharWidth = fontSize * 0.6;
-    return text.length * avgCharWidth;
-  };
+    const width = text.length * avgCharWidth;
+    textWidthCache.current.set(cacheKey, width);
+    return width;
+  }, []);
 
   // Get appropriate stroke color for nodes based on theme
-  const getNodeStrokeColor = (isDark = false) => {
-    return isDark ? '#ffffff' : '#000000';
-  };
+  const getNodeStrokeColor = useCallback((isDark = false, characterId = null) => {
+    if (!characterId) {
+      return isDark ? '#ffffff' : '#000000';
+    }
+    
+    // Check if this character is missing any relationships
+    const characterRelationships = relationshipsData.filter(rel => 
+      rel.from === characterId || rel.to === characterId
+    );
+    
+    // Get all characters connected to this one
+    const connectedCharacterIds = new Set();
+    characterRelationships.forEach(rel => {
+      connectedCharacterIds.add(rel.from);
+      connectedCharacterIds.add(rel.to);
+    });
+    
+    // Check if any connected characters are not currently visible in nodes
+    const isMissingRelationships = Array.from(connectedCharacterIds).some(id => 
+      id !== characterId && !nodes.some(node => node.id === id)
+    );
+    
+    if (isMissingRelationships) {
+      // Missing relationships: white in dark mode, black in light mode
+      return isDark ? '#ffffff' : '#000000';
+    } else {
+      // Not missing relationships: black in dark mode, white in light mode
+      return isDark ? '#000000' : '#ffffff';
+    }
+  }, [relationshipsData, nodes]);
 
   // Get relationship color
   const getRelationshipColor = useCallback((type) => {
@@ -419,7 +456,7 @@ const RelationshipWeb = ({
     });
 
     setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter]);
+  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -1079,7 +1116,7 @@ const RelationshipWeb = ({
                        <input
               type="range"
               min="0"
-              max="40"
+              max="200"
               step="1"
               value={springForce}
               onChange={(e) => setSpringForce(parseInt(e.target.value))}
@@ -1094,8 +1131,8 @@ const RelationshipWeb = ({
            </label>
            <input
              type="range"
-             min="200"
-             max="100000"
+             min="0"
+             max="500000"
              step="100"
              value={repulsionForce}
              onChange={(e) => setRepulsionForce(parseInt(e.target.value))}
@@ -1215,7 +1252,7 @@ const RelationshipWeb = ({
                     cy={node.position.y}
                     r={node.isFocused ? 35 : 30}
                     fill={node.color}
-                    stroke={node.isFocused ? getNodeStrokeColor(darkMode) : getNodeStrokeColor(darkMode)}
+                    stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
                     strokeWidth={node.isFocused ? 3 : 2}
                     className="cursor-pointer hover:opacity-80 transition-opacity"
                     onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
