@@ -117,11 +117,23 @@ const RelationshipWeb = ({
     return luminance > 0.5 ? '#000000' : '#ffffff';
   };
 
-  // Calculate approximate text width for relationship labels
+  // Calculate text width using canvas.measureText with fallback to estimation
   const getTextWidth = (text, fontSize = 10) => {
-    // Approximate width based on character count and font size
-    // This is a rough estimate - for more accuracy, you could use canvas.measureText
-    const avgCharWidth = fontSize * 0.6; // Rough estimate
+    // Try to use canvas.measureText if available (most accurate)
+    if (typeof document !== 'undefined' && document.createElement) {
+      try {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = `${fontSize}px Arial`; // Match your SVG font family
+        return context.measureText(text).width;
+      } catch (e) {
+        // Fall back to estimation if canvas fails
+        console.warn('Canvas text measurement failed, using estimation:', e);
+      }
+    }
+    
+    // Fallback: improved estimation
+    const avgCharWidth = fontSize * 0.6;
     return text.length * avgCharWidth;
   };
 
@@ -1029,17 +1041,17 @@ const RelationshipWeb = ({
                     strokeWidth="2"
                     markerEnd="url(#arrowhead)"
                   />
-                  {/* Background rectangle with dynamic width */}
-                  <rect
-                    x={labelX - Math.max(40, getTextWidth(edge.label) / 2 + 5)}
-                    y={labelY - 8}
-                    width={Math.max(80, getTextWidth(edge.label) + 10)}
-                    height="16"
-                    fill={darkMode ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.9)"}
-                    stroke={edge.color}
-                    strokeWidth="1"
-                    rx="3"
-                  />
+                                     {/* Background rectangle with dynamic width - tight to text */}
+                   <rect
+                     x={labelX - getTextWidth(edge.label) / 2}
+                     y={labelY - 8}
+                     width={getTextWidth(edge.label)}
+                     height="16"
+                     fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
+                     stroke={edge.color}
+                     strokeWidth="1"
+                     rx="3"
+                   />
                   <text
                     x={labelX}
                     y={labelY}
