@@ -32,7 +32,7 @@ const RelationshipWeb = ({
   const textWidthCache = useRef(new Map());
 
   // Find the largest connected component in the graph
-  const findLargestConnectedComponent = (currentNodes, currentEdges) => {
+  const findLargestConnectedComponent = useCallback((currentNodes, currentEdges) => {
     if (currentNodes.length === 0) return [];
     
     // Build adjacency list
@@ -80,7 +80,7 @@ const RelationshipWeb = ({
     );
     
     return largestComponent;
-  };
+  }, []);
 
   // Count relationships for a character
   const getRelationshipCount = useCallback((characterId) => {
@@ -564,7 +564,7 @@ const RelationshipWeb = ({
   }, [isDragging, draggedNode, dragStart]);
 
   // Handle node click - add character's relationships or remove node
-  const handleNodeClick = (nodeId) => {
+  const handleNodeClick = useCallback((nodeId) => {
     if (isRemoveMode) {
       // Remove mode: remove the clicked node and keep only the largest connected component
       setNodes(currentNodes => {
@@ -621,14 +621,13 @@ const RelationshipWeb = ({
         // Helper function to calculate position for this character
         const calculatePosition = () => {
           let attempts = 0;
-          let x, y;
           const minDistance = 120; // Increased minimum distance between nodes
           
           do {
             const angle = (index * 2 * Math.PI) / newCharacters.length + (attempts * 0.3);
             const radius = 150 + (attempts * 25); // Start with larger radius and increase more
-            x = clickedNode.position.x + radius * Math.cos(angle);
-            y = clickedNode.position.y + radius * Math.sin(angle);
+            const x = clickedNode.position.x + radius * Math.cos(angle);
+            const y = clickedNode.position.y + radius * Math.sin(angle);
             attempts++;
             
             // Check if this position overlaps with any existing node
@@ -642,7 +641,13 @@ const RelationshipWeb = ({
             if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
           } while (attempts <= 15);
           
-          return { x, y };
+          // Return the final calculated position
+          const finalAngle = (index * 2 * Math.PI) / newCharacters.length + ((attempts - 1) * 0.3);
+          const finalRadius = 150 + ((attempts - 1) * 25);
+          return {
+            x: clickedNode.position.x + finalRadius * Math.cos(finalAngle),
+            y: clickedNode.position.y + finalRadius * Math.sin(finalAngle)
+          };
         };
         
         const position = calculatePosition();
@@ -702,7 +707,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  };
+  }, [isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
@@ -952,11 +957,11 @@ const RelationshipWeb = ({
             onChange={(e) => setCurrentChapter(e.target.value || null)}
           >
             <option value="">Show All Relationships</option>
-            {chaptersData.map((chapter, index) => (
-              <option key={chapter.id} value={chapter.id}>
-                Chapter {index + 1}: {chapter.title}
-              </option>
-            ))}
+                         {chaptersData.map((chapter, index) => (
+               <option key={chapter.id} value={chapter.id}>
+                 {chapter.title}
+               </option>
+             ))}
           </select>
                  </div>
 
@@ -1041,6 +1046,24 @@ const RelationshipWeb = ({
              >
                {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
              </button>
+            <button
+              className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-lg font-bold"
+              title="How to use the Relationship Web"
+              onClick={() => {
+                alert(`How to use the Relationship Web:
+
+• Start by selecting a character to focus on their relationships
+• Choose a chapter to avoid spoilers
+• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
+• Click on any character to view their details and add their relationships
+• Use mouse wheel to zoom, and drag the background to pan
+• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
+• Use "Fit to View" to see all characters at once
+• Use "Full Page" for maximum viewing area`);
+              }}
+            >
+              ℹ️
+            </button>
                   </div>
        </div>
 
@@ -1293,19 +1316,10 @@ const RelationshipWeb = ({
         </div>
       </div>
 
-             {/* Instructions */}
-       <div className={`${isFullPage ? 'p-4' : 'mt-4'} text-sm text-gray-500 dark:text-gray-400 p-2 border-t border-gray-200 dark:border-gray-700`}>
-                 <p>
-           <strong>How to use:</strong> Start by selecting a character to focus on their relationships. 
-           Choose a chapter to avoid spoilers. Drag characters to rearrange, or use "Auto Arrange" for automatic layout. 
-           Click on any character to view their details. Use mouse wheel to zoom, and drag the background to pan.
-           <strong>Remove Mode:</strong> Toggle "Remove Mode" to click and remove characters. Only the largest connected component will be kept.
-         </p>
-      </div>
-      {/* Instructions */}
-             <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
-         <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
-       </div>
+       {/* Instructions */}
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+          <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
+        </div>
     </div>
   );
 };
