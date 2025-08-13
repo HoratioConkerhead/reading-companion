@@ -920,7 +920,6 @@ const RelationshipWeb = ({
     >
       {!isFullPage && (
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Character Relationship Web</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Explore character connections. Drag nodes to rearrange, select a character to focus, and choose a chapter to avoid spoilers.
           </p>

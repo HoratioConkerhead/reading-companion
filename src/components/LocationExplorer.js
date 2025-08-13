@@ -48,7 +48,6 @@ const LocationExplorer = ({
   return (
     <div className="location-explorer">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Location Explorer</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Explore the significant locations in the book where key events took place.
         </p>

@@ -18,7 +18,6 @@ const SpycraftEncyclopedia = ({
   return (
     <div className="spycraft-encyclopedia">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Spy Tradecraft Encyclopedia</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Explore the spy techniques and methods used in the book and learn about their historical context in WWII espionage.
         </p>

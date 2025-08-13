@@ -55,7 +55,6 @@ const PlotNavigator = ({
   return (
     <div className="plot-navigator">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">Plot Navigator</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Explore the narrative structure, mysteries, and themes of the book to enhance your understanding of the novel.
         </p>
