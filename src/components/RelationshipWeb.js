@@ -31,12 +31,6 @@ const RelationshipWeb = ({
   const wasAutoArrangeOn = useRef(false);
   const textWidthCache = useRef(new Map());
 
-  // Get character name from ID
-  const getCharacterName = (characterId) => {
-    const character = charactersData.find(c => c.id === characterId);
-    return character ? character.name : characterId;
-  };
-
   // Find the largest connected component in the graph
   const findLargestConnectedComponent = (currentNodes, currentEdges) => {
     if (currentNodes.length === 0) return [];
@@ -270,131 +264,6 @@ const RelationshipWeb = ({
       return true;
     });
   }, [chaptersData]);
-
-  // Simple spring-based layout simulation
-  const runForceSimulation = useCallback(() => {
-    setNodes(currentNodes => {
-      if (currentNodes.length === 0) return currentNodes;
-      
-      
-      
-      const simulation = {
-        nodes: currentNodes.map(node => ({
-          ...node,
-          velocity: { x: 0, y: 0 },
-          force: { x: 0, y: 0 }
-        })),
-        edges: edges,
-        
-        // Physics constants - use state values
-        repulsionForce: repulsionForce, // Nodes repel each other
-        springForce: springForce, // Connected nodes attract (spring)
-        springLength: 120, // Ideal distance between connected nodes
-        damping: 0.0, // Friction
-        maxVelocity: 800,
-        
-        // Run simulation step
-        step: function() {
-          // Reset forces
-          this.nodes.forEach(node => {
-            node.force.x = 0;
-            node.force.y = 0;
-          });
-          
-          // Repulsion between all nodes (push them apart)
-          for (let i = 0; i < this.nodes.length; i++) {
-            for (let j = i + 1; j < this.nodes.length; j++) {
-              const node1 = this.nodes[i];
-              const node2 = this.nodes[j];
-              
-              const dx = node2.position.x - node1.position.x;
-              const dy = node2.position.y - node1.position.y;
-              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-              
-              // Repulsion force (stronger when closer)
-              const force = this.repulsionForce / (distance * distance);
-              
-              node1.force.x -= (dx / distance) * force;
-              node1.force.y -= (dy / distance) * force;
-              node2.force.x += (dx / distance) * force;
-              node2.force.y += (dy / distance) * force;
-            }
-          }
-          
-          // Spring attraction along edges (pull connected nodes together)
-          this.edges.forEach(edge => {
-            const sourceNode = this.nodes.find(n => n.id === edge.from);
-            const targetNode = this.nodes.find(n => n.id === edge.to);
-            
-            if (sourceNode && targetNode) {
-              const dx = targetNode.position.x - sourceNode.position.x;
-              const dy = targetNode.position.y - sourceNode.position.y;
-              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-              
-              // Spring force (attraction with ideal length)
-              const displacement = distance - this.springLength;
-              const force = (this.springForce / 1000) * displacement;
-              
-              sourceNode.force.x += (dx / distance) * force;
-              sourceNode.force.y += (dy / distance) * force;
-              targetNode.force.x -= (dx / distance) * force;
-              targetNode.force.y -= (dy / distance) * force;
-            }
-          });
-          
-          // Apply forces to velocities
-          this.nodes.forEach(node => {
-            node.velocity.x += node.force.x;
-            node.velocity.y += node.force.y;
-            
-            // Apply damping
-            node.velocity.x *= this.damping;
-            node.velocity.y *= this.damping;
-            
-            // Limit velocity
-            const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
-            if (speed > this.maxVelocity) {
-              node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
-              node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
-            }
-            
-            // Update position
-            node.position.x += node.velocity.x;
-            node.position.y += node.velocity.y;
-          });
-        }
-      };
-      
-      let frameCount = 0;
-      const maxFrames = 180; // 3 seconds at 60fps
-      
-      // Animation loop
-      const animate = () => {
-        simulation.step();
-        setNodes(prevNodes => {
-          // Only update if we're still running
-          if (frameCount < maxFrames) {
-            frameCount++;
-            if (frameCount < maxFrames) {
-              animationRef.current = requestAnimationFrame(animate);
-                         } else {
-               if (animationRef.current) {
-                 cancelAnimationFrame(animationRef.current);
-               }
-             }
-            return simulation.nodes;
-          }
-          return prevNodes;
-        });
-      };
-      
-      // Start the animation
-      animationRef.current = requestAnimationFrame(animate);
-      
-      // Return initial nodes for now
-      return currentNodes;
-    });
-  }, [edges, springForce, repulsionForce]);
 
     // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
@@ -694,26 +563,7 @@ const RelationshipWeb = ({
     }
   }, [isDragging, draggedNode, dragStart]);
 
-  // Handle node drag end
-  const handleNodeMouseUp = (e, nodeId) => {
-    if (isDragging) {
-      setIsDragging(false);
-      setDraggedNode(null);
-      
-      // Restore auto arrange if it was on before dragging
-      if (wasAutoArrangeOn.current) {
-        setIsAutoArrangeOn(true);
-        wasAutoArrangeOn.current = false;
-      }
-    }
-    
-    // Handle click to add relationships
-    if (wasClick.current && nodeId) {
-      handleNodeClick(nodeId);
-    }
-  };
-
-    // Handle node click - add character's relationships or remove node
+  // Handle node click - add character's relationships or remove node
   const handleNodeClick = (nodeId) => {
     if (isRemoveMode) {
       // Remove mode: remove the clicked node and keep only the largest connected component
@@ -768,36 +618,41 @@ const RelationshipWeb = ({
       
       // Calculate what the updated nodes will be (including any new ones)
       const updatedNodes = newCharacters.length > 0 ? [...currentNodes, ...newCharacters.map((char, index) => {
-        // Try to find a good position that doesn't overlap
-        let attempts = 0;
-        let x, y;
-        const minDistance = 120; // Increased minimum distance between nodes
-        
-        do {
-          const angle = (index * 2 * Math.PI) / newCharacters.length + (attempts * 0.3);
-          const radius = 150 + (attempts * 25); // Start with larger radius and increase more
-          x = clickedNode.position.x + radius * Math.cos(angle);
-          y = clickedNode.position.y + radius * Math.sin(angle);
-          attempts++;
+        // Helper function to calculate position for this character
+        const calculatePosition = () => {
+          let attempts = 0;
+          let x, y;
+          const minDistance = 120; // Increased minimum distance between nodes
           
-          // Check if this position overlaps with any existing node
-          const overlaps = currentNodes.some(existingNode => {
-            const dx = existingNode.position.x - x;
-            const dy = existingNode.position.y - y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            return distance < minDistance;
-          });
+          do {
+            const angle = (index * 2 * Math.PI) / newCharacters.length + (attempts * 0.3);
+            const radius = 150 + (attempts * 25); // Start with larger radius and increase more
+            x = clickedNode.position.x + radius * Math.cos(angle);
+            y = clickedNode.position.y + radius * Math.sin(angle);
+            attempts++;
+            
+            // Check if this position overlaps with any existing node
+            const overlaps = currentNodes.some(existingNode => {
+              const dx = existingNode.position.x - x;
+              const dy = existingNode.position.y - y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              return distance < minDistance;
+            });
+            
+            if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
+          } while (attempts <= 15);
           
-          if (!overlaps || attempts > 15) break; // More attempts and stop if no overlap
-        } while (attempts <= 15);
+          return { x, y };
+        };
         
+        const position = calculatePosition();
         const relationshipCount = getRelationshipCount(char.id);
         return {
           id: char.id,
           name: char.name,
           role: char.role,
           group: char.group,
-          position: { x, y },
+          position: position,
           color: getGroupColor(char.group, relationshipCount),
           relationshipCount,
           isFocused: false
@@ -848,6 +703,25 @@ const RelationshipWeb = ({
       return updatedNodes;
     });
   };
+
+  // Handle node drag end
+  const handleNodeMouseUp = useCallback((e, nodeId) => {
+    if (isDragging) {
+      setIsDragging(false);
+      setDraggedNode(null);
+      
+      // Restore auto arrange if it was on before dragging
+      if (wasAutoArrangeOn.current) {
+        setIsAutoArrangeOn(true);
+        wasAutoArrangeOn.current = false;
+      }
+    }
+    
+    // Handle click to add relationships
+    if (wasClick.current && nodeId) {
+      handleNodeClick(nodeId);
+    }
+  }, [isDragging, handleNodeClick]);
 
   // Handle pan
   const handleMouseDown = (e) => {
@@ -912,6 +786,26 @@ const RelationshipWeb = ({
       // Clear all nodes and edges when changing focus
       setNodes([]);
       setEdges([]);
+      
+      // Center the view on the new character
+      setZoom(1);
+      // Center the character in the middle of the screen
+      // The character will be positioned at (400, 300) in initializeNodes
+      // So we need to pan to center it in the container
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+        const centerX = containerWidth / 2;
+        const centerY = containerHeight / 2;
+        const characterX = 400; // This matches the centerX in initializeNodes
+        const characterY = 300; // This matches the centerY in initializeNodes
+        
+        // Calculate pan to center the character
+        const newPanX = centerX - characterX;
+        const newPanY = centerY - characterY;
+        
+        setPan({ x: newPanX, y: newPanY });
+      }
     }
   };
 
@@ -971,6 +865,49 @@ const RelationshipWeb = ({
       document.removeEventListener('wheel', handleGlobalWheel);
     };
   }, [isDragging, draggedNode, handleNodeMouseMove, handleNodeMouseUp]);
+
+  // Handle window resize to keep focused character centered
+  useEffect(() => {
+    let previousContainerWidth = 0;
+    let previousContainerHeight = 0;
+    
+    const handleResize = () => {
+      // Only adjust view if we have a focused character and nodes are visible
+      if (focusedCharacter && nodes.length > 0 && containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+        
+        // If this is the first resize, just save the dimensions
+        if (previousContainerWidth === 0) {
+          previousContainerWidth = containerWidth;
+          previousContainerHeight = containerHeight;
+          return;
+        }
+        
+        // Calculate the difference in container dimensions
+        const widthDifference = containerWidth - previousContainerWidth;
+        const heightDifference = containerHeight - previousContainerHeight;
+        
+        // Pan by half the difference to keep the character centered
+        setPan(prevPan => ({
+          x: prevPan.x + (widthDifference / 2),
+          y: prevPan.y + (heightDifference / 2)
+        }));
+        
+        // Update the previous dimensions for next resize
+        previousContainerWidth = containerWidth;
+        previousContainerHeight = containerHeight;
+      }
+    };
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [focusedCharacter, nodes.length]);
 
   return (
     <div 
