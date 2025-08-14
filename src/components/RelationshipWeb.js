@@ -1381,26 +1381,26 @@ const RelationshipWeb = ({
                       className="cursor-pointer hover:opacity-80 transition-opacity"
                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                     />
-                    {/* Relationship count in center - only show if showNumber is true */}
-                    {showNumber && (
-                      <text
-                        x={node.position.x}
-                        y={node.position.y}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize={node.isFocused ? "14" : "12"}
-                        fontWeight="bold"
-                        fill={getContrastTextColor(node.color, darkMode)}
-                        className="select-none pointer-events-none"
-                        style={{
-                          textShadow: darkMode 
-                            ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                            : '1px 1px 2px rgba(255,255,255,0.8)'
-                        }}
-                      >
-                        {node.relationshipCount || 0}
-                      </text>
-                    )}
+                                         {/* Relationship count above node - only show if showNumber is true */}
+                                         {showNumber && (
+                       <text
+                         x={node.position.x}
+                         y={node.position.y - (node.isFocused ? 45 : 40)}
+                         textAnchor="middle"
+                         dominantBaseline="middle"
+                         fontSize={node.isFocused ? "14" : "12"}
+                         fontWeight="bold"
+                         fill={getContrastTextColor(node.color, darkMode)}
+                         className="select-none pointer-events-none"
+                         style={{
+                           textShadow: darkMode 
+                             ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                             : '1px 1px 2px rgba(255,255,255,0.8)'
+                         }}
+                       >
+                         {node.relationshipCount || 0}
+                       </text>
+                     )}                    )}
                     
                                          {/* Character name - always show with text wrapping */}
                      <text
