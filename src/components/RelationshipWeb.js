@@ -971,16 +971,7 @@ const RelationshipWeb = ({
             >
               Reset View
             </button>
-            <button
-              className={`px-4 py-2 text-white rounded transition-colors ${
-                isFullPage 
-                  ? 'bg-gray-500 hover:bg-gray-600' 
-                  : 'bg-indigo-500 hover:bg-indigo-600'
-              }`}
-              onClick={() => setIsFullPage(!isFullPage)}
-            >
-              {isFullPage ? 'Exit Full Page' : 'Full Page'}
-            </button>
+
             <button
   className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
   onClick={() => {
@@ -1058,7 +1049,7 @@ const RelationshipWeb = ({
 • Use mouse wheel to zoom, and drag the background to pan
 • Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
 • Use "Fit to View" to see all characters at once
-• Use "Full Page" for maximum viewing area`);
+• Use the full screen button (↗) for maximum viewing area`);
               }}
             >
               ℹ️
@@ -1103,19 +1094,57 @@ const RelationshipWeb = ({
 
                {/* Relationship Graph */}
                                                 <div 
-           ref={containerRef}
-           className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 ${
-             isFullPage ? 'flex-1' : ''
-           }`}
-           style={{ 
-             height: isFullPage ? 'calc(100vh - 200px)' : '600px'
-           }}
-           onMouseDown={handleMouseDown}
-           onMouseMove={handleMouseMove}
-           onMouseUp={handleMouseUp}
-           onWheel={handleWheel}
-         >
-        <svg
+            ref={containerRef}
+            className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 relative ${
+              isFullPage ? 'flex-1' : ''
+            }`}
+            style={{ 
+              height: isFullPage ? 'calc(100vh - 200px)' : '600px'
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onWheel={handleWheel}
+          >
+             {/* Full Screen Button */}
+             <button
+               className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+               onClick={() => setIsFullPage(!isFullPage)}
+               title={isFullPage ? 'Exit Full Screen' : 'Enter Full Screen'}
+             >
+               {isFullPage ? (
+                 // Exit full screen - arrows pointing inward
+
+                 <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                   <g>
+                   <path d="M 134.897 30.362 C 126.613 30.362 119.897 37.078 119.897 45.362 L 119.897 99.147 L 25.505 4.755 C 19.648 -1.103 10.15 -1.103 4.292 4.755 C -1.566 10.613 -1.566 20.11 4.292 25.968 L 98.682 120.358 L 44.896 120.362 C 36.612 120.362 29.896 127.079 29.897 135.363 C 29.898 143.647 36.614 150.362 44.898 150.362 L 134.898 150.356 C 143.182 150.356 149.897 143.64 149.897 135.356 L 149.897 45.362 C 149.897 37.078 143.181 30.362 134.897 30.362 Z"/>
+                   <path d="M 194.665 300.225 C 202.949 300.225 209.665 293.509 209.665 285.225 L 209.665 231.44 L 304.057 325.832 C 306.986 328.761 310.825 330.226 314.663 330.226 C 318.502 330.226 322.341 328.762 325.27 325.832 C 331.128 319.974 331.128 310.477 325.27 304.619 L 230.88 210.229 L 284.666 210.225 C 292.95 210.225 299.666 203.508 299.665 195.224 C 299.664 186.94 292.948 180.225 284.664 180.225 L 194.664 180.231 C 186.38 180.231 179.665 186.947 179.665 195.231 L 179.665 285.225 C 179.665 293.509 186.381 300.225 194.665 300.225 Z"/>
+                   <path d="M 303.77 3.972 L 209.38 98.362 L 209.376 44.576 C 209.376 36.292 202.659 29.577 194.375 29.577 C 186.091 29.577 179.376 36.294 179.376 44.578 L 179.382 134.578 C 179.382 142.862 186.098 149.577 194.382 149.577 L 284.376 149.577 C 292.66 149.577 299.376 142.861 299.376 134.577 C 299.376 126.293 292.66 119.577 284.376 119.577 L 230.591 119.577 L 324.983 25.185 C 330.841 19.327 330.841 9.83 324.983 3.972 C 319.125 -1.886 309.627 -1.886 303.77 3.972 Z"/>
+                   <path d="M 15.272 330.019 C 19.111 330.019 22.95 328.555 25.878 325.625 L 120.268 231.235 L 120.272 285.023 C 120.273 293.307 126.989 300.023 135.273 300.022 C 143.557 300.021 150.273 293.305 150.272 285.021 L 150.266 195.021 C 150.265 186.737 143.55 180.022 135.266 180.022 L 45.272 180.022 C 36.988 180.022 30.272 186.738 30.272 195.022 C 30.272 203.306 36.988 210.022 45.272 210.022 L 99.056 210.022 L 4.665 304.413 C -1.193 310.271 -1.193 319.768 4.665 325.626 C 7.594 328.555 11.433 330.019 15.272 330.019 Z"/>
+                   </g>
+                 </svg>
+               ) : (
+                 // Enter full screen - arrows pointing outward
+                 <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                   <g>
+                  
+                   <path d="M315,210c-8.284,0-15,6.716-15,15v53.785l-94.392-94.392c-5.857-5.858-15.355-5.858-21.213,0
+		c-5.858,5.858-5.858,15.355,0,21.213l94.39,94.39L224.999,300c-8.284,0-15,6.717-14.999,15.001
+		c0.001,8.284,6.717,14.999,15.001,14.999l90-0.006c8.284,0,14.999-6.716,14.999-15V225C330,216.716,323.284,210,315,210z"/>
+	<path d="M15,120c8.284,0,15-6.716,15-15V51.215l94.392,94.392c2.929,2.929,6.768,4.394,10.606,4.394
+		c3.839,0,7.678-1.464,10.607-4.394c5.858-5.858,5.858-15.355,0-21.213l-94.39-94.39L105.001,30c8.284,0,15-6.717,14.999-15.001
+		S113.283,0,104.999,0l-90,0.006C6.715,0.006,0,6.722,0,15.006V105C0,113.284,6.716,120,15,120z"/>
+	<path d="M124.394,184.395l-94.39,94.39L30,224.999c0-8.284-6.717-14.999-15.001-14.999S0,216.717,0,225.001l0.006,90
+		c0,8.284,6.716,14.999,15,14.999H105c8.284,0,15-6.716,15-15s-6.716-15-15-15H51.215l94.392-94.392
+		c5.858-5.858,5.858-15.355,0-21.213C139.749,178.537,130.251,178.537,124.394,184.395z"/>
+	<path d="M195,149.997c3.839,0,7.678-1.464,10.606-4.394l94.39-94.39L300,105.001c0.001,8.284,6.717,15,15.001,14.999
+		c8.284-0.001,15-6.717,14.999-15.001l-0.006-90C329.993,6.715,323.278,0,314.994,0H225c-8.284,0-15,6.716-15,15s6.716,15,15,15
+		h53.784l-94.391,94.391c-5.858,5.858-5.858,15.355,0,21.213C187.322,148.533,191.161,149.997,195,149.997z"/>
+                   </g>
+                 </svg>
+               )}
+             </button>            
+         <svg
           ref={svgRef}
           width="100%"
           height="100%"
