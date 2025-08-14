@@ -1053,7 +1053,7 @@ const RelationshipWeb = ({
       <div className="flex gap-4">
         {/* Left Panel */}
         <div className="w-48 flex-shrink-0">
-          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 200px)' : '800px' }}>
+          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 140px)' : '800px' }}>
 
             {/* Action Buttons */}
             <div className="mb-6">
@@ -1231,7 +1231,7 @@ const RelationshipWeb = ({
               isFullPage ? 'flex-1' : ''
             }`}
             style={{ 
-              height: isFullPage ? 'calc(100vh - 200px)' : '800px'
+              height: isFullPage ? 'calc(100vh - 140px)' : '800px'
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -1474,7 +1474,14 @@ const RelationshipWeb = ({
 
       {/* Instructions */}
       <div className="text-s text-gray-600 dark:text-gray-400 mt-2 text-center">
-        <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
+
+        <div className="flex gap-2 items-center justify-center">
+          <span>Drag nodes to move them</span>
+          <span>•</span>
+          <span>Click nodes to add their relationships</span>
+          <span>•</span>
+          <span>Toggle Remove Mode to delete nodes</span>
+        </div>
       </div>
     </div>
   );
