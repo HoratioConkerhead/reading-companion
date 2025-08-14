@@ -341,7 +341,7 @@ const RelationshipWeb = ({
     });
   }, [chaptersData]);
 
-    // Initialize nodes in a circular layout with focused character in center
+      // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
     const filteredCharacters = focusedCharacter 
       ? charactersData.filter(char => 
@@ -366,50 +366,50 @@ const RelationshipWeb = ({
     // Add focused character in center
     if (focusedChar) {
              const relationshipCount = getRelationshipCount(focusedChar.id);
-       const importance = calculateCharacterImportance(focusedChar);
-       const size = getNodeSize(importance, true);
-       newNodes.push({
-         id: focusedChar.id,
-         name: focusedChar.name,
-         role: focusedChar.role,
-         group: focusedChar.group,
-         position: { x: centerX, y: centerY },
-         color: getGroupColor(focusedChar.group, relationshipCount),
-         relationshipCount,
-         importance,
-         size,
-         isFocused: true
-       });
+      const importance = calculateCharacterImportance(focusedChar);
+      const size = getNodeSize(importance, true);
+      newNodes.push({
+        id: focusedChar.id,
+        name: focusedChar.name,
+        role: focusedChar.role,
+        group: focusedChar.group,
+        position: { x: centerX, y: centerY },
+        color: getGroupColor(focusedChar.group, relationshipCount),
+        relationshipCount,
+        importance,
+        size,
+        isFocused: true
+      });
     }
     
     // Place other characters in a circle around the focused character
-         otherCharacters.forEach((character, index) => {
-       const relationshipCount = getRelationshipCount(character.id);
-       const importance = calculateCharacterImportance(character);
-       const size = getNodeSize(importance, false);
-       const totalInCircle = otherCharacters.length;
-       
-       // Calculate angle evenly around the circle
-       const angle = (index * 2 * Math.PI) / totalInCircle;
-       const x = centerX + radius * Math.cos(angle);
-       const y = centerY + radius * Math.sin(angle);
-       
-       newNodes.push({
-         id: character.id,
-         name: character.name,
-         role: character.role,
-         group: character.group,
-         position: { x, y },
-         color: getGroupColor(character.group, relationshipCount),
-         relationshipCount,
-         importance,
-         size,
-         isFocused: false
-       });
-     });
+            otherCharacters.forEach((character, index) => {
+      const relationshipCount = getRelationshipCount(character.id);
+      const importance = calculateCharacterImportance(character);
+      const size = getNodeSize(importance, false);
+      const totalInCircle = otherCharacters.length;
+      
+      // Calculate angle evenly around the circle
+      const angle = (index * 2 * Math.PI) / totalInCircle;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      
+      newNodes.push({
+        id: character.id,
+        name: character.name,
+        role: character.role,
+        group: character.group,
+        position: { x, y },
+        color: getGroupColor(character.group, relationshipCount),
+        relationshipCount,
+        importance,
+        size,
+        isFocused: false
+      });
+    });
 
-         setNodes(newNodes);
-   }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize]);
+          setNodes(newNodes);
+  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance]); // Remove getNodeSize dependency
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -464,6 +464,18 @@ const RelationshipWeb = ({
       initializeEdges();
     }
   }, [nodes, initializeEdges]);
+
+  // Update node sizes when the sizing option changes (without re-initializing)
+  useEffect(() => {
+    if (nodes.length > 0) {
+      setNodes(currentNodes => 
+        currentNodes.map(node => ({
+          ...node,
+          size: getNodeSize(node.importance, node.isFocused)
+        }))
+      );
+    }
+  }, [scaleSizeByImportance, getNodeSize, nodes.length]);
 
   // Sync with external selectedCharacter prop
   useEffect(() => {
@@ -1172,7 +1184,7 @@ const RelationshipWeb = ({
  • Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
  • Use "Fit to View" to see all characters at once
  • Use the full screen button (↗) for maximum viewing area
- • Toggle "Scale Size by Importance" to make important characters larger`);
+ • Toggle "Size by Importance" to make important characters larger`);
                   }}
                 >
                   ℹ️ Help
@@ -1276,7 +1288,7 @@ const RelationshipWeb = ({
                        onChange={(e) => setScaleSizeByImportance(e.target.checked)}
                        className="mr-2"
                      />
-                     <span className="text-sm text-gray-700 dark:text-gray-300">Scale Size by Importance</span>
+                     <span className="text-sm text-gray-700 dark:text-gray-300">Size is Importance</span>
                    </label>
                 </div>
               </div>
