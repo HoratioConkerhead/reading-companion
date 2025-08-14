@@ -125,7 +125,17 @@ The main container component that manages global state and navigation between ta
 Displays character profiles with filtering and search functionality.
 
 ### RelationshipWeb
-Visualizes character relationships using a network graph or list view.
+Visualizes character relationships using a network graph with interactive features:
+- **Character Importance Ratings**: Each character is assigned a 1-100 importance score based on:
+  - Key scenes count (30 points max)
+  - Event participation (25 points max) 
+  - Relationship complexity (20 points max)
+  - Character group significance (15 points max)
+  - Development arc depth (10 points max)
+- **Interactive Network Graph**: Drag nodes to rearrange, click to expand relationships
+- **Chapter-based Filtering**: Avoid spoilers by limiting relationships to specific chapters
+- **Auto-arrangement**: Physics-based automatic layout with adjustable forces
+- **Multiple View Options**: Toggle between relationship counts, importance ratings, descriptions, and relationship labels
 
 ### Timeline
 Shows events in chronological order with filtering options.

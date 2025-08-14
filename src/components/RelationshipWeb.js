@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { stitchedUp } from '../data';
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
@@ -28,6 +29,7 @@ const RelationshipWeb = ({
   const [showDescription, setShowDescription] = useState(false); // off by default
   const [showRelationship, setShowRelationship] = useState(false); // off default
   const [showNumber, setShowNumber] = useState(false); // off y default
+  const [showImportance, setShowImportance] = useState(false); // off by default
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
@@ -36,6 +38,60 @@ const RelationshipWeb = ({
   const clickStartPos = useRef({ x: 0, y: 0 });
   const wasAutoArrangeOn = useRef(false);
   const textWidthCache = useRef(new Map());
+
+  // Calculate character importance rating (1-100) based on multiple factors
+  const calculateCharacterImportance = useCallback((character) => {
+    let score = 0;
+    
+    // Key scenes count (max 30 points)
+    if (character.key_scenes) {
+      score += Math.min(character.key_scenes.length * 6, 30);
+    }
+    
+    // Event participation (max 25 points)
+    const eventCount = stitchedUp.events.filter(event => 
+      event.characters.some(char => char.characterId === character.id)
+    ).length;
+    score += Math.min(eventCount * 2.5, 25);
+    
+    // Relationship count (max 20 points)
+    const relationshipCount = relationshipsData.filter(rel => 
+      rel.from === character.id || rel.to === character.id
+    ).length;
+    score += Math.min(relationshipCount * 2, 20);
+    
+    // Character group bonus (max 15 points)
+    switch (character.group) {
+      case 'Protagonists':
+        score += 15;
+        break;
+      case 'Fifth Columnists':
+        score += 12;
+        break;
+      case 'German Connection':
+        score += 8;
+        break;
+      case 'Military':
+        score += 10;
+        break;
+      case 'Historical Figures':
+        score += 10;
+        break;
+      case 'Supporting Characters':
+        score += 5;
+        break;
+      default:
+        score += 3;
+    }
+    
+    // Development arc bonus (max 10 points)
+    if (character.development) {
+      score += Math.min(character.development.length * 2.5, 10);
+    }
+    
+    // Ensure score is between 1 and 100
+    return Math.max(1, Math.min(100, Math.round(score)));
+  }, [relationshipsData]);
 
   // Find the largest connected component in the graph
   const findLargestConnectedComponent = useCallback((currentNodes, currentEdges) => {
@@ -296,6 +352,7 @@ const RelationshipWeb = ({
     // Add focused character in center
     if (focusedChar) {
       const relationshipCount = getRelationshipCount(focusedChar.id);
+      const importance = calculateCharacterImportance(focusedChar);
       newNodes.push({
         id: focusedChar.id,
         name: focusedChar.name,
@@ -304,6 +361,7 @@ const RelationshipWeb = ({
         position: { x: centerX, y: centerY },
         color: getGroupColor(focusedChar.group, relationshipCount),
         relationshipCount,
+        importance,
         isFocused: true
       });
     }
@@ -311,6 +369,7 @@ const RelationshipWeb = ({
     // Place other characters in a circle around the focused character
     otherCharacters.forEach((character, index) => {
       const relationshipCount = getRelationshipCount(character.id);
+      const importance = calculateCharacterImportance(character);
       const totalInCircle = otherCharacters.length;
       
       // Calculate angle evenly around the circle
@@ -326,12 +385,13 @@ const RelationshipWeb = ({
         position: { x, y },
         color: getGroupColor(character.group, relationshipCount),
         relationshipCount,
+        importance,
         isFocused: false
       });
     });
 
     setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor]);
+  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -674,6 +734,7 @@ const RelationshipWeb = ({
         
         const position = calculatePosition();
         const relationshipCount = getRelationshipCount(char.id);
+        const importance = calculateCharacterImportance(char);
         return {
           id: char.id,
           name: char.name,
@@ -682,6 +743,7 @@ const RelationshipWeb = ({
           position: position,
           color: getGroupColor(char.group, relationshipCount),
           relationshipCount,
+          importance,
           isFocused: false
         };
       })] : currentNodes;
@@ -1166,10 +1228,25 @@ const RelationshipWeb = ({
                     <input
                       type="checkbox"
                       checked={showNumber}
-                      onChange={(e) => setShowNumber(e.target.checked)}
+                      onChange={(e) => {
+                        setShowNumber(e.target.checked);
+                        if (e.target.checked) setShowImportance(false);
+                      }}
                       className="mr-2"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Number</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Relationship Count</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={showImportance}
+                      onChange={(e) => {
+                        setShowImportance(e.target.checked);
+                        if (e.target.checked) setShowNumber(false);
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Importance Rating</span>
                   </label>
                 </div>
               </div>
@@ -1399,8 +1476,8 @@ const RelationshipWeb = ({
                        onMouseEnter={() => setHoveredNode(node.id)}
                        onMouseLeave={() => setHoveredNode(null)}
                      />
-                                                                                   {/* Relationship count above node - show if showNumber is true OR hovering over this node */}
-                                          {(showNumber || hoveredNode === node.id) && (
+                                                                                   {/* Number above node - show relationship count OR importance rating */}
+                                          {(showNumber || showImportance || hoveredNode === node.id) && (
                        <text
                          x={node.position.x}
                                                    y={node.position.y - 40}
@@ -1416,7 +1493,7 @@ const RelationshipWeb = ({
                              : '1px 1px 2px rgba(255,255,255,0.8)'
                          }}
                        >
-                         {node.relationshipCount || 0}
+                         {showImportance ? (node.importance || 0) : (node.relationshipCount || 0)}
                        </text>
                      )}                  
                     

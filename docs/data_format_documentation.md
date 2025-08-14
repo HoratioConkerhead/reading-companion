@@ -67,6 +67,25 @@ export const characters = [
     key_scenes: ['scene_id_1', 'scene_id_2'] // Optional: Important scenes for this character
   }
 ];
+
+### Character Importance Rating System
+
+The RelationshipWeb component automatically calculates a 1-100 importance rating for each character based on the following weighted factors:
+
+- **Key Scenes (30 points max)**: Each scene in `key_scenes` contributes 6 points
+- **Event Participation (25 points max)**: Each event the character appears in contributes 2.5 points  
+- **Relationship Complexity (20 points max)**: Each relationship contributes 2 points
+- **Character Group Significance (15 points max)**:
+  - Protagonists: 15 points
+  - Fifth Columnists: 12 points
+  - Military: 10 points
+  - Historical Figures: 10 points
+  - German Connection: 8 points
+  - Supporting Characters: 5 points
+  - Default: 3 points
+- **Development Arc Depth (10 points max)**: Each development phase contributes 2.5 points
+
+This rating system helps users understand character prominence in the narrative and can be displayed above character nodes in the relationship web visualization.
 ```
 
 ### Location Data Format
