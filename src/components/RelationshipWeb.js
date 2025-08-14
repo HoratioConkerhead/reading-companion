@@ -1320,8 +1320,7 @@ const RelationshipWeb = ({
                   
                   if (!sourceNode || !targetNode) return null;
                   
-                  const nodeRadius = sourceNode.isFocused ? 35 : 30;
-                  const targetRadius = targetNode.isFocused ? 35 : 30;
+                  const nodeRadius = 30;
                   
                   // Calculate angle between nodes
                   const dx = targetNode.position.x - sourceNode.position.x;
@@ -1331,8 +1330,8 @@ const RelationshipWeb = ({
                   // Calculate start and end points (on the edge of the circles)
                   const startX = sourceNode.position.x + nodeRadius * Math.cos(angle);
                   const startY = sourceNode.position.y + nodeRadius * Math.sin(angle);
-                  const endX = targetNode.position.x - targetRadius * Math.cos(angle);
-                  const endY = targetNode.position.y - targetRadius * Math.sin(angle);
+                  const endX = targetNode.position.x - nodeRadius * Math.cos(angle);
+                  const endY = targetNode.position.y - nodeRadius * Math.sin(angle);
                   
                   // Calculate label position (middle of the line)
                   const labelX = (startX + endX) / 2;
@@ -1391,10 +1390,10 @@ const RelationshipWeb = ({
                                          <circle
                        cx={node.position.x}
                        cy={node.position.y}
-                       r={node.isFocused ? 35 : 30}
+                                               r={30}
                        fill={node.color}
-                       stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
-                       strokeWidth={node.isFocused ? 3 : 2}
+                                               stroke={getNodeStrokeColor(darkMode, node.id)}
+                                               strokeWidth={2}
                        className="cursor-pointer hover:opacity-80 transition-opacity"
                        onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                        onMouseEnter={() => setHoveredNode(node.id)}
@@ -1404,10 +1403,10 @@ const RelationshipWeb = ({
                                           {(showNumber || hoveredNode === node.id) && (
                        <text
                          x={node.position.x}
-                         y={node.position.y - (node.isFocused ? 45 : 40)}
+                                                   y={node.position.y - 40}
                          textAnchor="middle"
                          dominantBaseline="middle"
-                         fontSize={node.isFocused ? "14" : "12"}
+                                                   fontSize="12"
                          fontWeight="bold"
                          fill={getContrastTextColor(node.color, darkMode)}
                          className="select-none pointer-events-none"
@@ -1439,7 +1438,7 @@ const RelationshipWeb = ({
                      >
                                              {/* Text wrapping for character names */}
                        {(() => {
-                         const maxWidth = (node.isFocused ? 70 : 60)  * 1.2; // slightly larger than diameter
+                                                   const maxWidth = 60 * 1.2; // slightly larger than diameter
                          const words = node.name.split(' ');
                          const lines = [];
                          let currentLine = '';
@@ -1488,7 +1487,7 @@ const RelationshipWeb = ({
                       >
                         {/* Text wrapping for character descriptions */}
                         {(() => {
-                          const maxWidth = (node.isFocused ? 70 : 60) *2;
+                                                     const maxWidth = 60 * 2;
                           const words = node.role.split(' ');
                           const lines = [];
                           let currentLine = '';
@@ -1510,7 +1509,7 @@ const RelationshipWeb = ({
                           // Calculate total height of all lines and position below the node
                           const lineHeight = 12; // Slightly larger than fontSize for spacing
                           const totalHeight = lines.length * lineHeight;
-                          const startY = (node.isFocused ? 50 : 45) 
+                                                     const startY = 45 
                           
                           return lines.map((line, index) => (
                             <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
