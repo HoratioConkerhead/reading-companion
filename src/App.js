@@ -264,45 +264,7 @@ const InteractiveReadingCompanion = () => {
           </div>
         </Tabs>
         
-        {/* Current Selection Summary - Quick Cross-Reference */}
-        <div className={`p-4 rounded shadow mb-6 current-selections ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`} style={{ backgroundColor: 'var(--color-panel-bg)', borderColor: 'var(--color-panel-border)' }}>
-          <h2 className="text-lg font-bold mb-2">Current Selections</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {selectedCharacter && (
-              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(0)}>
-                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Character</div>
-                <div className="font-medium">{selectedCharacter.name}</div>
-                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
-              </div>
-            )}
-            
-            {selectedEvent && (
-              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(2)}>
-                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Event</div>
-                <div className="font-medium">{selectedEvent.title}</div>
-                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedEvent.date}</div>
-                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
-              </div>
-            )}
-            
-            {selectedLocation && (
-              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(3)}>
-                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Location</div>
-                <div className="font-medium">{selectedLocation.name}</div>
-                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedLocation.area}</div>
-                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
-              </div>
-            )}
-            
-            {selectedObject && (
-              <div className={`border p-3 rounded cursor-pointer ${darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-blue-50'}`} onClick={() => setActiveTab(6)}>
-                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Object</div>
-                <div className="font-medium">{selectedObject.name}</div>
-                <div className={`text-xs mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Click to view details</div>
-              </div>
-            )}
-          </div>
-        </div>
+
       </main>
       
       <footer className="p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
@@ -320,7 +282,7 @@ const InteractiveReadingCompanion = () => {
               <ul className="text-sm list-disc pl-5 space-y-1">
                 <li>Use the tabs to explore different aspects of the novel</li>
                 <li>Click on characters, events, or locations to see more details</li>
-                <li>Cross-reference elements using the "Current Selections" panel</li>
+
                 <li>Use the Plot Navigator to understand the story structure</li>
               </ul>
             </div>

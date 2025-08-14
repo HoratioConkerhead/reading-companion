@@ -926,8 +926,8 @@ const RelationshipWeb = ({
         </div>
       )}
 
-                     {/* Controls */}
-        <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-3 gap-4`}>
+      {/* Controls */}
+      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-3 gap-4`}>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Focus on Character
@@ -956,91 +956,91 @@ const RelationshipWeb = ({
             onChange={(e) => setCurrentChapter(e.target.value || null)}
           >
             <option value="">Show All Relationships</option>
-                         {chaptersData.map((chapter, index) => (
-               <option key={chapter.id} value={chapter.id}>
-                 {chapter.title}
-               </option>
-             ))}
+            {chaptersData.map((chapter, index) => (
+              <option key={chapter.id} value={chapter.id}>
+                {chapter.title}
+              </option>
+            ))}
           </select>
-                 </div>
+        </div>
 
-         <div className="flex gap-2 items-end">
-                       <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              onClick={resetView}
-            >
-              Reset View
-            </button>
+        <div className="flex gap-2 items-end">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            onClick={resetView}
+          >
+            Reset View
+          </button>
 
-            <button
-  className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
-  onClick={() => {
-    if (nodes.length === 0) return;
-    
-    // Calculate the bounding box of all current nodes
-    const minX = Math.min(...nodes.map(n => n.position.x));
-    const maxX = Math.max(...nodes.map(n => n.position.x));
-    const minY = Math.min(...nodes.map(n => n.position.y));
-    const maxY = Math.max(...nodes.map(n => n.position.y));
-    
-    // Add some padding around the nodes
-    const padding = 100;
-    const nodeWidth = maxX - minX + padding * 2;
-    const nodeHeight = maxY - minY + padding * 2;
-    
-    // Get the container dimensions
-    const containerWidth = containerRef.current.clientWidth;
-    const containerHeight = containerRef.current.clientHeight;
-    
-    // Calculate the zoom level needed to fit all nodes
-    const scaleX = containerWidth / nodeWidth;
-    const scaleY = containerHeight / nodeHeight;
-    const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
-    
-    // Calculate the center of the nodes
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-    
-    // Calculate the center of the container
-    const containerCenterX = containerWidth / 2;
-    const containerCenterY = containerHeight / 2;
-    
-    // Calculate the pan needed to center the nodes
-    const newPanX = containerCenterX - centerX * newZoom;
-    const newPanY = containerCenterY - centerY * newZoom;
-    
-    // Apply the new zoom and pan
-    setZoom(newZoom);
-    setPan({ x: newPanX, y: newPanY });
-  }}
->
-  Fit to View
-</button>
-                                    <button
-               className={`px-4 py-2 text-white rounded transition-colors ${
-                 isAutoArrangeOn 
-                   ? 'bg-red-500 hover:bg-red-600' 
-                   : 'bg-green-500 hover:bg-green-600'
-               }`}
-               onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
-             >
-               {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
-             </button>
-             <button
-               className={`px-4 py-2 text-white rounded transition-colors ${
-                 isRemoveMode 
-                   ? 'bg-red-500 hover:bg-red-600' 
-                   : 'bg-gray-500 hover:bg-gray-600'
-               }`}
-               onClick={() => setIsRemoveMode(!isRemoveMode)}
-             >
-               {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
-             </button>
-            <button
-              className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-lg font-bold"
-              title="How to use the Relationship Web"
-              onClick={() => {
-                alert(`How to use the Relationship Web:
+          <button
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
+            onClick={() => {
+              if (nodes.length === 0) return;
+              
+              // Calculate the bounding box of all current nodes
+              const minX = Math.min(...nodes.map(n => n.position.x));
+              const maxX = Math.max(...nodes.map(n => n.position.x));
+              const minY = Math.min(...nodes.map(n => n.position.y));
+              const maxY = Math.max(...nodes.map(n => n.position.y));
+              
+              // Add some padding around the nodes
+              const padding = 100;
+              const nodeWidth = maxX - minX + padding * 2;
+              const nodeHeight = maxY - minY + padding * 2;
+              
+              // Get the container dimensions
+              const containerWidth = containerRef.current.clientWidth;
+              const containerHeight = containerRef.current.clientHeight;
+              
+              // Calculate the zoom level needed to fit all nodes
+              const scaleX = containerWidth / nodeWidth;
+              const scaleY = containerHeight / nodeHeight;
+              const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
+              
+              // Calculate the center of the nodes
+              const centerX = (minX + maxX) / 2;
+              const centerY = (minY + maxY) / 2;
+              
+              // Calculate the center of the container
+              const containerCenterX = containerWidth / 2;
+              const containerCenterY = containerHeight / 2;
+              
+              // Calculate the pan needed to center the nodes
+              const newPanX = containerCenterX - centerX * newZoom;
+              const newPanY = containerCenterY - centerY * newZoom;
+              
+              // Apply the new zoom and pan
+              setZoom(newZoom);
+              setPan({ x: newPanX, y: newPanY });
+            }}
+          >
+            Fit to View
+          </button>
+          <button
+            className={`px-4 py-2 text-white rounded transition-colors ${
+              isAutoArrangeOn 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-green-500 hover:bg-green-600'
+            }`}
+            onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
+          >
+            {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
+          </button>
+          <button
+            className={`px-4 py-2 text-white rounded transition-colors ${
+              isRemoveMode 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-gray-500 hover:bg-gray-600'
+            }`}
+            onClick={() => setIsRemoveMode(!isRemoveMode)}
+          >
+            {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
+          </button>
+          <button
+            className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-lg font-bold"
+            title="How to use the Relationship Web"
+            onClick={() => {
+              alert(`How to use the Relationship Web:
 
 • Start by selecting a character to focus on their relationships
 • Choose a chapter to avoid spoilers
@@ -1050,50 +1050,193 @@ const RelationshipWeb = ({
 • Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
 • Use "Fit to View" to see all characters at once
 • Use the full screen button (↗) for maximum viewing area`);
-              }}
-            >
-              ℹ️
-            </button>
+            }}
+          >
+            ℹ️
+          </button>
+        </div>
+      </div>
+
+
+
+      {/* Main Content Area with Left Panel and Map */}
+      <div className="flex gap-4">
+        {/* Left Panel */}
+        <div className="w-48 flex-shrink-0">
+          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 200px)' : '600px' }}>
+            <h3 className="text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">
+              Controls & Information
+            </h3>
+            
+            {/* Physics Controls */}
+            <div className="mb-6">
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Physics Controls</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Spring Force
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    step="1"
+                    value={springForce}
+                    onChange={(e) => setSpringForce(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">{springForce}</div>
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Repulsion Force
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="500000"
+                    step="100"
+                    value={repulsionForce}
+                    onChange={(e) => setRepulsionForce(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">{repulsionForce}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mb-6">
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Actions</h4>
+              <div className="space-y-2">
+                <button
+                  className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs"
+                  onClick={resetView}
+                >
+                  Reset View
+                </button>
+
+                <button
+                  className="w-full px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-xs"
+                  onClick={() => {
+                    if (nodes.length === 0) return;
+                    
+                    // Calculate the bounding box of all current nodes
+                    const minX = Math.min(...nodes.map(n => n.position.x));
+                    const maxX = Math.max(...nodes.map(n => n.position.x));
+                    const minY = Math.min(...nodes.map(n => n.position.y));
+                    const maxY = Math.max(...nodes.map(n => n.position.y));
+                    
+                    // Add some padding around the nodes
+                    const padding = 100;
+                    const nodeWidth = maxX - minX + padding * 2;
+                    const nodeHeight = maxY - minY + padding * 2;
+                    
+                    // Get the container dimensions
+                    const containerWidth = containerRef.current.clientWidth;
+                    const containerHeight = containerRef.current.clientHeight;
+                    
+                    // Calculate the zoom level needed to fit all nodes
+                    const scaleX = containerWidth / nodeWidth;
+                    const scaleY = containerHeight / nodeHeight;
+                    const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
+                    
+                    // Calculate the center of the nodes
+                    const centerX = (minX + maxX) / 2;
+                    const centerY = (minY + maxY) / 2;
+                    
+                    // Calculate the center of the container
+                    const containerCenterX = containerWidth / 2;
+                    const containerCenterY = containerHeight / 2;
+                    
+                    // Calculate the pan needed to center the nodes
+                    const newPanX = containerCenterX - centerX * newZoom;
+                    const newPanY = containerCenterY - centerY * newZoom;
+                    
+                    // Apply the new zoom and pan
+                    setZoom(newZoom);
+                    setPan({ x: newPanX, y: newPanY });
+                  }}
+                >
+                  Fit to View
+                </button>
+
+                <button
+                  className={`w-full px-3 py-2 text-white rounded transition-colors text-xs ${
+                    isAutoArrangeOn 
+                      ? 'bg-red-500 hover:bg-red-600' 
+                      : 'bg-green-500 hover:bg-green-600'
+                  }`}
+                  onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
+                >
+                  {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
+                </button>
+
+                <button
+                  className={`w-full px-3 py-2 text-white rounded transition-colors text-xs ${
+                    isRemoveMode 
+                      ? 'bg-red-500 hover:bg-red-600' 
+                      : 'bg-gray-500 hover:bg-gray-600'
+                  }`}
+                  onClick={() => setIsRemoveMode(!isRemoveMode)}
+                >
+                  {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
+                </button>
+
+                <button
+                  className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-xs"
+                  title="How to use the Relationship Web"
+                  onClick={() => {
+                    alert(`How to use the Relationship Web:
+
+• Start by selecting a character to focus on their relationships
+• Choose a chapter to avoid spoilers
+• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
+• Click on any character to view their details and add their relationships
+• Use mouse wheel to zoom, and drag the background to pan
+• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
+• Use "Fit to View" to see all characters at once
+• Use the full screen button (↗) for maximum viewing area`);
+                  }}
+                >
+                  ℹ️ Help
+                </button>
+              </div>
+            </div>
+
+            {/* Character Groups Key */}
+            <div className="mb-6">
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Character Groups</h4>
+              <div className="space-y-2">
+                {['Protagonists', 'Fifth Columnists', 'German Connection', 'Supporting Characters', 'Military', 'Historical Figures'].map(group => (
+                  <div key={group} className="flex items-center">
+                    <div 
+                      className="w-3 h-3 rounded-full mr-2 flex-shrink-0"
+                      style={{ backgroundColor: getGroupColor(group) }}
+                    ></div>
+                    <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{group}</span>
                   </div>
-       </div>
+                ))}
+              </div>
+            </div>
 
-               {/* Physics Controls */}
-        <div className={`${isFullPage ? 'px-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-2 gap-4`}>
-         <div>
-           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-             Spring Force
-           </label>
-                       <input
-              type="range"
-              min="0"
-              max="200"
-              step="1"
-              value={springForce}
-              onChange={(e) => setSpringForce(parseInt(e.target.value))}
-              className="w-full"
-            />
-            <div className="text-xs text-gray-500 mt-1">{springForce}</div>
-         </div>
+            {/* Instructions */}
+            <div className="text-xs text-gray-600 dark:text-gray-400">
+              <p className="mb-2"><strong>Quick Tips:</strong></p>
+              <ul className="space-y-1 text-xs">
+                <li>• Drag nodes to move</li>
+                <li>• Click nodes to add relationships</li>
+                <li>• Toggle Remove Mode to delete</li>
+                <li>• Use mouse wheel to zoom</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-         <div>
-           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-             Repulsion Force
-           </label>
-           <input
-             type="range"
-             min="0"
-             max="500000"
-             step="100"
-             value={repulsionForce}
-             onChange={(e) => setRepulsionForce(parseInt(e.target.value))}
-             className="w-full"
-           />
-           <div className="text-xs text-gray-500 mt-1">{repulsionForce}</div>
-         </div>
-       </div>
-
-               {/* Relationship Graph */}
-                                                <div 
+        {/* Relationship Graph */}
+        <div className="flex-1">
+          <div 
             ref={containerRef}
             className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 relative ${
               isFullPage ? 'flex-1' : ''
@@ -1106,29 +1249,28 @@ const RelationshipWeb = ({
             onMouseUp={handleMouseUp}
             onWheel={handleWheel}
           >
-             {/* Full Screen Button */}
-             <button
-               className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-               onClick={() => setIsFullPage(!isFullPage)}
-               title={isFullPage ? 'Exit Full Screen' : 'Enter Full Screen'}
-             >
-               {isFullPage ? (
-                 // Exit full screen - arrows pointing inward
-
-                 <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
-                   <g>
-                   <path d="M 134.897 30.362 C 126.613 30.362 119.897 37.078 119.897 45.362 L 119.897 99.147 L 25.505 4.755 C 19.648 -1.103 10.15 -1.103 4.292 4.755 C -1.566 10.613 -1.566 20.11 4.292 25.968 L 98.682 120.358 L 44.896 120.362 C 36.612 120.362 29.896 127.079 29.897 135.363 C 29.898 143.647 36.614 150.362 44.898 150.362 L 134.898 150.356 C 143.182 150.356 149.897 143.64 149.897 135.356 L 149.897 45.362 C 149.897 37.078 143.181 30.362 134.897 30.362 Z"/>
-                   <path d="M 194.665 300.225 C 202.949 300.225 209.665 293.509 209.665 285.225 L 209.665 231.44 L 304.057 325.832 C 306.986 328.761 310.825 330.226 314.663 330.226 C 318.502 330.226 322.341 328.762 325.27 325.832 C 331.128 319.974 331.128 310.477 325.27 304.619 L 230.88 210.229 L 284.666 210.225 C 292.95 210.225 299.666 203.508 299.665 195.224 C 299.664 186.94 292.948 180.225 284.664 180.225 L 194.664 180.231 C 186.38 180.231 179.665 186.947 179.665 195.231 L 179.665 285.225 C 179.665 293.509 186.381 300.225 194.665 300.225 Z"/>
-                   <path d="M 303.77 3.972 L 209.38 98.362 L 209.376 44.576 C 209.376 36.292 202.659 29.577 194.375 29.577 C 186.091 29.577 179.376 36.294 179.376 44.578 L 179.382 134.578 C 179.382 142.862 186.098 149.577 194.382 149.577 L 284.376 149.577 C 292.66 149.577 299.376 142.861 299.376 134.577 C 299.376 126.293 292.66 119.577 284.376 119.577 L 230.591 119.577 L 324.983 25.185 C 330.841 19.327 330.841 9.83 324.983 3.972 C 319.125 -1.886 309.627 -1.886 303.77 3.972 Z"/>
-                   <path d="M 15.272 330.019 C 19.111 330.019 22.95 328.555 25.878 325.625 L 120.268 231.235 L 120.272 285.023 C 120.273 293.307 126.989 300.023 135.273 300.022 C 143.557 300.021 150.273 293.305 150.272 285.021 L 150.266 195.021 C 150.265 186.737 143.55 180.022 135.266 180.022 L 45.272 180.022 C 36.988 180.022 30.272 186.738 30.272 195.022 C 30.272 203.306 36.988 210.022 45.272 210.022 L 99.056 210.022 L 4.665 304.413 C -1.193 310.271 -1.193 319.768 4.665 325.626 C 7.594 328.555 11.433 330.019 15.272 330.019 Z"/>
-                   </g>
-                 </svg>
-               ) : (
-                 // Enter full screen - arrows pointing outward
-                 <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
-                   <g>
-                  
-                   <path d="M315,210c-8.284,0-15,6.716-15,15v53.785l-94.392-94.392c-5.857-5.858-15.355-5.858-21.213,0
+            {/* Full Screen Button */}
+            <button
+              className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setIsFullPage(!isFullPage)}
+              title={isFullPage ? 'Exit Full Screen' : 'Enter Full Screen'}
+            >
+              {isFullPage ? (
+                // Exit full screen - arrows pointing inward
+                <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                  <g>
+                  <path d="M 134.897 30.362 C 126.613 30.362 119.897 37.078 119.897 45.362 L 119.897 99.147 L 25.505 4.755 C 19.648 -1.103 10.15 -1.103 4.292 4.755 C -1.566 10.613 -1.566 20.11 4.292 25.968 L 98.682 120.358 L 44.896 120.362 C 36.612 120.362 29.896 127.079 29.897 135.363 C 29.898 143.647 36.614 150.362 44.898 150.362 L 134.898 150.356 C 143.182 150.356 149.897 143.64 149.897 135.356 L 149.897 45.362 C 149.897 37.078 143.181 30.362 134.897 30.362 Z"/>
+                  <path d="M 194.665 300.225 C 202.949 300.225 209.665 293.509 209.665 285.225 L 209.665 231.44 L 304.057 325.832 C 306.986 328.761 310.825 330.226 314.663 330.226 C 318.502 330.226 322.341 328.762 325.27 325.832 C 331.128 319.974 331.128 310.477 325.27 304.619 L 230.88 210.229 L 284.666 210.225 C 292.95 210.225 299.666 203.508 299.665 195.224 C 299.664 186.94 292.948 180.225 284.664 180.225 L 194.664 180.231 C 186.38 180.231 179.665 186.947 179.665 195.231 L 179.665 285.225 C 179.665 293.509 186.381 300.225 194.665 300.225 Z"/>
+                  <path d="M 303.77 3.972 L 209.38 98.362 L 209.376 44.576 C 209.376 36.292 202.659 29.577 194.375 29.577 C 186.091 29.577 179.376 36.294 179.376 44.578 L 179.382 134.578 C 179.382 142.862 186.098 149.577 194.382 149.577 L 284.376 149.577 C 292.66 149.577 299.376 142.861 299.376 134.577 C 299.376 126.293 292.66 119.577 284.376 119.577 L 230.591 119.577 L 324.983 25.185 C 330.841 19.327 330.841 9.83 324.983 3.972 C 319.125 -1.886 309.627 -1.886 303.77 3.972 Z"/>
+                  <path d="M 15.272 330.019 C 19.111 330.019 22.95 328.555 25.878 325.625 L 120.268 231.235 L 120.272 285.023 C 120.273 293.307 126.989 300.023 135.273 300.022 C 143.557 300.021 150.273 293.305 150.272 285.021 L 150.266 195.021 C 150.265 186.737 143.55 180.022 135.266 180.022 L 45.272 180.022 C 36.988 180.022 30.272 186.738 30.272 195.022 C 30.272 203.306 36.988 210.022 45.272 210.022 L 99.056 210.022 L 4.665 304.413 C -1.193 310.271 -1.193 319.768 4.665 325.626 C 7.594 328.555 11.433 330.019 15.272 330.019 Z"/>
+                  </g>
+                </svg>
+              ) : (
+                // Enter full screen - arrows pointing outward
+                <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                  <g>
+                 
+                  <path d="M315,210c-8.284,0-15,6.716-15,15v53.785l-94.392-94.392c-5.857-5.858-15.355-5.858-21.213,0
 		c-5.858,5.858-5.858,15.355,0,21.213l94.39,94.39L224.999,300c-8.284,0-15,6.717-14.999,15.001
 		c0.001,8.284,6.717,14.999,15.001,14.999l90-0.006c8.284,0,14.999-6.716,14.999-15V225C330,216.716,323.284,210,315,210z"/>
 	<path d="M15,120c8.284,0,15-6.716,15-15V51.215l94.392,94.392c2.929,2.929,6.768,4.394,10.606,4.394
@@ -1140,214 +1282,200 @@ const RelationshipWeb = ({
 	<path d="M195,149.997c3.839,0,7.678-1.464,10.606-4.394l94.39-94.39L300,105.001c0.001,8.284,6.717,15,15.001,14.999
 		c8.284-0.001,15-6.717,14.999-15.001l-0.006-90C329.993,6.715,323.278,0,314.994,0H225c-8.284,0-15,6.716-15,15s6.716,15,15,15
 		h53.784l-94.391,94.391c-5.858,5.858-5.858,15.355,0,21.213C187.322,148.533,191.161,149.997,195,149.997z"/>
-                   </g>
-                 </svg>
-               )}
-             </button>            
-         <svg
-          ref={svgRef}
-          width="100%"
-          height="100%"
-          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-        >
-          <defs>
-            <marker
-              id="arrowhead"
-              markerWidth="10"
-              markerHeight="7"
-              refX="9"
-              refY="3.5"
-              orient="auto"
+                  </g>
+                </svg>
+              )}
+            </button>            
+            <svg
+              ref={svgRef}
+              width="100%"
+              height="100%"
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
             >
-              <polygon points="0 0, 10 3.5, 0 7" fill={darkMode ? "#ccc" : "#666"} />
-            </marker>
-          </defs>
+              <defs>
+                <marker
+                  id="arrowhead"
+                  markerWidth="10"
+                  markerHeight="7"
+                  refX="9"
+                  refY="3.5"
+                  orient="auto"
+                >
+                  <polygon points="0 0, 10 3.5, 0 7" fill={darkMode ? "#ccc" : "#666"} />
+                </marker>
+              </defs>
 
-          {/* Transform for zoom and pan */}
-          <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-            {/* Edges */}
-            {edges.map((edge) => {
-              const sourceNode = nodes.find(n => n.id === edge.from);
-              const targetNode = nodes.find(n => n.id === edge.to);
-              
-              if (!sourceNode || !targetNode) return null;
-              
-              const nodeRadius = sourceNode.isFocused ? 35 : 30;
-              const targetRadius = targetNode.isFocused ? 35 : 30;
-              
-              // Calculate angle between nodes
-              const dx = targetNode.position.x - sourceNode.position.x;
-              const dy = targetNode.position.y - sourceNode.position.y;
-              const angle = Math.atan2(dy, dx);
-              
-              // Calculate start and end points (on the edge of the circles)
-              const startX = sourceNode.position.x + nodeRadius * Math.cos(angle);
-              const startY = sourceNode.position.y + nodeRadius * Math.sin(angle);
-              const endX = targetNode.position.x - targetRadius * Math.cos(angle);
-              const endY = targetNode.position.y - targetRadius * Math.sin(angle);
-              
-              // Calculate label position (middle of the line)
-              const labelX = (startX + endX) / 2;
-              const labelY = (startY + endY) / 2;
-              
-              return (
-                <g key={edge.id}>
-                  <line
-                    x1={startX}
-                    y1={startY}
-                    x2={endX}
-                    y2={endY}
-                    stroke={edge.color}
-                    strokeWidth="2"
-                    markerEnd="url(#arrowhead)"
-                  />
-                                     {/* Background rectangle with dynamic width - tight to text */}
-                   <rect
-                     x={labelX - getTextWidth(edge.label) / 2}
-                     y={labelY - 8}
-                     width={getTextWidth(edge.label)}
-                     height="16"
-                     fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
-                     stroke={edge.color}
-                     strokeWidth="1"
-                     rx="3"
-                   />
-                  <text
-                    x={labelX}
-                    y={labelY}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize="10"
-                    fill={getTextColor(darkMode)}
-                    className="select-none font-medium"
-                    style={{
-                      textShadow: darkMode
-                        ? '1px 1px 2px rgba(0,0,0,0.8)'
-                        : '1px 1px 2px rgba(255,255,255,0.8)'
-                    }}
-                  >
-                    {edge.label}
-                  </text>
-                </g>
-              );
-            })}
+              {/* Transform for zoom and pan */}
+              <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+                {/* Edges */}
+                {edges.map((edge) => {
+                  const sourceNode = nodes.find(n => n.id === edge.from);
+                  const targetNode = nodes.find(n => n.id === edge.to);
+                  
+                  if (!sourceNode || !targetNode) return null;
+                  
+                  const nodeRadius = sourceNode.isFocused ? 35 : 30;
+                  const targetRadius = targetNode.isFocused ? 35 : 30;
+                  
+                  // Calculate angle between nodes
+                  const dx = targetNode.position.x - sourceNode.position.x;
+                  const dy = targetNode.position.y - sourceNode.position.y;
+                  const angle = Math.atan2(dy, dx);
+                  
+                  // Calculate start and end points (on the edge of the circles)
+                  const startX = sourceNode.position.x + nodeRadius * Math.cos(angle);
+                  const startY = sourceNode.position.y + nodeRadius * Math.sin(angle);
+                  const endX = targetNode.position.x - targetRadius * Math.cos(angle);
+                  const endY = targetNode.position.y - targetRadius * Math.sin(angle);
+                  
+                  // Calculate label position (middle of the line)
+                  const labelX = (startX + endX) / 2;
+                  const labelY = (startY + endY) / 2;
+                  
+                  return (
+                    <g key={edge.id}>
+                      <line
+                        x1={startX}
+                        y1={startY}
+                        x2={endX}
+                        y2={endY}
+                        stroke={edge.color}
+                        strokeWidth="2"
+                        markerEnd="url(#arrowhead)"
+                      />
+                      {/* Background rectangle with dynamic width - tight to text */}
+                      <rect
+                        x={labelX - getTextWidth(edge.label) / 2}
+                        y={labelY - 8}
+                        width={getTextWidth(edge.label)}
+                        height="16"
+                        fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
+                        stroke={edge.color}
+                        strokeWidth="1"
+                        rx="3"
+                      />
+                      <text
+                        x={labelX}
+                        y={labelY}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize="10"
+                        fill={getTextColor(darkMode)}
+                        className="select-none font-medium"
+                        style={{
+                          textShadow: darkMode
+                            ? '1px 1px 2px rgba(0,0,0,0.8)'
+                            : '1px 1px 2px rgba(255,255,255,0.8)'
+                        }}
+                      >
+                        {edge.label}
+                      </text>
+                    </g>
+                  );
+                })}
 
-                         {/* Nodes */}
-             {nodes.map(node => (
-               <g key={node.id}>
-                                  <circle
-                    cx={node.position.x}
-                    cy={node.position.y}
-                    r={node.isFocused ? 35 : 30}
-                    fill={node.color}
-                    stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
-                    strokeWidth={node.isFocused ? 3 : 2}
-                    className="cursor-pointer hover:opacity-80 transition-opacity"
-                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                  />
-                 {/* Relationship count in center */}
-                 <text
-                   x={node.position.x}
-                   y={node.position.y}
-                   textAnchor="middle"
-                   dominantBaseline="middle"
-                   fontSize={node.isFocused ? "14" : "12"}
-                   fontWeight="bold"
-                   fill={getContrastTextColor(node.color, darkMode)}
-                   className="select-none pointer-events-none"
-                   style={{
-                     textShadow: darkMode 
-                       ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                       : '1px 1px 2px rgba(255,255,255,0.8)'
-                   }}
-                 >
-                   {node.relationshipCount || 0}
-                 </text>
-                 <text
-                   x={node.position.x}
-                   y={node.position.y - 45}
-                   textAnchor="middle"
-                   fontSize="12"
-                   fontWeight="bold"
-                   fill={getTextColor(darkMode)}
-                   className="select-none pointer-events-none"
-                   style={{
-                     textShadow: darkMode 
-                       ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                       : '1px 1px 2px rgba(255,255,255,0.8)'
-                   }}
-                 >
-                   {node.name}
-                 </text>
-                 {node.role && (
-                   <text
-                     x={node.position.x}
-                     y={node.position.y + 45}
-                     textAnchor="middle"
-                     fontSize="10"
-                     fill={getTextColor(darkMode)}
-                     className="select-none pointer-events-none"
-                     style={{
-                       textShadow: darkMode
-                         ? '1px 1px 2px rgba(0,0,0,0.8)'
-                         : '1px 1px 2px rgba(255,255,255,0.8)'
-                     }}
-                   >
-                     {/* Simple text wrapping - split by spaces and create multiple lines */}
-                     {(() => {
-                       const maxWidth = (node.isFocused ? 70 : 60) * 2; // 2x node diameter
-                       const words = node.role.split(' ');
-                       const lines = [];
-                       let currentLine = '';
-                       
-                       words.forEach(word => {
-                         const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                         const testWidth = getTextWidth(testLine, 10);
-                         
-                         if (testWidth <= maxWidth) {
-                           currentLine = testLine;
-                         } else {
-                           if (currentLine) lines.push(currentLine);
-                           currentLine = word;
-                         }
-                       });
-                       
-                       if (currentLine) lines.push(currentLine);
-                       
-                       return lines.map((line, index) => (
-                         <tspan key={index} x={node.position.x} dy={index === 0 ? 0 : 12}>
-                           {line}
-                         </tspan>
-                       ));
-                     })()}
-                   </text>
-                 )}
-               </g>
-             ))}
-          </g>
-        </svg>
-      </div>
-
-             {/* Legend */}
-       <div className={`${isFullPage ? 'p-4' : 'mt-4 p-4'} border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800`}>
-        <h3 className="text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Character Groups</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {['Protagonists', 'Fifth Columnists', 'German Connection', 'Supporting Characters', 'Military', 'Historical Figures'].map(group => (
-            <div key={group} className="flex items-center">
-              <div 
-                className="w-4 h-4 rounded-full mr-2"
-                style={{ backgroundColor: getGroupColor(group) }}
-              ></div>
-              <span className="text-sm text-gray-700 dark:text-gray-300">{group}</span>
-            </div>
-          ))}
+                {/* Nodes */}
+                {nodes.map(node => (
+                  <g key={node.id}>
+                    <circle
+                      cx={node.position.x}
+                      cy={node.position.y}
+                      r={node.isFocused ? 35 : 30}
+                      fill={node.color}
+                      stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
+                      strokeWidth={node.isFocused ? 3 : 2}
+                      className="cursor-pointer hover:opacity-80 transition-opacity"
+                      onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                    />
+                    {/* Relationship count in center */}
+                    <text
+                      x={node.position.x}
+                      y={node.position.y}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize={node.isFocused ? "14" : "12"}
+                      fontWeight="bold"
+                      fill={getContrastTextColor(node.color, darkMode)}
+                      className="select-none pointer-events-none"
+                      style={{
+                        textShadow: darkMode 
+                          ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                          : '1px 1px 2px rgba(255,255,255,0.8)'
+                      }}
+                    >
+                      {node.relationshipCount || 0}
+                    </text>
+                    <text
+                      x={node.position.x}
+                      y={node.position.y - 45}
+                      textAnchor="middle"
+                      fontSize="12"
+                      fontWeight="bold"
+                      fill={getTextColor(darkMode)}
+                      className="select-none pointer-events-none"
+                      style={{
+                        textShadow: darkMode 
+                          ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                          : '1px 1px 2px rgba(255,255,255,0.8)'
+                      }}
+                    >
+                      {node.name}
+                    </text>
+                    {node.role && (
+                      <text
+                        x={node.position.x}
+                        y={node.position.y + 45}
+                        textAnchor="middle"
+                        fontSize="10"
+                        fill={getTextColor(darkMode)}
+                        className="select-none pointer-events-none"
+                        style={{
+                          textShadow: darkMode
+                            ? '1px 1px 2px rgba(0,0,0,0.8)'
+                            : '1px 1px 2px rgba(255,255,255,0.8)'
+                        }}
+                      >
+                        {/* Simple text wrapping - split by spaces and create multiple lines */}
+                        {(() => {
+                          const maxWidth = (node.isFocused ? 70 : 60) * 2; // 2x node diameter
+                          const words = node.role.split(' ');
+                          const lines = [];
+                          let currentLine = '';
+                          
+                          words.forEach(word => {
+                            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                            const testWidth = getTextWidth(testLine, 10);
+                            
+                            if (testWidth <= maxWidth) {
+                              currentLine = testLine;
+                            } else {
+                              if (currentLine) lines.push(currentLine);
+                              currentLine = word;
+                            }
+                          });
+                          
+                          if (currentLine) lines.push(currentLine);
+                          
+                          return lines.map((line, index) => (
+                            <tspan key={index} x={node.position.x} dy={index === 0 ? 0 : 12}>
+                              {line}
+                            </tspan>
+                          ));
+                        })()}
+                      </text>
+                    )}
+                  </g>
+                ))}
+              </g>
+            </svg>
+          </div>
         </div>
       </div>
 
-       {/* Instructions */}
-              <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
-          <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
-        </div>
+      {/* Instructions */}
+      <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+        <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
+      </div>
     </div>
   );
 };
