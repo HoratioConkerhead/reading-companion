@@ -22,6 +22,7 @@ const RelationshipWeb = ({
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
   const [isFullPage, setIsFullPage] = useState(false);
+  const [hoveredNode, setHoveredNode] = useState(null);
   
   // View options state
   const [showDescription, setShowDescription] = useState(false); // off by default
@@ -1332,8 +1333,8 @@ const RelationshipWeb = ({
                         strokeWidth="2"
                         markerEnd="url(#arrowhead)"
                       />
-                      {/* Relationship label - only show if showRelationship is true */}
-                      {showRelationship && (
+                                             {/* Relationship label - show if showRelationship is true OR hovering over either connected node */}
+                       {(showRelationship || hoveredNode === edge.from || hoveredNode === edge.to) && (
                         <>
                           {/* Background rectangle with dynamic width - tight to text */}
                           <rect
@@ -1371,18 +1372,20 @@ const RelationshipWeb = ({
                 {/* Nodes */}
                 {nodes.map(node => (
                   <g key={node.id}>
-                    <circle
-                      cx={node.position.x}
-                      cy={node.position.y}
-                      r={node.isFocused ? 35 : 30}
-                      fill={node.color}
-                      stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
-                      strokeWidth={node.isFocused ? 3 : 2}
-                      className="cursor-pointer hover:opacity-80 transition-opacity"
-                      onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                    />
-                                         {/* Relationship count above node - only show if showNumber is true */}
-                                         {showNumber && (
+                                         <circle
+                       cx={node.position.x}
+                       cy={node.position.y}
+                       r={node.isFocused ? 35 : 30}
+                       fill={node.color}
+                       stroke={node.isFocused ? getNodeStrokeColor(darkMode, node.id) : getNodeStrokeColor(darkMode, node.id)}
+                       strokeWidth={node.isFocused ? 3 : 2}
+                       className="cursor-pointer hover:opacity-80 transition-opacity"
+                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                       onMouseEnter={() => setHoveredNode(node.id)}
+                       onMouseLeave={() => setHoveredNode(null)}
+                     />
+                                                                                   {/* Relationship count above node - show if showNumber is true OR hovering over this node */}
+                                          {(showNumber || hoveredNode === node.id) && (
                        <text
                          x={node.position.x}
                          y={node.position.y - (node.isFocused ? 45 : 40)}
@@ -1400,7 +1403,7 @@ const RelationshipWeb = ({
                        >
                          {node.relationshipCount || 0}
                        </text>
-                     )}                    )}
+                     )}                  
                     
                                          {/* Character name - always show with text wrapping */}
                      <text
@@ -1452,8 +1455,8 @@ const RelationshipWeb = ({
                        })()}
                     </text>
                     
-                    {/* Character description - only show if showDescription is true */}
-                    {showDescription && node.role && (
+                                         {/* Character description - show if showDescription is true OR hovering over this node */}
+                     {(showDescription || hoveredNode === node.id) && node.role && (
                       <text
                         x={node.position.x}
                         y={node.position.y}
