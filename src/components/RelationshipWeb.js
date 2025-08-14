@@ -964,6 +964,7 @@ const RelationshipWeb = ({
           </select>
         </div>
 
+
         <div className="flex gap-2 items-end">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
@@ -1036,24 +1037,7 @@ const RelationshipWeb = ({
           >
             {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
           </button>
-          <button
-            className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-lg font-bold"
-            title="How to use the Relationship Web"
-            onClick={() => {
-              alert(`How to use the Relationship Web:
 
-• Start by selecting a character to focus on their relationships
-• Choose a chapter to avoid spoilers
-• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
-• Click on any character to view their details and add their relationships
-• Use mouse wheel to zoom, and drag the background to pan
-• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
-• Use "Fit to View" to see all characters at once
-• Use the full screen button (↗) for maximum viewing area`);
-            }}
-          >
-            ℹ️
-          </button>
         </div>
       </div>
 
@@ -1063,7 +1047,32 @@ const RelationshipWeb = ({
       <div className="flex gap-4">
         {/* Left Panel */}
         <div className="w-48 flex-shrink-0">
-          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 200px)' : '600px' }}>
+          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 200px)' : '800px' }}>
+
+            {/* Action Buttons */}
+            <div className="mb-6">
+              <div className="space-y-2">
+
+                <button
+                  className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-s"
+                  title="How to use the Relationship Web"
+                  onClick={() => {
+                    alert(`How to use the Relationship Web:
+
+• Start by selecting a character to focus on their relationships
+• Choose a chapter to avoid spoilers
+• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
+• Click on any character to view their details and add their relationships
+• Use mouse wheel to zoom, and drag the background to pan
+• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
+• Use "Fit to View" to see all characters at once
+• Use the full screen button (↗) for maximum viewing area`);
+                  }}
+                >
+                  ℹ️ Help
+                </button>
+              </div>
+            </div>
             {/* Physics Controls */}
             <div className="mb-6">
               <div className="space-y-3">
@@ -1105,103 +1114,6 @@ const RelationshipWeb = ({
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="mb-6">
-              <div className="space-y-2">
-                <button
-                  className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-s"
-                  onClick={resetView}
-                >
-                  Reset View
-                </button>
-
-                <button
-                  className="w-full px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-s"
-                  onClick={() => {
-                    if (nodes.length === 0) return;
-                    
-                    // Calculate the bounding box of all current nodes
-                    const minX = Math.min(...nodes.map(n => n.position.x));
-                    const maxX = Math.max(...nodes.map(n => n.position.x));
-                    const minY = Math.min(...nodes.map(n => n.position.y));
-                    const maxY = Math.max(...nodes.map(n => n.position.y));
-                    
-                    // Add some padding around the nodes
-                    const padding = 100;
-                    const nodeWidth = maxX - minX + padding * 2;
-                    const nodeHeight = maxY - minY + padding * 2;
-                    
-                    // Get the container dimensions
-                    const containerWidth = containerRef.current.clientWidth;
-                    const containerHeight = containerRef.current.clientHeight;
-                    
-                    // Calculate the zoom level needed to fit all nodes
-                    const scaleX = containerWidth / nodeWidth;
-                    const scaleY = containerHeight / nodeHeight;
-                    const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
-                    
-                    // Calculate the center of the nodes
-                    const centerX = (minX + maxX) / 2;
-                    const centerY = (minY + maxY) / 2;
-                    
-                    // Calculate the center of the container
-                    const containerCenterX = containerWidth / 2;
-                    const containerCenterY = containerHeight / 2;
-                    
-                    // Calculate the pan needed to center the nodes
-                    const newPanX = containerCenterX - centerX * newZoom;
-                    const newPanY = containerCenterY - centerY * newZoom;
-                    
-                    // Apply the new zoom and pan
-                    setZoom(newZoom);
-                    setPan({ x: newPanX, y: newPanY });
-                  }}
-                >
-                  Fit to View
-                </button>
-
-                <button
-                  className={`w-full px-3 py-2 text-white rounded transition-colors text-s ${
-                    isAutoArrangeOn 
-                      ? 'bg-red-500 hover:bg-red-600' 
-                      : 'bg-green-500 hover:bg-green-600'
-                  }`}
-                  onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
-                >
-                  {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
-                </button>
-
-                <button
-                  className={`w-full px-3 py-2 text-white rounded transition-colors text-s ${
-                    isRemoveMode 
-                      ? 'bg-red-500 hover:bg-red-600' 
-                      : 'bg-gray-500 hover:bg-gray-600'
-                  }`}
-                  onClick={() => setIsRemoveMode(!isRemoveMode)}
-                >
-                  {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
-                </button>
-
-                <button
-                  className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-s"
-                  title="How to use the Relationship Web"
-                  onClick={() => {
-                    alert(`How to use the Relationship Web:
-
-• Start by selecting a character to focus on their relationships
-• Choose a chapter to avoid spoilers
-• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
-• Click on any character to view their details and add their relationships
-• Use mouse wheel to zoom, and drag the background to pan
-• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
-• Use "Fit to View" to see all characters at once
-• Use the full screen button (↗) for maximum viewing area`);
-                  }}
-                >
-                  ℹ️ Help
-                </button>
-              </div>
-            </div>
 
             {/* Character Groups Key */}
             <div className="mb-6">
@@ -1219,16 +1131,45 @@ const RelationshipWeb = ({
               </div>
             </div>
 
-            {/* Instructions */}
-            <div className="text-xs text-gray-600 dark:text-gray-400">
-              <p className="mb-2"><strong>Quick Tips:</strong></p>
-              <ul className="space-y-1 text-xs">
-                <li>• Drag nodes to move</li>
-                <li>• Click nodes to add relationships</li>
-                <li>• Toggle Remove Mode to delete</li>
-                <li>• Use mouse wheel to zoom</li>
-              </ul>
+            {/* Relationship Types Key */}
+            <div className="mb-6">
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Relationship Types</h4>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#805AD5' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Spouse</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#3182CE' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Handler/Asset</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#E53E3E' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Conspirator/Enemy</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#38A169' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Colleague/Partner</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#DD6B20' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Superior/Subordinate</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#4299E1' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Friend</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#D53F8C' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Informant/Double-Agent</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#718096' }}></div>
+                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Other</span>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
 
@@ -1240,7 +1181,7 @@ const RelationshipWeb = ({
               isFullPage ? 'flex-1' : ''
             }`}
             style={{ 
-              height: isFullPage ? 'calc(100vh - 200px)' : '600px'
+              height: isFullPage ? 'calc(100vh - 200px)' : '800px'
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -1471,7 +1412,7 @@ const RelationshipWeb = ({
       </div>
 
       {/* Instructions */}
-      <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+      <div className="text-s text-gray-600 dark:text-gray-400 mt-2 text-center">
         <p>Drag nodes to move them • Click nodes to add their relationships • Toggle Remove Mode to delete nodes • Shift+drag to stretch relationship lines</p>
       </div>
     </div>
