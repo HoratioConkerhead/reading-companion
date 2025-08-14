@@ -362,6 +362,22 @@ const RelationshipWeb = ({
   // Initialize graph when focused character or chapter changes
   useEffect(() => {
     initializeNodes();
+    
+    // Center the view on the focused character after initialization
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const containerHeight = containerRef.current.clientHeight;
+      const centerX = containerWidth / 2;
+      const centerY = containerHeight / 2;
+      const characterX = 400; // This matches the centerX in initializeNodes
+      const characterY = 300; // This matches the centerY in initializeNodes
+      
+      // Calculate pan to center the character
+      const newPanX = centerX - characterX;
+      const newPanY = centerY - characterY;
+      
+      setPan({ x: newPanX, y: newPanY });
+    }
   }, [initializeNodes]);
 
   // Initialize edges after nodes are set
