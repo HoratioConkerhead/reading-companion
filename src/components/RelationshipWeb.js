@@ -1402,29 +1402,61 @@ const RelationshipWeb = ({
                       </text>
                     )}
                     
-                    {/* Character name - always show */}
-                    <text
-                      x={node.position.x}
-                      y={node.position.y - 45}
-                      textAnchor="middle"
-                      fontSize="12"
-                      fontWeight="bold"
-                      fill={getTextColor(darkMode)}
-                      className="select-none pointer-events-none"
-                      style={{
-                        textShadow: darkMode 
-                          ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                          : '1px 1px 2px rgba(255,255,255,0.8)'
-                      }}
-                    >
-                      {node.name}
+                                         {/* Character name - always show with text wrapping */}
+                     <text
+                       x={node.position.x}
+                       y={node.position.y}
+                       textAnchor="middle"
+                       dominantBaseline="middle"
+                       fontSize="12"
+                       fontWeight="bold"
+                       fill={getTextColor(darkMode)}
+                       className="select-none pointer-events-none"
+                       style={{
+                         textShadow: darkMode 
+                           ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                           : '1px 1px 2px rgba(255,255,255,0.8)'
+                       }}
+                     >
+                                             {/* Text wrapping for character names */}
+                       {(() => {
+                         const maxWidth = (node.isFocused ? 70 : 60)  * 1.2; // slightly larger than diameter
+                         const words = node.name.split(' ');
+                         const lines = [];
+                         let currentLine = '';
+                         
+                         words.forEach(word => {
+                           const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                           const testWidth = getTextWidth(testLine, 12);
+                           
+                           if (testWidth <= maxWidth) {
+                             currentLine = testLine;
+                           } else {
+                             if (currentLine) lines.push(currentLine);
+                             currentLine = word;
+                           }
+                         });
+                         
+                         if (currentLine) lines.push(currentLine);
+                         
+                         // Calculate total height of all lines to center them on the node
+                         const lineHeight = 14; // Slightly larger than fontSize for spacing
+                         const totalHeight = lines.length * lineHeight;
+                         const startY = -(totalHeight / 2) + (lineHeight / 2);
+                         
+                         return lines.map((line, index) => (
+                           <tspan key={index} x={node.position.x} dy={index === 0 ? startY : 14}>
+                             {line}
+                           </tspan>
+                         ));
+                       })()}
                     </text>
                     
                     {/* Character description - only show if showDescription is true */}
                     {showDescription && node.role && (
                       <text
                         x={node.position.x}
-                        y={node.position.y + 45}
+                        y={node.position.y}
                         textAnchor="middle"
                         fontSize="10"
                         fill={getTextColor(darkMode)}
@@ -1435,9 +1467,9 @@ const RelationshipWeb = ({
                             : '1px 1px 2px rgba(255,255,255,0.8)'
                         }}
                       >
-                        {/* Simple text wrapping - split by spaces and create multiple lines */}
+                        {/* Text wrapping for character descriptions */}
                         {(() => {
-                          const maxWidth = (node.isFocused ? 70 : 60) * 2; // 2x node diameter
+                          const maxWidth = (node.isFocused ? 70 : 60) *2;
                           const words = node.role.split(' ');
                           const lines = [];
                           let currentLine = '';
@@ -1456,8 +1488,13 @@ const RelationshipWeb = ({
                           
                           if (currentLine) lines.push(currentLine);
                           
+                          // Calculate total height of all lines and position below the node
+                          const lineHeight = 12; // Slightly larger than fontSize for spacing
+                          const totalHeight = lines.length * lineHeight;
+                          const startY = (node.isFocused ? 50 : 45) 
+                          
                           return lines.map((line, index) => (
-                            <tspan key={index} x={node.position.x} dy={index === 0 ? 0 : 12}>
+                            <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
                               {line}
                             </tspan>
                           ));
