@@ -23,6 +23,11 @@ const RelationshipWeb = ({
   const [repulsionForce, setRepulsionForce] = useState(100000);
   const [isFullPage, setIsFullPage] = useState(false);
   
+  // View options state
+  const [showDescription, setShowDescription] = useState(false); // off by default
+  const [showRelationship, setShowRelationship] = useState(false); // off default
+  const [showNumber, setShowNumber] = useState(false); // off y default
+  
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const animationRef = useRef(null);
@@ -1043,6 +1048,7 @@ const RelationshipWeb = ({
 
 
 
+
       {/* Main Content Area with Left Panel and Map */}
       <div className="flex gap-4">
         {/* Left Panel */}
@@ -1114,10 +1120,52 @@ const RelationshipWeb = ({
               </div>
             </div>
 
+            {/* View Options */}
+            <div className={`${isFullPage ? 'p-4' : 'mb-4'} flex flex-col gap-2`}>
+              <div>
+                <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  View Options
+                </label>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={showDescription}
+                      onChange={(e) => setShowDescription(e.target.checked)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Description</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={showRelationship}
+                      onChange={(e) => setShowRelationship(e.target.checked)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Relationship</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={showNumber}
+                      onChange={(e) => setShowNumber(e.target.checked)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Number</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
 
             {/* Character Groups Key */}
             <div className="mb-6">
-              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Character Groups</h4>
+
+              <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
+                 Character Groups
+              </label>
+
               <div className="space-y-2">
                 {['Protagonists', 'Fifth Columnists', 'German Connection', 'Supporting Characters', 'Military', 'Historical Figures'].map(group => (
                   <div key={group} className="flex items-center">
@@ -1133,7 +1181,9 @@ const RelationshipWeb = ({
 
             {/* Relationship Types Key */}
             <div className="mb-6">
-              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Relationship Types</h4>
+              <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Relationship Types
+              </label>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#805AD5' }}></div>
@@ -1282,33 +1332,38 @@ const RelationshipWeb = ({
                         strokeWidth="2"
                         markerEnd="url(#arrowhead)"
                       />
-                      {/* Background rectangle with dynamic width - tight to text */}
-                      <rect
-                        x={labelX - getTextWidth(edge.label) / 2}
-                        y={labelY - 8}
-                        width={getTextWidth(edge.label)}
-                        height="16"
-                        fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
-                        stroke={edge.color}
-                        strokeWidth="1"
-                        rx="3"
-                      />
-                      <text
-                        x={labelX}
-                        y={labelY}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize="10"
-                        fill={getTextColor(darkMode)}
-                        className="select-none font-medium"
-                        style={{
-                          textShadow: darkMode
-                            ? '1px 1px 2px rgba(0,0,0,0.8)'
-                            : '1px 1px 2px rgba(255,255,255,0.8)'
-                        }}
-                      >
-                        {edge.label}
-                      </text>
+                      {/* Relationship label - only show if showRelationship is true */}
+                      {showRelationship && (
+                        <>
+                          {/* Background rectangle with dynamic width - tight to text */}
+                          <rect
+                            x={labelX - getTextWidth(edge.label) / 2}
+                            y={labelY - 8}
+                            width={getTextWidth(edge.label)}
+                            height="16"
+                            fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
+                            stroke={edge.color}
+                            strokeWidth="1"
+                            rx="3"
+                          />
+                          <text
+                            x={labelX}
+                            y={labelY}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fontSize="10"
+                            fill={getTextColor(darkMode)}
+                            className="select-none font-medium"
+                            style={{
+                              textShadow: darkMode
+                                ? '1px 1px 2px rgba(0,0,0,0.8)'
+                                : '1px 1px 2px rgba(255,255,255,0.8)'
+                            }}
+                          >
+                            {edge.label}
+                          </text>
+                        </>
+                      )}
                     </g>
                   );
                 })}
@@ -1326,24 +1381,28 @@ const RelationshipWeb = ({
                       className="cursor-pointer hover:opacity-80 transition-opacity"
                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                     />
-                    {/* Relationship count in center */}
-                    <text
-                      x={node.position.x}
-                      y={node.position.y}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontSize={node.isFocused ? "14" : "12"}
-                      fontWeight="bold"
-                      fill={getContrastTextColor(node.color, darkMode)}
-                      className="select-none pointer-events-none"
-                      style={{
-                        textShadow: darkMode 
-                          ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                          : '1px 1px 2px rgba(255,255,255,0.8)'
-                      }}
-                    >
-                      {node.relationshipCount || 0}
-                    </text>
+                    {/* Relationship count in center - only show if showNumber is true */}
+                    {showNumber && (
+                      <text
+                        x={node.position.x}
+                        y={node.position.y}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize={node.isFocused ? "14" : "12"}
+                        fontWeight="bold"
+                        fill={getContrastTextColor(node.color, darkMode)}
+                        className="select-none pointer-events-none"
+                        style={{
+                          textShadow: darkMode 
+                            ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                            : '1px 1px 2px rgba(255,255,255,0.8)'
+                        }}
+                      >
+                        {node.relationshipCount || 0}
+                      </text>
+                    )}
+                    
+                    {/* Character name - always show */}
                     <text
                       x={node.position.x}
                       y={node.position.y - 45}
@@ -1360,7 +1419,9 @@ const RelationshipWeb = ({
                     >
                       {node.name}
                     </text>
-                    {node.role && (
+                    
+                    {/* Character description - only show if showDescription is true */}
+                    {showDescription && node.role && (
                       <text
                         x={node.position.x}
                         y={node.position.y + 45}
