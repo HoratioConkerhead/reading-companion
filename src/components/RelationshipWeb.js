@@ -30,6 +30,7 @@ const RelationshipWeb = ({
   const [showRelationship, setShowRelationship] = useState(false); // off default
   const [showNumber, setShowNumber] = useState(false); // off y default
   const [showImportance, setShowImportance] = useState(false); // off by default
+  const [scaleSizeByImportance, setScaleSizeByImportance] = useState(false); // off by default
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
@@ -254,6 +255,19 @@ const RelationshipWeb = ({
     return width;
   }, []);
 
+  // Calculate node size based on importance (if enabled)
+  const getNodeSize = useCallback((importance, isFocused = false) => {
+    if (!scaleSizeByImportance) {
+      return 30; // All nodes same size
+    }
+    
+    // Scale importance (1-100) to size (10-60)
+    // Formula: size = 10 + (importance / 100) * 50
+    const baseSize = 10 + (importance / 100) * 50;
+        
+    return Math.max(baseSize, 15); // Minimum size of 15
+  }, [scaleSizeByImportance]);
+
   // Get appropriate stroke color for nodes based on theme
   const getNodeStrokeColor = useCallback((isDark = false, characterId = null) => {
     if (!characterId) {
@@ -351,47 +365,51 @@ const RelationshipWeb = ({
     
     // Add focused character in center
     if (focusedChar) {
-      const relationshipCount = getRelationshipCount(focusedChar.id);
-      const importance = calculateCharacterImportance(focusedChar);
-      newNodes.push({
-        id: focusedChar.id,
-        name: focusedChar.name,
-        role: focusedChar.role,
-        group: focusedChar.group,
-        position: { x: centerX, y: centerY },
-        color: getGroupColor(focusedChar.group, relationshipCount),
-        relationshipCount,
-        importance,
-        isFocused: true
-      });
+             const relationshipCount = getRelationshipCount(focusedChar.id);
+       const importance = calculateCharacterImportance(focusedChar);
+       const size = getNodeSize(importance, true);
+       newNodes.push({
+         id: focusedChar.id,
+         name: focusedChar.name,
+         role: focusedChar.role,
+         group: focusedChar.group,
+         position: { x: centerX, y: centerY },
+         color: getGroupColor(focusedChar.group, relationshipCount),
+         relationshipCount,
+         importance,
+         size,
+         isFocused: true
+       });
     }
     
     // Place other characters in a circle around the focused character
-    otherCharacters.forEach((character, index) => {
-      const relationshipCount = getRelationshipCount(character.id);
-      const importance = calculateCharacterImportance(character);
-      const totalInCircle = otherCharacters.length;
-      
-      // Calculate angle evenly around the circle
-      const angle = (index * 2 * Math.PI) / totalInCircle;
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-      
-      newNodes.push({
-        id: character.id,
-        name: character.name,
-        role: character.role,
-        group: character.group,
-        position: { x, y },
-        color: getGroupColor(character.group, relationshipCount),
-        relationshipCount,
-        importance,
-        isFocused: false
-      });
-    });
+         otherCharacters.forEach((character, index) => {
+       const relationshipCount = getRelationshipCount(character.id);
+       const importance = calculateCharacterImportance(character);
+       const size = getNodeSize(importance, false);
+       const totalInCircle = otherCharacters.length;
+       
+       // Calculate angle evenly around the circle
+       const angle = (index * 2 * Math.PI) / totalInCircle;
+       const x = centerX + radius * Math.cos(angle);
+       const y = centerY + radius * Math.sin(angle);
+       
+       newNodes.push({
+         id: character.id,
+         name: character.name,
+         role: character.role,
+         group: character.group,
+         position: { x, y },
+         color: getGroupColor(character.group, relationshipCount),
+         relationshipCount,
+         importance,
+         size,
+         isFocused: false
+       });
+     });
 
-    setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance]);
+         setNodes(newNodes);
+   }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -732,20 +750,22 @@ const RelationshipWeb = ({
           };
         };
         
-        const position = calculatePosition();
-        const relationshipCount = getRelationshipCount(char.id);
-        const importance = calculateCharacterImportance(char);
-        return {
-          id: char.id,
-          name: char.name,
-          role: char.role,
-          group: char.group,
-          position: position,
-          color: getGroupColor(char.group, relationshipCount),
-          relationshipCount,
-          importance,
-          isFocused: false
-        };
+                 const position = calculatePosition();
+         const relationshipCount = getRelationshipCount(char.id);
+         const importance = calculateCharacterImportance(char);
+         const size = getNodeSize(importance, false);
+         return {
+           id: char.id,
+           name: char.name,
+           role: char.role,
+           group: char.group,
+           position: position,
+           color: getGroupColor(char.group, relationshipCount),
+           relationshipCount,
+           importance,
+           size,
+           isFocused: false
+         };
       })] : currentNodes;
              
       // Update edges to show ALL relationships between visible characters
@@ -1142,16 +1162,17 @@ const RelationshipWeb = ({
                   className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-s"
                   title="How to use the Relationship Web"
                   onClick={() => {
-                    alert(`How to use the Relationship Web:
+                                         alert(`How to use the Relationship Web:
 
-• Start by selecting a character to focus on their relationships
-• Choose a chapter to avoid spoilers
-• Drag characters to rearrange, or use "Auto Arrange" for automatic layout
-• Click on any character to view their details and add their relationships
-• Use mouse wheel to zoom, and drag the background to pan
-• Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
-• Use "Fit to View" to see all characters at once
-• Use the full screen button (↗) for maximum viewing area`);
+ • Start by selecting a character to focus on their relationships
+ • Choose a chapter to avoid spoilers
+ • Drag characters to rearrange, or use "Auto Arrange" for automatic layout
+ • Click on any character to view their details and add their relationships
+ • Use mouse wheel to zoom, and drag the background to pan
+ • Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
+ • Use "Fit to View" to see all characters at once
+ • Use the full screen button (↗) for maximum viewing area
+ • Toggle "Scale Size by Importance" to make important characters larger`);
                   }}
                 >
                   ℹ️ Help
@@ -1236,18 +1257,27 @@ const RelationshipWeb = ({
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Relationship Count</span>
                   </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={showImportance}
-                      onChange={(e) => {
-                        setShowImportance(e.target.checked);
-                        if (e.target.checked) setShowNumber(false);
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Importance Rating</span>
-                  </label>
+                                     <label className="flex items-center">
+                     <input
+                       type="checkbox"
+                       checked={showImportance}
+                       onChange={(e) => {
+                         setShowImportance(e.target.checked);
+                         if (e.target.checked) setShowNumber(false);
+                       }}
+                       className="mr-2"
+                     />
+                     <span className="text-sm text-gray-700 dark:text-gray-300">Importance Rating</span>
+                   </label>
+                   <label className="flex items-center">
+                     <input
+                       type="checkbox"
+                       checked={scaleSizeByImportance}
+                       onChange={(e) => setScaleSizeByImportance(e.target.checked)}
+                       className="mr-2"
+                     />
+                     <span className="text-sm text-gray-700 dark:text-gray-300">Scale Size by Importance</span>
+                   </label>
                 </div>
               </div>
             </div>
@@ -1391,24 +1421,25 @@ const RelationshipWeb = ({
               {/* Transform for zoom and pan */}
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
                 {/* Edges */}
-                {edges.map((edge) => {
-                  const sourceNode = nodes.find(n => n.id === edge.from);
-                  const targetNode = nodes.find(n => n.id === edge.to);
-                  
-                  if (!sourceNode || !targetNode) return null;
-                  
-                  const nodeRadius = 30;
+                                 {edges.map((edge) => {
+                   const sourceNode = nodes.find(n => n.id === edge.from);
+                   const targetNode = nodes.find(n => n.id === edge.to);
+                   
+                   if (!sourceNode || !targetNode) return null;
+                   
+                   const sourceRadius = sourceNode.size || 30;
+                   const targetRadius = targetNode.size || 30;
                   
                   // Calculate angle between nodes
                   const dx = targetNode.position.x - sourceNode.position.x;
                   const dy = targetNode.position.y - sourceNode.position.y;
                   const angle = Math.atan2(dy, dx);
                   
-                  // Calculate start and end points (on the edge of the circles)
-                  const startX = sourceNode.position.x + nodeRadius * Math.cos(angle);
-                  const startY = sourceNode.position.y + nodeRadius * Math.sin(angle);
-                  const endX = targetNode.position.x - nodeRadius * Math.cos(angle);
-                  const endY = targetNode.position.y - nodeRadius * Math.sin(angle);
+                                     // Calculate start and end points (on the edge of the circles)
+                   const startX = sourceNode.position.x + sourceRadius * Math.cos(angle);
+                   const startY = sourceNode.position.y + sourceRadius * Math.sin(angle);
+                   const endX = targetNode.position.x - targetRadius * Math.cos(angle);
+                   const endY = targetNode.position.y - targetRadius * Math.sin(angle);
                   
                   // Calculate label position (middle of the line)
                   const labelX = (startX + endX) / 2;
@@ -1464,37 +1495,37 @@ const RelationshipWeb = ({
                 {/* Nodes */}
                 {nodes.map(node => (
                   <g key={node.id}>
-                                         <circle
-                       cx={node.position.x}
-                       cy={node.position.y}
-                                               r={30}
-                       fill={node.color}
-                                               stroke={getNodeStrokeColor(darkMode, node.id)}
-                                               strokeWidth={2}
-                       className="cursor-pointer hover:opacity-80 transition-opacity"
-                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                       onMouseEnter={() => setHoveredNode(node.id)}
-                       onMouseLeave={() => setHoveredNode(null)}
-                     />
+                                                              <circle
+                        cx={node.position.x}
+                        cy={node.position.y}
+                        r={node.size || 30}
+                        fill={node.color}
+                        stroke={getNodeStrokeColor(darkMode, node.id)}
+                        strokeWidth={2}
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                        onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                        onMouseEnter={() => setHoveredNode(node.id)}
+                        onMouseLeave={() => setHoveredNode(null)}
+                      />
                                                                                    {/* Number above node - show relationship count OR importance rating */}
                                           {(showNumber || showImportance || hoveredNode === node.id) && (
-                       <text
-                         x={node.position.x}
-                                                   y={node.position.y - 40}
-                         textAnchor="middle"
-                         dominantBaseline="middle"
-                                                   fontSize="12"
-                         fontWeight="bold"
-                         fill={getContrastTextColor(node.color, darkMode)}
-                         className="select-none pointer-events-none"
-                         style={{
-                           textShadow: darkMode 
-                             ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                             : '1px 1px 2px rgba(255,255,255,0.8)'
-                         }}
-                       >
-                         {showImportance ? (node.importance || 0) : (node.relationshipCount || 0)}
-                       </text>
+                                               <text
+                          x={node.position.x}
+                          y={node.position.y - (node.size || 30) - 10}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fontSize="12"
+                          fontWeight="bold"
+                          fill={getContrastTextColor(node.color, darkMode)}
+                          className="select-none pointer-events-none"
+                          style={{
+                            textShadow: darkMode 
+                              ? '1px 1px 2px rgba(0,0,0,0.8)' 
+                              : '1px 1px 2px rgba(255,255,255,0.8)'
+                          }}
+                        >
+                          {showImportance ? (node.importance || 0) : (node.relationshipCount || 0)}
+                        </text>
                      )}                  
                     
                                          {/* Character name - always show with text wrapping */}
@@ -1583,10 +1614,10 @@ const RelationshipWeb = ({
                           
                           if (currentLine) lines.push(currentLine);
                           
-                          // Calculate total height of all lines and position below the node
-                          const lineHeight = 12; // Slightly larger than fontSize for spacing
-                          const totalHeight = lines.length * lineHeight;
-                                                     const startY = 45 
+                                                     // Calculate total height of all lines and position below the node
+                           const lineHeight = 12; // Slightly larger than fontSize for spacing
+                           const totalHeight = lines.length * lineHeight;
+                           const startY = (node.size || 30) + 15; 
                           
                           return lines.map((line, index) => (
                             <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
