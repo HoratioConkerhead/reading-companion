@@ -328,38 +328,57 @@ const RelationshipWeb = ({
     const chapterIndex = chaptersData.findIndex(ch => ch.id === chapterId);
     if (chapterIndex === -1) return relationships;
     
-    // For now, show all relationships up to the current chapter
-    // You can enhance this logic based on when relationships are revealed in the story
+    // Filter relationships based on when they are introduced
     return relationships.filter(rel => {
-      // If relationship has a chapter property, use it
-      if (rel.chapter) {
-        const relChapterIndex = chaptersData.findIndex(ch => ch.id === rel.chapter);
+      if (rel.introducedInChapter) {
+        const relChapterIndex = chaptersData.findIndex(ch => ch.id === rel.introducedInChapter);
         return relChapterIndex <= chapterIndex;
       }
-      // Otherwise, show all relationships (you can customize this logic)
+      // If no chapter info, show the relationship
+      return true;
+    });
+  }, [chaptersData]);
+
+  // Filter characters by chapter
+  const filterCharactersByChapter = useCallback((characters, chapterId) => {
+    if (!chapterId) return characters;
+    
+    const chapterIndex = chaptersData.findIndex(ch => ch.id === chapterId);
+    if (chapterIndex === -1) return characters;
+    
+    // Filter characters based on when they are introduced
+    return characters.filter(char => {
+      if (char.introducedInChapter) {
+        const charChapterIndex = chaptersData.findIndex(ch => ch.id === char.introducedInChapter);
+        return charChapterIndex <= chapterIndex;
+      }
+      // If no chapter info, show the character
       return true;
     });
   }, [chaptersData]);
 
       // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
-    const filteredCharacters = focusedCharacter 
-      ? charactersData.filter(char => 
+    // Filter characters based on current chapter
+    const filteredCharacters = filterCharactersByChapter(charactersData, currentChapter);
+    
+    const focusedCharacterFiltered = focusedCharacter 
+      ? filteredCharacters.filter(char => 
           char.id === focusedCharacter ||
           relationshipsData.some(rel => 
             (rel.from === focusedCharacter && rel.to === char.id) ||
             (rel.to === focusedCharacter && rel.from === char.id)
           )
         )
-      : charactersData;
+      : filteredCharacters;
 
     const centerX = 400;
     const centerY = 300;
     const radius = 200; // Fixed radius of 200 pixels
 
     // Separate focused character from others for proper circle calculation
-    const focusedChar = filteredCharacters.find(char => char.id === focusedCharacter);
-    const otherCharacters = filteredCharacters.filter(char => char.id !== focusedCharacter);
+    const focusedChar = focusedCharacterFiltered.find(char => char.id === focusedCharacter);
+    const otherCharacters = focusedCharacterFiltered.filter(char => char.id !== focusedCharacter);
     
     const newNodes = [];
     
@@ -409,7 +428,7 @@ const RelationshipWeb = ({
     });
 
           setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance]); // Remove getNodeSize dependency
+  }, [charactersData, relationshipsData, focusedCharacter, currentChapter, getRelationshipCount, getGroupColor, calculateCharacterImportance, filterCharactersByChapter]); // Add currentChapter and filterCharactersByChapter dependencies
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -456,7 +475,7 @@ const RelationshipWeb = ({
       
       setPan({ x: newPanX, y: newPanY });
     }
-  }, [initializeNodes]);
+  }, [initializeNodes, currentChapter]);
 
   // Initialize edges after nodes are set
   useEffect(() => {
@@ -716,10 +735,11 @@ const RelationshipWeb = ({
         connectedCharacterIds.add(rel.to);
       });
       
-      // Find new characters to add
+      // Find new characters to add (respecting chapter filtering)
       const existingIds = new Set(currentNodes.map(n => n.id));
+      const filteredCharacters = filterCharactersByChapter(charactersData, currentChapter);
 
-      const newCharacters = charactersData.filter(char => 
+      const newCharacters = filteredCharacters.filter(char => 
         connectedCharacterIds.has(char.id) && !existingIds.has(char.id)
       );
       
@@ -823,7 +843,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  }, [isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
+  }, [isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
@@ -930,11 +950,20 @@ const RelationshipWeb = ({
     }
   };
 
+  // Show all characters and relationships up to current chapter
+  const showAllUpToChapter = () => {
+    // Clear focused character to show all characters up to current chapter
+    setFocusedCharacter(null);
+    // Clear current view to force re-initialization
+    setNodes([]);
+    setEdges([]);
+  };
+
   // Reset view
   const resetView = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
-    setCurrentChapter(null);
+    // Don't reset currentChapter - keep the chapter filter active
     setNodes([]);
     setEdges([]);
     setIsAutoArrangeOn(false);
@@ -1075,7 +1104,6 @@ const RelationshipWeb = ({
             value={focusedCharacter || ''}
             onChange={(e) => focusOnCharacter(e.target.value || null)}
           >
-            <option value="">Show All Characters</option>
             {charactersData.map(character => (
               <option key={character.id} value={character.id}>
                 {character.name} ({character.group})
@@ -1088,18 +1116,27 @@ const RelationshipWeb = ({
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Show Up To Chapter
           </label>
-          <select
-            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-            value={currentChapter || ''}
-            onChange={(e) => setCurrentChapter(e.target.value || null)}
-          >
-            <option value="">Show All Relationships</option>
-            {chaptersData.map((chapter, index) => (
-              <option key={chapter.id} value={chapter.id}>
-                {chapter.title}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2">
+            <select
+              className="flex-1 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              value={currentChapter || ''}
+              onChange={(e) => setCurrentChapter(e.target.value || null)}
+            >
+              <option value="">Show All Relationships</option>
+              {chaptersData.map((chapter, index) => (
+                <option key={chapter.id} value={chapter.id}>
+                  {chapter.title}
+                </option>
+              ))}
+            </select>
+            <button
+              className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+              onClick={showAllUpToChapter}
+              title="Show all characters and relationships up to the selected chapter"
+            >
+              Show All
+            </button>
+          </div>
         </div>
 
 

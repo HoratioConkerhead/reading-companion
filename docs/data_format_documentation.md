@@ -14,7 +14,7 @@ The app uses a modular data structure organized by book with domain-specific fil
     locations.js          // Location data
     events.js             // Event data
     objects.js            // Object data
-    relationships.js      // Character relationship data
+    relationships.js      // Character relationship data (optional; can be derived from characters.relations)
     positions.js          // Geographic positions and map data
     mysteryElements.js    // Mystery-specific elements
     chapters.js           // Chapter information
@@ -51,11 +51,12 @@ export const characters = [
     background: 'Background...',  // Character's background information
     personality: 'Personality traits description',
     traits: ['Trait1', 'Trait2'], // Array of character traits
-    relations: [                  // Array of relationships to other characters
+    relations: [                  // Array of relationships used to derive edges
       { 
         characterId: 'related_character_id', 
         type: 'relationship_type', 
-        description: 'Detailed description of relationship' 
+        description: 'Detailed description of relationship',
+        introducedInChapter: 'chapter_id' // Optional: when THIS relation starts
       }
     ],
     development: [                // Character development through the story
@@ -153,7 +154,7 @@ export const events = [
 ];
 ```
 
-### Relationship Data Format
+### Relationship Data Format (Derived or Explicit)
 ```javascript
 export const relationships = [
   {
@@ -164,6 +165,11 @@ export const relationships = [
   }
 ];
 ```
+
+Notes:
+- This file is optional. If omitted, relationships are automatically derived from `characters[].relations` by pairing both sides and combining their `type` values (e.g., `employer` + `confidante` → `employer-confidante`).
+- If `introducedInChapter` is not provided at the relation level, the derived relationship uses the earliest of the two characters' `introducedInChapter` values.
+- Providing an explicit `relationships.js` is supported but not required.
 
 **Chapter-Based Filtering**: Relationships can be filtered by their introduction chapter, enabling the relationship web to progressively reveal connections as the reader progresses through the story. This prevents spoilers and creates a dynamic reading experience where the network grows chapter by chapter.
 
@@ -354,7 +360,7 @@ To add a new book to the series:
    - `locations.js`
    - `events.js`
    - `objects.js`
-   - `relationships.js`
+   - `relationships.js` (optional; omit if deriving from `characters.relations`)
    - `positions.js`
    - `mysteryElements.js`
    - `chapters.js`
@@ -377,7 +383,7 @@ export const locations = [...];
 export { characters } from './characters.js';
 export { locations } from './locations.js';
 export { events } from './events.js';
-export { relationships } from './relationships.js';
+// export { relationships } from './relationships.js'; // Optional: only if not deriving
 export { objects } from './objects.js';
 export { spycraftEntries } from './spycraftEntries.js';
 export { chapters } from './chapters.js';
