@@ -480,12 +480,12 @@ const RelationshipWeb = ({
   // Sync with external selectedCharacter prop
   useEffect(() => {
     if (selectedCharacter && selectedCharacter.id !== focusedCharacter) {
-      setFocusedCharacter(selectedCharacter.id);
       // Clear all nodes and edges when changing focus
       setNodes([]);
       setEdges([]);
+      setFocusedCharacter(selectedCharacter.id);
     }
-  }, [selectedCharacter, focusedCharacter]);
+  }, [selectedCharacter]);
 
        // Auto arrange simulation - runs continuously when enabled
     const runAutoArrange = useCallback(() => {
@@ -934,12 +934,34 @@ const RelationshipWeb = ({
   const resetView = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
-    setFocusedCharacter('cynthia_childreth');
     setCurrentChapter(null);
     setNodes([]);
     setEdges([]);
     setIsAutoArrangeOn(false);
-    setIsFullPage(false);
+    // Keep the current focused character, don't change it
+    // Don't reset full screen mode
+    
+    // Force re-initialization by calling initializeNodes directly
+    // This avoids the flash of all characters
+    setTimeout(() => {
+      initializeNodes();
+      
+      // Center the view on the focused character after initialization
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+        const centerX = containerWidth / 2;
+        const centerY = containerHeight / 2;
+        const characterX = 400; // This matches the centerX in initializeNodes
+        const characterY = 300; // This matches the centerY in initializeNodes
+        
+        // Calculate pan to center the character
+        const newPanX = centerX - characterX;
+        const newPanY = centerY - characterY;
+        
+        setPan({ x: newPanX, y: newPanY });
+      }
+    }, 0);
   };
 
   // Add event listeners
