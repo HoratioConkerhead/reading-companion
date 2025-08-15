@@ -2,16 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { defaultBook } from '../data';
-
-// Import position data from the default book
-const { 
-  locationPositions, 
-  eventPositions, 
-  characterPositions, 
-  objectPositions,
-  mapBoundaries
-} = defaultBook;
+// Position data will be passed as props from the parent component
+// This component no longer imports data directly
 
 // Fix Leaflet's default icon paths
 delete L.Icon.Default.prototype._getIconUrl;
@@ -99,13 +91,19 @@ const MapController = ({ center, zoom, bounds, selectedItem, currentZoomRef }) =
 
 const InteractiveMap = ({ 
   onLocationSelect, 
-  onEventSelect,
-  onCharacterSelect,
+  onEventSelect, 
+  onCharacterSelect, 
   onObjectSelect,
   locationsData,
   eventsData,
   charactersData,
-  objectsData
+  objectsData,
+  // Add position data as props
+  locationPositions = {},
+  eventPositions = {},
+  characterPositions = {},
+  objectPositions = {},
+  mapBoundaries = null
 }) => {
   // State
   const [mapMode, setMapMode] = useState('all'); // 'all', 'locations', 'events', 'characters', 'objects'

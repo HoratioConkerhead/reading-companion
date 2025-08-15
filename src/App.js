@@ -16,8 +16,8 @@ import PlotNavigator from './components/PlotNavigator';
 import ObjectGallery from './components/ObjectGallery';
 import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 
-// Import data from new structure - using the namespace approach
-import { getAvailableBooks } from './data';
+// Import data from new structure - using dynamic loading
+import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import BookSelector from './components/BookSelector';
 
 const InteractiveReadingCompanion = () => {
@@ -30,14 +30,33 @@ const InteractiveReadingCompanion = () => {
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const [bookSelectorOpen, setBookSelectorOpen] = useState(false);
-  const [currentBookKey, setCurrentBookKey] = useState('stitchedUp');
+  const [currentBookKey, setCurrentBookKey] = useState(defaultBookKey);
+  const [bookData, setBookData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Available books
-  const availableBooks = getAvailableBooks();
+  // Available books metadata (lightweight, no heavy data)
+  const availableBooks = getAvailableBookMetadata();
   
-  // Get current book data
-  const bookData = availableBooks[currentBookKey];
-  const metadata = bookData.bookMetadata;
+  // Load book data when currentBookKey changes
+  useEffect(() => {
+    const loadBook = async () => {
+      setIsLoading(true);
+      try {
+        const data = await loadBookData(currentBookKey);
+        setBookData(data);
+      } catch (error) {
+        console.error('Failed to load book data:', error);
+        // Fallback to default book if loading fails
+        if (currentBookKey !== defaultBookKey) {
+          setCurrentBookKey(defaultBookKey);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadBook();
+  }, [currentBookKey]);
   
   // Check for first visit to potentially show tutorial
   useEffect(() => {
@@ -68,10 +87,10 @@ const InteractiveReadingCompanion = () => {
 
     // Check for saved book preference
     const savedBook = localStorage.getItem('selectedBook');
-    if (savedBook && getAvailableBooks()[savedBook]) {
+    if (savedBook && availableBooks[savedBook]) {
       setCurrentBookKey(savedBook);
     }
-  }, []);
+  }, [availableBooks]);
   
   // Dark mode toggle handler
   const toggleDarkMode = () => {
@@ -147,6 +166,8 @@ const InteractiveReadingCompanion = () => {
   };
 
   const handleBookSelect = (bookKey) => {
+    if (bookKey === currentBookKey) return; // No change needed
+    
     setCurrentBookKey(bookKey);
     localStorage.setItem('selectedBook', bookKey);
     // Reset selections when changing books
@@ -155,7 +176,24 @@ const InteractiveReadingCompanion = () => {
     setSelectedEvent(null);
     setSelectedObject(null);
     setActiveTab(0);
+    
+    // Close the book selector
+    setBookSelectorOpen(false);
   };
+
+  // Don't render until book data is loaded
+  if (isLoading || !bookData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-xl">Loading {availableBooks[currentBookKey]?.title || 'book'}...</p>
+        </div>
+      </div>
+      );
+    }
+    
+    const metadata = bookData.bookMetadata;
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
@@ -231,14 +269,15 @@ const InteractiveReadingCompanion = () => {
             
             {/* Relationship Web Tab */}
             <TabPanel>
-                          <RelationshipWeb
-              onCharacterSelect={handleCharacterSelect}
-              selectedCharacter={selectedCharacter}
-              charactersData={bookData.characters}
-              relationshipsData={bookData.relationships}
-              chaptersData={bookData.chapters}
-              darkMode={darkMode}
-            />
+              <RelationshipWeb
+                onCharacterSelect={handleCharacterSelect}
+                selectedCharacter={selectedCharacter}
+                charactersData={bookData.characters}
+                relationshipsData={bookData.relationships}
+                eventsData={bookData.events}
+                chaptersData={bookData.chapters}
+                darkMode={darkMode}
+              />
             </TabPanel>
             
             {/* Timeline Tab */}
@@ -276,6 +315,12 @@ const InteractiveReadingCompanion = () => {
                 eventsData={bookData.events}
                 charactersData={bookData.characters}
                 objectsData={bookData.objects}
+                // Position data from the book
+                locationPositions={bookData.locationPositions || {}}
+                eventPositions={bookData.eventPositions || {}}
+                characterPositions={bookData.characterPositions || {}}
+                objectPositions={bookData.objectPositions || {}}
+                mapBoundaries={bookData.mapBoundaries || null}
               />
             </TabPanel>
             

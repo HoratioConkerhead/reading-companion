@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { stitchedUp } from '../data';
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
   selectedCharacter,
   charactersData,
   relationshipsData,
+  eventsData = [], // Add events data for importance calculation
   chaptersData = [], // Add chapters data for filtering
   darkMode = false // Add darkMode prop for theme-aware colors
 }) => {
@@ -49,10 +49,10 @@ const RelationshipWeb = ({
       score += Math.min(character.key_scenes.length * 6, 30);
     }
     
-    // Event participation (max 25 points)
-    const eventCount = stitchedUp.events.filter(event => 
-      event.characters.some(char => char.characterId === character.id)
-    ).length;
+      // Event participation (max 25 points)
+  const eventCount = (eventsData || []).filter(event => 
+    event.characters.some(char => char.characterId === character.id)
+  ).length;
     score += Math.min(eventCount * 2.5, 25);
     
     // Relationship count (max 20 points)
@@ -92,7 +92,7 @@ const RelationshipWeb = ({
     
     // Ensure score is between 1 and 100
     return Math.max(1, Math.min(100, Math.round(score)));
-  }, [relationshipsData]);
+  }, [relationshipsData, eventsData]);
 
   // Find the largest connected component in the graph
   const findLargestConnectedComponent = useCallback((currentNodes, currentEdges) => {
@@ -1255,7 +1255,7 @@ const RelationshipWeb = ({
             </div>
 
             {/* View Options */}
-            <div className="mb-4 flex flex-col gap-2">
+            <div className={`${isFullPage ? 'p-4' : 'mb-4'} flex flex-col gap-2`}>
               <div>
                 <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
                   View Options
