@@ -1255,7 +1255,7 @@ const RelationshipWeb = ({
             </div>
 
             {/* View Options */}
-            <div className={`${isFullPage ? 'p-4' : 'mb-4'} flex flex-col gap-2`}>
+            <div className="mb-4 flex flex-col gap-2">
               <div>
                 <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
                   View Options
