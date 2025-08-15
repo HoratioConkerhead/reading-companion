@@ -15,23 +15,25 @@ The app uses a modular data structure organized by book with domain-specific fil
     events.js             // Event data
     objects.js            // Object data
     relationships.js      // Character relationship data
-    positions.js          // Position/role data
+    positions.js          // Geographic positions and map data
     mysteryElements.js    // Mystery-specific elements
     chapters.js           // Chapter information
     spycraftEntries.js    // Spycraft technique data
     themeElements.js      // Thematic elements
+    metadata.js           // Book metadata and app configuration
   /book2Name/
     index.js
     characters.js
     locations.js
-    events.js
     objects.js
+    events.js
     relationships.js
     positions.js
     mysteryElements.js
     chapters.js
     spycraftEntries.js
     themeElements.js
+    metadata.js
   index.js                // Exports all books' data
 ```
 
@@ -64,9 +66,11 @@ export const characters = [
     ],
     aliases: ['Alias1', 'Alias2'], // Optional: Alternate names or disguises
     fate: 'Character's ultimate fate', // Optional: What happens to character by the end
-    key_scenes: ['scene_id_1', 'scene_id_2'] // Optional: Important scenes for this character
+    key_scenes: ['scene_id_1', 'scene_id_2'], // Optional: Important scenes for this character
+    introducedInChapter: 'chapter_id' // NEW: Chapter where character is first introduced
   }
 ];
+```
 
 ### Character Importance Rating System
 
@@ -86,7 +90,8 @@ The RelationshipWeb component automatically calculates a 1-100 importance rating
 - **Development Arc Depth (10 points max)**: Each development phase contributes 2.5 points
 
 This rating system helps users understand character prominence in the narrative and can be displayed above character nodes in the relationship web visualization.
-```
+
+**Chapter-Based Filtering**: Characters can be filtered by their introduction chapter, allowing the relationship web to show only characters and relationships relevant up to a specific point in the story. This prevents spoilers and enables progressive revelation of the narrative.
 
 ### Location Data Format
 ```javascript
@@ -116,7 +121,8 @@ export const locations = [
     ],
     proximity: [                  // Optional: Nearby locations
       { locationId: 'nearby_location_id', description: 'Relationship to this location' }
-    ]
+    ],
+    owner: 'Owner name'           // Optional: Property owner information
   }
 ];
 ```
@@ -154,9 +160,12 @@ export const relationships = [
     from: 'character_id_1',       // Character initiating relationship
     to: 'character_id_2',         // Target character
     type: 'relationship-type',    // Nature of relationship (e.g., 'handler-asset', 'spouse')
+    introducedInChapter: 'chapter_id' // NEW: Chapter where relationship is first introduced
   }
 ];
 ```
+
+**Chapter-Based Filtering**: Relationships can be filtered by their introduction chapter, enabling the relationship web to progressively reveal connections as the reader progresses through the story. This prevents spoilers and creates a dynamic reading experience where the network grows chapter by chapter.
 
 ### Object Data Format
 ```javascript
@@ -193,6 +202,93 @@ export const objects = [
 ];
 ```
 
+### Positions Data Format (NEW)
+```javascript
+// Geographic positions for locations optimized for mapping
+export const locationPositions = {
+  'location_id': { 
+    lat: 51.4286, 
+    lon: -1.2507, 
+    label: "Location Name", 
+    type: "uk/german/irish" 
+  }
+};
+
+// Event positions (may be at existing location or unique position)
+export const eventPositions = {
+  'event_id': { locationId: 'existing_location_id' },
+  'event_with_path': { 
+    path: [
+      { lat: 51.4286, lon: -1.2507, label: "Point 1" },
+      { lat: 51.5000, lon: -1.2000, label: "Point 2" }
+    ]
+  }
+};
+
+// Character last known positions
+export const characterPositions = {
+  'character_id': { locationId: 'location_id' }
+};
+
+// Object positions
+export const objectPositions = {
+  'object_id': { locationId: 'location_id' }
+};
+
+// Map boundaries for different regions
+export const mapBoundaries = {
+  'uk': { bounds: [[49.0, -8.0], [61.0, 2.0]] },
+  'german': { bounds: [[47.0, 5.0], [55.0, 15.0]] }
+};
+```
+
+### Mystery Elements Data Format (NEW)
+```javascript
+export const mysteryElements = [
+  {
+    id: 'mystery_id',             // Unique identifier
+    title: 'Mystery Title',       // Name of the mystery element
+    description: 'Description of the mystery',
+    firstMentioned: 'chapter_reference', // When first mentioned
+    revealedInChapter: 'chapter_reference', // When revealed
+    relatedCharacters: ['character_id_1', 'character_id_2'],
+    relatedEvents: ['event_id_1', 'event_id_2'], // Optional
+    status: 'revealed/twist/major_plot/background' // Current status
+  }
+];
+```
+
+### Theme Elements Data Format (NEW)
+```javascript
+export const themeElements = [
+  {
+    id: 'theme_id',               // Unique identifier
+    title: 'Theme Title',         // Name of the theme
+    description: 'Description of the theme',
+    examples: [                   // Examples from the story
+      'Example description 1',
+      'Example description 2'
+    ],
+    relatedCharacters: ['character_id_1', 'character_id_2'],
+    relatedEvents: ['event_id_1', 'event_id_2'], // Optional
+    relatedObjects: ['object_id_1', 'object_id_2'] // Optional
+  }
+];
+```
+
+### Chapters Data Format (NEW)
+```javascript
+export const chapters = [
+  {
+    id: 'chapter_id',             // Unique identifier
+    title: 'Chapter Title',       // Full chapter title
+    description: 'Chapter description',
+    events: ['event_id_1', 'event_id_2'], // Events in this chapter
+    timeframe: 'Time period'      // When this chapter takes place
+  }
+];
+```
+
 ### Spycraft Entries Format
 ```javascript
 export const spycraftEntries = [
@@ -214,6 +310,40 @@ export const spycraftEntries = [
 ];
 ```
 
+### Metadata Data Format (NEW)
+```javascript
+export const bookMetadata = {
+  title: "Book Title",
+  author: "Author Name",
+  genre: "Genre",
+  setting: "Setting",
+  description: "Book description",
+  publisher: "Publisher",
+  publicationYear: 2023,
+  series: "Series Name",
+  seriesOrder: 1,
+  
+  // App-specific metadata
+  appTitle: "App Title",
+  appSubtitle: "App Subtitle",
+  welcomeMessage: "Welcome message",
+  welcomeDescription: "Welcome description",
+  aboutApp: "About the app",
+  aboutBook: "About the book",
+  tourWelcome: "Tour welcome message",
+  tourConclusion: "Tour conclusion message",
+  
+  // Character groups for the book
+  characterGroups: {
+    'Group1': 'Description of group 1',
+    'Group2': 'Description of group 2'
+  },
+  
+  // Footer copyright
+  copyright: "Copyright text"
+};
+```
+
 ## Adding a New Book
 
 To add a new book to the series:
@@ -230,6 +360,7 @@ To add a new book to the series:
    - `chapters.js`
    - `spycraftEntries.js`
    - `themeElements.js`
+   - `metadata.js`
 3. Create an `index.js` file that re-exports all data from the separate files
 4. Update the main `/src/data/index.js` to include the new book
 
@@ -252,6 +383,8 @@ export { spycraftEntries } from './spycraftEntries.js';
 export { chapters } from './chapters.js';
 export { mysteryElements } from './mysteryElements.js';
 export { themeElements } from './themeElements.js';
+export { bookMetadata } from './metadata.js';
+export { locationPositions, eventPositions, characterPositions, objectPositions, mapBoundaries } from './positions.js';
 
 // /src/data/index.js
 export * as bookName from './bookName';
@@ -274,3 +407,75 @@ import { characters, events } from '../data/bookName';
 ```
 
 Choose the approach that works best for your component's needs.
+
+## Data Validation
+
+When creating data files, ensure:
+
+1. **Unique IDs**: All IDs must be unique within their category
+2. **Valid References**: All references to other entities (characterId, locationId, eventId) must exist
+3. **Required Fields**: Required fields are marked above, optional fields are noted
+4. **Data Consistency**: Character groups, relationship types, and other enums should be consistent across files
+5. **Geographic Accuracy**: Coordinates in positions.js should be accurate for mapping functionality
+
+## Chapter-Based Filtering System
+
+The application supports progressive revelation of content based on the reader's progress through the story. This system prevents spoilers and creates a dynamic experience where the narrative network grows chapter by chapter.
+
+### Implementation Details
+
+**Character Introduction Tracking**:
+- Each character includes an `introducedInChapter` field indicating when they first appear
+- Characters can be filtered to show only those introduced up to a specific chapter
+- This enables the relationship web to progressively add new characters
+
+**Relationship Timeline Tracking**:
+- Each relationship includes an `introducedInChapter` field indicating when it's established
+- Relationships can be filtered to show only those relevant up to a specific chapter
+- This prevents revealing connections before they're established in the story
+
+**Filtering Behavior**:
+- **Character Explorer**: Can limit character list to those introduced up to current chapter
+- **Relationship Web**: Can show only characters and relationships relevant to current chapter
+- **Timeline**: Can limit events to those occurring up to current chapter
+- **Location Explorer**: Can filter locations based on when they become relevant
+- **Object Gallery**: Can show only objects introduced up to current chapter
+
+### Benefits
+
+1. **Spoiler Prevention**: Readers can explore the app without encountering future plot developments
+2. **Progressive Discovery**: The narrative network grows organically as the story progresses
+3. **Reading Companion**: Perfect for readers who want to explore as they read
+4. **Post-Reading Analysis**: Full network available after completing the book
+5. **Educational Use**: Teachers can control how much information students see
+
+### Usage Examples
+
+```javascript
+// Filter characters by chapter
+const charactersUpToChapter = characters.filter(char => 
+  char.introducedInChapter <= currentChapter
+);
+
+// Filter relationships by chapter
+const relationshipsUpToChapter = relationships.filter(rel => 
+  rel.introducedInChapter <= currentChapter
+);
+
+// Get all content for a specific chapter
+const chapterContent = {
+  characters: characters.filter(char => char.introducedInChapter === chapterId),
+  relationships: relationships.filter(rel => rel.introducedInChapter === chapterId),
+  events: events.filter(event => event.chapter === chapterId)
+};
+```
+
+### Future Enhancements
+
+The chapter-based system is designed to be extensible for future features:
+
+1. **Progressive Character Information**: Different character details revealed at different chapters
+2. **Relationship Evolution**: Track how relationships change over time
+3. **Location Discovery**: Progressive revelation of location significance
+4. **Object History**: Show object movement and significance progressively
+5. **Theme Development**: Track how themes emerge and develop throughout the story

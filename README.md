@@ -32,6 +32,19 @@ Browse detailed character profiles including backgrounds, personalities, relatio
 ### Relationship Web
 Visualize the complex network of relationships between characters. Filter connections by relationship type and character group.
 
+**Advanced Features:**
+- **Character Importance Ratings**: Each character is assigned a 1-100 importance score based on:
+  - Key scenes count (30 points max)
+  - Event participation (25 points max) 
+  - Relationship complexity (20 points max)
+  - Character group significance (15 points max)
+  - Development arc depth (10 points max)
+- **Interactive Network Graph**: Drag nodes to rearrange, click to expand relationships
+- **Chapter-based Filtering**: Avoid spoilers by limiting relationships to specific chapters
+- **Auto-arrangement**: Physics-based automatic layout with adjustable forces
+- **Multiple View Options**: Toggle between relationship counts, importance ratings, descriptions, and relationship labels
+- **Progressive Revelation**: Characters and relationships appear as they're introduced in the story, preventing spoilers
+
 ### Timeline
 Navigate the story chronologically with a visual timeline of events. Filter by time period, character involvement, or view parallel storylines.
 
@@ -47,7 +60,7 @@ Understand the narrative structure through chapter progression, mystery elements
 ### Object Gallery
 Examine important objects from the story, their significance, and their movement between characters throughout the plot.
 
-### Spy Encyclopedia
+### Spycraft Encyclopedia
 Learn about espionage techniques referenced in the novel and their historical context in intelligence operations.
 
 ## Getting Started
@@ -82,7 +95,8 @@ Learn about espionage techniques referenced in the novel and their historical co
 ├── docs/                  # Documentation files
 │   ├── data_format_documentation.md
 │   ├── design_document.md
-│   └── stitchedUpAnalysus.md
+│   ├── StitchedUpAnalysis.md
+│   └── diagrams/          # Architecture and flow diagrams
 ├── public/                # Static files
 └── src/                   # Source code
     ├── assets/            # Images and other assets
@@ -95,10 +109,11 @@ Learn about espionage techniques referenced in the novel and their historical co
     │   ├── PlotNavigator.js
     │   ├── ObjectGallery.js
     │   ├── SpycraftEncyclopedia.js
-    │   └── Timeline.js
+    │   ├── AppTour.js
+    │   └── DarkModeToggle.js
     ├── data/              # Data files
     │   ├── index.js
-    │   └── stitchedUp/
+    │   └── stitchedUp/    # Data for "Stitched Up" novel
     │       ├── characters.js
     │       ├── locations.js
     │       ├── events.js
@@ -109,9 +124,11 @@ Learn about espionage techniques referenced in the novel and their historical co
     │       ├── chapters.js
     │       ├── spycraftEntries.js
     │       ├── themeElements.js
+    │       ├── metadata.js
     │       └── index.js
     ├── styles/            # CSS and styling
-    │   └── style.css
+    │   ├── style.css
+    │   └── enhanced-tabs.css
     ├── App.js             # Main app component
     └── index.js           # Entry point
 ```
@@ -169,6 +186,9 @@ The application uses a structured data model organized by domain in separate fil
 - `chapters.js`: Chapter information and narrative structure
 - `spycraftEntries.js`: Information about espionage techniques
 - `themeElements.js`: Thematic elements and motifs from the novel
+- `metadata.js`: Book metadata and app configuration
+
+**Chapter-Based Filtering**: The data model includes chapter tracking for characters and relationships, enabling progressive revelation of content and spoiler prevention. Characters and relationships can be filtered to show only those relevant up to a specific chapter in the story.
 
 The data structure is designed to be easily extensible for different books and series, with each data type organized in its own file for better maintainability.
 
@@ -177,7 +197,7 @@ The data structure is designed to be easily extensible for different books and s
 - React: Front-end library for building the user interface
 - React Tabs: Tab navigation component
 - Tailwind CSS: Utility-first CSS framework for styling
-- React Force Graph (planned): Library for relationship visualization
+- Custom Physics Engine: For relationship web visualization and auto-arrangement
 
 ## Deployment
 
@@ -201,12 +221,14 @@ The app can be deployed to:
 ## Future Enhancements
 
 1. **Advanced Visualizations**
-   - Implement force-directed graph for relationship web
-   - Add mapping library for interactive location map
+   - Enhanced force-directed graph for relationship web
+   - Improved mapping library integration
+   - Timeline visualization improvements
 
 2. **Content Enhancements**
    - Add character portraits and location images
    - Include more quotes and excerpts from the novel
+   - Audio narration integration
 
 3. **Reading Progress Integration**
    - Add functionality for readers to track their progress through the novel
@@ -215,14 +237,17 @@ The app can be deployed to:
 4. **User Experience**
    - Complete the "App Tour" guided introduction
    - Add annotations and note-taking features
+   - User preferences and customization
 
 5. **Performance Optimizations**
    - Lazy loading of components
    - Data caching strategies
+   - Virtual scrolling for large datasets
 
 6. **Multi-Book Support**
    - Support for multiple books in a series
    - Cross-book character and plot connections
+   - Series-wide relationship mapping
 
 ## Contributing
 
