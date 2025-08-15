@@ -8,5 +8,14 @@ export { stitchedUp };
 // import * as bookName from './bookName';
 // export { bookName };
 
+// Helper function to get all available books
+export const getAvailableBooks = () => {
+  return {
+    stitchedUp,
+    // Add future books here:
+    // bookName,
+  };
+};
+
 // Default book (can be configured based on user preference or URL)
 export const defaultBook = stitchedUp;

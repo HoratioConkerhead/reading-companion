@@ -17,7 +17,8 @@ import ObjectGallery from './components/ObjectGallery';
 import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 
 // Import data from new structure - using the namespace approach
-import { defaultBook } from './data';
+import { getAvailableBooks } from './data';
+import BookSelector from './components/BookSelector';
 
 const InteractiveReadingCompanion = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -28,9 +29,14 @@ const InteractiveReadingCompanion = () => {
   const [appTour, setAppTour] = useState(false);
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const [bookSelectorOpen, setBookSelectorOpen] = useState(false);
+  const [currentBookKey, setCurrentBookKey] = useState('stitchedUp');
   
-  // Get book metadata
-  const bookData = defaultBook;
+  // Available books
+  const availableBooks = getAvailableBooks();
+  
+  // Get current book data
+  const bookData = availableBooks[currentBookKey];
   const metadata = bookData.bookMetadata;
   
   // Check for first visit to potentially show tutorial
@@ -44,21 +50,27 @@ const InteractiveReadingCompanion = () => {
       setFirstVisit(false);
     }
     
-      // Check for dark mode preference
-  const savedDarkMode = localStorage.getItem('darkMode');
-  if (savedDarkMode !== null) {
-    // Only override if there's a saved preference
-    const isDarkMode = savedDarkMode === 'true';
-    setDarkMode(isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+    // Check for dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode !== null) {
+      // Only override if there's a saved preference
+      const isDarkMode = savedDarkMode === 'true';
+      setDarkMode(isDarkMode);
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     } else {
-      document.documentElement.classList.remove('dark');
+      // No saved preference, use the default (which is true for dark mode)
+      document.documentElement.classList.add('dark');
     }
-  } else {
-    // No saved preference, use the default (which is true for dark mode)
-    document.documentElement.classList.add('dark');
-  }
+
+    // Check for saved book preference
+    const savedBook = localStorage.getItem('selectedBook');
+    if (savedBook && getAvailableBooks()[savedBook]) {
+      setCurrentBookKey(savedBook);
+    }
   }, []);
   
   // Dark mode toggle handler
@@ -125,6 +137,26 @@ const InteractiveReadingCompanion = () => {
     setFirstVisit(false);
   };
 
+  // Book selection handlers
+  const openBookSelector = () => {
+    setBookSelectorOpen(true);
+  };
+
+  const closeBookSelector = () => {
+    setBookSelectorOpen(false);
+  };
+
+  const handleBookSelect = (bookKey) => {
+    setCurrentBookKey(bookKey);
+    localStorage.setItem('selectedBook', bookKey);
+    // Reset selections when changing books
+    setSelectedCharacter(null);
+    setSelectedLocation(null);
+    setSelectedEvent(null);
+    setSelectedObject(null);
+    setActiveTab(0);
+  };
+
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <header className="p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
@@ -135,6 +167,15 @@ const InteractiveReadingCompanion = () => {
           </div>
           <div className="flex items-center space-x-4">
             <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+                         <button 
+               className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white text-sm"
+               onClick={openBookSelector}
+             >
+                               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+             </button>
             <button 
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white text-sm"
               onClick={startTour}
@@ -315,6 +356,16 @@ const InteractiveReadingCompanion = () => {
         currentTab={activeTab}
         onTabChange={handleTabChangeFromTour}
         bookMetadata={metadata}
+      />
+
+      {/* Book Selector Component */}
+      <BookSelector
+        isOpen={bookSelectorOpen}
+        onClose={closeBookSelector}
+        currentBook={currentBookKey}
+        onBookSelect={handleBookSelect}
+        availableBooks={availableBooks}
+        darkMode={darkMode}
       />
     </div>
   );
