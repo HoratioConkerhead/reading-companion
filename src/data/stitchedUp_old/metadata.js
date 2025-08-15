@@ -1,6 +1,6 @@
 // Book metadata for "Stitched Up"
 export const bookMetadata = {
-  title: "Stitched Up",
+  title: "Stitched Up (old)",
   author: "Matt Parry",
   genre: "Spy Thriller",
   setting: "World War II",
