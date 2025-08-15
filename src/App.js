@@ -27,7 +27,7 @@ const InteractiveReadingCompanion = () => {
   const [selectedObject, setSelectedObject] = useState(null);
   const [appTour, setAppTour] = useState(false);
   const [firstVisit, setFirstVisit] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   
   // Get book metadata
   const bookData = defaultBook;
@@ -44,14 +44,21 @@ const InteractiveReadingCompanion = () => {
       setFirstVisit(false);
     }
     
-    // Check for dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(savedDarkMode);
-    if (savedDarkMode) {
+      // Check for dark mode preference
+  const savedDarkMode = localStorage.getItem('darkMode');
+  if (savedDarkMode !== null) {
+    // Only override if there's a saved preference
+    const isDarkMode = savedDarkMode === 'true';
+    setDarkMode(isDarkMode);
+    if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+  } else {
+    // No saved preference, use the default (which is true for dark mode)
+    document.documentElement.classList.add('dark');
+  }
   }, []);
   
   // Dark mode toggle handler
