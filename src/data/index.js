@@ -1,7 +1,7 @@
 // Dynamic book loading - only load data when needed
 const bookModules = {
-    stitchedUp_old: () => import('./stitchedUp_old'),
-    stitchedUp: () => import('./MattParry_StitchedUp'),
+    MattParry_StitchedUp_v1: () => import('./MattParry_StitchedUp_v1'),
+    MattParry_StitchedUp_v2: () => import('./MattParry_StitchedUp_v2'),
   // Add future books here:
   // bookName: () => import('./bookName'),
 };
@@ -9,15 +9,15 @@ const bookModules = {
 // Helper function to get available book metadata without loading full data
 export const getAvailableBookMetadata = () => {
   return {
-    stitchedUp_old: {
-      key: 'stitchedUp_old',
-      title: 'Stitched Up (old)',
+    MattParry_StitchedUp_v1: {
+      key: 'MattParry_StitchedUp_v1',
+      title: 'Stitched Up (v1)',
       author: 'Matt Parry',
       shortDescription: 'WWII spy thriller following Lady Cynthia Childreth'
     },
-    stitchedUp: {
-        key: 'stitchedUp',
-        title: 'Stitched Up',
+    MattParry_StitchedUp_v2: {
+        key: 'MattParry_StitchedUp_v2',
+        title: 'Stitched Up (v2)',
         author: 'Matt Parry',
         shortDescription: 'WWII spy thriller following Lady Cynthia Childreth'
       },
@@ -56,7 +56,7 @@ export const loadBookData = async (bookKey) => {
       return bookModule.default;
     } else {
       console.log(`Using individual exports for ${bookKey}`);
-      // Old format (stitchedUp_old) - construct the object from individual exports
+      // Old format (v1) - construct the object from individual exports
       const constructedBook = {
         bookMetadata: bookModule.bookMetadata,
         characters: bookModule.characters,
@@ -88,8 +88,8 @@ export const loadBookData = async (bookKey) => {
 export const getAvailableBooks = () => {
   console.warn('getAvailableBooks() is deprecated. Use loadBookData() instead for better performance.');
   // Return a promise that resolves to the default book
-  return loadBookData('stitchedUp');
+  return loadBookData('MattParry_StitchedUp_v2');
 };
 
 // Default book key
-export const defaultBookKey = 'stitchedUp';
+export const defaultBookKey = 'MattParry_StitchedUp_v2';
