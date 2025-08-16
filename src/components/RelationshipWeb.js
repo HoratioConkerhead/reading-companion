@@ -22,6 +22,7 @@ const RelationshipWeb = ({
   const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
+  const [pinIsolatedNodes, setPinIsolatedNodes] = useState(true);
   const [isFullPage, setIsFullPage] = useState(false);
   const [hoveredNode, setHoveredNode] = useState(null);
   
@@ -520,6 +521,17 @@ const RelationshipWeb = ({
             force: { x: 0, y: 0 }
           })),
           edges: edges,
+          pinIsolatedNodes,
+          degreeById: (() => {
+            const map = new Map();
+            currentNodes.forEach(n => map.set(n.id, 0));
+            edges.forEach(e => {
+              if (map.has(e.from)) map.set(e.from, map.get(e.from) + 1);
+              if (map.has(e.to)) map.set(e.to, map.get(e.to) + 1);
+            });
+            return map;
+          })(),
+          // (center pull for isolates removed per user request)
           
           // Physics constants - use state values
           repulsionForce: repulsionForce,
@@ -527,6 +539,7 @@ const RelationshipWeb = ({
           springLength: 120,
           damping: 0.85,
           maxVelocity: 8,
+          // centerPull removed
           
           // Run simulation step
           step: function() {
@@ -576,11 +589,20 @@ const RelationshipWeb = ({
                 targetNode.force.y -= (dy / distance) * force;
               }
             });
+
+            // (isolate center pull removed)
             
             // Apply forces to velocities
             this.nodes.forEach(node => {
-              node.velocity.x += node.force.x;
-              node.velocity.y += node.force.y;
+              const deg = this.degreeById.get(node.id) || 0;
+              const pinned = this.pinIsolatedNodes && deg === 0;
+              if (!pinned) {
+                node.velocity.x += node.force.x;
+                node.velocity.y += node.force.y;
+              } else {
+                node.velocity.x = 0;
+                node.velocity.y = 0;
+              }
               
               // Apply damping
               node.velocity.x *= this.damping;
@@ -594,8 +616,10 @@ const RelationshipWeb = ({
               }
               
               // Update position
-              node.position.x += node.velocity.x;
-              node.position.y += node.velocity.y;
+              if (!pinned) {
+                node.position.x += node.velocity.x;
+                node.position.y += node.velocity.y;
+              }
             });
           }
         };
@@ -610,7 +634,7 @@ const RelationshipWeb = ({
         
         return simulation.nodes;
       });
-    }, [isAutoArrangeOn, edges, springForce, repulsionForce]);
+    }, [isAutoArrangeOn, edges, springForce, repulsionForce, pinIsolatedNodes]);
   
            // Run auto arrange when enabled
     useEffect(() => {
@@ -1202,6 +1226,15 @@ const RelationshipWeb = ({
           >
             {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
           </button>
+          <label className="flex items-center ml-2 text-sm text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              className="mr-2"
+              checked={pinIsolatedNodes}
+              onChange={(e) => setPinIsolatedNodes(e.target.checked)}
+            />
+            Pin isolated nodes
+          </label>
           <button
             className={`px-4 py-2 text-white rounded transition-colors ${
               isRemoveMode 
