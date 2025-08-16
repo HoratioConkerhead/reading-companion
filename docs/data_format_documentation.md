@@ -37,6 +37,15 @@ The app uses a modular data structure organized by book with domain-specific fil
   index.js                // Exports all books' data
 ```
 
+## Global Chapter Introduction Field
+
+To enable a universal “show up to chapter” view, every data entity MUST include an `introducedInChapter` field indicating the earliest chapter where that entity is first mentioned or becomes relevant. This applies to characters, relationships (at the edge level), locations, events, objects, spycraft entries, theme elements, and mystery elements.
+
+Rules:
+- Use chapter ids from the book’s `chapters.js` (e.g., `chapter_01`).
+- For relationships, `introducedInChapter` is the chapter the relationship begins and cannot be earlier than either character’s own `introducedInChapter`.
+- UI components should filter based on this field to avoid spoilers.
+
 ## Data Format Per Type
 
 ### Character Data Format
@@ -56,7 +65,7 @@ export const characters = [
         characterId: 'related_character_id', 
         type: 'relationship_type', 
         description: 'Detailed description of relationship',
-        introducedInChapter: 'chapter_id' // Optional: when THIS relation starts
+        introducedInChapter: 'chapter_id' // Required: when THIS relation starts
       }
     ],
     development: [                // Character development through the story
@@ -68,7 +77,7 @@ export const characters = [
     aliases: ['Alias1', 'Alias2'], // Optional: Alternate names or disguises
     fate: 'Character's ultimate fate', // Optional: What happens to character by the end
     key_scenes: ['scene_id_1', 'scene_id_2'], // Optional: Important scenes for this character
-    introducedInChapter: 'chapter_id' // NEW: Chapter where character is first introduced
+    introducedInChapter: 'chapter_id' // Required: chapter where character is first introduced
   }
 ];
 ```
@@ -111,6 +120,7 @@ export const locations = [
       'Significance point 2'
     ],
     description: 'Detailed description of location',
+    introducedInChapter: 'chapter_id', // Required: earliest chapter where this location becomes relevant
     events: [                     // Events that occurred at this location
       { eventId: 'event_id', role: 'setting/critical_location/etc.' }
     ],
@@ -145,7 +155,7 @@ export const events = [
       }
     ],
     significance: 'Event significance to plot',
-    chapter: 'Book chapter reference', // Optional: Chapter number/name
+    introducedInChapter: 'chapter_id', // Required: chapter where event first occurs/appears
     keyActions: [                  // Important actions during event
       'Action description 1',
       'Action description 2'
@@ -182,6 +192,7 @@ export const objects = [
     type: 'Object type',          // Category (e.g., 'Weapon', 'Document')
     description: 'Description of object',
     physical_details: 'Physical appearance',
+    introducedInChapter: 'chapter_id', // Required: earliest chapter where object is introduced
     technical_details: [          // Optional specific characteristics
       'Technical detail 1',
       'Technical detail 2'
@@ -255,7 +266,8 @@ export const mysteryElements = [
     id: 'mystery_id',             // Unique identifier
     title: 'Mystery Title',       // Name of the mystery element
     description: 'Description of the mystery',
-    firstMentioned: 'chapter_reference', // When first mentioned
+    introducedInChapter: 'chapter_id',   // Required: earliest mention of this mystery element
+    firstMentioned: 'chapter_reference', // Deprecated; use introducedInChapter
     revealedInChapter: 'chapter_reference', // When revealed
     relatedCharacters: ['character_id_1', 'character_id_2'],
     relatedEvents: ['event_id_1', 'event_id_2'], // Optional
@@ -271,6 +283,7 @@ export const themeElements = [
     id: 'theme_id',               // Unique identifier
     title: 'Theme Title',         // Name of the theme
     description: 'Description of the theme',
+    introducedInChapter: 'chapter_id', // Required: earliest chapter where theme is made explicit
     examples: [                   // Examples from the story
       'Example description 1',
       'Example description 2'
@@ -302,6 +315,7 @@ export const spycraftEntries = [
     id: 'technique_id',           // Unique identifier
     title: 'Technique Name',      // Name of the spy technique
     description: 'Description of the technique',
+    introducedInChapter: 'chapter_id', // Required: earliest chapter where this technique is described
     historicalContext: 'Historical background of this spy method',
     examples: [                   // How it was used in the book
       'Example from book 1',

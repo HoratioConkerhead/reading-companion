@@ -5,6 +5,8 @@ This directory contains documentation for the Stitched Up Interactive Companion 
 ## Documentation Files
 
 - **[data_format_documentation.md](data_format_documentation.md)** - Details on the data format used in the application
+- **[extraction_format.md](extraction_format.md)** - Per-chapter extraction JSON format used for one-pass reading
+- **[data_generation_guide.md](data_generation_guide.md)** - Workflow and prompts for generating data via chapter-first extraction and consolidation
 - **[design_document.md](design_document.md)** - Design principles and decisions for the application
 - **[StitchedUpAnalysis.md](StitchedUpAnalysis.md)** - Analysis of the novel content and structure
 

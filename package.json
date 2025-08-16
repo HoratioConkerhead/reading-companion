@@ -29,7 +29,8 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "validate:data": "node scripts/validate-data.mjs"
+    "validate:data": "node scripts/validate-data.mjs",
+    "build:data": "node scripts/consolidate-data.mjs --book MattParry_StitchedUp && npm run validate:data"
   },
   "eslintConfig": {
     "extends": [

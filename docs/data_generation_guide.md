@@ -7,6 +7,7 @@ This guide documents a reliable workflow and prompt patterns for generating book
 - Primary source: the canonical chapter text in `books/<Author - Title>/`.
 - Do not read any pre‑existing data files of the same type to “learn” the answers (prevents leakage of prior mistakes). Use them only for diff checks after generation.
 - Validate results with the provided script: `node scripts/validate-data.mjs`.
+- Global rule: every entity (characters, relations, events, objects, locations, spycraft, themes, mystery elements) MUST include `introducedInChapter` to enable universal “show up to chapter” filtering.
 
 ## Golden Rules (must‑haves)
 
@@ -17,13 +18,14 @@ This guide documents a reliable workflow and prompt patterns for generating book
 - `introducedInChapter` for a character is the earliest textual mention (mention is enough, not only dialogue/action).
 - No placeholders or inventions: all details must be supported by the text; avoid spoilers beyond the chapter in which something is introduced.
 
-## Workflow (chapter‑first extraction)
+## Workflow (chapter-first extraction)
 
 1. Read all chapters once quickly to build a mental model of the arc.
-2. Do a chapter‑by‑chapter pass and extract:
-   - New characters introduced.
+2. Do a chapter-by-chapter pass and extract (see `docs/extraction_format.md`):
+   - New characters introduced (with `introducedInChapter = chapterId`).
    - First mention chapter for existing characters.
-   - Relationships introduced between characters and the chapter in which the relationship is first established.
+   - Relationships introduced (reciprocated, each with `introducedInChapter = chapterId`).
+   - New locations/events/objects/spycraft entries/theme elements/mystery elements (each with `introducedInChapter = chapterId`).
 3. After the per‑chapter pass, consolidate the global character list:
    - Merge duplicates.
    - Normalize IDs to snake_case.
@@ -35,6 +37,16 @@ This guide documents a reliable workflow and prompt patterns for generating book
    - `node scripts/validate-data.mjs`
    - Address any errors: unknown IDs, missing reciprocals, invalid `introducedInChapter`, duplicates.
 6. (Optional) Diff against legacy data (e.g., `stitchedUp_old`) to find omissions, then confirm each addition against the source text.
+
+## Running Consolidation
+
+Use the consolidation script to generate final files from per-chapter extractions (writes to `_generated/` by default):
+
+```
+node scripts/consolidate-data.mjs --book MattParry_StitchedUp
+```
+
+Add `--overwrite` to back up and replace the live file(s). Always run the validator afterward.
 
 ## Common Pitfalls and How We Fixed Them
 
@@ -55,7 +67,7 @@ Replace variables in ALL‑CAPS.
 
 ### 1) Chapter Extraction Prompt
 
-“Read CHAPTER_ID (TITLE). List all characters first mentioned in this chapter with a brief evidence extract. Then list relationships that start in this chapter as triples: A, B, type (use concise/asymmetric classification), and a one‑sentence evidence note. Do not invent; only use content present in this chapter. No spoilers from later chapters.”
+“Read CHAPTER_ID (TITLE). List all characters first mentioned in this chapter with a brief evidence extract. Then list relationships that start in this chapter as triples: A, B, type (use concise/asymmetric classification), and a one‑sentence evidence note. Also list any new locations, events, objects, spycraft entries, theme elements, and mystery elements introduced in this chapter. Do not invent; only use content present in this chapter. No spoilers from later chapters.”
 
 ### 2) Consolidation Prompt
 
@@ -100,6 +112,7 @@ Keep their relations minimal and true (e.g., `employer`/`subordinate`, `colleagu
   - [ ] Reciprocal entry from counterpart
   - [ ] `introducedInChapter` not earlier than either character’s intro
   - [ ] Concise, textual description
+- [ ] Every location/event/object/spycraft/theme/mystery element includes `introducedInChapter` corresponding to its earliest on-page mention.
 - [ ] No invented facts, no spoilers beyond intro chapter.
 - [ ] `node scripts/validate-data.mjs` shows no errors; suggestions reviewed.
 
