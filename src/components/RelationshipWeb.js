@@ -13,7 +13,7 @@ const RelationshipWeb = ({
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
-  const [focusedCharacter, setFocusedCharacter] = useState('cynthia_childreth'); // Start with main protagonist
+  const [focusedCharacter, setFocusedCharacter] = useState(() => (charactersData && charactersData.length > 0 ? charactersData[0].id : null));
   const [draggedNode, setDraggedNode] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -438,7 +438,7 @@ const RelationshipWeb = ({
     setEdges(newEdges);
   }, [relationshipsData, currentChapter, nodes, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
 
-  // Initialize graph when focused character or chapter changes
+  // Initialize graph when focused character changes (do not move nodes on chapter change)
   useEffect(() => {
     initializeNodes();
     
@@ -457,14 +457,33 @@ const RelationshipWeb = ({
       
       setPan({ x: newPanX, y: newPanY });
     }
-  }, [initializeNodes, currentChapter]);
+  }, [focusedCharacter]);
 
   // Initialize edges after nodes are set
   useEffect(() => {
     if (nodes.length > 0) {
       initializeEdges();
+    } else {
+      setEdges([]);
     }
   }, [nodes, initializeEdges]);
+
+  // When chapter filter changes, remove nodes introduced after the selected chapter
+  // Do not reinitialize or move existing nodes
+  useEffect(() => {
+    setNodes(prevNodes => {
+      if (!currentChapter) return prevNodes; // show all
+      const chapterIndex = chaptersData.findIndex(ch => ch.id === currentChapter);
+      if (chapterIndex === -1) return prevNodes;
+
+      // Compute allowed character ids up to the selected chapter
+      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+      const allowedIds = new Set(allowedCharacters.map(c => c.id));
+
+      const filtered = prevNodes.filter(n => allowedIds.has(n.id));
+      return filtered;
+    });
+  }, [currentChapter, chaptersData, charactersData, filterCharactersByChapter]);
 
   // Update node sizes when the sizing option changes (without re-initializing)
   useEffect(() => {
@@ -481,12 +500,29 @@ const RelationshipWeb = ({
   // Sync with external selectedCharacter prop
   useEffect(() => {
     if (selectedCharacter && selectedCharacter.id !== focusedCharacter) {
-      // Clear all nodes and edges when changing focus
+      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+      const allowedIds = new Set(allowedCharacters.map(c => c.id));
+      if (allowedIds.has(selectedCharacter.id)) {
+        // Clear all nodes and edges when changing focus
+        setNodes([]);
+        setEdges([]);
+        setFocusedCharacter(selectedCharacter.id);
+      }
+    }
+  }, [selectedCharacter, charactersData, currentChapter, filterCharactersByChapter]);
+
+  // Ensure a default focused character when charactersData changes or current focus is missing
+  useEffect(() => {
+    if (!charactersData || charactersData.length === 0) return;
+    const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+    const existsInCurrent = focusedCharacter && allowedCharacters.some(c => c.id === focusedCharacter);
+    if (!existsInCurrent && !selectedCharacter) {
       setNodes([]);
       setEdges([]);
-      setFocusedCharacter(selectedCharacter.id);
+      const nextFocus = allowedCharacters.length > 0 ? allowedCharacters[0].id : null;
+      setFocusedCharacter(nextFocus);
     }
-  }, [selectedCharacter]);
+  }, [charactersData, currentChapter, filterCharactersByChapter, focusedCharacter, selectedCharacter]);
 
        // Auto arrange simulation - runs continuously when enabled
     const runAutoArrange = useCallback(() => {
@@ -655,7 +691,18 @@ const RelationshipWeb = ({
       
       setIsDragging(true);
       setDraggedNode(nodeId);
-      setDragStart({ x: e.clientX - node.position.x, y: e.clientY - node.position.y });
+      // Store the offset between the mouse (in world coords) and the node position
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const worldMouseX = (mouseX - pan.x) / zoom;
+        const worldMouseY = (mouseY - pan.y) / zoom;
+        setDragStart({ x: worldMouseX - node.position.x, y: worldMouseY - node.position.y });
+      } else {
+        // Fallback: no container ref, assume no pan/zoom
+        setDragStart({ x: 0, y: 0 });
+      }
       
       // Stop auto arrange if it's running
       if (isAutoArrangeOn) {
@@ -676,8 +723,18 @@ const RelationshipWeb = ({
         const node = prevNodes.find(n => n.id === draggedNode);
         if (!node) return prevNodes;
         
-        const newX = e.clientX - dragStart.x;
-        const newY = e.clientY - dragStart.y;
+        // Convert mouse to world coordinates taking current pan/zoom into account
+        let newX = node.position.x;
+        let newY = node.position.y;
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          const worldMouseX = (mouseX - pan.x) / zoom;
+          const worldMouseY = (mouseY - pan.y) / zoom;
+          newX = worldMouseX - dragStart.x;
+          newY = worldMouseY - dragStart.y;
+        }
         
         // Check if mouse moved enough to not be a click
         const moveDistance = Math.sqrt(
@@ -697,7 +754,7 @@ const RelationshipWeb = ({
         );
       });
     }
-  }, [isDragging, draggedNode, dragStart]);
+  }, [isDragging, draggedNode, dragStart, pan, zoom]);
 
   // Handle node click - add character's relationships or remove node
   const handleNodeClick = useCallback((nodeId) => {
@@ -926,6 +983,14 @@ const RelationshipWeb = ({
 
   // Focus on character - clears everything and shows just that character
   const focusOnCharacter = (characterId) => {
+    // Respect chapter filter to avoid spoilers
+    if (characterId) {
+      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+      const allowedIds = new Set(allowedCharacters.map(c => c.id));
+      if (!allowedIds.has(characterId)) {
+        return; // Ignore selection outside allowed range
+      }
+    }
     // Only clear if we're actually changing focus, not during initial load
     if (focusedCharacter !== characterId) {
       setFocusedCharacter(characterId);
@@ -1109,7 +1174,7 @@ const RelationshipWeb = ({
             value={focusedCharacter || ''}
             onChange={(e) => focusOnCharacter(e.target.value || null)}
           >
-            {charactersData.map(character => (
+            {filterCharactersByChapter(charactersData, currentChapter).map(character => (
               <option key={character.id} value={character.id}>
                 {character.name} ({character.group})
               </option>

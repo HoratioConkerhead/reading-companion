@@ -25,16 +25,16 @@ The app uses a modular data structure organized by book with domain-specific fil
     ... same structure ...
 ```
 
-Discovery is automatic at runtime. The app scans each book folder for `metadata.js` (for selection info) and `index.js` (for full data). No app code changes are required when adding a new book.
+Discovery is automatic at runtime. The app scans each book folder for `metadata.js` (for selection info) and `index.js` (for full data). No app code changes are required when adding a new book. Selection cards are built exclusively from `metadata.js`.
 
 ## Global Chapter Introduction Field
 
-To enable a universal “show up to chapter” view, every data entity MUST include an `introducedInChapter` field indicating the earliest chapter where that entity is first mentioned or becomes relevant. This applies to characters, relationships (at the edge level), locations, events, objects, spycraft entries, theme elements, and mystery elements.
+To enable a universal “show up to chapter” view, every data entity should include an `introducedInChapter` field indicating the earliest chapter where that entity is first mentioned or becomes relevant. This applies to characters, relationships (at the edge level), locations, events, objects, spycraft entries, theme elements, and mystery elements.
 
 Rules:
 - Use chapter ids from the book’s `chapters.js` (e.g., `chapter_01`).
 - For relationships, `introducedInChapter` is the chapter the relationship begins and cannot be earlier than either character’s own `introducedInChapter`.
-- UI components should filter based on this field to avoid spoilers.
+- UI components filter based on this field to avoid spoilers. If an entity omits `introducedInChapter`, current components treat it as always visible (no spoiler filtering for that item).
 
 ## Data Format Per Type
 
@@ -173,8 +173,8 @@ export const relationships = [
 ```
 
 Notes:
-- This file is optional. If omitted, relationships are automatically derived from `characters[].relations` by pairing both sides and combining their `type` values (e.g., `employer` + `confidante` → `employer-confidante`).
-- If `introducedInChapter` is not provided at the relation level, the derived relationship uses the earliest of the two characters' `introducedInChapter` values.
+- This file is optional. If omitted, relationships are automatically derived from `characters[].relations` by pairing both sides and combining their `type` values (e.g., `handler` + `asset` → `handler-asset`). The derivation logic lives in `src/utils/relationships.js`.
+- If `introducedInChapter` is not provided at the relation level, the derived relationship uses the earliest of the two characters' `introducedInChapter` values based on the order in the book’s `chapters.js`.
 - Providing an explicit `relationships.js` is supported but not required.
 
 **Chapter-Based Filtering**: Relationships can be filtered by their introduction chapter, enabling the relationship web to progressively reveal connections as the reader progresses through the story. This prevents spoilers and creates a dynamic reading experience where the network grows chapter by chapter.
@@ -296,7 +296,7 @@ export const themeElements = [
 export const chapters = [
   {
     id: 'chapter_id',             // Unique identifier
-    title: 'Chapter Title',       // Full chapter title
+    title: 'Chapter Num - Chapter Title',       // Full chapter number and title, e.g. 'Chapter 1: The Start'
     description: 'Chapter description',
     events: ['event_id_1', 'event_id_2'], // Events in this chapter
     timeframe: 'Time period'      // When this chapter takes place
@@ -428,23 +428,27 @@ Loader behavior:
 - Falls back to `export const stitchedUp = {...}` or `export default {...}`
 - If no `index.js`, it aggregates named exports from per-type files
 
-## Using the Data in Components
+## Runtime Loader APIs (recommended)
 
-Components can import data in two ways:
+The app dynamically discovers books and loads data at runtime via `src/data/index.js`.
 
-1. Import all data from a specific book:
+Available functions:
+- `getAvailableBookKeys(): string[]` — discovered book directory names.
+- `getAvailableBookMetadata(): Record<bookKey, { key, title, author, shortDescription }>` — lightweight selection metadata from each book’s `metadata.js`.
+- `loadBookData(bookKey): Promise<Book>` — loads the full book data. Prefers `export const book = {...}` from `index.js`, then `stitchedUp`, then `default`. If no `index.js` exists, it aggregates named exports from per‑type files.
+- `defaultBookKey: string` — preferred default if present (e.g., `MattParry_StitchedUp_v2`), else first discovered.
+
+Example:
 ```javascript
-import { bookName } from '../data';
-// Use: bookName.characters, bookName.events, etc.
+import { getAvailableBookMetadata, loadBookData, defaultBookKey } from '../data';
+
+const books = getAvailableBookMetadata();
+const selectedKey = defaultBookKey;
+const book = await loadBookData(selectedKey);
+// book.characters, book.events, book.relationships, book.bookMetadata, etc.
 ```
 
-2. Import specific data types directly:
-```javascript
-import { characters, events } from '../data/bookName';
-// Use: characters, events directly
-```
-
-Choose the approach that works best for your component's needs.
+Note: Relationships are auto‑derived from `characters[].relations` when not explicitly provided in the book bundle.
 
 ## Data Validation
 
