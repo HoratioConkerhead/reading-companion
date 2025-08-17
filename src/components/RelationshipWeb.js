@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
   selectedCharacter,
   charactersData,
-  relationshipsData,
+  relationshipsData = [],
   eventsData = [], // Add events data for importance calculation
   chaptersData = [], // Add chapters data for filtering
   darkMode = false, // Add darkMode prop for theme-aware colors
@@ -42,6 +42,7 @@ const RelationshipWeb = ({
   const clickStartPos = useRef({ x: 0, y: 0 });
   const wasAutoArrangeOn = useRef(false);
   const textWidthCache = useRef(new Map());
+  const suppressAutoFocusRef = useRef(false);
 
   // Calculate character importance rating (1-100) based on multiple factors
   const calculateCharacterImportance = useCallback((character) => {
@@ -76,7 +77,7 @@ const RelationshipWeb = ({
 
     // Event participation
     const eventCount = (eventsData || []).filter(event => 
-      event.characters.some(char => char.characterId === character.id)
+      (event.characters || []).some(char => char.characterId === character.id)
     ).length;
     score += Math.min(eventCount * weights.eventPer, weights.eventMax);
 
@@ -295,6 +296,22 @@ const RelationshipWeb = ({
     return '#718096'; // gray
   }, []);
 
+  // Map a relationship type string to a display category label used in the legend
+  const getRelationshipCategoryLabel = useCallback((type) => {
+    const t = (type || '').toLowerCase();
+    if (t.includes('spouse')) return 'Spouse';
+    if (t.includes('handler') || t.includes('asset')) return 'Handler/Asset';
+    if (t.includes('conspirator') || t.includes('enemy')) return 'Conspirator/Enemy';
+    if (t.includes('colleague') || t.includes('partner')) return 'Colleague/Partner';
+    if (t.includes('superior') || t.includes('subordinate')) return 'Superior/Subordinate';
+    if (t.includes('friend')) return 'Friend';
+    if (t.includes('informant') || t.includes('double-agent')) return 'Informant/Double-Agent';
+    if (t.includes('target') || t.includes('victim')) return 'Conspirator/Enemy';
+    return 'Other';
+  }, []);
+
+  
+
   // Format relationship type
   const formatRelationshipType = useCallback((type) => {
     return type
@@ -338,6 +355,52 @@ const RelationshipWeb = ({
       return true;
     });
   }, [chaptersData]);
+
+  // Build legend items from relationships present up to the selected chapter
+  const relationshipLegendItems = useMemo(() => {
+    const filtered = filterRelationshipsByChapter(relationshipsData, currentChapter) || [];
+    const colorByLabel = new Map();
+    filtered.forEach(rel => {
+      const label = getRelationshipCategoryLabel(rel.type);
+      if (!colorByLabel.has(label)) {
+        colorByLabel.set(label, getRelationshipColor(rel.type));
+      }
+    });
+
+    // Desired display order
+    const CATEGORY_ORDER = [
+      'Spouse',
+      'Handler/Asset',
+      'Conspirator/Enemy',
+      'Colleague/Partner',
+      'Superior/Subordinate',
+      'Friend',
+      'Informant/Double-Agent',
+      'Other'
+    ];
+
+    // If no relationships yet, fall back to showing all categories with representative colors
+    if (colorByLabel.size === 0) {
+      const representativeTypeByLabel = {
+        'Spouse': 'spouse',
+        'Handler/Asset': 'handler-asset',
+        'Conspirator/Enemy': 'conspirator',
+        'Colleague/Partner': 'colleague-partner',
+        'Superior/Subordinate': 'superior-subordinate',
+        'Friend': 'friend',
+        'Informant/Double-Agent': 'informant-double-agent',
+        'Other': 'other'
+      };
+      return CATEGORY_ORDER.map(label => ({
+        label,
+        color: getRelationshipColor(representativeTypeByLabel[label])
+      }));
+    }
+
+    return CATEGORY_ORDER
+      .filter(label => colorByLabel.has(label))
+      .map(label => ({ label, color: colorByLabel.get(label) }));
+  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel]);
 
       // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
@@ -513,6 +576,10 @@ const RelationshipWeb = ({
 
   // Ensure a default focused character when charactersData changes or current focus is missing
   useEffect(() => {
+    if (suppressAutoFocusRef.current) {
+      suppressAutoFocusRef.current = false; // one-shot
+      return;
+    }
     if (!charactersData || charactersData.length === 0) return;
     const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
     const existsInCurrent = focusedCharacter && allowedCharacters.some(c => c.id === focusedCharacter);
@@ -523,6 +590,8 @@ const RelationshipWeb = ({
       setFocusedCharacter(nextFocus);
     }
   }, [charactersData, currentChapter, filterCharactersByChapter, focusedCharacter, selectedCharacter]);
+
+  // Keep show-all mode until user explicitly focuses a character
 
        // Auto arrange simulation - runs continuously when enabled
     const runAutoArrange = useCallback(() => {
@@ -1022,11 +1091,51 @@ const RelationshipWeb = ({
 
   // Show all characters and relationships up to current chapter
   const showAllUpToChapter = () => {
-    // Clear focused character to show all characters up to current chapter
+    // Explicitly build all nodes up to the selected chapter and all relationships among them
+    suppressAutoFocusRef.current = true;
     setFocusedCharacter(null);
-    // Clear current view to force re-initialization
-    setNodes([]);
-    setEdges([]);
+
+    const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+    const centerX = 400;
+    const centerY = 300;
+    const radius = 200;
+
+    const newNodes = allowedCharacters.map((character, index) => {
+      const relationshipCount = getRelationshipCount(character.id);
+      const importance = calculateCharacterImportance(character);
+      const size = getNodeSize(importance, false);
+      const angle = (index * 2 * Math.PI) / Math.max(allowedCharacters.length, 1);
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      return {
+        id: character.id,
+        name: character.name,
+        role: character.role,
+        group: character.group,
+        position: { x, y },
+        color: getGroupColor(character.group, relationshipCount),
+        relationshipCount,
+        importance,
+        size,
+        isFocused: false
+      };
+    });
+
+    setNodes(newNodes);
+
+    const allowedIds = new Set(allowedCharacters.map(c => c.id));
+    const filteredRels = filterRelationshipsByChapter(relationshipsData, currentChapter)
+      .filter(rel => allowedIds.has(rel.from) && allowedIds.has(rel.to));
+    const newEdges = filteredRels.map((relationship, index) => ({
+      id: `${relationship.from}-${relationship.to}-${index}`,
+      from: relationship.from,
+      to: relationship.to,
+      type: relationship.type,
+      color: getRelationshipColor(relationship.type),
+      label: formatRelationshipType(relationship.type)
+    }));
+
+    setEdges(newEdges);
   };
 
   // Reset view
@@ -1192,7 +1301,7 @@ const RelationshipWeb = ({
               value={currentChapter || ''}
               onChange={(e) => setCurrentChapter(e.target.value || null)}
             >
-              <option value="">Show All Relationships</option>
+              <option value="">Show All Characters and Relationships</option>
               {chaptersData.map((chapter, index) => (
                 <option key={chapter.id} value={chapter.id}>
                   {chapter.title}
@@ -1469,38 +1578,12 @@ const RelationshipWeb = ({
                   Relationship Types
               </label>
               <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#805AD5' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Spouse</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#3182CE' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Handler/Asset</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#E53E3E' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Conspirator/Enemy</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#38A169' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Colleague/Partner</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#DD6B20' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Superior/Subordinate</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#4299E1' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Friend</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#D53F8C' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Informant/Double-Agent</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: '#718096' }}></div>
-                  <span className="text-xs text-gray-700 dark:text-gray-300 truncate">Other</span>
-                </div>
+                {relationshipLegendItems.map(item => (
+                  <div key={item.label} className="flex items-center">
+                    <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: item.color }}></div>
+                    <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{item.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 

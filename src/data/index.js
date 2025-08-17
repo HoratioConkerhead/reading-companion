@@ -10,6 +10,10 @@ const indexContext = require.context('./', true, /index\.js$/);
 // eslint-disable-next-line no-undef
 const allJsContext = require.context('./', true, /\.js$/);
 
+// Temporarily ignore certain book folders while under construction
+const IGNORED_BOOK_KEYS = new Set([''
+]);
+
 const toBookKey = (p) => {
   // p looks like './BookKey/metadata.js' → return 'BookKey'
   const parts = p.split('/');
@@ -22,6 +26,7 @@ const discoverSelectionMetadata = () => {
   metadataContext.keys().forEach((k) => {
     const bookKey = toBookKey(k);
     if (!bookKey) return;
+    if (IGNORED_BOOK_KEYS.has(bookKey)) return;
     try {
       const mod = metadataContext(k);
       const meta = mod.bookMetadata || mod.default || {};
@@ -50,6 +55,9 @@ export const getAvailableBookMetadata = () => discoverSelectionMetadata();
 // Load a specific book's full data from its index.js
 export const loadBookData = async (bookKey) => {
   try {
+    if (IGNORED_BOOK_KEYS.has(bookKey)) {
+      throw new Error(`Book "${bookKey}" is currently disabled`);
+    }
     // Try to load via index.js if present
     const indexPath = `./${bookKey}/index.js`;
     let bookModule = null;
