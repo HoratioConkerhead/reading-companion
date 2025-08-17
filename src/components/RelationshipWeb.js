@@ -9,7 +9,8 @@ const RelationshipWeb = ({
   chaptersData = [], // Add chapters data for filtering
   darkMode = false, // Add darkMode prop for theme-aware colors
   groupColors = {},
-  importanceConfig = {}
+  importanceConfig = {},
+  relationshipCategoryColors = {}
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -324,19 +325,6 @@ const RelationshipWeb = ({
     }
   }, [relationshipsData, nodes]);
 
-  // Get relationship color
-  const getRelationshipColor = useCallback((type) => {
-    if (type.includes('spouse')) return '#805AD5'; // purple
-    if (type.includes('handler') || type.includes('asset')) return '#3182CE'; // blue
-    if (type.includes('conspirator')) return '#E53E3E'; // red
-    if (type.includes('colleague') || type.includes('partner')) return '#38A169'; // green
-    if (type.includes('superior') || type.includes('subordinate')) return '#DD6B20'; // orange
-    if (type.includes('friend')) return '#4299E1'; // light blue
-    if (type.includes('informant') || type.includes('double-agent')) return '#D53F8C'; // pink
-    if (type.includes('enemy') || type.includes('target') || type.includes('victim')) return '#E53E3E'; // red
-    return '#718096'; // gray
-  }, []);
-
   // Map a relationship type string to a display category label used in the legend
   const getRelationshipCategoryLabel = useCallback((type) => {
     const t = (type || '').toLowerCase();
@@ -350,6 +338,26 @@ const RelationshipWeb = ({
     if (t.includes('target') || t.includes('victim')) return 'Conspirator/Enemy';
     return 'Other';
   }, []);
+
+  // Get relationship color
+  const getRelationshipColor = useCallback((type) => {
+    // Prefer metadata-driven category colors
+    const label = getRelationshipCategoryLabel(type);
+    const fromMeta = relationshipCategoryColors[label];
+    if (fromMeta) return fromMeta;
+
+    // Fallback legacy mapping (kept for compatibility if metadata missing)
+    const t = (type || '').toLowerCase();
+    if (t.includes('spouse')) return '#805AD5'; // purple
+    if (t.includes('handler') || t.includes('asset')) return '#3182CE'; // blue
+    if (t.includes('conspirator')) return '#E53E3E'; // red
+    if (t.includes('colleague') || t.includes('partner')) return '#38A169'; // green
+    if (t.includes('superior') || t.includes('subordinate')) return '#DD6B20'; // orange
+    if (t.includes('friend')) return '#4299E1'; // light blue
+    if (t.includes('informant') || t.includes('double-agent')) return '#D53F8C'; // pink
+    if (t.includes('enemy') || t.includes('target') || t.includes('victim')) return '#E53E3E'; // red
+    return '#718096'; // gray
+  }, [relationshipCategoryColors, getRelationshipCategoryLabel]);
 
   
 
@@ -434,14 +442,15 @@ const RelationshipWeb = ({
       };
       return CATEGORY_ORDER.map(label => ({
         label,
-        color: getRelationshipColor(representativeTypeByLabel[label])
+        // Prefer metadata color; fallback to derived color from representative type
+        color: relationshipCategoryColors[label] || getRelationshipColor(representativeTypeByLabel[label])
       }));
     }
 
     return CATEGORY_ORDER
       .filter(label => colorByLabel.has(label))
       .map(label => ({ label, color: colorByLabel.get(label) }));
-  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel]);
+  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel, relationshipCategoryColors]);
 
       // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
