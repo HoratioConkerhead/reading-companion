@@ -24,9 +24,11 @@ const RelationshipWeb = ({
   const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
-  const [pinIsolatedNodes, setPinIsolatedNodes] = useState(true);
   const [isFullPage, setIsFullPage] = useState(false);
   const [hoveredNode, setHoveredNode] = useState(null);
+  const [isPinMode, setIsPinMode] = useState(false);
+  const [pinnedNodeIds, setPinnedNodeIds] = useState(new Set());
+  const [autoPinnedNodeIds, setAutoPinnedNodeIds] = useState(new Set());
   
   // View options state
   const [showDescription, setShowDescription] = useState(false); // off by default
@@ -148,6 +150,45 @@ const RelationshipWeb = ({
     );
     
     return largestComponent;
+  }, []);
+
+  // Find all connected components in the graph
+  const findConnectedComponents = useCallback((currentNodes, currentEdges) => {
+    if (!currentNodes || currentNodes.length === 0) return [];
+
+    const adjacencyList = new Map();
+    currentNodes.forEach(node => {
+      adjacencyList.set(node.id, new Set());
+    });
+
+    currentEdges.forEach(edge => {
+      if (adjacencyList.has(edge.from) && adjacencyList.has(edge.to)) {
+        adjacencyList.get(edge.from).add(edge.to);
+        adjacencyList.get(edge.to).add(edge.from);
+      }
+    });
+
+    const visited = new Set();
+    const components = [];
+
+    const dfs = (nodeId, component) => {
+      visited.add(nodeId);
+      component.push(nodeId);
+      const neighbors = adjacencyList.get(nodeId) || new Set();
+      neighbors.forEach(neighborId => {
+        if (!visited.has(neighborId)) dfs(neighborId, component);
+      });
+    };
+
+    currentNodes.forEach(node => {
+      if (!visited.has(node.id)) {
+        const component = [];
+        dfs(node.id, component);
+        components.push(component);
+      }
+    });
+
+    return components;
   }, []);
 
   // Count relationships for a character
@@ -600,6 +641,11 @@ const RelationshipWeb = ({
       setNodes(currentNodes => {
         if (currentNodes.length === 0) return currentNodes;
         
+        const pinnedSet = new Set([
+          ...Array.from(pinnedNodeIds || new Set()),
+          ...Array.from(autoPinnedNodeIds || new Set())
+        ]);
+
         const simulation = {
           nodes: currentNodes.map(node => ({
             ...node,
@@ -607,16 +653,7 @@ const RelationshipWeb = ({
             force: { x: 0, y: 0 }
           })),
           edges: edges,
-          pinIsolatedNodes,
-          degreeById: (() => {
-            const map = new Map();
-            currentNodes.forEach(n => map.set(n.id, 0));
-            edges.forEach(e => {
-              if (map.has(e.from)) map.set(e.from, map.get(e.from) + 1);
-              if (map.has(e.to)) map.set(e.to, map.get(e.to) + 1);
-            });
-            return map;
-          })(),
+          pinnedSet,
           // (center pull for isolates removed per user request)
           
           // Physics constants - use state values
@@ -647,11 +684,22 @@ const RelationshipWeb = ({
                 
                 // Repulsion force (stronger when closer)
                 const force = this.repulsionForce / (distance * distance);
+
+                const node1Pinned = this.pinnedSet.has(node1.id);
+                const node2Pinned = this.pinnedSet.has(node2.id);
                 
-                node1.force.x -= (dx / distance) * force;
-                node1.force.y -= (dy / distance) * force;
-                node2.force.x += (dx / distance) * force;
-                node2.force.y += (dy / distance) * force;
+                if (!node1Pinned && !node2Pinned) {
+                  node1.force.x -= (dx / distance) * force;
+                  node1.force.y -= (dy / distance) * force;
+                  node2.force.x += (dx / distance) * force;
+                  node2.force.y += (dy / distance) * force;
+                } else if (node1Pinned && !node2Pinned) {
+                  node2.force.x += (dx / distance) * force;
+                  node2.force.y += (dy / distance) * force;
+                } else if (!node1Pinned && node2Pinned) {
+                  node1.force.x -= (dx / distance) * force;
+                  node1.force.y -= (dy / distance) * force;
+                }
               }
             }
             
@@ -668,11 +716,22 @@ const RelationshipWeb = ({
                 // Spring force (attraction with ideal length)
                 const displacement = distance - this.springLength;
                 const force = (this.springForce / 1000) * displacement;
+
+                const sourcePinned = this.pinnedSet.has(sourceNode.id);
+                const targetPinned = this.pinnedSet.has(targetNode.id);
                 
-                sourceNode.force.x += (dx / distance) * force;
-                sourceNode.force.y += (dy / distance) * force;
-                targetNode.force.x -= (dx / distance) * force;
-                targetNode.force.y -= (dy / distance) * force;
+                if (!sourcePinned && !targetPinned) {
+                  sourceNode.force.x += (dx / distance) * force;
+                  sourceNode.force.y += (dy / distance) * force;
+                  targetNode.force.x -= (dx / distance) * force;
+                  targetNode.force.y -= (dy / distance) * force;
+                } else if (sourcePinned && !targetPinned) {
+                  targetNode.force.x -= (dx / distance) * force;
+                  targetNode.force.y -= (dy / distance) * force;
+                } else if (!sourcePinned && targetPinned) {
+                  sourceNode.force.x += (dx / distance) * force;
+                  sourceNode.force.y += (dy / distance) * force;
+                }
               }
             });
 
@@ -680,8 +739,7 @@ const RelationshipWeb = ({
             
             // Apply forces to velocities
             this.nodes.forEach(node => {
-              const deg = this.degreeById.get(node.id) || 0;
-              const pinned = this.pinIsolatedNodes && deg === 0;
+              const pinned = this.pinnedSet.has(node.id);
               if (!pinned) {
                 node.velocity.x += node.force.x;
                 node.velocity.y += node.force.y;
@@ -720,7 +778,7 @@ const RelationshipWeb = ({
         
         return simulation.nodes;
       });
-    }, [isAutoArrangeOn, edges, springForce, repulsionForce, pinIsolatedNodes]);
+    }, [isAutoArrangeOn, edges, springForce, repulsionForce, pinnedNodeIds, autoPinnedNodeIds]);
   
            // Run auto arrange when enabled
     useEffect(() => {
@@ -744,6 +802,48 @@ const RelationshipWeb = ({
       }
     };
   }, []);
+
+  // Auto-pin one node per disconnected component when multiple components exist
+  useEffect(() => {
+    if (nodes.length === 0) {
+      if (autoPinnedNodeIds.size > 0) setAutoPinnedNodeIds(new Set());
+      return;
+    }
+    const components = findConnectedComponents(nodes, edges);
+    if (components.length <= 1) {
+      if (autoPinnedNodeIds.size > 0) setAutoPinnedNodeIds(new Set());
+      return;
+    }
+
+    const degreeMap = new Map();
+    nodes.forEach(n => degreeMap.set(n.id, 0));
+    edges.forEach(e => {
+      if (degreeMap.has(e.from)) degreeMap.set(e.from, (degreeMap.get(e.from) || 0) + 1);
+      if (degreeMap.has(e.to)) degreeMap.set(e.to, (degreeMap.get(e.to) || 0) + 1);
+    });
+
+    const nextAuto = new Set();
+    components.forEach(componentIds => {
+      const hasUserPin = componentIds.some(id => pinnedNodeIds.has(id));
+      if (hasUserPin) return;
+      let bestId = null;
+      let bestScore = -Infinity;
+      componentIds.forEach(id => {
+        const node = nodes.find(n => n.id === id);
+        if (!node) return;
+        const deg = degreeMap.get(id) || 0;
+        const score = deg * 100 + (node.importance || 0);
+        if (score > bestScore) {
+          bestScore = score;
+          bestId = id;
+        }
+      });
+      if (bestId) nextAuto.add(bestId);
+    });
+
+    const same = autoPinnedNodeIds.size === nextAuto.size && Array.from(autoPinnedNodeIds).every(id => nextAuto.has(id));
+    if (!same) setAutoPinnedNodeIds(nextAuto);
+  }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds.size, findConnectedComponents]);
 
   // Handle node drag start
   const handleNodeMouseDown = (e, nodeId) => {
@@ -827,6 +927,18 @@ const RelationshipWeb = ({
 
   // Handle node click - add character's relationships or remove node
   const handleNodeClick = useCallback((nodeId) => {
+    if (isPinMode) {
+      setPinnedNodeIds(prev => {
+        const next = new Set(prev);
+        if (next.has(nodeId)) {
+          next.delete(nodeId);
+        } else {
+          next.add(nodeId);
+        }
+        return next;
+      });
+      return;
+    }
     if (isRemoveMode) {
       // Remove mode: remove the clicked node and keep only the largest connected component
       setNodes(currentNodes => {
@@ -974,7 +1086,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  }, [isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType]);
+  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
@@ -1389,15 +1501,17 @@ const RelationshipWeb = ({
 
           <button
             className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
-              pinIsolatedNodes 
-                ? 'bg-green-500 hover:bg-green-600' 
+              isPinMode
+                ? 'bg-green-500 hover:bg-green-600'
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
-            onClick={() => setPinIsolatedNodes(!pinIsolatedNodes)}
-            title="Toggle pinning of isolated nodes during auto-arrange"
+            onClick={() => setIsPinMode(!isPinMode)}
+            title="Toggle pin mode (click nodes to pin/unpin)"
           >
-            <span className="whitespace-pre leading-tight text-center">{`Pin\nIsolated`}</span>
+            <span className="whitespace-pre leading-tight text-center">{`Pin\nMode`}</span>
           </button>
+
+          {/* Removed Pin Isolated toggle */}
 
           <button
             className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
@@ -1750,6 +1864,12 @@ const RelationshipWeb = ({
                         onMouseEnter={() => setHoveredNode(node.id)}
                         onMouseLeave={() => setHoveredNode(null)}
                       />
+                      {/* Pin icon overlay if node is pinned */}
+                      { (pinnedNodeIds.has(node.id) || autoPinnedNodeIds.has(node.id)) && (
+                        <g transform={`translate(${node.position.x - (node.size || 30) * 0.5}, ${node.position.y - (node.size || 30) * 0.9})`}>
+                          <path d="M5 0 L10 5 L7 5 L7 14 L3 14 L3 5 L0 5 Z" fill={darkMode ? '#fef3c7' : '#b45309'} stroke={darkMode ? '#f59e0b' : '#92400e'} strokeWidth="0.8" />
+                        </g>
+                      )}
                                                                                    {/* Number above node - show relationship count OR importance rating */}
                                           {(showNumber || showImportance || hoveredNode === node.id) && (
                                                <text
