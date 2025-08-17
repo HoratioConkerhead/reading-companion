@@ -1134,97 +1134,107 @@ const RelationshipWeb = ({
                 </option>
               ))}
             </select>
-            <button
-              className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
-              onClick={showAllUpToChapter}
-              title="Show all characters and relationships up to the selected chapter"
-            >
-              Show All
-            </button>
           </div>
         </div>
 
 
         <div className="flex gap-2 items-end">
+        <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              onClick={showAllUpToChapter}
+              title="Show all characters and relationships up to the selected chapter"
+            >
+              Show All
+            </button>
+
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             onClick={resetView}
+            title="Reset zoom, pan, and focus to defaults"
           >
             Reset View
           </button>
 
           <button
-            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
-            onClick={() => {
-              if (nodes.length === 0) return;
-              
-              // Calculate the bounding box of all current nodes
-              const minX = Math.min(...nodes.map(n => n.position.x));
-              const maxX = Math.max(...nodes.map(n => n.position.x));
-              const minY = Math.min(...nodes.map(n => n.position.y));
-              const maxY = Math.max(...nodes.map(n => n.position.y));
-              
-              // Add some padding around the nodes
-              const padding = 100;
-              const nodeWidth = maxX - minX + padding * 2;
-              const nodeHeight = maxY - minY + padding * 2;
-              
-              // Get the container dimensions
-              const containerWidth = containerRef.current.clientWidth;
-              const containerHeight = containerRef.current.clientHeight;
-              
-              // Calculate the zoom level needed to fit all nodes
-              const scaleX = containerWidth / nodeWidth;
-              const scaleY = containerHeight / nodeHeight;
-              const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
-              
-              // Calculate the center of the nodes
-              const centerX = (minX + maxX) / 2;
-              const centerY = (minY + maxY) / 2;
-              
-              // Calculate the center of the container
-              const containerCenterX = containerWidth / 2;
-              const containerCenterY = containerHeight / 2;
-              
-              // Calculate the pan needed to center the nodes
-              const newPanX = containerCenterX - centerX * newZoom;
-              const newPanY = containerCenterY - centerY * newZoom;
-              
-              // Apply the new zoom and pan
-              setZoom(newZoom);
-              setPan({ x: newPanX, y: newPanY });
-            }}
-          >
-            Fit to View
-          </button>
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              onClick={() => {
+                if (nodes.length === 0) return;
+                
+                // Calculate the bounding box of all current nodes
+                const minX = Math.min(...nodes.map(n => n.position.x));
+                const maxX = Math.max(...nodes.map(n => n.position.x));
+                const minY = Math.min(...nodes.map(n => n.position.y));
+                const maxY = Math.max(...nodes.map(n => n.position.y));
+                
+                // Add some padding around the nodes
+                const padding = 100;
+                const nodeWidth = maxX - minX + padding * 2;
+                const nodeHeight = maxY - minY + padding * 2;
+                
+                // Get the container dimensions
+                const containerWidth = containerRef.current.clientWidth;
+                const containerHeight = containerRef.current.clientHeight;
+                
+                // Calculate the zoom level needed to fit all nodes
+                const scaleX = containerWidth / nodeWidth;
+                const scaleY = containerHeight / nodeHeight;
+                const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
+                
+                // Calculate the center of the nodes
+                const centerX = (minX + maxX) / 2;
+                const centerY = (minY + maxY) / 2;
+                
+                // Calculate the center of the container
+                const containerCenterX = containerWidth / 2;
+                const containerCenterY = containerHeight / 2;
+                
+                // Calculate the pan needed to center the nodes
+                const newPanX = containerCenterX - centerX * newZoom;
+                const newPanY = containerCenterY - centerY * newZoom;
+                
+                // Apply the new zoom and pan
+                setZoom(newZoom);
+                setPan({ x: newPanX, y: newPanY });
+              }}
+              title="Zoom and center so all visible nodes fit in view"
+            >
+              Fit to View
+            </button>
+
           <button
             className={`px-4 py-2 text-white rounded transition-colors ${
               isAutoArrangeOn 
-                ? 'bg-red-500 hover:bg-red-600' 
-                : 'bg-green-500 hover:bg-green-600'
+                ? 'bg-green-500 hover:bg-green-600' 
+                : 'bg-gray-500 hover:bg-gray-600'
             }`}
             onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
+            title="Toggle automatic layout of nodes"
           >
-            {isAutoArrangeOn ? 'Stop Auto Arrange' : 'Start Auto Arrange'}
+            {`Auto arrange`}
           </button>
-          <label className="flex items-center ml-2 text-sm text-gray-700 dark:text-gray-300">
-            <input
-              type="checkbox"
-              className="mr-2"
-              checked={pinIsolatedNodes}
-              onChange={(e) => setPinIsolatedNodes(e.target.checked)}
-            />
-            Pin isolated nodes
-          </label>
+
+          <button
+            className={`px-4 py-2 text-white rounded transition-colors ${
+              pinIsolatedNodes 
+                ? 'bg-green-500 hover:bg-green-600' 
+                : 'bg-gray-500 hover:bg-gray-600'
+            }`}
+            onClick={() => setPinIsolatedNodes(!pinIsolatedNodes)}
+            title="Toggle pinning of isolated nodes during auto-arrange"
+          >
+            {`Pin Insolated`}
+          </button>
+
           <button
             className={`px-4 py-2 text-white rounded transition-colors ${
               isRemoveMode 
-                ? 'bg-red-500 hover:bg-red-600' 
+                ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
             onClick={() => setIsRemoveMode(!isRemoveMode)}
+            title="Toggle remove mode (click nodes to remove)"
           >
-            {isRemoveMode ? 'Exit Remove Mode' : 'Remove Mode'}
+            {`Remove Mode`}
           </button>
 
         </div>
