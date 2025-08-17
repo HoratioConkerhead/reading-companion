@@ -85,7 +85,7 @@ const InteractiveReadingCompanion = () => {
       document.documentElement.classList.add('dark');
     }
 
-    // Check for saved book preference
+    // Check for saved book preference (localStorage only)
     const savedBook = localStorage.getItem('selectedBook');
     if (savedBook && availableBooks[savedBook]) {
       setCurrentBookKey(savedBook);
@@ -264,6 +264,7 @@ const InteractiveReadingCompanion = () => {
                 selectedCharacter={selectedCharacter}
                 charactersData={bookData.characters}
                 relationshipsData={bookData.relationships}
+                groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
               />
             </TabPanel>
             
@@ -277,6 +278,7 @@ const InteractiveReadingCompanion = () => {
                 eventsData={bookData.events}
                 chaptersData={bookData.chapters}
                 darkMode={darkMode}
+                groupColors={bookData.bookMetadata?.characterGroupColors || {}}
               />
             </TabPanel>
             
@@ -416,18 +418,6 @@ const InteractiveReadingCompanion = () => {
   );
 };
 
-// Helper function to get the CSS class for a character group
-export const getGroupColor = (group) => {
-  switch (group) {
-    case 'Protagonists':
-      return 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200';
-    case 'Fifth Columnists':
-      return 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200';
-    case 'German Connection':
-      return 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200';
-    default:
-      return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  }
-};
+// Removed hard-coded group color mapping; now provided via bookMetadata
 
 export default InteractiveReadingCompanion;

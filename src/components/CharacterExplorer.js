@@ -4,7 +4,8 @@ const CharacterExplorer = ({
   onCharacterSelect, 
   selectedCharacter,
   charactersData,
-  relationshipsData 
+  relationshipsData,
+  groupStyles = {}
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
@@ -146,7 +147,7 @@ const CharacterExplorer = ({
               >
                 <h3 className="font-bold text-gray-900 dark:text-gray-100">{character.name}</h3>
                 <div className="flex flex-wrap mt-1 gap-1">
-                  <span className={`text-xs px-2 py-1 rounded ${getGroupColor(character.group)}`}>
+                  <span className={`text-xs px-2 py-1 rounded ${groupStyles[character.group] || 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
                     {character.group}
                   </span>
                   {character.title && (
@@ -173,7 +174,7 @@ const CharacterExplorer = ({
                   {selectedCharacter.title && (
                     <p className="text-lg text-gray-600 dark:text-gray-400">{selectedCharacter.title}</p>
                   )}
-                  <span className={`inline-block mt-2 px-3 py-1 rounded text-sm ${getGroupColor(selectedCharacter.group)}`}>
+                  <span className={`inline-block mt-2 px-3 py-1 rounded text-sm ${groupStyles[selectedCharacter.group] || 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
                     {selectedCharacter.group}
                   </span>
                 </div>
@@ -246,20 +247,6 @@ const CharacterExplorer = ({
       </div>
     </div>
   );
-};
-
-// Helper function to get the CSS class for a character group
-const getGroupColor = (group) => {
-  switch (group) {
-    case 'Protagonists':
-      return 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200';
-    case 'Fifth Columnists':
-      return 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200';
-    case 'German Connection':
-      return 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200';
-    default:
-      return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  }
 };
 
 export default CharacterExplorer;

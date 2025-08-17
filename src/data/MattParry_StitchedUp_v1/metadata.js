@@ -31,6 +31,20 @@ export const bookMetadata = {
     'German Connection': 'German nationals and sympathizers',
     'Supporting Characters': 'Other characters in the story'
   },
+  // Optional: UI styles for character groups (Tailwind classes)
+  characterGroupStyles: {
+    'Protagonists': 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+    'Fifth Columnists': 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200',
+    'German Connection': 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
+    'Supporting Characters': 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200'
+  },
+  // Optional: colors for character groups (hex for SVGs, etc.)
+  characterGroupColors: {
+    'Protagonists': '#3182CE',
+    'Fifth Columnists': '#E53E3E',
+    'German Connection': '#D69E2E',
+    'Supporting Characters': '#38A169'
+  },
   
   // Footer copyright
   copyright: "\"Stitched Up\" Interactive Companion"

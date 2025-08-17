@@ -34,6 +34,9 @@ export const stitchedUp = {
   mapBoundaries
 };
 
+// Neutral export name preferred by the loader
+export const book = stitchedUp;
+
 // Export individual modules for direct access if needed
 export {
   characters,

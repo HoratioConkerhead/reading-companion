@@ -7,7 +7,8 @@ const RelationshipWeb = ({
   relationshipsData,
   eventsData = [], // Add events data for importance calculation
   chaptersData = [], // Add chapters data for filtering
-  darkMode = false // Add darkMode prop for theme-aware colors
+  darkMode = false, // Add darkMode prop for theme-aware colors
+  groupColors = {}
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -155,30 +156,8 @@ const RelationshipWeb = ({
 
   // Get character group color with brightness based on relationship count
   const getGroupColor = useCallback((group, relationshipCount = 0) => {
-    // Base colors for each group
-    let baseColor;
-    switch (group) {
-      case 'Protagonists':
-        baseColor = '#3182CE'; // blue
-        break;
-      case 'Fifth Columnists':
-        baseColor = '#E53E3E'; // red
-        break;
-      case 'German Connection':
-        baseColor = '#D69E2E'; // yellow/gold
-        break;
-      case 'Supporting Characters':
-        baseColor = '#38A169'; // green
-        break;
-      case 'Military':
-        baseColor = '#4A5568'; // gray-blue
-        break;
-      case 'Historical Figures':
-        baseColor = '#805AD5'; // purple
-        break;
-      default:
-        baseColor = '#718096'; // gray
-    }
+    // Base color from book metadata mapping, fallback to gray
+    const baseColor = groupColors[group] || '#718096';
 
     // If no relationship count provided, return base color
     if (relationshipCount === 0) return baseColor;
@@ -201,7 +180,7 @@ const RelationshipWeb = ({
 
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-  }, []);
+  }, [groupColors]);
 
   // Get appropriate text color based on theme
   const getTextColor = (isDark = false) => {
@@ -1395,7 +1374,7 @@ const RelationshipWeb = ({
               </label>
 
               <div className="space-y-2">
-                {['Protagonists', 'Fifth Columnists', 'German Connection', 'Supporting Characters', 'Military', 'Historical Figures'].map(group => (
+                {Object.keys(groupColors).map(group => (
                   <div key={group} className="flex items-center">
                     <div 
                       className="w-3 h-3 rounded-full mr-2 flex-shrink-0"
