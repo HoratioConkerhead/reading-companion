@@ -346,16 +346,7 @@ const RelationshipWeb = ({
     const fromMeta = relationshipCategoryColors[label];
     if (fromMeta) return fromMeta;
 
-    // Fallback legacy mapping (kept for compatibility if metadata missing)
-    const t = (type || '').toLowerCase();
-    if (t.includes('spouse')) return '#805AD5'; // purple
-    if (t.includes('handler') || t.includes('asset')) return '#3182CE'; // blue
-    if (t.includes('conspirator')) return '#E53E3E'; // red
-    if (t.includes('colleague') || t.includes('partner')) return '#38A169'; // green
-    if (t.includes('superior') || t.includes('subordinate')) return '#DD6B20'; // orange
-    if (t.includes('friend')) return '#4299E1'; // light blue
-    if (t.includes('informant') || t.includes('double-agent')) return '#D53F8C'; // pink
-    if (t.includes('enemy') || t.includes('target') || t.includes('victim')) return '#E53E3E'; // red
+    // Fallback mapping
     return '#718096'; // gray
   }, [relationshipCategoryColors, getRelationshipCategoryLabel]);
 
@@ -410,9 +401,9 @@ const RelationshipWeb = ({
     const filtered = filterRelationshipsByChapter(relationshipsData, currentChapter) || [];
     const colorByLabel = new Map();
     filtered.forEach(rel => {
-      const label = getRelationshipCategoryLabel(rel.type);
+      const label = rel.category || getRelationshipCategoryLabel(rel.type);
       if (!colorByLabel.has(label)) {
-        colorByLabel.set(label, getRelationshipColor(rel.type));
+        colorByLabel.set(label, getRelationshipColor(rel.category || rel.type));
       }
     });
 
@@ -1986,7 +1977,7 @@ const RelationshipWeb = ({
                           
                           if (currentLine) lines.push(currentLine);
                           
-                                                     // Calculate total height of all lines and position below the node
+                           // Calculate total height of all lines and position below the node
                            const lineHeight = 12; // Slightly larger than fontSize for spacing
                            const totalHeight = lines.length * lineHeight;
                            const startY = (node.size || 30) + 15; 

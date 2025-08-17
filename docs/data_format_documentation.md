@@ -166,14 +166,16 @@ export const relationships = [
   {
     from: 'character_id_1',       // Character initiating relationship
     to: 'character_id_2',         // Target character
-    type: 'relationship-type',    // Nature of relationship (e.g., 'handler-asset', 'spouse')
-    introducedInChapter: 'chapter_id' // NEW: Chapter where relationship is first introduced
+    type: 'relationship-type',    // Specific type from source data (e.g., 'handler-asset', 'informant-contact')
+    category: 'Category',         // NEW: General category used for legend/colors (one of: 'Spouse', 'Handler/Asset', 'Conspirator/Enemy', 'Colleague/Partner', 'Superior/Subordinate', 'Friend', 'Informant/Double-Agent', 'Other')
+    introducedInChapter: 'chapter_id' // Chapter where relationship is first introduced
   }
 ];
 ```
 
 Notes:
 - This file is optional. If omitted, relationships are automatically derived from `characters[].relations` by pairing both sides and combining their `type` values (e.g., `handler` + `asset` → `handler-asset`). The derivation logic lives in `src/utils/relationships.js`.
+- During derivation, `category` is automatically computed from `type` using the same mapping as the legend in the Relationship Web. When authoring explicit relationships, set `category` directly to control legend membership and color.
 - If `introducedInChapter` is not provided at the relation level, the derived relationship uses the earliest of the two characters' `introducedInChapter` values based on the order in the book’s `chapters.js`.
 - Providing an explicit `relationships.js` is supported but not required.
 

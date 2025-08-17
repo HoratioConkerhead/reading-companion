@@ -10,6 +10,10 @@ const indexContext = require.context('./', true, /index\.js$/);
 // eslint-disable-next-line no-undef
 const allJsContext = require.context('./', true, /\.js$/);
 
+// Derivation helper for relationship category (use require to avoid import/first issues)
+// eslint-disable-next-line no-undef
+const { toRelationshipCategory } = require('../utils/relationships.js');
+
 // Temporarily ignore certain book folders while under construction
 const IGNORED_BOOK_KEYS = new Set([''
 ]);
@@ -65,15 +69,24 @@ export const loadBookData = async (bookKey) => {
       bookModule = indexContext(indexPath);
     }
 
+    // Helper to ensure every relationship has a general category
+    const ensureRelationshipCategories = (book) => {
+      if (!book || !book.relationships) return book;
+      const relationships = (book.relationships || []).map(rel => (
+        rel && rel.category ? rel : { ...rel, category: toRelationshipCategory(rel?.type || '') }
+      ));
+      return { ...book, relationships };
+    };
+
     // Prefer neutral export name 'book', then 'stitchedUp', then default
     if (bookModule.book) {
-      return bookModule.book;
+      return ensureRelationshipCategories(bookModule.book);
     }
     if (bookModule.stitchedUp) {
-      return bookModule.stitchedUp;
+      return ensureRelationshipCategories(bookModule.stitchedUp);
     }
     if (bookModule.default) {
-      return bookModule.default;
+      return ensureRelationshipCategories(bookModule.default);
     }
 
     // Fallback: construct object by aggregating per-file exports within the book folder
@@ -93,7 +106,7 @@ export const loadBookData = async (bookKey) => {
       });
     });
     if (!constructed.timeline) constructed.timeline = [];
-    return constructed;
+    return ensureRelationshipCategories(constructed);
   } catch (error) {
     console.error(`Failed to load book "${bookKey}":`, error);
     throw error;

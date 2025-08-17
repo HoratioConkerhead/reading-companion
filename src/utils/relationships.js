@@ -70,10 +70,30 @@ export const deriveRelationshipsFromCharacters = (charactersList, chaptersList =
       }, null);
     }
 
-    result.push({ from: id1, to: id2, type, introducedInChapter });
+    // Derive general category from combined type
+    const category = toRelationshipCategory(type);
+
+    result.push({ from: id1, to: id2, type, category, introducedInChapter });
   });
 
   return result;
+};
+
+/**
+ * Map a specific relationship type string to a general category label
+ * Categories align with legend and coloring: 'Spouse', 'Handler/Asset', 'Conspirator/Enemy',
+ * 'Colleague/Partner', 'Superior/Subordinate', 'Friend', 'Informant/Double-Agent', 'Other'
+ */
+export const toRelationshipCategory = (type) => {
+  const t = (type || '').toLowerCase();
+  if (t.includes('spouse')) return 'Spouse';
+  if (t.includes('handler') || t.includes('asset')) return 'Handler/Asset';
+  if (t.includes('conspirator') || t.includes('enemy') || t.includes('target') || t.includes('victim')) return 'Conspirator/Enemy';
+  if (t.includes('colleague') || t.includes('partner')) return 'Colleague/Partner';
+  if (t.includes('superior') || t.includes('subordinate')) return 'Superior/Subordinate';
+  if (t.includes('friend')) return 'Friend';
+  if (t.includes('informant') || t.includes('double-agent')) return 'Informant/Double-Agent';
+  return 'Other';
 };
 
 
