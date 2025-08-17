@@ -5,3 +5,4 @@ export const objectPositions = {}
 export const mapBoundaries = {}
 
 
+
