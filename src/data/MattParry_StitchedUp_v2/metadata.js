@@ -67,11 +67,3 @@ export const bookMetadata = {
   // Footer copyright
   copyright: "© 2023 Matt Parry. All rights reserved."
 };
-
-// Basic book selection info (for index.js)
-export const bookSelectionInfo = {
-  key: 'stitchedUp',
-  title: 'Stitched Up',
-  author: 'Matt Parry',
-  shortDescription: 'WWII spy thriller following Lady Cynthia Childreth'
-};
