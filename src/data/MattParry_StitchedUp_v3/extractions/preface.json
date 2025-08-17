@@ -1,0 +1,22 @@
+{
+  "chapterId": "preface",
+  "charactersIntroduced": [
+    { "id": "helmut_schnitter", "name": "Helmut Schnitter" }
+  ],
+  "relationsIntroduced": [],
+  "locationsIntroduced": [
+    { "id": "st_marys_isles_of_scilly", "name": "St Mary's, Isles of Scilly" },
+    { "id": "hugh_town", "name": "Hugh Town" },
+    { "id": "penzance", "name": "Penzance" },
+    { "id": "st_nazaire", "name": "St Nazaire" }
+  ],
+  "eventsIntroduced": [
+    { "id": "u_boat_landing_st_marys", "title": "U-boat Landing at St Mary's" }
+  ],
+  "objectsIntroduced": [
+    { "id": "two_suitcases", "name": "Two Suitcases" }
+  ],
+  "timeline": []
+}
+
+{"chapterId":"preface","charactersIntroduced":[],"relationsIntroduced":[],"locationsIntroduced":[],"eventsIntroduced":[],"objectsIntroduced":[],"timeline":[]}

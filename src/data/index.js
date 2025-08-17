@@ -2,6 +2,7 @@
 const bookModules = {
     MattParry_StitchedUp_v1: () => import('./MattParry_StitchedUp_v1'),
     MattParry_StitchedUp_v2: () => import('./MattParry_StitchedUp_v2'),
+    MattParry_StitchedUp_v3: () => import('./MattParry_StitchedUp_v3'),
   // Add future books here:
   // bookName: () => import('./bookName'),
 };
@@ -18,6 +19,12 @@ export const getAvailableBookMetadata = () => {
     MattParry_StitchedUp_v2: {
         key: 'MattParry_StitchedUp_v2',
         title: 'Stitched Up (v2)',
+        author: 'Matt Parry',
+        shortDescription: 'WWII spy thriller following Lady Cynthia Childreth'
+      },
+    MattParry_StitchedUp_v3: {
+        key: 'MattParry_StitchedUp_v3',
+        title: 'Stitched Up (v3)',
         author: 'Matt Parry',
         shortDescription: 'WWII spy thriller following Lady Cynthia Childreth'
       },

@@ -190,8 +190,9 @@ const validateBook = async (bookKey, bookModulePath) => {
 };
 
 const main = async () => {
-  await validateBook('stitchedUp', 'src/data/MattParry_StitchedUp/index.js');
-  await validateBook('stitchedUp_old', 'src/data/stitchedUp_old/index.js');
+  await validateBook('MattParry_StitchedUp_v1', 'src/data/MattParry_StitchedUp_v1/index.js');
+  await validateBook('MattParry_StitchedUp_v2', 'src/data/MattParry_StitchedUp_v2/index.js');
+  await validateBook('MattParry_StitchedUp_v3', 'src/data/MattParry_StitchedUp_v3/index.js');
 };
 
 main().catch(err => {

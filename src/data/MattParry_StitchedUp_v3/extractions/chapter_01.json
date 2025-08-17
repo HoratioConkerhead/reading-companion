@@ -1,0 +1,35 @@
+{
+  "chapterId": "chapter_01",
+  "charactersIntroduced": [
+    { "id": "lady_cynthia_childreth", "name": "Lady Cynthia Childreth" },
+    { "id": "lady_amelia_wyndholme", "name": "Lady Amelia Wyndholme" },
+    { "id": "colonel_peter_snowden", "name": "Colonel Peter Snowden" },
+    { "id": "marjorie_snowden", "name": "Marjorie Snowden" },
+    { "id": "bob_harrington", "name": "Bob Harrington" },
+    { "id": "louise_harrington", "name": "Louise Harrington" },
+    { "id": "miss_maclean", "name": "Miss Maclean" },
+    { "id": "miss_gilchrist", "name": "Miss Gilchrist" },
+    { "id": "mr_newton", "name": "Mr Newton" },
+    { "id": "sir_john_davies", "name": "Sir John Davies" },
+    { "id": "lady_davies", "name": "Lady Davies" },
+    { "id": "richard_childreth", "name": "Richard Childreth" },
+    { "id": "sheila", "name": "Sheila" },
+    { "id": "patrick", "name": "Patrick" },
+    { "id": "mrs_ball", "name": "Mrs Ball" },
+    { "id": "miss_nicholson", "name": "Miss Nicholson" },
+    { "id": "gary", "name": "Gary" }
+  ],
+  "relationsIntroduced": [],
+  "locationsIntroduced": [
+    { "id": "denleigh_manor", "name": "Denleigh Manor" },
+    { "id": "bucklebury", "name": "Bucklebury" }
+  ],
+  "eventsIntroduced": [],
+  "objectsIntroduced": [
+    { "id": "alvis_12_50_tourer_1931", "name": "1931 Alvis 12/50 tourer" },
+    { "id": "have_his_carcase", "name": "Have His Carcase (book)" }
+  ],
+  "timeline": []
+}
+
+{"chapterId":"chapter_01","charactersIntroduced":[],"relationsIntroduced":[],"locationsIntroduced":[],"eventsIntroduced":[],"objectsIntroduced":[],"timeline":[]}
