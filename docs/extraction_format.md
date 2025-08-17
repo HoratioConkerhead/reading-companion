@@ -3,7 +3,7 @@
 This document defines the minimal JSON structure to capture data per chapter in a single pass. A consolidation script will merge these into final data files. Refer to `docs/data_format_documentation.md` for the authoritative schema used in output files.
 
 File location per book:
-- `src/data/<BookDir>/extractions/chapter_XX.json` (e.g., `src/data/MattParry_StitchedUp/extractions/chapter_01.json`)
+- `src/data/<BookDir>/extractions/chapter_XX.json` (e.g., `src/data/MyBook/extractions/chapter_01.json`)
 
 ## JSON Schema (minimal)
 
@@ -53,7 +53,7 @@ Notes:
 Run:
 
 ```
-node scripts/consolidate-data.mjs --book MattParry_StitchedUp
+node scripts/consolidate-data.mjs --book <BookDirectoryName>
 ```
 
 - Output goes to `src/data/<BookDir>/_generated/characters.js`. Use `--overwrite` to back up and replace the live file.

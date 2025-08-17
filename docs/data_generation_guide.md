@@ -36,14 +36,14 @@ This guide documents a reliable workflow and prompt patterns for generating book
 5. Run validation and fix:
    - `node scripts/validate-data.mjs`
    - Address any errors: unknown IDs, missing reciprocals, invalid `introducedInChapter`, duplicates.
-6. (Optional) Diff against legacy data (e.g., `stitchedUp_old`) to find omissions, then confirm each addition against the source text.
+6. (Optional) Diff against legacy data to find omissions, then confirm each addition against the source text.
 
 ## Running Consolidation
 
 Use the consolidation script to generate final files from per-chapter extractions (writes to `_generated/` by default):
 
 ```
-node scripts/consolidate-data.mjs --book MattParry_StitchedUp
+node scripts/consolidate-data.mjs --book <BookDirectoryName>
 ```
 
 Add `--overwrite` to back up and replace the live file(s). Always run the validator afterward.
@@ -53,7 +53,7 @@ Add `--overwrite` to back up and replace the live file(s). Always run the valida
 - Missing supporting characters (butlers, ADCs, local officials): the network looked sparse; we added them with minimal, true relations.
 - Relations without reciprocals: derived edges later expect symmetry; always add both sides.
 - Wrong `introducedInChapter`: confirm earliest mention; relation introduction cannot predate either character’s introduction.
-- Legacy ID mismatches: maintain a mapping doc (see below) to align `stitchedUp_old` ids with canonical ones.
+- Legacy ID mismatches: maintain a mapping doc to align old ids with canonical ones.
 - Over‑inventing: only include what is actually in the chapter text; leave `key_scenes` empty if unsure.
 
 ## Relationship Type Guidance (concise, often asymmetric)

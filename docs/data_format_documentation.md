@@ -9,7 +9,7 @@ The app uses a modular data structure organized by book with domain-specific fil
 ```
 /src/data/
   /bookName/
-    index.js              // Re-exports all data from this book
+    index.js              // Optional. Recommended to export a neutral `book` object
     characters.js         // Character data
     locations.js          // Location data
     events.js             // Event data
@@ -20,22 +20,12 @@ The app uses a modular data structure organized by book with domain-specific fil
     chapters.js           // Chapter information
     spycraftEntries.js    // Spycraft technique data
     themeElements.js      // Thematic elements
-    metadata.js           // Book metadata and app configuration
+    metadata.js           // Book metadata and app configuration (required for discovery)
   /book2Name/
-    index.js
-    characters.js
-    locations.js
-    objects.js
-    events.js
-    relationships.js
-    positions.js
-    mysteryElements.js
-    chapters.js
-    spycraftEntries.js
-    themeElements.js
-    metadata.js
-  index.js                // Exports all books' data
+    ... same structure ...
 ```
+
+Discovery is automatic at runtime. The app scans each book folder for `metadata.js` (for selection info) and `index.js` (for full data). No app code changes are required when adding a new book.
 
 ## Global Chapter Introduction Field
 
@@ -82,24 +72,30 @@ export const characters = [
 ];
 ```
 
-### Character Importance Rating System
+### Character Importance Rating System (Metadata-driven)
 
-The RelationshipWeb component automatically calculates a 1-100 importance rating for each character based on the following weighted factors:
+The RelationshipWeb component calculates a 1-100 importance rating per character using weights configured in `bookMetadata.importanceWeights`. If not provided, sensible defaults are used. Schema:
 
-- **Key Scenes (30 points max)**: Each scene in `key_scenes` contributes 6 points
-- **Event Participation (25 points max)**: Each event the character appears in contributes 2.5 points  
-- **Relationship Complexity (20 points max)**: Each relationship contributes 2 points
-- **Character Group Significance (15 points max)**:
-  - Protagonists: 15 points
-  - Fifth Columnists: 12 points
-  - Military: 10 points
-  - Historical Figures: 10 points
-  - German Connection: 8 points
-  - Supporting Characters: 5 points
-  - Default: 3 points
-- **Development Arc Depth (10 points max)**: Each development phase contributes 2.5 points
+```javascript
+importanceWeights: {
+  keyScenes: { perItem: number, max: number },
+  eventParticipation: { perItem: number, max: number },
+  relationships: { perItem: number, max: number },
+  development: { perItem: number, max: number },
+  defaultGroupBonus: number,
+  groupBonuses: { [groupName: string]: number }
+}
+```
 
-This rating system helps users understand character prominence in the narrative and can be displayed above character nodes in the relationship web visualization.
+Example defaults (can be overridden per book):
+- keyScenes: perItem 6, max 30
+- eventParticipation: perItem 2.5, max 25
+- relationships: perItem 2, max 20
+- development: perItem 2.5, max 10
+- defaultGroupBonus: 3
+- groupBonuses: { Protagonists: 15, Fifth Columnists: 12, Military: 10, Historical Figures: 10, German Connection: 8, Supporting Characters: 5 }
+
+This system helps readers understand character prominence and can be displayed as a number above nodes.
 
 **Chapter-Based Filtering**: Characters can be filtered by their introduction chapter, allowing the relationship web to show only characters and relationships relevant up to a specific point in the story. This prevents spoilers and enables progressive revelation of the narrative.
 
@@ -335,6 +331,7 @@ export const spycraftEntries = [
 export const bookMetadata = {
   title: "Book Title",
   author: "Author Name",
+  shortDescription: "Optional: brief description shown in selector",
   genre: "Genre",
   setting: "Setting",
   description: "Book description",
@@ -358,6 +355,23 @@ export const bookMetadata = {
     'Group1': 'Description of group 1',
     'Group2': 'Description of group 2'
   },
+  // Optional: Tailwind classes for character group badges (used in lists/details)
+  characterGroupStyles: {
+    'Group1': 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200'
+  },
+  // Optional: HEX colors for character groups (used in SVGs/graphs)
+  characterGroupColors: {
+    'Group1': '#3182CE'
+  },
+  // Optional: importance weights and per-group bonuses for the RelationshipWeb
+  importanceWeights: {
+    keyScenes: { perItem: 6, max: 30 },
+    eventParticipation: { perItem: 2.5, max: 25 },
+    relationships: { perItem: 2, max: 20 },
+    development: { perItem: 2.5, max: 10 },
+    defaultGroupBonus: 3,
+    groupBonuses: { 'Group1': 10 }
+  },
   
   // Footer copyright
   copyright: "Copyright text"
@@ -366,49 +380,53 @@ export const bookMetadata = {
 
 ## Adding a New Book
 
-To add a new book to the series:
+To add a new book to the series (no rebuild needed):
 
-1. Create a new folder in `/src/data/` with the book's name (e.g., `/src/data/bookName/`)
-2. Create separate files for each data type following the formats above:
-   - `characters.js`
-   - `locations.js`
-   - `events.js`
-   - `objects.js`
-   - `relationships.js` (optional; omit if deriving from `characters.relations`)
-   - `positions.js`
-   - `mysteryElements.js`
-   - `chapters.js`
-   - `spycraftEntries.js`
-   - `themeElements.js`
-   - `metadata.js`
-3. Create an `index.js` file that re-exports all data from the separate files
-4. Update the main `/src/data/index.js` to include the new book
+1. Create a new folder in `/src/data/` with the book's name (e.g., `/src/data/MyBook/`).
+2. Add a `metadata.js` file exporting `bookMetadata` (required for discovery and selection UI).
+3. Add data files as needed: `characters.js`, `events.js`, `locations.js`, `objects.js`, `relationships.js` (optional), `positions.js`, `mysteryElements.js`, `chapters.js`, `spycraftEntries.js`, `themeElements.js`.
+4. Recommended: create an `index.js` that exports a neutral `book` object aggregating your data. The loader will also accept a named `stitchedUp` export or a default export. If `index.js` is omitted, the loader will automatically assemble the book object from the individual files.
+5. Refresh the browser. The app rescans on load and the new book appears in the selector.
 
-Example for new book:
+Example `index.js` (recommended):
 
 ```javascript
-// /src/data/bookName/characters.js
-export const characters = [...];
+// /src/data/MyBook/index.js
+import { characters } from './characters.js';
+import { events } from './events.js';
+import { locations } from './locations.js';
+import { objects } from './objects.js';
+import { chapters } from './chapters.js';
+import { timeline } from './timeline.js';
+import { mysteryElements } from './mysteryElements.js';
+import { themeElements } from './themeElements.js';
+import { spycraftEntries } from './spycraftEntries.js';
+import { bookMetadata } from './metadata.js';
+import { locationPositions, eventPositions, characterPositions, objectPositions, mapBoundaries } from './positions.js';
 
-// /src/data/bookName/locations.js
-export const locations = [...];
-
-// /src/data/bookName/index.js
-export { characters } from './characters.js';
-export { locations } from './locations.js';
-export { events } from './events.js';
-// export { relationships } from './relationships.js'; // Optional: only if not deriving
-export { objects } from './objects.js';
-export { spycraftEntries } from './spycraftEntries.js';
-export { chapters } from './chapters.js';
-export { mysteryElements } from './mysteryElements.js';
-export { themeElements } from './themeElements.js';
-export { bookMetadata } from './metadata.js';
-export { locationPositions, eventPositions, characterPositions, objectPositions, mapBoundaries } from './positions.js';
-
-// /src/data/index.js
-export * as bookName from './bookName';
+export const book = {
+  bookMetadata,
+  characters,
+  events,
+  locations,
+  objects,
+  chapters,
+  timeline,
+  mysteryElements,
+  themeElements,
+  spycraftEntries,
+  locationPositions,
+  eventPositions,
+  characterPositions,
+  objectPositions,
+  mapBoundaries
+};
 ```
+
+Loader behavior:
+- Prefers `export const book = {...}`
+- Falls back to `export const stitchedUp = {...}` or `export default {...}`
+- If no `index.js`, it aggregates named exports from per-type files
 
 ## Using the Data in Components
 

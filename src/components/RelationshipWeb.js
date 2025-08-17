@@ -8,7 +8,8 @@ const RelationshipWeb = ({
   eventsData = [], // Add events data for importance calculation
   chaptersData = [], // Add chapters data for filtering
   darkMode = false, // Add darkMode prop for theme-aware colors
-  groupColors = {}
+  groupColors = {},
+  importanceConfig = {}
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -46,55 +47,56 @@ const RelationshipWeb = ({
   const calculateCharacterImportance = useCallback((character) => {
     let score = 0;
     
-    // Key scenes count (max 30 points)
+    const weights = {
+      keyScenesPer: importanceConfig.keyScenes?.perItem ?? 6,
+      keyScenesMax: importanceConfig.keyScenes?.max ?? 30,
+      eventPer: importanceConfig.eventParticipation?.perItem ?? 2.5,
+      eventMax: importanceConfig.eventParticipation?.max ?? 25,
+      relationshipsPer: importanceConfig.relationships?.perItem ?? 2,
+      relationshipsMax: importanceConfig.relationships?.max ?? 20,
+      developmentPer: importanceConfig.development?.perItem ?? 2.5,
+      developmentMax: importanceConfig.development?.max ?? 10,
+      defaultGroupBonus: importanceConfig.defaultGroupBonus ?? 3
+    };
+
+    const defaultGroupBonuses = {
+      'Protagonists': 15,
+      'Fifth Columnists': 12,
+      'Military': 10,
+      'Historical Figures': 10,
+      'German Connection': 8,
+      'Supporting Characters': 5
+    };
+    const groupBonuses = importanceConfig.groupBonuses || defaultGroupBonuses;
+
+    // Key scenes
     if (character.key_scenes) {
-      score += Math.min(character.key_scenes.length * 6, 30);
+      score += Math.min(character.key_scenes.length * weights.keyScenesPer, weights.keyScenesMax);
     }
-    
-      // Event participation (max 25 points)
-  const eventCount = (eventsData || []).filter(event => 
-    event.characters.some(char => char.characterId === character.id)
-  ).length;
-    score += Math.min(eventCount * 2.5, 25);
-    
-    // Relationship count (max 20 points)
+
+    // Event participation
+    const eventCount = (eventsData || []).filter(event => 
+      event.characters.some(char => char.characterId === character.id)
+    ).length;
+    score += Math.min(eventCount * weights.eventPer, weights.eventMax);
+
+    // Relationship count
     const relationshipCount = relationshipsData.filter(rel => 
       rel.from === character.id || rel.to === character.id
     ).length;
-    score += Math.min(relationshipCount * 2, 20);
-    
-    // Character group bonus (max 15 points)
-    switch (character.group) {
-      case 'Protagonists':
-        score += 15;
-        break;
-      case 'Fifth Columnists':
-        score += 12;
-        break;
-      case 'German Connection':
-        score += 8;
-        break;
-      case 'Military':
-        score += 10;
-        break;
-      case 'Historical Figures':
-        score += 10;
-        break;
-      case 'Supporting Characters':
-        score += 5;
-        break;
-      default:
-        score += 3;
-    }
-    
-    // Development arc bonus (max 10 points)
+    score += Math.min(relationshipCount * weights.relationshipsPer, weights.relationshipsMax);
+
+    // Character group bonus
+    score += groupBonuses[character.group] ?? weights.defaultGroupBonus;
+
+    // Development arc bonus
     if (character.development) {
-      score += Math.min(character.development.length * 2.5, 10);
+      score += Math.min(character.development.length * weights.developmentPer, weights.developmentMax);
     }
-    
+
     // Ensure score is between 1 and 100
     return Math.max(1, Math.min(100, Math.round(score)));
-  }, [relationshipsData, eventsData]);
+  }, [relationshipsData, eventsData, importanceConfig]);
 
   // Find the largest connected component in the graph
   const findLargestConnectedComponent = useCallback((currentNodes, currentEdges) => {
@@ -156,8 +158,8 @@ const RelationshipWeb = ({
 
   // Get character group color with brightness based on relationship count
   const getGroupColor = useCallback((group, relationshipCount = 0) => {
-    // Base color from book metadata mapping, fallback to gray
-    const baseColor = groupColors[group] || '#718096';
+    // Base color from book metadata mapping, fallback to black
+    const baseColor = groupColors[group] || '#000000';
 
     // If no relationship count provided, return base color
     if (relationshipCount === 0) return baseColor;

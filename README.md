@@ -111,9 +111,9 @@ Learn about espionage techniques referenced in the novel and their historical co
     │   ├── SpycraftEncyclopedia.js
     │   ├── AppTour.js
     │   └── DarkModeToggle.js
-    ├── data/              # Data files
-    │   ├── index.js
-    │   └── stitchedUp/    # Data for "Stitched Up" novel
+    ├── data/              # Data files (auto-discovered per book)
+    │   ├── index.js       # Discovery + loader
+    │   └── <BookDir>/     # e.g., MattParry_StitchedUp_v2
     │       ├── characters.js
     │       ├── locations.js
     │       ├── events.js
@@ -124,8 +124,8 @@ Learn about espionage techniques referenced in the novel and their historical co
     │       ├── chapters.js
     │       ├── spycraftEntries.js
     │       ├── themeElements.js
-    │       ├── metadata.js
-    │       └── index.js
+    │       ├── metadata.js   # required for discovery
+    │       └── index.js      # optional; export const book = {...}
     ├── styles/            # CSS and styling
     │   ├── style.css
     │   └── enhanced-tabs.css

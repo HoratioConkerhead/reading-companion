@@ -279,6 +279,7 @@ const InteractiveReadingCompanion = () => {
                 chaptersData={bookData.chapters}
                 darkMode={darkMode}
                 groupColors={bookData.bookMetadata?.characterGroupColors || {}}
+                importanceConfig={bookData.bookMetadata?.importanceWeights || {}}
               />
             </TabPanel>
             

@@ -46,6 +46,23 @@ export const bookMetadata = {
     'Military': '#4A5568',
     'Historical Figures': '#805AD5'
   },
+  // Optional: character importance weighting configuration used by RelationshipWeb
+  importanceWeights: {
+    keyScenes: { perItem: 6, max: 30 },
+    eventParticipation: { perItem: 2.5, max: 25 },
+    relationships: { perItem: 2, max: 20 },
+    development: { perItem: 2.5, max: 10 },
+    defaultGroupBonus: 3,
+    // Per-group bonus overrides
+    groupBonuses: {
+      'Protagonists': 15,
+      'Fifth Columnists': 12,
+      'Military': 10,
+      'Historical Figures': 10,
+      'German Connection': 8,
+      'Supporting Characters': 5
+    }
+  },
   
   // Footer copyright
   copyright: "© 2023 Matt Parry. All rights reserved."
