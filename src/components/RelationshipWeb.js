@@ -1099,13 +1099,13 @@ const RelationshipWeb = ({
       )}
 
       {/* Controls */}
-      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:grid-cols-3 gap-4`}>
-        <div>
+      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:[grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_auto] gap-4`}>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Focus on Character
           </label>
           <select
-            className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+            className="w-full min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={focusedCharacter || ''}
             onChange={(e) => focusOnCharacter(e.target.value || null)}
           >
@@ -1117,13 +1117,13 @@ const RelationshipWeb = ({
           </select>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Show Up To Chapter
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 min-w-0">
             <select
-              className="flex-1 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+              className="flex-1 min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
               value={currentChapter || ''}
               onChange={(e) => setCurrentChapter(e.target.value || null)}
             >
@@ -1138,25 +1138,25 @@ const RelationshipWeb = ({
         </div>
 
 
-        <div className="flex gap-2 items-end">
+        <div className="flex flex-wrap gap-2 items-end md:w-max md:justify-self-start">
         <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
               onClick={showAllUpToChapter}
               title="Show all characters and relationships up to the selected chapter"
             >
-              Show All
+              <span className="whitespace-pre leading-tight text-center">{`Show\nAll`}</span>
             </button>
 
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
             onClick={resetView}
             title="Reset zoom, pan, and focus to defaults"
           >
-            Reset View
+            <span className="whitespace-pre leading-tight text-center">{`Reset\nView`}</span>
           </button>
 
           <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
               onClick={() => {
                 if (nodes.length === 0) return;
                 
@@ -1198,11 +1198,11 @@ const RelationshipWeb = ({
               }}
               title="Zoom and center so all visible nodes fit in view"
             >
-              Fit to View
+              <span className="whitespace-pre leading-tight text-center">{`Fit to\nView`}</span>
             </button>
 
           <button
-            className={`px-4 py-2 text-white rounded transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
               isAutoArrangeOn 
                 ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
@@ -1210,11 +1210,11 @@ const RelationshipWeb = ({
             onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
             title="Toggle automatic layout of nodes"
           >
-            {`Auto arrange`}
+            <span className="whitespace-pre leading-tight text-center">{`Auto\narrange`}</span>
           </button>
 
           <button
-            className={`px-4 py-2 text-white rounded transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
               pinIsolatedNodes 
                 ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
@@ -1222,11 +1222,11 @@ const RelationshipWeb = ({
             onClick={() => setPinIsolatedNodes(!pinIsolatedNodes)}
             title="Toggle pinning of isolated nodes during auto-arrange"
           >
-            {`Pin Insolated`}
+            <span className="whitespace-pre leading-tight text-center">{`Pin\nIsolated`}</span>
           </button>
 
           <button
-            className={`px-4 py-2 text-white rounded transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
               isRemoveMode 
                 ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
@@ -1234,7 +1234,7 @@ const RelationshipWeb = ({
             onClick={() => setIsRemoveMode(!isRemoveMode)}
             title="Toggle remove mode (click nodes to remove)"
           >
-            {`Remove Mode`}
+            <span className="whitespace-pre leading-tight text-center">{`Remove\nMode`}</span>
           </button>
 
         </div>
