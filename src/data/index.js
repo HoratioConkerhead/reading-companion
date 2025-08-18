@@ -116,7 +116,7 @@ export const loadBookData = async (bookKey) => {
 // Default book key (choose preferred if present, else first discovered)
 const computeDefaultBookKey = () => {
   const keys = getAvailableBookKeys().sort();
-  if (keys.includes('MattParry_StitchedUp_v2')) return 'MattParry_StitchedUp_v2';
+  if (keys.includes('MattParry_StitchedUp')) return 'MattParry_StitchedUp';
   return keys[0] || '';
 };
 
