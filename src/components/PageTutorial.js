@@ -2,12 +2,26 @@ import React, { useState, useEffect } from 'react';
 
 const PageTutorial = ({ isOpen, onClose, title = 'Page Tutorial', steps = [], darkMode = false }) => {
 	const [index, setIndex] = useState(0);
-	const [position, setPosition] = useState({ top: 40, left: 40 });
+	const [position, setPosition] = useState({ top: 40, left: 16 });
 	const [dragging, setDragging] = useState(false);
 	const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
 	useEffect(() => {
-		if (isOpen) setIndex(0);
+		if (isOpen) {
+			setIndex(0);
+			try {
+				const margin = 16;
+				const panelHeight = 260; // estimated starting height
+				const panelWidth = 655; // estimated starting width 
+				const viewportH = window?.innerHeight || 800;
+				const viewportW = window?.innerWidth || 1200;
+				const top = Math.max(margin, viewportH - panelHeight - margin);
+				const left = Math.max(margin, viewportW - panelWidth - margin);
+				setPosition({ top, left });
+			} catch (_) {
+				setPosition({ top: 40, left: 40 });
+			}
+		}
 	}, [isOpen]);
 
 	useEffect(() => {
