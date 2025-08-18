@@ -6,7 +6,6 @@ import './styles/enhanced-tabs.css';
 
 // Import components
 import AppTour from './components/AppTour';
-import PageTutorial from './components/PageTutorial';
 import DarkModeToggle from './components/DarkModeToggle';
 import CharacterExplorer from './components/CharacterExplorer';
 import RelationshipWeb from './components/RelationshipWeb';
@@ -22,7 +21,7 @@ import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import BookSelector from './components/BookSelector';
 
 const InteractiveReadingCompanion = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(1);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -34,7 +33,6 @@ const InteractiveReadingCompanion = () => {
   const [currentBookKey, setCurrentBookKey] = useState(defaultBookKey);
   const [bookData, setBookData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPageTutorialOpen, setIsPageTutorialOpen] = useState(false);
   
   // Available books metadata (lightweight, no heavy data)
   const availableBooks = getAvailableBookMetadata();
@@ -153,61 +151,7 @@ const InteractiveReadingCompanion = () => {
     setActiveTab(tabIndex);
   }, []);
 
-  // Page Tutorial config per tab
-  const getPageTutorialConfig = () => {
-    let title = 'Page Tutorial';
-    let steps = ['No tutorial is available for this page yet.'];
-
-    // Relationships tab
-    if (activeTab === 1) {
-      title = 'Relationships — How to use this page';
-      steps = [
-        [
-          'This page lets you explore relationships between characters.',
-          'Start by using “Focus on Character” to select someone.'
-        ],
-        [
-          'Hover a character to see connected relationships and a brief description.',
-          'Use your mouse wheel to zoom, and drag the background to pan.'
-        ],
-        [
-          'Characters with a white outline have relationships not yet shown.',
-          'Click a character to add their related characters and edges.'
-        ],
-        [
-          'Click “Auto arrange” to toggle automatic layout.',
-          'Layout uses springs (attraction) and node repulsion — adjust “Spring Force” and “Repulsion Force”.'
-        ],
-        [
-          'Use “Fit to View” to center and zoom to include all visible nodes.',
-          'Use the expand icon (↗) to enter a full-screen view.'
-        ],
-        [
-          'Under “View Options”:',
-          '— “Size is Importance” scales node size by calculated importance.',
-          '— Toggle labels like Relationship, Description, and Counts/Importance.'
-        ],
-        [
-          'If the view is cluttered, toggle “Remove Mode” to click and remove nodes.',
-          'Only the largest remaining connected component is kept.'
-        ],
-        [
-          'Click “Show All” to reveal all characters up to the selected chapter.',
-          'Then “Fit to View” to frame everything.'
-        ],
-        [
-          '“Pin Mode” pins/unpins nodes (useful for isolated clusters).',
-          'This prevents components from drifting apart under repulsion.'
-        ],
-        [
-          '“Reset View” restores defaults without changing the chapter filter or full-screen.',
-          '“Show Up To Chapter” limits characters/relationships to avoid spoilers (WIP).'
-        ]
-      ];
-    }
-
-    return { title, steps };
-  };
+  // Per-tab tutorials are managed inside each tab component
   
   // Close first visit message
   const closeFirstVisitMessage = () => {
@@ -255,7 +199,7 @@ const InteractiveReadingCompanion = () => {
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
-      <header className="p-4" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
+      <header className="p-3" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-serif">{metadata.appTitle}</h1>
@@ -277,13 +221,6 @@ const InteractiveReadingCompanion = () => {
               onClick={startTour}
             >
               Tour the App
-            </button>
-            <button
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded text-white text-sm"
-              onClick={() => setIsPageTutorialOpen(true)}
-              title="Show a tutorial for this page"
-            >
-              Page Tutorial
             </button>
           </div>
         </div>
@@ -471,14 +408,6 @@ const InteractiveReadingCompanion = () => {
         currentTab={activeTab}
         onTabChange={handleTabChangeFromTour}
         bookMetadata={metadata}
-      />
-
-      <PageTutorial
-        isOpen={isPageTutorialOpen}
-        onClose={() => setIsPageTutorialOpen(false)}
-        title={getPageTutorialConfig().title}
-        steps={getPageTutorialConfig().steps}
-        darkMode={darkMode}
       />
 
       {/* Book Selector Component */}

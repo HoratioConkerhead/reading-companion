@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import PageTutorial from './PageTutorial';
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
@@ -30,6 +31,7 @@ const RelationshipWeb = ({
   const [isPinMode, setIsPinMode] = useState(false);
   const [pinnedNodeIds, setPinnedNodeIds] = useState(new Set());
   const [autoPinnedNodeIds, setAutoPinnedNodeIds] = useState(new Set());
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   
   // View options state
   const [showDescription, setShowDescription] = useState(false); // off by default
@@ -442,6 +444,51 @@ const RelationshipWeb = ({
       .filter(label => colorByLabel.has(label))
       .map(label => ({ label, color: colorByLabel.get(label) }));
   }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel, relationshipCategoryColors]);
+
+  // Page tutorial content for Relationships tab
+  const tutorialTitle = 'Relationships — How to use this page';
+  const tutorialSteps = [
+    [
+      'This page lets you explore relationships between characters.',
+      'Start by using “Focus on Character” to select someone.'
+    ],
+    [
+      'Hover a character to see connected relationships and a brief description.',
+      'Use your mouse wheel to zoom, and drag the background to pan.'
+    ],
+    [
+      'Characters with a white outline have relationships not yet shown.',
+      'Click a character to add their related characters and edges.'
+    ],
+    [
+      'Click “Auto arrange” to toggle automatic layout.',
+      'Layout uses springs (attraction) and node repulsion — adjust “Spring Force” and “Repulsion Force”.'
+    ],
+    [
+      'Use “Fit to View” to center and zoom to include all visible nodes.',
+      'Use the expand icon (↗) to enter a full-screen view.'
+    ],
+    [
+      'Under “View Options” you can control labels and sizing.',
+      '“Size is Importance” scales node size by calculated importance.'
+    ],
+    [
+      'If the view is cluttered, toggle “Remove Mode” to click and remove nodes.',
+      'Only the largest remaining connected component is kept.'
+    ],
+    [
+      'Click “Show All” to reveal all characters up to the selected chapter.',
+      'Then “Fit to View” to frame everything.'
+    ],
+    [
+      '“Pin Mode” pins/unpins nodes (useful for isolated clusters).',
+      'This prevents clusters from drifting apart under repulsion.'
+    ],
+    [
+      '“Reset View” restores defaults without changing the chapter filter or full-screen.',
+      '“Show Up To Chapter” limits characters/relationships to avoid spoilers (WIP).'
+    ]
+  ];
 
       // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
@@ -1535,11 +1582,18 @@ const RelationshipWeb = ({
       <div className="flex gap-4">
         {/* Left Panel */}
         <div className="w-48 flex-shrink-0">
-          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 140px)' : '800px' }}>
+          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 95px)' : '840px' }}>
 
             {/* Action Buttons */}
             <div className="mb-6">
               <div className="space-y-2">
+                <button
+                  className="w-full px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors text-s"
+                  title="Step-by-step tutorial for this page"
+                  onClick={() => setIsTutorialOpen(true)}
+                >
+                  Page Tutorial
+                </button>
 
                 <button
                   className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-s"
@@ -1712,7 +1766,7 @@ const RelationshipWeb = ({
               isFullPage ? 'flex-1' : ''
             }`}
             style={{ 
-              height: isFullPage ? 'calc(100vh - 140px)' : '800px'
+              height: isFullPage ? 'calc(100vh - 95px)' : '840px'
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -1998,17 +2052,14 @@ const RelationshipWeb = ({
         </div>
       </div>
 
-      {/* Instructions */}
-      <div className="text-s text-gray-600 dark:text-gray-400 mt-2 text-center">
-
-        <div className="flex gap-2 items-center justify-center">
-          <span>Drag nodes to move them</span>
-          <span>•</span>
-          <span>Click nodes to add their relationships</span>
-          <span>•</span>
-          <span>Toggle Remove Mode to delete nodes</span>
-        </div>
-      </div>
+      {/* Page Tutorial Modal */}
+      <PageTutorial
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        title={tutorialTitle}
+        steps={tutorialSteps}
+        darkMode={darkMode}
+      />
     </div>
   );
 };
