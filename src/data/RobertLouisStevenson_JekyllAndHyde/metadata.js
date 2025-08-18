@@ -67,6 +67,15 @@ export const bookMetadata = {
     }
   },
   
+  // Literary analysis for Plot Navigator
+  literaryAnalysis: {
+    title: 'Literary Analysis',
+    paragraphs: [
+      'Stevenson\'s novella distills Victorian anxieties about respectability, repression, and scientific transgression into the iconic figure of a self-divided man. Through the dual personae of Jekyll and Hyde, the text dramatizes the split between public virtue and private appetite, suggesting that moral identity is not a steady essence but a precarious performance susceptible to rupture.',
+      'Formally, the narrative withholds its revelation through testimony, legal documents, and nested accounts, mirroring the investigative process while foregrounding the instability of witness and memory. London\'s fogbound streets, locked doors, and recurrent thresholds function as spatial metaphors for divided selves and compartmentalized desire, making the city itself an anatomy of doubleness.'
+    ]
+  },
+  
   // Footer copyright
   copyright: "Text is public domain; dataset © 2025 by Contributors"
 };

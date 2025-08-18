@@ -7,7 +7,8 @@ const PlotNavigator = ({
   charactersData,
   chaptersData,
   mysteryElements,
-  themeElements
+  themeElements,
+  bookMetadata
 }) => {
   const [viewMode, setViewMode] = useState('chapters'); // 'chapters', 'mysteries', 'themes'
   const [readerKnowledge, setReaderKnowledge] = useState('full'); // 'progressive', 'full'
@@ -425,20 +426,20 @@ const PlotNavigator = ({
             </div>
           ))}
           
-          <div className="border border-gray-200 dark:border-gray-700 rounded p-4 bg-gray-50 dark:bg-gray-800 mt-6">
-            <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">Literary Analysis</h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              The book uses the spy thriller genre to explore broader themes of loyalty, 
-              deception, class division, and the moral compromises made during wartime. The novel's 
-              structure mirrors the complexity of intelligence work itself, with information revealed 
-              gradually and perspectives shifting as characters' true motivations come to light.
-            </p>
-            <p className="mt-2 text-gray-700 dark:text-gray-300">
-              The book's title operates on multiple levels, referring both to the knitting motif 
-              throughout the story and the way characters find themselves betrayed or 
-              trapped by circumstances and the actions of others.
-            </p>
-          </div>
+          {bookMetadata?.literaryAnalysis && (
+            <div className="border border-gray-200 dark:border-gray-700 rounded p-4 bg-gray-50 dark:bg-gray-800 mt-6">
+              <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">{bookMetadata.literaryAnalysis.title || 'Literary Analysis'}</h3>
+              {Array.isArray(bookMetadata.literaryAnalysis.paragraphs) && bookMetadata.literaryAnalysis.paragraphs.length > 0 ? (
+                bookMetadata.literaryAnalysis.paragraphs.map((para, idx) => (
+                  <p key={idx} className={`text-gray-700 dark:text-gray-300 ${idx > 0 ? 'mt-2' : ''}`}>{para}</p>
+                ))
+              ) : (
+                bookMetadata.literaryAnalysis.content ? (
+                  <p className="text-gray-700 dark:text-gray-300">{bookMetadata.literaryAnalysis.content}</p>
+                ) : null
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -338,6 +338,7 @@ const InteractiveReadingCompanion = () => {
                 chaptersData={bookData.chapters}
                 mysteryElements={bookData.mysteryElements}
                 themeElements={bookData.themeElements}
+                bookMetadata={bookData.bookMetadata}
               />
             </TabPanel>
             

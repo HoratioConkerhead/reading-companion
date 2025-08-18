@@ -41,6 +41,15 @@ export const bookMetadata = {
       'German Connection': 8,
       'Supporting Characters': 5
     }
+  },
+  
+  // Literary analysis for Plot Navigator
+  literaryAnalysis: {
+    title: 'Literary Analysis',
+    paragraphs: [
+      'The book uses the spy thriller genre to explore broader themes of loyalty, deception, class division, and the moral compromises made during wartime. The novel\'s structure mirrors the complexity of intelligence work itself, with information revealed gradually and perspectives shifting as characters\' true motivations come to light.',
+      'The book\'s title operates on multiple levels, referring both to the knitting motif throughout the story and the way characters find themselves betrayed or trapped by circumstances and the actions of others.'
+    ]
   }
 }
 
