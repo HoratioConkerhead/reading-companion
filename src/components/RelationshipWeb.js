@@ -461,32 +461,34 @@ const RelationshipWeb = ({
       'Click a character to add their related characters and edges.'
     ],
     [
-      'Click “Auto arrange” to toggle automatic layout.',
-      'Layout uses springs (attraction) and node repulsion — adjust “Spring Force” and “Repulsion Force”.'
+      'The view may now be cluttered, Click “Auto arrange” to toggle automatic layout.',
+      'Layout uses springs (attraction) and node repulsion.',
+      'Adjust “Spring Force” and “Repulsion Force” using the sliders.'
     ],
     [
-      'Use “Fit to View” to center and zoom to include all visible nodes.',
-      'Use the expand icon (↗) to enter a full-screen view.'
+      'You may now want more space. Use the expand icon to enter a full-screen view.',
+      'Now use “Fit to View” to center and zoom to include all visible nodes.'
     ],
     [
       'Under “View Options” you can control labels and sizing.',
-      '“Size is Importance” scales node size by calculated importance.'
+      'Click “Size is Importance” to scale node size by calculated importance.',
+      'Toggle labels like Relationship, Description, and Counts/Importance.'
     ],
     [
       'If the view is cluttered, toggle “Remove Mode” to click and remove nodes.',
-      'Only the largest remaining connected component is kept.'
+      'Only the largest remaining connected component is kept to you can remove whole branches.'
     ],
     [
       'Click “Show All” to reveal all characters up to the selected chapter.',
       'Then “Fit to View” to frame everything.'
     ],
     [
-      '“Pin Mode” pins/unpins nodes (useful for isolated clusters).',
+      '“Pin Mode” pins/unpins nodes.',
       'This prevents clusters from drifting apart under repulsion.'
     ],
     [
       '“Reset View” restores defaults without changing the chapter filter or full-screen.',
-      '“Show Up To Chapter” limits characters/relationships to avoid spoilers (WIP).'
+      '“Show Up To Chapter” limits characters/relationships to avoid spoilers (Work in Progress).'
     ]
   ];
 
