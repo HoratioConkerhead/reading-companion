@@ -2065,8 +2065,14 @@ const RelationshipWeb = ({
                       />
                       {/* Pin icon overlay if node is pinned */}
                       { (pinnedNodeIds.has(node.id) || autoPinnedNodeIds.has(node.id)) && (
-                        <g transform={`translate(${node.position.x - (node.animatedSize ?? node.size ?? 30) * 0.5}, ${node.position.y - (node.animatedSize ?? node.size ?? 30) * 0.9})`}>
-                          <path d="M5 0 L10 5 L7 5 L7 14 L3 14 L3 5 L0 5 Z" fill={darkMode ? '#fef3c7' : '#b45309'} stroke={darkMode ? '#f59e0b' : '#92400e'} strokeWidth="0.8" />
+                        <g transform={`translate(${node.position.x + (node.animatedSize ?? node.size ?? 30) * 0.3}, ${node.position.y - (node.animatedSize ?? node.size ?? 30) * 1.0})`} pointerEvents="none">
+                          {/* Scale the provided 512x512 SVG to a small overlay relative to node size */}
+                          <g transform={`scale(${10 / 256})`}>
+                            <path fill="#C0392B" d="M394.6,81.1L161.5,314.3l18.1,18.1l115,115c9.5-30.7,12.6-63,7.1-93.7L445,210.3c22.1,0,45.7-4.7,67-11.8l-99.2-99.2L394.6,81.1z"/>
+                            <polygon fill="#BDC3C7" points="161.5,314.3 125.2,350.5 53.6,422.2 18.1,458.4 0,512 36.2,475.8 143.4,368.6 179.6,332.4 "/>
+                            <polygon fill="#7F8C8D" points="179.6,332.4 143.4,368.6 71.7,440.3 36.2,475.8 0,512 53.6,493.9 89.8,458.4 161.5,386.8 197.7,350.5 "/>
+                            <path fill="#E74C3C" d="M313.5,0c-7.1,21.3-12.6,44.9-11.8,67L157.5,210.3c-29.9-5.5-63-2.4-93.7,7.1l115,115L412,99.2 L313.5,0z"/>
+                          </g>
                         </g>
                       )}
                                                                                      {/* Number above node - show relationship count OR importance rating */}
