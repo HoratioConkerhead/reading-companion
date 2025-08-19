@@ -271,7 +271,7 @@ const InteractiveReadingCompanion = () => {
             </TabPanel>
             
             {/* Relationship Web Tab */}
-            <TabPanel>
+            <TabPanel forceRender>
               <RelationshipWeb
                 onCharacterSelect={handleCharacterSelect}
                 selectedCharacter={selectedCharacter}
