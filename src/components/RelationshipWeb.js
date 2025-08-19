@@ -1963,6 +1963,28 @@ const RelationshipWeb = ({
               height="100%"
               style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
             >
+              <defs>
+              <marker
+                  id="arrow-end"
+                  markerWidth="10"
+                  markerHeight="8"
+                  refX="4"
+                  refY="2"
+                  orient="auto"
+                >
+                  <polygon points="0 0, 6 2, 0 4" fill="context-stroke" />
+                </marker>
+                <marker
+                  id="arrow-start"
+                  markerWidth="10"
+                  markerHeight="8"
+                  refX="4"
+                  refY="2"
+                  orient="auto-start-reverse"
+                >
+                  <polygon points="0 0, 6 2, 0 4" fill="context-stroke" />
+                </marker>
+              </defs>
               {/* Transform for zoom and pan */}
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
                 {/* Edges */}
@@ -1980,12 +2002,13 @@ const RelationshipWeb = ({
                   const dy = targetNode.position.y - sourceNode.position.y;
                   const angle = Math.atan2(dy, dx);
                   
-                                     // Calculate start and end points (on the edge of the circles)
-                   const startX = sourceNode.position.x + sourceRadius * Math.cos(angle);
-                   const startY = sourceNode.position.y + sourceRadius * Math.sin(angle);
-                   const endX = targetNode.position.x - targetRadius * Math.cos(angle);
-                   const endY = targetNode.position.y - targetRadius * Math.sin(angle);
-                  
+                   // Calculate start and end points (on the edge of the circles, but inset by 4 pixels becuase of the arrowheads)
+                   const startX = sourceNode.position.x + (sourceRadius + 4) * Math.cos(angle);
+                   const startY = sourceNode.position.y + (sourceRadius + 4) * Math.sin(angle);
+                   const endX = targetNode.position.x - (targetRadius + 4) * Math.cos(angle);
+                   const endY = targetNode.position.y - (targetRadius + 4) * Math.sin(angle);
+
+                   
                   // Calculate label position (middle of the line)
                   const labelX = (startX + endX) / 2;
                   const labelY = (startY + endY) / 2;
@@ -1999,8 +2022,10 @@ const RelationshipWeb = ({
                         y2={endY}
                         stroke={edge.color}
                         strokeWidth="2"
+                        markerEnd="url(#arrow-end)"
+                        markerStart="url(#arrow-start)"
                       />
-                                             {/* Relationship label - show if showRelationship is true OR hovering over either connected node */}
+                       {/* Relationship label - show if showRelationship is true OR hovering over either connected node */}
                        {(showRelationship || hoveredNode === edge.from || hoveredNode === edge.to) && (
                         <>
                           {/* Background rectangle with dynamic width - tight to text */}

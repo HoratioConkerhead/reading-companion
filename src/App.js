@@ -177,7 +177,6 @@ const InteractiveReadingCompanion = () => {
     setSelectedLocation(null);
     setSelectedEvent(null);
     setSelectedObject(null);
-    setActiveTab(0);
     
     // Close the book selector
     setBookSelectorOpen(false);
