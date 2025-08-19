@@ -1677,7 +1677,13 @@ const RelationshipWeb = ({
                 ? 'bg-green-500 hover:bg-green-600'
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
-            onClick={() => setIsPinMode(!isPinMode)}
+            onClick={() => {
+              setIsPinMode(prev => {
+                const next = !prev;
+                if (next) setIsRemoveMode(false);
+                return next;
+              });
+            }}
             title="Toggle pin mode (click nodes to pin/unpin)"
           >
             <span className="whitespace-pre leading-tight text-center">{`Pin\nMode`}</span>
@@ -1691,7 +1697,13 @@ const RelationshipWeb = ({
                 ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
-            onClick={() => setIsRemoveMode(!isRemoveMode)}
+            onClick={() => {
+              setIsRemoveMode(prev => {
+                const next = !prev;
+                if (next) setIsPinMode(false);
+                return next;
+              });
+            }}
             title="Toggle remove mode (click nodes to remove)"
           >
             <span className="whitespace-pre leading-tight text-center">{`Remove\nMode`}</span>
