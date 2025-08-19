@@ -294,18 +294,11 @@ const RelationshipWeb = ({
 
   // Calculate node size based on importance (if enabled)
   const getNodeSize = useCallback((importance, isFocused = false) => {
-    if (!scaleSizeByImportance) {
-      return 30; // All nodes same size
-    }
-    
-    // Scale importance (1-100) to size (10-60)
-    // Formula: size = 10 + (importance / 100) * 50
-    const baseSize = 10 + (importance / 100) * 50;
-        
-    return Math.max(baseSize, 15); // Minimum size of 15
-  }, [scaleSizeByImportance]);
+    const scale = 10 + (importance / 100) * 50;
+    return Math.max(scale, 15);
+  }, []);
 
-  // Ensure each node has an animatedSize initialized to current size
+  // Ensure each node has an animatedSize initialized to its current target
   useEffect(() => {
     setNodes(prev => prev.map(n => ({
       ...n,
@@ -323,7 +316,7 @@ const RelationshipWeb = ({
     sizeAnimationLastTimeRef.current = timestamp;
     const dt = Math.min(0.05, last ? (timestamp - last) / 1000 : 0.016); // seconds
 
-    // Spring params (tuned for a subtle, bouncy feel)
+    // Spring params for node size animation (tuned for a subtle, bouncy feel)
     const stiffness = 260; // higher -> faster
     const damping = 14; // lower -> more oscillation
 
@@ -358,6 +351,7 @@ const RelationshipWeb = ({
       return node;
     });
 
+    // stop when converged
     if (anyChange) {
       setNodes(updatedNodes);
       sizeAnimationFrameRef.current = window.requestAnimationFrame(stepSizeAnimation);
@@ -601,7 +595,7 @@ const RelationshipWeb = ({
     if (focusedChar) {
              const relationshipCount = getRelationshipCount(focusedChar.id);
       const importance = calculateCharacterImportance(focusedChar);
-      const size = getNodeSize(importance, true);
+      const size = scaleSizeByImportance ? getNodeSize(importance, true) : 30;
       newNodes.push({
         id: focusedChar.id,
         name: focusedChar.name,
@@ -620,7 +614,7 @@ const RelationshipWeb = ({
             otherCharacters.forEach((character, index) => {
       const relationshipCount = getRelationshipCount(character.id);
       const importance = calculateCharacterImportance(character);
-      const size = getNodeSize(importance, false);
+      const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
       const totalInCircle = otherCharacters.length;
       
       // Calculate angle evenly around the circle
@@ -723,9 +717,19 @@ const RelationshipWeb = ({
   // Update node sizes when the sizing option changes (without re-initializing)
   useEffect(() => {
     if (nodes.length > 0) {
-      setNodes(currentNodes => 
-        currentNodes.map(node => {
-          const newTarget = getNodeSize(node.importance, node.isFocused);
+      // Stop any in-progress size RAF to avoid race conditions, reset velocities
+      if (sizeAnimationFrameRef.current) {
+        cancelAnimationFrame(sizeAnimationFrameRef.current);
+        sizeAnimationFrameRef.current = null;
+      }
+      sizeAnimationActiveRef.current = false;
+      sizeAnimationVelocitiesRef.current.clear();
+
+      setNodes(currentNodes => {
+        const mapped = currentNodes.map(node => {
+          const newTarget = scaleSizeByImportance
+            ? getNodeSize(node.importance, node.isFocused)
+            : 30;
           const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
           return {
             ...node,
@@ -733,10 +737,15 @@ const RelationshipWeb = ({
             animatedSize: currentRendered,
             size: newTarget
           };
-        })
-      );
-      // kick the spring animation when target sizes change
-      startSizeAnimation();
+        });
+        return mapped;
+      });
+      // kick the spring animation after the DOM commit; schedule on next frame
+      if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+        window.requestAnimationFrame(() => startSizeAnimation());
+      } else {
+        startSizeAnimation();
+      }
     }
   }, [scaleSizeByImportance, getNodeSize, nodes.length, startSizeAnimation]);
 
@@ -754,6 +763,13 @@ const RelationshipWeb = ({
       prev.set(n.id, target);
     });
     if (anyTargetChanged) {
+      // If the toggle changed mid-flight, restart cleanly
+      if (sizeAnimationFrameRef.current) {
+        cancelAnimationFrame(sizeAnimationFrameRef.current);
+        sizeAnimationFrameRef.current = null;
+      }
+      sizeAnimationActiveRef.current = false;
+      sizeAnimationVelocitiesRef.current.clear();
       startSizeAnimation();
     }
   }, [nodes, startSizeAnimation]);
@@ -1184,7 +1200,7 @@ const RelationshipWeb = ({
                  const position = calculatePosition();
          const relationshipCount = getRelationshipCount(char.id);
          const importance = calculateCharacterImportance(char);
-         const size = getNodeSize(importance, false);
+         const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
          return {
            id: char.id,
            name: char.name,
@@ -1371,7 +1387,7 @@ const RelationshipWeb = ({
     const newNodes = allowedCharacters.map((character, index) => {
       const relationshipCount = getRelationshipCount(character.id);
       const importance = calculateCharacterImportance(character);
-      const size = getNodeSize(importance, false);
+      const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
       const angle = (index * 2 * Math.PI) / Math.max(allowedCharacters.length, 1);
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
@@ -1819,7 +1835,27 @@ const RelationshipWeb = ({
                      <input
                        type="checkbox"
                        checked={scaleSizeByImportance}
-                       onChange={(e) => setScaleSizeByImportance(e.target.checked)}
+                       onChange={(e) => {
+                         setScaleSizeByImportance(e.target.checked);
+                         if (nodes && nodes.length > 0) {
+                           if (sizeAnimationFrameRef.current) {
+                             cancelAnimationFrame(sizeAnimationFrameRef.current);
+                             sizeAnimationFrameRef.current = null;
+                           }
+                           sizeAnimationActiveRef.current = false;
+                           sizeAnimationVelocitiesRef.current.clear();
+                           setNodes(currentNodes => currentNodes.map(node => {
+                             const newTarget = e.target.checked ? getNodeSize(node.importance, node.isFocused) : 30;
+                             const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
+                             return { ...node, animatedSize: currentRendered, size: newTarget };
+                           }));
+                           if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+                             window.requestAnimationFrame(() => startSizeAnimation());
+                           } else {
+                             startSizeAnimation();
+                           }
+                         }
+                       }}
                        className="mr-2"
                      />
                      <span className="text-sm text-gray-700 dark:text-gray-300">Size is Importance</span>
