@@ -23,12 +23,13 @@ const RelationshipWeb = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [currentChapter, setCurrentChapter] = useState(null);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
-  const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
   const [isFullPage, setIsFullPage] = useState(false);
   const [hoveredNode, setHoveredNode] = useState(null);
-  const [isPinMode, setIsPinMode] = useState(false);
+  const [activeMode, setActiveMode] = useState('none'); // 'none' | 'pin' | 'remove'
+  const isPinMode = activeMode === 'pin';
+  const isRemoveMode = activeMode === 'remove';
   const [pinnedNodeIds, setPinnedNodeIds] = useState(new Set());
   const [autoPinnedNodeIds, setAutoPinnedNodeIds] = useState(new Set());
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
@@ -1677,13 +1678,7 @@ const RelationshipWeb = ({
                 ? 'bg-green-500 hover:bg-green-600'
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
-            onClick={() => {
-              setIsPinMode(prev => {
-                const next = !prev;
-                if (next) setIsRemoveMode(false);
-                return next;
-              });
-            }}
+            onClick={() => setActiveMode(prev => (prev === 'pin' ? 'none' : 'pin'))}
             title="Toggle pin mode (click nodes to pin/unpin)"
           >
             <span className="whitespace-pre leading-tight text-center">{`Pin\nMode`}</span>
@@ -1697,13 +1692,7 @@ const RelationshipWeb = ({
                 ? 'bg-green-500 hover:bg-green-600' 
                 : 'bg-gray-500 hover:bg-gray-600'
             }`}
-            onClick={() => {
-              setIsRemoveMode(prev => {
-                const next = !prev;
-                if (next) setIsPinMode(false);
-                return next;
-              });
-            }}
+            onClick={() => setActiveMode(prev => (prev === 'remove' ? 'none' : 'remove'))}
             title="Toggle remove mode (click nodes to remove)"
           >
             <span className="whitespace-pre leading-tight text-center">{`Remove\nMode`}</span>
