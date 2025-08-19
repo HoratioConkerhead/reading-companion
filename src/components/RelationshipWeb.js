@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import PageTutorial from './PageTutorial';
 
 const RelationshipWeb = ({ 
@@ -48,6 +48,16 @@ const RelationshipWeb = ({
   const wasAutoArrangeOn = useRef(false);
   const textWidthCache = useRef(new Map());
   const suppressAutoFocusRef = useRef(false);
+  // Keep a live reference to nodes to avoid stale closures in RAF
+  const nodesRef = useRef(nodes);
+  // Keep nodesRef synchronized before paint so RAF sees latest targets
+  useLayoutEffect(() => { nodesRef.current = nodes; }, [nodes]);
+  // Spring animation state for node sizes
+  const sizeAnimationVelocitiesRef = useRef(new Map()); // id -> velocity
+  const sizeAnimationActiveRef = useRef(false);
+  const sizeAnimationLastTimeRef = useRef(null);
+  const previousTargetSizesRef = useRef(new Map()); // id -> last seen target size
+  const sizeAnimationFrameRef = useRef(null);
 
   // Calculate character importance rating (1-100) based on multiple factors
   const calculateCharacterImportance = useCallback((character) => {
@@ -295,6 +305,76 @@ const RelationshipWeb = ({
     return Math.max(baseSize, 15); // Minimum size of 15
   }, [scaleSizeByImportance]);
 
+  // Ensure each node has an animatedSize initialized to current size
+  useEffect(() => {
+    setNodes(prev => prev.map(n => ({
+      ...n,
+      animatedSize: n.animatedSize != null ? n.animatedSize : (n.size != null ? n.size : 30)
+    })));
+  }, [nodes.length]);
+
+  // Spring-based animation towards target size (node.size)
+  const stepSizeAnimation = useCallback((timestamp) => {
+    if (!sizeAnimationActiveRef.current) {
+      sizeAnimationFrameRef.current = null;
+      return;
+    }
+    const last = sizeAnimationLastTimeRef.current;
+    sizeAnimationLastTimeRef.current = timestamp;
+    const dt = Math.min(0.05, last ? (timestamp - last) / 1000 : 0.016); // seconds
+
+    // Spring params (tuned for a subtle, bouncy feel)
+    const stiffness = 260; // higher -> faster
+    const damping = 14; // lower -> more oscillation
+
+    const velocities = sizeAnimationVelocitiesRef.current;
+    let anyChange = false;
+
+    const currentNodes = nodesRef.current;
+    const updatedNodes = currentNodes.map(node => {
+      const target = node.size != null ? node.size : 30;
+      const current = node.animatedSize != null ? node.animatedSize : target;
+      let v = velocities.get(node.id) || 0;
+
+      const displacement = current - target; // positive if larger than target
+      // Acceleration from Hooke's law with damping: a = -k*x - c*v
+      const acceleration = (-stiffness * displacement) - (damping * v);
+      v = v + acceleration * dt;
+      let next = current + v * dt;
+
+      // Convergence check
+      const close = Math.abs(next - target) < 0.1 && Math.abs(v) < 0.1;
+      if (close) {
+        next = target;
+        v = 0;
+      } else {
+        anyChange = true;
+      }
+
+      velocities.set(node.id, v);
+      if (next !== node.animatedSize) {
+        return { ...node, animatedSize: next };
+      }
+      return node;
+    });
+
+    if (anyChange) {
+      setNodes(updatedNodes);
+      sizeAnimationFrameRef.current = window.requestAnimationFrame(stepSizeAnimation);
+    } else {
+      sizeAnimationActiveRef.current = false;
+      sizeAnimationFrameRef.current = null;
+    }
+  }, [setNodes]);
+
+  const startSizeAnimation = useCallback(() => {
+    sizeAnimationActiveRef.current = true;
+    sizeAnimationLastTimeRef.current = null;
+    if (!sizeAnimationFrameRef.current) {
+      sizeAnimationFrameRef.current = window.requestAnimationFrame(stepSizeAnimation);
+    }
+  }, [stepSizeAnimation]);
+
   // Get appropriate stroke color for nodes based on theme
   const getNodeStrokeColor = useCallback((isDark = false, characterId = null) => {
     if (!characterId) {
@@ -450,7 +530,7 @@ const RelationshipWeb = ({
   const tutorialSteps = [
     [
       'This page lets you explore relationships between characters.',
-      'Start by using “Focus on Character” to select someone.'
+      'Start by using "Focus on Character" to select someone.'
     ],
     [
       'Hover a character to see connected relationships and a brief description.',
@@ -461,34 +541,34 @@ const RelationshipWeb = ({
       'Click a character to add their related characters and edges.'
     ],
     [
-      'The view may now be cluttered, Click “Auto arrange” to toggle automatic layout.',
+      'The view may now be cluttered, Click "Auto arrange" to toggle automatic layout.',
       'Layout uses springs (attraction) and node repulsion.',
-      'Adjust “Spring Force” and “Repulsion Force” using the sliders.'
+      'Adjust "Spring Force" and "Repulsion Force" using the sliders.'
     ],
     [
       'You may now want more space. Use the expand icon to enter a full-screen view.',
-      'Now use “Fit to View” to center and zoom to include all visible nodes.'
+      'Now use "Fit to View" to center and zoom to include all visible nodes.'
     ],
     [
-      'Under “View Options” you can control labels and sizing.',
-      'Click “Size is Importance” to scale node size by calculated importance.',
+      'Under "View Options" you can control labels and sizing.',
+      'Click "Size is Importance" to scale node size by calculated importance.',
       'Toggle labels like Relationship, Description, and Counts/Importance.'
     ],
     [
-      'If the view is cluttered, toggle “Remove Mode” to click and remove nodes.',
+      'If the view is cluttered, toggle "Remove Mode" to click and remove nodes.',
       'Only the largest remaining connected component is kept to you can remove whole branches.'
     ],
     [
-      'Click “Show All” to reveal all characters up to the selected chapter.',
-      'Then “Fit to View” to frame everything.'
+      'Click "Show All" to reveal all characters up to the selected chapter.',
+      'Then "Fit to View" to frame everything.'
     ],
     [
-      '“Pin Mode” pins/unpins nodes.',
+      '"Pin Mode" pins/unpins nodes.',
       'This prevents clusters from drifting apart under repulsion.'
     ],
     [
-      '“Reset View” restores defaults without changing the chapter filter or full-screen.',
-      '“Show Up To Chapter” limits characters/relationships to avoid spoilers (Work in Progress).'
+      '"Reset View" restores defaults without changing the chapter filter or full-screen.',
+      '"Show Up To Chapter" limits characters/relationships to avoid spoilers (Work in Progress).'
     ]
   ];
 
@@ -616,10 +696,12 @@ const RelationshipWeb = ({
   useEffect(() => {
     if (nodes.length > 0) {
       initializeEdges();
+      // ensure sizes begin animating after nodes appear
+      startSizeAnimation();
     } else {
       setEdges([]);
     }
-  }, [nodes, initializeEdges]);
+  }, [nodes, initializeEdges, startSizeAnimation]);
 
   // When chapter filter changes, remove nodes introduced after the selected chapter
   // Do not reinitialize or move existing nodes
@@ -642,13 +724,39 @@ const RelationshipWeb = ({
   useEffect(() => {
     if (nodes.length > 0) {
       setNodes(currentNodes => 
-        currentNodes.map(node => ({
-          ...node,
-          size: getNodeSize(node.importance, node.isFocused)
-        }))
+        currentNodes.map(node => {
+          const newTarget = getNodeSize(node.importance, node.isFocused);
+          const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
+          return {
+            ...node,
+            // seed animation from whatever is currently rendered
+            animatedSize: currentRendered,
+            size: newTarget
+          };
+        })
       );
+      // kick the spring animation when target sizes change
+      startSizeAnimation();
     }
-  }, [scaleSizeByImportance, getNodeSize, nodes.length]);
+  }, [scaleSizeByImportance, getNodeSize, nodes.length, startSizeAnimation]);
+
+  // Restart size animation whenever any node's target size changes
+  useEffect(() => {
+    if (nodes.length === 0) return;
+    let anyTargetChanged = false;
+    const prev = previousTargetSizesRef.current;
+    nodes.forEach(n => {
+      const target = n.size != null ? n.size : 30;
+      const last = prev.get(n.id);
+      if (last == null || Math.abs(last - target) > 0.25) {
+        anyTargetChanged = true;
+      }
+      prev.set(n.id, target);
+    });
+    if (anyTargetChanged) {
+      startSizeAnimation();
+    }
+  }, [nodes, startSizeAnimation]);
 
   // Sync with external selectedCharacter prop
   useEffect(() => {
@@ -846,9 +954,8 @@ const RelationshipWeb = ({
   // Cleanup animation on unmount
   useEffect(() => {
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (sizeAnimationFrameRef.current) cancelAnimationFrame(sizeAnimationFrameRef.current);
     };
   }, []);
 
@@ -1840,8 +1947,8 @@ const RelationshipWeb = ({
                    
                    if (!sourceNode || !targetNode) return null;
                    
-                   const sourceRadius = sourceNode.size || 30;
-                   const targetRadius = targetNode.size || 30;
+                   const sourceRadius = (sourceNode.animatedSize ?? sourceNode.size ?? 30);
+                   const targetRadius = (targetNode.animatedSize ?? targetNode.size ?? 30);
                   
                   // Calculate angle between nodes
                   const dx = targetNode.position.x - sourceNode.position.x;
@@ -1911,7 +2018,7 @@ const RelationshipWeb = ({
                                                               <circle
                         cx={node.position.x}
                         cy={node.position.y}
-                        r={node.size || 30}
+                        r={node.animatedSize ?? node.size ?? 30}
                         fill={node.color}
                         stroke={getNodeStrokeColor(darkMode, node.id)}
                         strokeWidth={2}
@@ -1922,15 +2029,15 @@ const RelationshipWeb = ({
                       />
                       {/* Pin icon overlay if node is pinned */}
                       { (pinnedNodeIds.has(node.id) || autoPinnedNodeIds.has(node.id)) && (
-                        <g transform={`translate(${node.position.x - (node.size || 30) * 0.5}, ${node.position.y - (node.size || 30) * 0.9})`}>
+                        <g transform={`translate(${node.position.x - (node.animatedSize ?? node.size ?? 30) * 0.5}, ${node.position.y - (node.animatedSize ?? node.size ?? 30) * 0.9})`}>
                           <path d="M5 0 L10 5 L7 5 L7 14 L3 14 L3 5 L0 5 Z" fill={darkMode ? '#fef3c7' : '#b45309'} stroke={darkMode ? '#f59e0b' : '#92400e'} strokeWidth="0.8" />
                         </g>
                       )}
-                                                                                   {/* Number above node - show relationship count OR importance rating */}
+                                                                                     {/* Number above node - show relationship count OR importance rating */}
                                           {(showNumber || showImportance || hoveredNode === node.id) && (
                                                <text
                           x={node.position.x}
-                          y={node.position.y - (node.size || 30) - 10}
+                          y={node.position.y - (node.animatedSize ?? node.size ?? 30) - 10}
                           textAnchor="middle"
                           dominantBaseline="middle"
                           fontSize="12"
@@ -2036,7 +2143,7 @@ const RelationshipWeb = ({
                            // Calculate total height of all lines and position below the node
                            const lineHeight = 12; // Slightly larger than fontSize for spacing
                            const totalHeight = lines.length * lineHeight;
-                           const startY = (node.size || 30) + 15; 
+                           const startY = (node.animatedSize ?? node.size ?? 30) + 15; 
                           
                           return lines.map((line, index) => (
                             <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
