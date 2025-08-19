@@ -11,7 +11,7 @@ const PageTutorial = ({ isOpen, onClose, title = 'Page Tutorial', steps = [], da
 			setIndex(0);
 			try {
 				const margin = 16;
-				const panelHeight = 260; // estimated starting height
+				const panelHeight = 300; // estimated starting height
 				const panelWidth = 655; // estimated starting width 
 				const viewportH = window?.innerHeight || 800;
 				const viewportW = window?.innerWidth || 1200;
@@ -29,7 +29,7 @@ const PageTutorial = ({ isOpen, onClose, title = 'Page Tutorial', steps = [], da
 			if (!dragging) return;
 			setPosition((prev) => {
 				const panelWidth = 560; // approx max-w-2xl
-				const panelHeight = 200; // min height estimate
+				const panelHeight = 250; // min height estimate
 				const nextLeft = Math.max(8, Math.min(window.innerWidth - 8 - panelWidth, e.clientX - dragOffset.x));
 				const nextTop = Math.max(8, Math.min(window.innerHeight - 8 - panelHeight, e.clientY - dragOffset.y));
 				return { top: nextTop, left: nextLeft };

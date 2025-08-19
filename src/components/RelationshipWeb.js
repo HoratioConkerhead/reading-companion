@@ -559,7 +559,8 @@ const RelationshipWeb = ({
     ],
     [
       '"Pin Mode" pins/unpins nodes.',
-      'This prevents clusters from drifting apart under repulsion.'
+      'This prevents clusters from drifting apart under repulsion.',
+      'Click a pinned node to unpin it.At least one node per group must be pinned'
     ],
     [
       '"Reset View" restores defaults without changing the chapter filter or full-screen.',
@@ -1962,19 +1963,6 @@ const RelationshipWeb = ({
               height="100%"
               style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
             >
-              <defs>
-                <marker
-                  id="arrowhead"
-                  markerWidth="10"
-                  markerHeight="7"
-                  refX="9"
-                  refY="3.5"
-                  orient="auto"
-                >
-                  <polygon points="0 0, 10 3.5, 0 7" fill={darkMode ? "#ccc" : "#666"} />
-                </marker>
-              </defs>
-
               {/* Transform for zoom and pan */}
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
                 {/* Edges */}
@@ -2011,7 +1999,6 @@ const RelationshipWeb = ({
                         y2={endY}
                         stroke={edge.color}
                         strokeWidth="2"
-                        markerEnd="url(#arrowhead)"
                       />
                                              {/* Relationship label - show if showRelationship is true OR hovering over either connected node */}
                        {(showRelationship || hoveredNode === edge.from || hoveredNode === edge.to) && (
