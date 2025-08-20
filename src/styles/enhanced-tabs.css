@@ -21,6 +21,16 @@
   transition: all 0.3s ease;
 }
 
+/* Push custom CTA at end of tab list to the right */
+.react-tabs__tab-list .tablist-right-cta {
+  margin-left: auto !important;
+}
+
+/* Prevent spy icon styling from applying to the CTA button */
+.react-tabs__tab-list .tablist-right-cta::after {
+  content: none !important;
+}
+
 .dark .react-tabs__tab-list {
   background: linear-gradient(to right, #1e293b, #334155);
 }

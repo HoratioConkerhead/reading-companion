@@ -26,6 +26,11 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => 
       position: 'bottom'
     },
     {
+      element: '.tablist-right-cta',
+      intro: 'Use this Up To control to set the latest chapter you\'ve read. The entire app will limit content to avoid spoilers.',
+      position: 'bottom'
+    },
+    {
       element: '.react-tabs__tab:nth-child(1)',
       intro: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.',
       position: 'bottom'
@@ -79,12 +84,15 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => 
 
   // Called before each step change
   const onBeforeChange = (nextStepIndex) => {
-    // Change tabs appropriately based on the next step
-    if (nextStepIndex >= 2 && nextStepIndex <= 9) {
-      // Steps 2-9 correspond to tabs 0-7
-      const tabIndex = nextStepIndex - 2;
-      if (currentTab !== tabIndex) {
-        onTabChange(tabIndex);
+    // Change tabs appropriately based on where the tab steps begin in the steps array
+    const firstTabStepIndex = steps.findIndex(s => String(s.element).includes('.react-tabs__tab:nth-child(1)'));
+    if (firstTabStepIndex !== -1) {
+      const lastTabStepIndex = firstTabStepIndex + 7; // 8 tabs total
+      if (nextStepIndex >= firstTabStepIndex && nextStepIndex <= lastTabStepIndex) {
+        const tabIndex = nextStepIndex - firstTabStepIndex; // map step to tab index 0..7
+        if (currentTab !== tabIndex) {
+          onTabChange(tabIndex);
+        }
       }
     }
   };

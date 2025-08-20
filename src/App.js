@@ -33,6 +33,8 @@ const InteractiveReadingCompanion = () => {
   const [currentBookKey, setCurrentBookKey] = useState(defaultBookKey);
   const [bookData, setBookData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [chapterFilterId, setChapterFilterId] = useState(null);
+  const [isChapterPickerOpen, setIsChapterPickerOpen] = useState(false);
   
   // Available books metadata (lightweight, no heavy data)
   const availableBooks = getAvailableBookMetadata();
@@ -44,6 +46,8 @@ const InteractiveReadingCompanion = () => {
       try {
         const data = await loadBookData(currentBookKey);
         setBookData(data);
+        const savedChapter = localStorage.getItem(`chapterFilter:${currentBookKey}`);
+        setChapterFilterId(savedChapter ? savedChapter : null);
       } catch (error) {
         console.error('Failed to load book data:', error);
         // Fallback to default book if loading fails
@@ -57,6 +61,13 @@ const InteractiveReadingCompanion = () => {
     
     loadBook();
   }, [currentBookKey]);
+
+  // Persist chapter filter for current book
+  useEffect(() => {
+    if (bookData) {
+      localStorage.setItem(`chapterFilter:${currentBookKey}`, chapterFilterId ?? '');
+    }
+  }, [chapterFilterId, currentBookKey, bookData]);
   
   // Check for first visit to potentially show tutorial
   useEffect(() => {
@@ -196,6 +207,82 @@ const InteractiveReadingCompanion = () => {
     
     const metadata = bookData.bookMetadata;
 
+    // Build filtered datasets based on global chapterFilterId (per-book)
+    const chapters = bookData.chapters || [];
+    const getChapterIndex = (id) => {
+      if (!id) return -1;
+      return chapters.findIndex(ch => ch.id === id);
+    };
+    const targetIdx = chapterFilterId ? getChapterIndex(chapterFilterId) : null;
+
+    const filteredCharacters = (() => {
+      if (targetIdx === null || targetIdx === -1) return bookData.characters;
+      return (bookData.characters || []).filter(char => {
+        if (!char.introducedInChapter) return true;
+        const idx = getChapterIndex(char.introducedInChapter);
+        if (idx === -1) return true;
+        return idx <= targetIdx;
+      });
+    })();
+
+    const filteredRelationships = (() => {
+      if (targetIdx === null || targetIdx === -1) return bookData.relationships;
+      const introIdxByChar = new Map(
+        (bookData.characters || []).map(c => [c.id, getChapterIndex(c.introducedInChapter)])
+      );
+      return (bookData.relationships || []).filter(rel => {
+        let relIdx = -1;
+        if (rel.introducedInChapter) relIdx = getChapterIndex(rel.introducedInChapter);
+        else {
+          const a = introIdxByChar.get(rel.from) ?? -1;
+          const b = introIdxByChar.get(rel.to) ?? -1;
+          const cand = [a, b].filter(v => v !== -1);
+          relIdx = cand.length ? Math.min(...cand) : -1;
+        }
+        if (relIdx === -1) return false;
+        return relIdx <= targetIdx;
+      });
+    })();
+
+    const filteredEvents = (() => {
+      if (targetIdx === null || targetIdx === -1) return bookData.events;
+      const chapterIndexByEventId = new Map();
+      chapters.forEach((ch, idx) => {
+        (ch.events || []).forEach(eid => {
+          if (!chapterIndexByEventId.has(eid)) chapterIndexByEventId.set(eid, idx);
+        });
+      });
+
+      return (bookData.events || []).filter(ev => {
+        let idx = -1;
+        if (ev.introducedInChapter) idx = getChapterIndex(ev.introducedInChapter);
+        else if (chapterIndexByEventId.has(ev.id)) idx = chapterIndexByEventId.get(ev.id);
+        else if (ev.chapter) idx = getChapterIndex(String(ev.chapter));
+        if (idx === -1) return true; // keep unknowns
+        return idx <= targetIdx;
+      });
+    })();
+
+    const filteredLocations = (() => {
+      if (targetIdx === null || targetIdx === -1) return bookData.locations;
+      return (bookData.locations || []).filter(loc => {
+        if (!loc.introducedInChapter) return true;
+        const idx = getChapterIndex(loc.introducedInChapter);
+        if (idx === -1) return true;
+        return idx <= targetIdx;
+      });
+    })();
+
+    const filteredObjects = (() => {
+      if (targetIdx === null || targetIdx === -1) return bookData.objects;
+      return (bookData.objects || []).filter(obj => {
+        if (!obj.introducedInChapter) return true;
+        const idx = getChapterIndex(obj.introducedInChapter);
+        if (idx === -1) return true;
+        return idx <= targetIdx;
+      });
+    })();
+
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <header className="p-3" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
@@ -255,16 +342,67 @@ const InteractiveReadingCompanion = () => {
             <Tab>Plot</Tab>
             <Tab>Objects</Tab>
             <Tab>Spycraft</Tab>
+            {/* In-list global chapter filter trigger styled as a tab */}
+            <button
+              type="button"
+              className={`react-tabs__tab tablist-right-cta ml-2 cursor-pointer ${darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-800'}`}
+              onClick={() => setIsChapterPickerOpen(true)}
+              title="Choose the latest chapter you've read to limit content across the app"
+              style={{ userSelect: 'none' }}
+            >
+              {(() => {
+                const chapters = bookData.chapters || [];
+                const label = chapterFilterId
+                  ? (chapters.find(ch => ch.id === chapterFilterId)?.title || 'Selected chapter')
+                  : 'Whole book';
+                return `Up To: ${label}`;
+              })()}
+            </button>
           </TabList>
-          
+
+          {/* Centered chapter picker pane */}
+          {isChapterPickerOpen && (
+            <div className="fixed inset-0 z-40 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsChapterPickerOpen(false)}></div>
+              <div className={`relative z-50 w-full max-w-lg mx-4 rounded shadow-lg ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-600">
+                  <h3 className="text-lg font-semibold">Select chapter to view up to</h3>
+                  <button
+                    className={`px-2 py-1 text-sm rounded ${darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+                    onClick={() => setIsChapterPickerOpen(false)}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+                  <button
+                    className={`w-full text-left px-3 py-2 rounded border ${darkMode ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}`}
+                    onClick={() => { setChapterFilterId(null); setIsChapterPickerOpen(false); }}
+                  >
+                    Whole book (no limit)
+                  </button>
+                  {(bookData.chapters || []).map(ch => (
+                    <button
+                      key={ch.id}
+                      className={`w-full text-left px-3 py-2 rounded border ${darkMode ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}`}
+                      onClick={() => { setChapterFilterId(ch.id); setIsChapterPickerOpen(false); }}
+                    >
+                      {ch.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             {/* Characters Tab */}
             <TabPanel>
               <CharacterExplorer 
                 onCharacterSelect={handleCharacterSelect} 
                 selectedCharacter={selectedCharacter}
-                charactersData={bookData.characters}
-                relationshipsData={bookData.relationships}
+                charactersData={filteredCharacters}
+                relationshipsData={filteredRelationships}
                 groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
               />
             </TabPanel>
@@ -283,6 +421,8 @@ const InteractiveReadingCompanion = () => {
                 importanceConfig={bookData.bookMetadata?.importanceWeights || {}}
                 relationshipCategoryColors={bookData.bookMetadata?.relationshipCategoryColors || {}}
                 currentBookKey={currentBookKey}
+                chapterFilterId={chapterFilterId}
+                onChapterFilterChange={setChapterFilterId}
               />
             </TabPanel>
             
@@ -292,9 +432,9 @@ const InteractiveReadingCompanion = () => {
                 onEventSelect={handleEventSelect}
                 selectedEvent={selectedEvent}
                 onCharacterSelect={handleCharacterSelect}
-                eventsData={bookData.events}
-                charactersData={bookData.characters}
-                locationsData={bookData.locations}
+                eventsData={filteredEvents}
+                charactersData={filteredCharacters}
+                locationsData={filteredLocations}
               />
             </TabPanel>
             
@@ -304,9 +444,9 @@ const InteractiveReadingCompanion = () => {
                 onLocationSelect={handleLocationSelect}
                 selectedLocation={selectedLocation}
                 onEventSelect={handleEventSelect}
-                locationsData={bookData.locations}
-                eventsData={bookData.events}
-                charactersData={bookData.characters}
+                locationsData={filteredLocations}
+                eventsData={filteredEvents}
+                charactersData={filteredCharacters}
               />
             </TabPanel>
             
@@ -317,10 +457,10 @@ const InteractiveReadingCompanion = () => {
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
                 onObjectSelect={handleObjectSelect}
-                locationsData={bookData.locations}
-                eventsData={bookData.events}
-                charactersData={bookData.characters}
-                objectsData={bookData.objects}
+                locationsData={filteredLocations}
+                eventsData={filteredEvents}
+                charactersData={filteredCharacters}
+                objectsData={filteredObjects}
                 // Position data from the book
                 locationPositions={bookData.locationPositions || {}}
                 eventPositions={bookData.eventPositions || {}}
@@ -335,8 +475,8 @@ const InteractiveReadingCompanion = () => {
               <PlotNavigator
                 onEventSelect={handleEventSelect}
                 onCharacterSelect={handleCharacterSelect}
-                eventsData={bookData.events}
-                charactersData={bookData.characters}
+                eventsData={filteredEvents}
+                charactersData={filteredCharacters}
                 chaptersData={bookData.chapters}
                 mysteryElements={bookData.mysteryElements}
                 themeElements={bookData.themeElements}
@@ -349,9 +489,9 @@ const InteractiveReadingCompanion = () => {
               <ObjectGallery
                 onObjectSelect={handleObjectSelect}
                 selectedObject={selectedObject}
-                objectsData={bookData.objects}
-                charactersData={bookData.characters}
-                eventsData={bookData.events}
+                objectsData={filteredObjects}
+                charactersData={filteredCharacters}
+                eventsData={filteredEvents}
               />
             </TabPanel>
             

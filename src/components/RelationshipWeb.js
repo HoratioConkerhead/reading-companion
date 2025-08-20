@@ -12,7 +12,9 @@ const RelationshipWeb = ({
   groupColors = {},
   importanceConfig = {},
   relationshipCategoryColors = {},
-  currentBookKey
+  currentBookKey,
+  chapterFilterId,
+  onChapterFilterChange
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -438,6 +440,11 @@ const RelationshipWeb = ({
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' - ');
   }, []);
+
+  // Sync local chapter state with global filter
+  useEffect(() => {
+    setCurrentChapter(chapterFilterId || null);
+  }, [chapterFilterId]);
 
   // Filter relationships by chapter
   const filterRelationshipsByChapter = useCallback((relationships, chapterId) => {
@@ -1725,7 +1732,11 @@ const RelationshipWeb = ({
             <select
               className="flex-1 min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
               value={currentChapter || ''}
-              onChange={(e) => setCurrentChapter(e.target.value || null)}
+              onChange={(e) => {
+                const value = e.target.value || null;
+                setCurrentChapter(value);
+                if (onChapterFilterChange) onChapterFilterChange(value);
+              }}
             >
               <option value="">Show All Characters and Relationships</option>
               {chaptersData.map((chapter, index) => (
