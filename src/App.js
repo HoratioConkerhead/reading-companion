@@ -282,6 +282,7 @@ const InteractiveReadingCompanion = () => {
                 groupColors={bookData.bookMetadata?.characterGroupColors || {}}
                 importanceConfig={bookData.bookMetadata?.importanceWeights || {}}
                 relationshipCategoryColors={bookData.bookMetadata?.relationshipCategoryColors || {}}
+                currentBookKey={currentBookKey}
               />
             </TabPanel>
             
@@ -366,7 +367,7 @@ const InteractiveReadingCompanion = () => {
 
       </main>
       
-      <footer className="p-4 mt-8" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
+      <footer className="p-4 mt-0" style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>

@@ -11,7 +11,8 @@ const RelationshipWeb = ({
   darkMode = false, // Add darkMode prop for theme-aware colors
   groupColors = {},
   importanceConfig = {},
-  relationshipCategoryColors = {}
+  relationshipCategoryColors = {},
+  currentBookKey
 }) => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -33,6 +34,7 @@ const RelationshipWeb = ({
   const [pinnedNodeIds, setPinnedNodeIds] = useState(new Set());
   const [autoPinnedNodeIds, setAutoPinnedNodeIds] = useState(new Set());
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const previousBookKeyRef = useRef(currentBookKey);
   
   // View options state
   const [showDescription, setShowDescription] = useState(false); // off by default
@@ -441,19 +443,38 @@ const RelationshipWeb = ({
   const filterRelationshipsByChapter = useCallback((relationships, chapterId) => {
     if (!chapterId) return relationships;
     
-    const chapterIndex = chaptersData.findIndex(ch => ch.id === chapterId);
-    if (chapterIndex === -1) return relationships;
-    
-    // Filter relationships based on when they are introduced
+    const getChapterIndex = (id) => {
+      if (!id) return -1;
+      return chaptersData.findIndex(ch => ch.id === id);
+    };
+
+    const targetChapterIndex = getChapterIndex(chapterId);
+    if (targetChapterIndex === -1) return relationships;
+
+    // Precompute character introduction chapter indices for efficient lookup
+    const characterIntroIndexById = new Map(
+      (charactersData || []).map(c => [c.id, getChapterIndex(c.introducedInChapter)])
+    );
+
+    // Include only relationships introduced on/before the selected chapter.
+    // If a relationship lacks its own introduction, infer from earliest-known intro of its endpoints.
     return relationships.filter(rel => {
+      let relationshipIntroIndex = -1;
+
       if (rel.introducedInChapter) {
-        const relChapterIndex = chaptersData.findIndex(ch => ch.id === rel.introducedInChapter);
-        return relChapterIndex <= chapterIndex;
+        relationshipIntroIndex = getChapterIndex(rel.introducedInChapter);
+      } else {
+        const aIdx = characterIntroIndexById.get(rel.from) ?? -1;
+        const bIdx = characterIntroIndexById.get(rel.to) ?? -1;
+        const candidates = [aIdx, bIdx].filter(idx => idx !== -1);
+        relationshipIntroIndex = candidates.length > 0 ? Math.min(...candidates) : -1;
       }
-      // If no chapter info, show the relationship
-      return true;
+
+      // If still unknown, exclude to avoid leaking future relationships
+      if (relationshipIntroIndex === -1) return false;
+      return relationshipIntroIndex <= targetChapterIndex;
     });
-  }, [chaptersData]);
+  }, [chaptersData, charactersData]);
 
   // Filter characters by chapter
   const filterCharactersByChapter = useCallback((characters, chapterId) => {
@@ -473,9 +494,10 @@ const RelationshipWeb = ({
     });
   }, [chaptersData]);
 
-  // Build legend items from relationships present up to the selected chapter
+  // Build legend items from relationships present up to the selected chapter (no fixed order)
   const relationshipLegendItems = useMemo(() => {
     const filtered = filterRelationshipsByChapter(relationshipsData, currentChapter) || [];
+    console.log(filtered);
     const colorByLabel = new Map();
     filtered.forEach(rel => {
       const label = rel.category || getRelationshipCategoryLabel(rel.type);
@@ -484,40 +506,13 @@ const RelationshipWeb = ({
       }
     });
 
-    // Desired display order
-    const CATEGORY_ORDER = [
-      'Spouse',
-      'Handler/Asset',
-      'Conspirator/Enemy',
-      'Colleague/Partner',
-      'Superior/Subordinate',
-      'Friend',
-      'Informant/Double-Agent',
-      'Other'
-    ];
-
-    // If no relationships yet, fall back to showing all categories with representative colors
+    // If no relationships yet, don't show a legend
     if (colorByLabel.size === 0) {
-      const representativeTypeByLabel = {
-        'Spouse': 'spouse',
-        'Handler/Asset': 'handler-asset',
-        'Conspirator/Enemy': 'conspirator',
-        'Colleague/Partner': 'colleague-partner',
-        'Superior/Subordinate': 'superior-subordinate',
-        'Friend': 'friend',
-        'Informant/Double-Agent': 'informant-double-agent',
-        'Other': 'other'
-      };
-      return CATEGORY_ORDER.map(label => ({
-        label,
-        // Prefer metadata color; fallback to derived color from representative type
-        color: relationshipCategoryColors[label] || getRelationshipColor(representativeTypeByLabel[label])
-      }));
+      return [];
     }
 
-    return CATEGORY_ORDER
-      .filter(label => colorByLabel.has(label))
-      .map(label => ({ label, color: colorByLabel.get(label) }));
+    // Use natural insertion order of discovered categories
+    return Array.from(colorByLabel, ([label, color]) => ({ label, color }));
   }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel, relationshipCategoryColors]);
 
   // Page tutorial content for Relationships tab
@@ -669,6 +664,12 @@ const RelationshipWeb = ({
 
   // Initialize graph when focused character changes (do not move nodes on chapter change)
   useEffect(() => {
+    // Skip initialization when explicitly suppressed (e.g., book change or show-all action)
+    if (suppressAutoFocusRef.current) {
+      suppressAutoFocusRef.current = false; // one-shot suppression
+      return;
+    }
+
     initializeNodes();
     
     // Center the view on the focused character after initialization
@@ -1458,6 +1459,41 @@ const RelationshipWeb = ({
     }, 0);
   };
 
+  // Clear all local graph state when the book changes
+  useEffect(() => {
+    if (previousBookKeyRef.current !== currentBookKey) {
+      // Reset internal component state related to graph/filters
+      setNodes([]);
+      setEdges([]);
+      // Keep graph empty until user interacts after book change
+      suppressAutoFocusRef.current = true;
+      setFocusedCharacter(null);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      setIsAutoArrangeOn(false);
+      setPinnedNodeIds(new Set());
+      setAutoPinnedNodeIds(new Set());
+      setHoveredNode(null);
+      setActiveMode('none');
+      setCurrentChapter(null);
+
+      // Stop any ongoing animations
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      if (sizeAnimationFrameRef.current) {
+        cancelAnimationFrame(sizeAnimationFrameRef.current);
+        sizeAnimationFrameRef.current = null;
+      }
+      sizeAnimationActiveRef.current = false;
+      sizeAnimationVelocitiesRef.current.clear();
+
+      // Update ref to new book key
+      previousBookKeyRef.current = currentBookKey;
+    }
+  }, [currentBookKey, charactersData]);
+
   // Add event listeners
   useEffect(() => {
     const handleGlobalMouseMove = (e) => handleNodeMouseMove(e);
@@ -1888,19 +1924,21 @@ const RelationshipWeb = ({
             </div>
 
             {/* Relationship Types Key */}
-            <div className="mb-6">
-              <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Relationship Types
-              </label>
-              <div className="space-y-2">
-                {relationshipLegendItems.map(item => (
-                  <div key={item.label} className="flex items-center">
-                    <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: item.color }}></div>
-                    <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{item.label}</span>
-                  </div>
-                ))}
+            {relationshipLegendItems.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Relationship Types
+                </label>
+                <div className="space-y-2">
+                  {relationshipLegendItems.map(item => (
+                    <div key={item.label} className="flex items-center">
+                      <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: item.color }}></div>
+                      <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>

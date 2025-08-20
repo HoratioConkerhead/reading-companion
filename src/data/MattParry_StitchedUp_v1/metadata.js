@@ -51,6 +51,17 @@ export const bookMetadata = {
     'Military': '#4A5568',
     'Historical Figures': '#805AD5'
   },
+  // Optional: colors for relationship categories used by RelationshipWeb
+  relationshipCategoryColors: {
+    'Spouse': '#805AD5',
+    'Handler/Asset': '#3182CE',
+    'Conspirator/Enemy': '#E53E3E',
+    'Colleague/Partner': '#38A169',
+    'Superior/Subordinate': '#DD6B20',
+    'Friend': '#4299E1',
+    'Informant/Double-Agent': '#D53F8C',
+    'Other': '#718096'
+  },
   // Optional: character importance weighting configuration used by RelationshipWeb
   importanceWeights: {
     keyScenes: { perItem: 6, max: 30 },
