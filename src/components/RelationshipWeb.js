@@ -566,7 +566,7 @@ const RelationshipWeb = ({
     ],
     [
       '"Reset View" restores defaults without changing the chapter filter or full-screen.',
-      '"Show Up To Chapter" limits characters/relationships to avoid spoilers (Work in Progress).'
+      'Use the Up To control on the tab bar to limit content by chapter and avoid spoilers.'
     ]
   ];
 
@@ -1706,7 +1706,7 @@ const RelationshipWeb = ({
       )}
 
       {/* Controls */}
-      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:[grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_auto] gap-4`}>
+      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:[grid-template-columns:minmax(0,1fr)_auto] gap-4`}>
         <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Focus on Character
@@ -1724,29 +1724,7 @@ const RelationshipWeb = ({
           </select>
         </div>
 
-        <div className="min-w-0">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Show Up To Chapter
-          </label>
-          <div className="flex gap-2 min-w-0">
-            <select
-              className="flex-1 min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-              value={currentChapter || ''}
-              onChange={(e) => {
-                const value = e.target.value || null;
-                setCurrentChapter(value);
-                if (onChapterFilterChange) onChapterFilterChange(value);
-              }}
-            >
-              <option value="">Show All Characters and Relationships</option>
-              {chaptersData.map((chapter, index) => (
-                <option key={chapter.id} value={chapter.id}>
-                  {chapter.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* Removed local chapter dropdown – now controlled globally from the tab bar */}
 
 
         <div className="flex flex-wrap gap-2 items-end md:w-max md:justify-self-start">
@@ -1850,31 +1828,16 @@ const RelationshipWeb = ({
             <span className="whitespace-pre leading-tight text-center">{`Remove\nMode`}</span>
           </button>
 
-        </div>
-      </div>
+          <button
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors flex-shrink-0"
+            title="Step-by-step tutorial for this page"
+            onClick={() => setIsTutorialOpen(true)}
+          >
+            <span className="whitespace-pre leading-tight text-center">{`Page\nTutorial`}</span>
+          </button>
 
-
-
-
-      {/* Main Content Area with Left Panel and Map */}
-      <div className="flex gap-4">
-        {/* Left Panel */}
-        <div className="w-48 flex-shrink-0">
-          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 95px)' : '840px' }}>
-
-            {/* Action Buttons */}
-            <div className="mb-6">
-              <div className="space-y-2">
-                <button
-                  className="w-full px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors text-s"
-                  title="Step-by-step tutorial for this page"
-                  onClick={() => setIsTutorialOpen(true)}
-                >
-                  Page Tutorial
-                </button>
-
-                <button
-                  className="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-s"
+          <button
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors flex-shrink-0"
                   title="How to use the Relationship Web"
                   onClick={() => {
                                          alert(`How to use the Relationship Web:
@@ -1890,10 +1853,24 @@ const RelationshipWeb = ({
  • Toggle "Size by Importance" to make important characters larger`);
                   }}
                 >
-                  ℹ️ Help
+            <span className="whitespace-pre leading-tight text-center">{`ℹ️\nHelp`}</span>
+            
                 </button>
-              </div>
-            </div>
+
+
+
+        </div>
+      </div>
+
+
+
+
+      {/* Main Content Area with Left Panel and Map */}
+      <div className="flex gap-4">
+        {/* Left Panel */}
+        <div className="w-48 flex-shrink-0">
+          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 95px)' : '840px' }}>
+
             {/* Physics Controls */}
             <div className="mb-6">
               <div className="space-y-3">
