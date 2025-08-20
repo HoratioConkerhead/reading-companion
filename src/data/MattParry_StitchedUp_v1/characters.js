@@ -11,12 +11,12 @@ export const characters = [
       personality: 'Independent, observant, quick-thinking, adaptable. Not comfortable with class expectations. Has a natural talent for intelligence work despite initial reluctance.',
       traits: ['Multilingual', 'Well-traveled', 'Independent thinker', 'Adaptable', 'Observant'],
       relations: [
-        { characterId: 'richard_childreth', type: 'spouse', description: 'Marriage of convenience where both have had "dalliances"', introducedInChapter: 'chapter_01' },
-        { characterId: 'amy_wyndholme', type: 'friend', description: 'Old school friend who facilitates her recruitment', introducedInChapter: 'chapter_01' },
-        { characterId: 'bill_laurie', type: 'handler', description: 'Intelligence handler who respects her abilities', introducedInChapter: 'chapter_03' },
-        { characterId: 'mary', type: 'employee_friend', description: 'Secretary, confidante, and ally throughout operations', introducedInChapter: 'chapter_15' },
-        { characterId: 'peter_snowden', type: 'adversary', description: 'Nazi sympathizer she must monitor', introducedInChapter: 'chapter_01' },
-        { characterId: 'louise_harrington', type: 'complex', description: 'Initially an adversary, later revealed as ally', introducedInChapter: 'chapter_01' }
+        { characterId: 'richard_childreth', type: 'spouse', description: 'Marriage of convenience where both have had "dalliances"', introducedInChapter: 'chapter1' },
+        { characterId: 'amy_wyndholme', type: 'friend', description: 'Old school friend who facilitates her recruitment', introducedInChapter: 'chapter1' },
+        { characterId: 'bill_laurie', type: 'handler', description: 'Intelligence handler who respects her abilities', introducedInChapter: 'chapter3' },
+        { characterId: 'mary', type: 'employee_friend', description: 'Secretary, confidante, and ally throughout operations', introducedInChapter: 'epilogue' },
+        { characterId: 'peter_snowden', type: 'adversary', description: 'Nazi sympathizer she must monitor', introducedInChapter: 'chapter1' },
+        { characterId: 'louise_harrington', type: 'complex', description: 'Initially an adversary, later revealed as ally', introducedInChapter: 'chapter1' }
       ],
       development: [
         { phase: 'Beginning', description: 'Socialite with unconventional views, recruited at Denleigh Manor' },
@@ -26,7 +26,7 @@ export const characters = [
       ],
       fate: 'Receives OBE for "services to war work" in recognition of her intelligence contributions',
       key_scenes: ['denleigh_recruitment', 'berlin_trip', 'first_party', 'second_party', 'assassination_attempt'],
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'richard_childreth',
@@ -37,8 +37,8 @@ export const characters = [
       personality: 'Practical, professional, supportive of Cynthia. More comfortable with straightforward business matters than espionage intrigue.',
       traits: ['Financially astute', 'Loyal', 'Pragmatic', 'Veteran of WWI'],
       relations: [
-        { characterId: 'cynthia_childreth', type: 'spouse', description: 'Marriage of convenience that functions well professionally', introducedInChapter: 'chapter_01' },
-        { characterId: 'bill_laurie', type: 'handler', description: 'Operational contact for banking aspects of mission', introducedInChapter: 'chapter_06' }
+        { characterId: 'cynthia_childreth', type: 'spouse', description: 'Marriage of convenience that functions well professionally', introducedInChapter: 'chapter1' },
+        { characterId: 'bill_laurie', type: 'handler', description: 'Operational contact for banking aspects of mission', introducedInChapter: 'chapter6' }
       ],
       development: [
         { phase: 'Beginning', description: 'Banker drawn into intelligence work through Cynthia' },
@@ -46,7 +46,7 @@ export const characters = [
         { phase: 'End', description: 'Continues supporting Cynthia through final operation' }
       ],
       key_scenes: ['berlin_trip', 'bank_meeting', 'assassination_attempt'],
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'bill_laurie',
@@ -57,16 +57,16 @@ export const characters = [
       personality: 'Strategic, cautious, intelligent. Expert at planning long-term intelligence operations and managing assets.',
       traits: ['Military background', 'Strategic thinker', 'Patient', 'Forward-planning'],
       relations: [
-        { characterId: 'cynthia_childreth', type: 'asset', description: 'Recruits and handles Cynthia, respects her abilities', introducedInChapter: 'chapter_03' },
-        { characterId: 'hannah_park', type: 'colleague', description: 'Works closely with Hannah on operations', introducedInChapter: 'chapter_03' },
-        { characterId: 'jane_maclean', type: 'colleague', description: 'Works closely with Jane on operations', introducedInChapter: 'chapter_03' },
-        { characterId: 'edwin', type: 'subordinate', description: 'Edwin is Bill\'s "minder" and operational support', introducedInChapter: 'chapter_19' },
-        { characterId: 'george_bennet', type: 'colleague', description: 'Collaborates with Special Branch on cross-department operations', introducedInChapter: 'chapter_31' },
-        { characterId: 'louise_harrington', type: 'asset', description: 'Secret informant within the fifth columnist group', introducedInChapter: 'chapter_22' }
+        { characterId: 'cynthia_childreth', type: 'asset', description: 'Recruits and handles Cynthia, respects her abilities', introducedInChapter: 'chapter3' },
+        { characterId: 'hannah_park', type: 'colleague', description: 'Works closely with Hannah on operations', introducedInChapter: 'chapter3' },
+        { characterId: 'jane_maclean', type: 'colleague', description: 'Works closely with Jane on operations', introducedInChapter: 'chapter3' },
+        { characterId: 'edwin', type: 'subordinate', description: 'Edwin is Bill\'s "minder" and operational support', introducedInChapter: 'epilogue' },
+        { characterId: 'george_bennet', type: 'colleague', description: 'Collaborates with Special Branch on cross-department operations', introducedInChapter: 'epilogue' },
+        { characterId: 'louise_harrington', type: 'asset', description: 'Secret informant within the fifth columnist group', introducedInChapter: 'epilogue' }
       ],
       aliases: ['Mr. Newton (at Denleigh Manor)'],
       key_scenes: ['denleigh_recruitment', 'operation_planning', 'assassination_prevention'],
-      introducedInChapter: 'chapter_03'
+      introducedInChapter: 'chapter3'
     },
     {
       id: 'hannah_park',
@@ -77,12 +77,12 @@ export const characters = [
       personality: 'Bold, unconventional, adaptable. Master of disguise who can completely transform her appearance.',
       traits: ['Master of disguise', 'Provocative', 'Adaptable', 'Quick-thinking'],
       relations: [
-        { characterId: 'bill_laurie', type: 'colleague', description: 'Works under Bill\'s direction on operations', introducedInChapter: 'chapter_03' },
-        { characterId: 'jane_maclean', type: 'partner', description: 'Close working partnership, often operate together', introducedInChapter: 'chapter_03' }
+        { characterId: 'bill_laurie', type: 'colleague', description: 'Works under Bill\'s direction on operations', introducedInChapter: 'chapter3' },
+        { characterId: 'jane_maclean', type: 'partner', description: 'Close working partnership, often operate together', introducedInChapter: 'chapter3' }
       ],
       aliases: ['Miss Gilchrist (at Denleigh, deliberately provocative with monocle and masculine attire)', 'Blonde society lady (at the Ritz)'],
       key_scenes: ['denleigh_recruitment', 'ritz_meeting', 'final_operation'],
-      introducedInChapter: 'chapter_03'
+      introducedInChapter: 'chapter3'
     },
     {
       id: 'louise_harrington',
@@ -93,8 +93,8 @@ export const characters = [
       personality: 'Cunning, adaptable, morally complex. Began as true believer but developed doubts about Nazi methods.',
       traits: ['Knitter', 'Intelligent', 'Morally complex', 'Excellent shot', 'Multilingual'],
       relations: [
-        { characterId: 'bob_harrington', type: 'spouse', description: 'Marriage increasingly strained by her changing views', introducedInChapter: 'chapter_01' },
-        { characterId: 'bill_laurie', type: 'handler', description: 'Secret informant relationship after disillusionment', introducedInChapter: 'chapter_22' },
+        { characterId: 'bob_harrington', type: 'spouse', description: 'Marriage increasingly strained by her changing views', introducedInChapter: 'chapter1' },
+        { characterId: 'bill_laurie', type: 'handler', description: 'Secret informant relationship after disillusionment', introducedInChapter: 'epilogue' },
         { characterId: 'gerda_stammer', type: 'associate', description: 'Connection to German Nazi supporters' }
       ],
       development: [
@@ -106,7 +106,7 @@ export const characters = [
       aliases: ['Grey-haired lady on train'],
       fate: 'Killed in suspicious gas explosion after events, likely murdered by remaining Nazi sympathizers',
       key_scenes: ['denleigh_manor', 'berlin_trip', 'train_journey', 'rifle_practice', 'assassination_prevention'],
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'bob_harrington',
@@ -117,7 +117,7 @@ export const characters = [
       personality: 'Determined, obsessive about weapons',
       traits: ['Meticulous', 'Fanatical'],
       fate: 'Shot in hand, arrested and imprisoned',
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'john_davies',
@@ -129,7 +129,7 @@ export const characters = [
       personality: 'Arrogant, commanding',
       traits: ['Authoritative', 'Wealthy landowner'],
       fate: 'Shot in arm, arrested and imprisoned',
-      introducedInChapter: 'chapter_11'
+      introducedInChapter: 'chapter11'
     },
     {
       id: 'megan_davies',
@@ -141,7 +141,7 @@ export const characters = [
       personality: 'Appears mousey but is extremely dedicated to the cause',
       traits: ['Deceptively meek appearance', 'Fanatically devoted to Nazi cause'],
       fate: 'Escaped to Ireland',
-      introducedInChapter: 'chapter_11'
+      introducedInChapter: 'chapter11'
     },
     {
       id: 'peter_snowden',
@@ -150,7 +150,7 @@ export const characters = [
       group: 'Fifth Columnists',
       role: 'Fifth columnist, pro-Nazi sympathizer',
       fate: 'Escaped to Ireland',
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'marjorie_snowden',
@@ -158,7 +158,7 @@ export const characters = [
       group: 'Fifth Columnists',
       role: 'Fifth columnist, pro-Nazi sympathizer',
       fate: 'Escaped to Ireland',
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'gerda_stammer',
@@ -166,69 +166,71 @@ export const characters = [
       group: 'German Connection',
       role: 'German Nazi sympathizer',
       traits: ['Enthusiastic Hitler supporter'],
-      introducedInChapter: 'chapter_10'
+      introducedInChapter: 'chapter10'
     },
     {
       id: 'mary',
       name: 'Mary',
       group: 'Protagonists',
       role: 'Cynthia\'s secretary and confidante',
-      introducedInChapter: 'chapter_15'
+      introducedInChapter: 'chapter11'
     },
     {
       id: 'amy_wyndholme',
       name: 'Amy Wyndholme',
       group: 'Supporting Characters',
       role: 'Cynthia\'s old school friend, facilitates recruitment',
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'jane_maclean',
       name: 'Jane Maclean',
       group: 'Protagonists',
       role: 'Intelligence agent',
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'george_bennet',
       name: 'George Bennet',
       group: 'Protagonists',
       role: 'Special Branch officer',
-      introducedInChapter: 'chapter_25'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'edwin',
       name: 'Edwin',
       group: 'Protagonists',
       role: 'Bill\'s "minder" and operational support',
-      introducedInChapter: 'chapter_19'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'franz_stammer',
       name: 'Franz Stammer',
       group: 'German Connection',
       role: 'Works at the Reichsbank',
-      introducedInChapter: 'chapter_09'
+      introducedInChapter: 'chapter9'
     },
     {
       id: 'lena_weber',
       name: 'Lena Weber',
       group: 'German Connection',
-      role: 'Original member of the German pro-Nazi group'
+      role: 'Original member of the German pro-Nazi group',
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'edwards',
       name: 'T.G. Edwards',
       group: 'German Connection',
       role: 'German agent',
-      fate: 'Murdered in London flat'
+      fate: 'Murdered in London flat',
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'jim',
       name: 'Jim',
       group: 'Supporting Characters',
       role: 'George\'s colleague at Special Branch',
-      introducedInChapter: 'chapter_26'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'montgomery',
@@ -241,7 +243,7 @@ export const characters = [
       traits: ['Strategic', 'Charismatic', 'Methodical', 'Recognizable'],
       significance: 'Primary target of the assassination plot. His death was intended to disrupt Allied invasion planning.',
       key_scenes: ['montgomery_visit', 'assassination_attempt'],
-      introducedInChapter: 'chapter_35'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'gladys',
@@ -252,11 +254,11 @@ export const characters = [
       personality: 'Observant, gossipy but reliable, loyal to the community',
       traits: ['Vigilant', 'Knowledgeable about local affairs', 'Trusted'],
       relations: [
-        { characterId: 'cynthia_childreth', type: 'village_contact', description: 'Trusted local who provides information about strangers in the village', introducedInChapter: 'chapter_20' }
+        { characterId: 'cynthia_childreth', type: 'village_contact', description: 'Trusted local who provides information about strangers in the village', introducedInChapter: 'epilogue' }
       ],
       significance: 'Provides crucial intelligence about unknown visitors and watchers in the village',
       key_scenes: ['village_surveillance'],
-      introducedInChapter: 'chapter_20'
+      introducedInChapter: 'chapter11'
     },
     {
       id: 'alison',
@@ -267,11 +269,11 @@ export const characters = [
       personality: 'Adaptable, quick-thinking, resourceful',
       traits: ['Master of disguise', 'Observant', 'Resilient'],
       relations: [
-        { characterId: 'bill_laurie', type: 'subordinate', description: 'Works under Bill\'s direction', introducedInChapter: 'chapter_26' }
+        { characterId: 'bill_laurie', type: 'subordinate', description: 'Works under Bill\'s direction', introducedInChapter: 'epilogue' }
       ],
       aliases: ['Sarah (to Cynthia)', 'Rambler (on train)'],
       key_scenes: ['train_journey', 'house_protection'],
-      introducedInChapter: 'chapter_26'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'felicity',
@@ -283,7 +285,7 @@ export const characters = [
       traits: ['Observant', 'Diligent', 'Versatile'],
       aliases: ['Writer (in Aldworth)'],
       key_scenes: ['cottage_surveillance'],
-      introducedInChapter: 'chapter_06'
+      introducedInChapter: 'chapter6'
     },
     {
       id: 'don',
@@ -294,7 +296,7 @@ export const characters = [
       personality: 'Professional, direct, methodical',
       traits: ['Experienced operative', 'Good teacher', 'Practical'],
       key_scenes: ['tradecraft_training'],
-      introducedInChapter: 'chapter_18'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'jack',
@@ -305,10 +307,10 @@ export const characters = [
       personality: 'Outwardly friendly, inwardly scheming',
       traits: ['Deceptive', 'Observant', 'Connected'],
       relations: [
-        { characterId: 'louise_harrington', type: 'co-conspirator', description: 'Provides local intelligence and assistance to Louise', introducedInChapter: 'chapter_44' }
+        { characterId: 'louise_harrington', type: 'co-conspirator', description: 'Provides local intelligence and assistance to Louise', introducedInChapter: 'epilogue' }
       ],
       key_scenes: ['cottage_surveillance', 'house_occupation'],
-      introducedInChapter: 'chapter_44'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'keith',
@@ -318,7 +320,8 @@ export const characters = [
       background: 'Agent who assumes cover as artist for surveillance',
       personality: 'Observant, detail-oriented, patient',
       traits: ['Artistic', 'Discreet'],
-      key_scenes: ['surveillance_operation', 'final_operation']
+      key_scenes: ['surveillance_operation', 'final_operation'],
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'bert',
@@ -328,7 +331,8 @@ export const characters = [
       background: 'Special Branch officer with artistic talent',
       personality: 'Resourceful, observant, resilient',
       traits: ['Artistic', 'Adaptable'],
-      key_scenes: ['edwards_discovery', 'surveillance_operation']
+      key_scenes: ['edwards_discovery', 'surveillance_operation'],
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'mike',
@@ -338,7 +342,9 @@ export const characters = [
       background: 'Special Branch officer',
       personality: 'Analytical, thorough',
       traits: ['Detail-oriented', 'Methodical'],
-      key_scenes: ['surveillance_operation', 'final_operation']
+      key_scenes: ['surveillance_operation', 'final_operation'],
+      introducedInChapter: 'epilogue'
+
     },
     {
       id: 'patrick',
@@ -348,7 +354,7 @@ export const characters = [
       background: 'Professional butler serving the Wyndholmes',
       personality: 'Formal, discreet',
       traits: ['Professional', 'Observant'],
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'sheila',
@@ -358,7 +364,7 @@ export const characters = [
       background: 'Household staff',
       personality: 'Attentive, proper',
       traits: ['Efficient', 'Proper'],
-      introducedInChapter: 'chapter_01'
+      introducedInChapter: 'chapter1'
     },
     {
       id: 'horace_wyndholme',
@@ -367,7 +373,7 @@ export const characters = [
       role: 'Amy\'s husband, works for Foreign Office',
       background: 'Amy\'s husband who actually works in intelligence',
       traits: ['Connected', 'Intelligence officer'],
-      introducedInChapter: 'chapter_05'
+      introducedInChapter: 'chapter5'
     },
     {
       id: 'oswald_mosley',
@@ -379,7 +385,7 @@ export const characters = [
       personality: 'Charismatic, authoritarian, ambitious',
       traits: ['Oratorical', 'Fascist', 'Ambitious'],
       key_scenes: ['second_party'],
-      introducedInChapter: 'chapter_22'
+      introducedInChapter: 'epilogue'
     },
     {
       id: 'helmut_schnitter',
@@ -400,7 +406,7 @@ export const characters = [
     traits: ['Efficient', 'Discreet', 'Cooperative'],
     significance: 'Coordinates security arrangements with Bill, arranges "three Montgomerys" decoy',
     key_scenes: ['intelligence_meeting', 'montgomery_visit'],
-    introducedInChapter: 'chapter_42'
+    introducedInChapter: 'epilogue'
   },
   {
     id: 'inspector_williams',
@@ -410,7 +416,7 @@ export const characters = [
     background: 'Local police officer who assists with tracking Davies\' escape to Ireland',
     traits: ['Thorough', 'Cooperative'],
     key_scenes: ['davies_ireland_investigation'],
-    introducedInChapter: 'chapter_47'
+    introducedInChapter: 'epilogue'
   },
   {
     id: 'paul_holness',
@@ -421,11 +427,11 @@ export const characters = [
     personality: 'Reliable, discreet, supportive of intelligence operations',
     traits: ['Trustworthy', 'Efficient'],
     relations: [
-      { characterId: 'bill_laurie', type: 'former_colleague', description: 'Former RAF colleague who assists with intelligence operations', introducedInChapter: 'chapter_45' },
-      { characterId: 'felicity', type: 'cover_provider', description: 'Provides publishing cover for Felicity\'s reports', introducedInChapter: 'chapter_45' }
+      { characterId: 'bill_laurie', type: 'former_colleague', description: 'Former RAF colleague who assists with intelligence operations', introducedInChapter: 'epilogue' },
+      { characterId: 'felicity', type: 'cover_provider', description: 'Provides publishing cover for Felicity\'s reports', introducedInChapter: 'epilogue' }
     ],
     key_scenes: ['felicity_reports_handling'],
-    introducedInChapter: 'chapter_45'
+    introducedInChapter: 'epilogue'
   },
   {
     id: 'jacobs',
@@ -435,7 +441,7 @@ export const characters = [
     background: 'Weapons expert who identifies the 7.92mm shell casing',
     traits: ['Knowledgeable', 'Technical'],
     key_scenes: ['shell_casing_identification'],
-    introducedInChapter: 'chapter_42'
+    introducedInChapter: 'epilogue'
   },
   {
     id: 'ken',
@@ -444,7 +450,7 @@ export const characters = [
     role: 'Intelligence operative stationed at vehicle during final operation',
     traits: ['Reliable', 'Alert'],
     key_scenes: ['final_operation'],
-    introducedInChapter: 'chapter_50'
+    introducedInChapter: 'epilogue'
   },
   {
     id: 'chief_inspector',
@@ -454,6 +460,6 @@ export const characters = [
     personality: 'Professional but territorial about jurisdiction',
     traits: ['Professional', 'By-the-book'],
     key_scenes: ['edwards_murder_investigation'],
-    introducedInChapter: 'chapter_30'
+    introducedInChapter: 'epilogue'
   }
 ];

@@ -793,6 +793,8 @@ const RelationshipWeb = ({
 
   // Ensure a default focused character when charactersData changes or current focus is missing
   useEffect(() => {
+    // If nodes already exist (e.g., after Show All), do not override with auto-focus
+    if (nodes.length > 0) return;
     if (suppressAutoFocusRef.current) {
       suppressAutoFocusRef.current = false; // one-shot
       return;
@@ -806,7 +808,7 @@ const RelationshipWeb = ({
       const nextFocus = allowedCharacters.length > 0 ? allowedCharacters[0].id : null;
       setFocusedCharacter(nextFocus);
     }
-  }, [charactersData, currentChapter, filterCharactersByChapter, focusedCharacter, selectedCharacter]);
+  }, [charactersData, currentChapter, filterCharactersByChapter, focusedCharacter, selectedCharacter, nodes.length]);
 
   // Keep show-all mode until user explicitly focuses a character
 
@@ -1378,22 +1380,44 @@ const RelationshipWeb = ({
 
   // Show all characters and relationships up to current chapter
   const showAllUpToChapter = () => {
-    // Explicitly build all nodes up to the selected chapter and all relationships among them
-    suppressAutoFocusRef.current = true;
-    setFocusedCharacter(null);
+    // Expand the current view as if we had clicked every visible node to reveal all
+    // characters and relationships up to the selected chapter, without changing focus
 
     const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
+    const allowedById = new Map(allowedCharacters.map(c => [c.id, c]));
+    const allowedIds = new Set(allowedCharacters.map(c => c.id));
+    const filteredRels = filterRelationshipsByChapter(relationshipsData, currentChapter)
+      .filter(rel => allowedIds.has(rel.from) && allowedIds.has(rel.to));
+
+    // Build adjacency map
+    const adjacency = new Map(); // id -> Set(neighborId)
+    filteredRels.forEach(rel => {
+      if (!adjacency.has(rel.from)) adjacency.set(rel.from, new Set());
+      if (!adjacency.has(rel.to)) adjacency.set(rel.to, new Set());
+      adjacency.get(rel.from).add(rel.to);
+      adjacency.get(rel.to).add(rel.from);
+    });
+
+    // Start from current nodes; if empty, seed with focused character (if any and allowed)
+    let updatedNodes = [...nodes];
+    let existingIds = new Set(updatedNodes.map(n => n.id));
+
     const centerX = 400;
     const centerY = 300;
-    const radius = 200;
 
-    const newNodes = allowedCharacters.map((character, index) => {
-      const relationshipCount = getRelationshipCount(character.id);
+    const addNodeWithPositionNear = (anchorNode, characterId, neighborIndex = 0) => {
+      const character = allowedById.get(characterId);
+      if (!character) return null;
+      const relationshipCount = getRelationshipCount(characterId);
       const importance = calculateCharacterImportance(character);
       const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
-      const angle = (index * 2 * Math.PI) / Math.max(allowedCharacters.length, 1);
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
+
+      // Place around anchor using a spread angle and radius increasing with neighborIndex
+      const angle = (neighborIndex * 2 * Math.PI) / Math.max(1, (adjacency.get(anchorNode.id)?.size || 1));
+      const radius = 150 + (neighborIndex * 25);
+      const x = anchorNode.position.x + radius * Math.cos(angle);
+      const y = anchorNode.position.y + radius * Math.sin(angle);
+
       return {
         id: character.id,
         name: character.name,
@@ -1406,21 +1430,101 @@ const RelationshipWeb = ({
         size,
         isFocused: false
       };
-    });
+    };
 
-    setNodes(newNodes);
+    if (updatedNodes.length === 0) {
+      const seedId = (focusedCharacter && allowedIds.has(focusedCharacter))
+        ? focusedCharacter
+        : (allowedCharacters[0]?.id || null);
+      if (seedId) {
+        const seedChar = allowedById.get(seedId);
+        const relationshipCount = getRelationshipCount(seedId);
+        const importance = calculateCharacterImportance(seedChar);
+        const size = scaleSizeByImportance ? getNodeSize(importance, true) : 30;
+        updatedNodes.push({
+          id: seedChar.id,
+          name: seedChar.name,
+          role: seedChar.role,
+          group: seedChar.group,
+          position: { x: centerX, y: centerY },
+          color: getGroupColor(seedChar.group, relationshipCount),
+          relationshipCount,
+          importance,
+          size,
+          isFocused: true
+        });
+        existingIds.add(seedId);
+      }
+    }
 
-    const allowedIds = new Set(allowedCharacters.map(c => c.id));
-    const filteredRels = filterRelationshipsByChapter(relationshipsData, currentChapter)
-      .filter(rel => allowedIds.has(rel.from) && allowedIds.has(rel.to));
-    const newEdges = filteredRels.map((relationship, index) => ({
-      id: `${relationship.from}-${relationship.to}-${index}`,
-      from: relationship.from,
-      to: relationship.to,
-      type: relationship.type,
-      color: getRelationshipColor(relationship.type),
-      label: formatRelationshipType(relationship.type)
-    }));
+    // Iteratively add neighbors of all present nodes until closure over allowed set
+    let safety = allowedCharacters.length + 5;
+    while (safety-- > 0) {
+      let addedAny = false;
+      // Snapshot current nodes length at each pass
+      const snapshotNodes = [...updatedNodes];
+      for (let i = 0; i < snapshotNodes.length; i++) {
+        const anchor = snapshotNodes[i];
+        const neighbors = Array.from(adjacency.get(anchor.id) || []);
+        let localIndex = 0;
+        for (const neighborId of neighbors) {
+          if (!existingIds.has(neighborId) && allowedIds.has(neighborId)) {
+            const newNode = addNodeWithPositionNear(anchor, neighborId, localIndex);
+            if (newNode) {
+              updatedNodes.push(newNode);
+              existingIds.add(neighborId);
+              addedAny = true;
+              localIndex++;
+            }
+          }
+        }
+      }
+      if (!addedAny) break;
+    }
+
+    // Some allowed characters might still be missing (disconnected components). Place them in a circle around center.
+    const missingIds = Array.from(allowedIds).filter(id => !existingIds.has(id));
+    if (missingIds.length > 0) {
+      const radius = 250;
+      missingIds.forEach((id, idx) => {
+        const character = allowedById.get(id);
+        if (!character) return;
+        const relationshipCount = getRelationshipCount(id);
+        const importance = calculateCharacterImportance(character);
+        const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
+        const angle = (idx * 2 * Math.PI) / missingIds.length;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        updatedNodes.push({
+          id: character.id,
+          name: character.name,
+          role: character.role,
+          group: character.group,
+          position: { x, y },
+          color: getGroupColor(character.group, relationshipCount),
+          relationshipCount,
+          importance,
+          size,
+          isFocused: false
+        });
+      });
+    }
+
+    // Commit nodes
+    setNodes(updatedNodes);
+
+    // Build edges among all visible nodes
+    const visibleIds = new Set(updatedNodes.map(n => n.id));
+    const newEdges = filteredRels
+      .filter(rel => visibleIds.has(rel.from) && visibleIds.has(rel.to))
+      .map((relationship, index) => ({
+        id: `${relationship.from}-${relationship.to}-${index}`,
+        from: relationship.from,
+        to: relationship.to,
+        type: relationship.type,
+        color: getRelationshipColor(relationship.type),
+        label: formatRelationshipType(relationship.type)
+      }));
 
     setEdges(newEdges);
   };
