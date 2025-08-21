@@ -1202,6 +1202,10 @@ const RelationshipWeb = ({
         }
         return next;
       });
+
+      // Only pin once, so return to normal mode
+      setActiveMode('none');
+
       return;
     }
     if (isRemoveMode) {
@@ -1223,6 +1227,9 @@ const RelationshipWeb = ({
           );
         });
         
+        // Only remove once, so return to normal mode
+        setActiveMode('none');
+
         return filteredNodes;
       });
       return;
