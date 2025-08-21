@@ -901,7 +901,7 @@ const RelationshipWeb = ({
           springForce: springForceRef.current,
           springLength: 120,
           damping: 0.85,
-          maxVelocity: 80,
+          maxVelocity: 40,
           // centerPull removed
           
           // Run simulation step
