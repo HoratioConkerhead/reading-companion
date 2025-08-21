@@ -66,7 +66,14 @@ const RelationshipWeb = ({
   // FPS tracking (for auto-arrange)
   const [fps, setFps] = useState(0);
   const [showFps, setShowFps] = useState(false);
+  const [fpsHistory, setFpsHistory] = useState([]);
   const fpsStatsRef = useRef({ frames: 0, lastReport: 0, lastFps: 0 });
+  // Live refs for values used inside RAF loop to avoid stale closures
+  const springForceRef = useRef(springForce);
+  const repulsionForceRef = useRef(repulsionForce);
+  const edgesRef = useRef(edges);
+  const pinnedNodeIdsRef = useRef(pinnedNodeIds);
+  const autoPinnedNodeIdsRef = useRef(autoPinnedNodeIds);
 
   useEffect(() => {
     if (typeof performance !== 'undefined') {
@@ -75,6 +82,13 @@ const RelationshipWeb = ({
       fpsStatsRef.current.lastFps = 0;
     }
   }, []);
+
+  // Keep physics-related refs up to date for the RAF loop
+  useEffect(() => { springForceRef.current = springForce; }, [springForce]);
+  useEffect(() => { repulsionForceRef.current = repulsionForce; }, [repulsionForce]);
+  useEffect(() => { edgesRef.current = edges; }, [edges]);
+  useEffect(() => { pinnedNodeIdsRef.current = pinnedNodeIds; }, [pinnedNodeIds]);
+  useEffect(() => { autoPinnedNodeIdsRef.current = autoPinnedNodeIds; }, [autoPinnedNodeIds]);
 
   // Toggle FPS with F10
   useEffect(() => {
@@ -868,8 +882,8 @@ const RelationshipWeb = ({
         if (currentNodes.length === 0) return currentNodes;
         
         const pinnedSet = new Set([
-          ...Array.from(pinnedNodeIds || new Set()),
-          ...Array.from(autoPinnedNodeIds || new Set())
+          ...Array.from(pinnedNodeIdsRef.current || new Set()),
+          ...Array.from(autoPinnedNodeIdsRef.current || new Set())
         ]);
 
         const simulation = {
@@ -878,13 +892,13 @@ const RelationshipWeb = ({
             velocity: { x: 0, y: 0 },
             force: { x: 0, y: 0 }
           })),
-          edges: edges,
+          edges: edgesRef.current,
           pinnedSet,
           // (center pull for isolates removed per user request)
           
-          // Physics constants - use state values
-          repulsionForce: repulsionForce,
-          springForce: springForce,
+          // Physics constants - use ref values (live updates)
+          repulsionForce: repulsionForceRef.current,
+          springForce: springForceRef.current,
           springLength: 120,
           damping: 0.85,
           maxVelocity: 8,
@@ -1007,6 +1021,12 @@ const RelationshipWeb = ({
             const currentFps = Math.round((stats.frames * 1000) / elapsed);
             stats.frames = 0;
             stats.lastReport = now;
+            // push into history buffer (always push, even if unchanged)
+            setFpsHistory(prev => {
+              const next = [...prev, currentFps];
+              const MAX = 60; // history length
+              return next.length > MAX ? next.slice(next.length - MAX) : next;
+            });
             if (currentFps !== stats.lastFps) {
               stats.lastFps = currentFps;
               setFps(currentFps);
@@ -1021,7 +1041,7 @@ const RelationshipWeb = ({
         
         return simulation.nodes;
       });
-    }, [isAutoArrangeOn, edges, springForce, repulsionForce, pinnedNodeIds, autoPinnedNodeIds]);
+    }, [isAutoArrangeOn]);
   
            // Run auto arrange when enabled
     useEffect(() => {
@@ -2131,8 +2151,31 @@ const RelationshipWeb = ({
           >
             {/* FPS Overlay */}
             {showFps && (
-              <div className="absolute left-4 top-4 z-10 px-2 py-1 rounded text-xs font-mono" style={{ background: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.8)', color: darkMode ? '#fff' : '#111', border: darkMode ? '1px solid #444' : '1px solid #ddd' }}>
-                FPS: {fps}
+              <div className="absolute left-4 top-4 z-10 px-2 py-1 rounded text-xs font-mono flex items-center gap-2" style={{ background: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.8)', color: darkMode ? '#fff' : '#111', border: darkMode ? '1px solid #444' : '1px solid #ddd' }}>
+                <span style={{ minWidth: 16, textAlign: 'right' }}>{fps}</span>
+                <svg width="80" height="40" viewBox="0 0 80 20">
+                  {
+                    (() => {
+                      const values = fpsHistory;
+                      const maxFps = 60; // assume 60hz cap
+                      const barWidth = 2;
+                      const gap = 0;
+                      const capacity = Math.floor(80 / (barWidth + gap));
+                      const recent = values.slice(-capacity);
+                      const startX = 80 - recent.length * (barWidth + gap);
+                      return recent.map((v, i) => {
+                        const clamped = Math.max(0, Math.min(maxFps, v || 0));
+                        const h = Math.max(1, Math.round((clamped / maxFps) * 38));
+                        const x = startX + i * (barWidth + gap);
+                        const y = 30 - h;
+                        const fill = darkMode ? '#777788' : '#0ea5e9';
+                        return (
+                          <rect key={i} x={x} y={y} width={barWidth} height={h} fill={fill} />
+                        );
+                      });
+                    })()
+                  }
+                </svg>
               </div>
             )}
             {/* Full Screen Button */}
@@ -2374,7 +2417,7 @@ const RelationshipWeb = ({
                        })()}
                     </text>
                     
-                                         {/* Character description - show if showDescription is true OR hovering over this node */}
+                     {/* Character description - show if showDescription is true OR hovering over this node */}
                      {(showDescription || hoveredNode === node.id) && node.role && (
                       <text
                         x={node.position.x}

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 const PageTutorial = ({ isOpen, onClose, title = 'Page Tutorial', steps = [], darkMode = false }) => {
 	const [index, setIndex] = useState(0);
-	const [position, setPosition] = useState({ top: 40, left: 16 });
+	// starts off screen to avoid flash
+	const [position, setPosition] = useState({ top: -500, left: 0 });
 	const [dragging, setDragging] = useState(false);
 	const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
