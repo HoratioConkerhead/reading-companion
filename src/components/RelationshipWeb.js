@@ -901,85 +901,112 @@ const RelationshipWeb = ({
           springForce: springForceRef.current,
           springLength: 120,
           damping: 0.85,
-          maxVelocity: 8,
+          maxVelocity: 80,
           // centerPull removed
           
           // Run simulation step
           step: function() {
+            const nodes = this.nodes;
+            const numNodes = nodes.length;
+            const pinnedSet = this.pinnedSet;
+            const damping = this.damping;
+            const maxVelocity = this.maxVelocity;
+            const repulsionForce = this.repulsionForce;
+            const springForce = this.springForce;
+            const springLength = this.springLength;
+
             // Reset forces
-            this.nodes.forEach(node => {
+            for (let i = 0; i < numNodes; i++) {
+              const node = nodes[i];
               node.force.x = 0;
               node.force.y = 0;
-            });
-            
-            // Repulsion between all nodes (push them apart)
-            for (let i = 0; i < this.nodes.length; i++) {
-              for (let j = i + 1; j < this.nodes.length; j++) {
-                const node1 = this.nodes[i];
-                const node2 = this.nodes[j];
-                
+            }
+
+            // Precompute pinned flags and id->index map for fast lookup
+            const pinnedFlags = new Array(numNodes);
+            const idToIndex = new Map();
+            for (let i = 0; i < numNodes; i++) {
+              const node = nodes[i];
+              idToIndex.set(node.id, i);
+              pinnedFlags[i] = pinnedSet.has(node.id);
+            }
+
+            // Repulsion between all node pairs (push them apart)
+            for (let i = 0; i < numNodes; i++) {
+              const node1 = nodes[i];
+              for (let j = i + 1; j < numNodes; j++) {
+                const node2 = nodes[j];
                 const dx = node2.position.x - node1.position.x;
                 const dy = node2.position.y - node1.position.y;
-                const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-                
-                // Repulsion force (stronger when closer)
-                const force = this.repulsionForce / (distance * distance);
+                const distSq = dx * dx + dy * dy;
+                if (distSq === 0) continue;
+                const distance = Math.sqrt(distSq);
+                const invDist = 1 / distance;
+                const force = repulsionForce / distSq;
 
-                const node1Pinned = this.pinnedSet.has(node1.id);
-                const node2Pinned = this.pinnedSet.has(node2.id);
-                
+                const node1Pinned = pinnedFlags[i];
+                const node2Pinned = pinnedFlags[j];
+
                 if (!node1Pinned && !node2Pinned) {
-                  node1.force.x -= (dx / distance) * force;
-                  node1.force.y -= (dy / distance) * force;
-                  node2.force.x += (dx / distance) * force;
-                  node2.force.y += (dy / distance) * force;
+                  const fx = (dx * invDist) * force;
+                  const fy = (dy * invDist) * force;
+                  node1.force.x -= fx;
+                  node1.force.y -= fy;
+                  node2.force.x += fx;
+                  node2.force.y += fy;
                 } else if (node1Pinned && !node2Pinned) {
-                  node2.force.x += (dx / distance) * force;
-                  node2.force.y += (dy / distance) * force;
+                  node2.force.x += (dx * invDist) * force;
+                  node2.force.y += (dy * invDist) * force;
                 } else if (!node1Pinned && node2Pinned) {
-                  node1.force.x -= (dx / distance) * force;
-                  node1.force.y -= (dy / distance) * force;
+                  node1.force.x -= (dx * invDist) * force;
+                  node1.force.y -= (dy * invDist) * force;
                 }
               }
             }
-            
+
             // Spring attraction along edges (pull connected nodes together)
-            this.edges.forEach(edge => {
-              const sourceNode = this.nodes.find(n => n.id === edge.from);
-              const targetNode = this.nodes.find(n => n.id === edge.to);
-              
-              if (sourceNode && targetNode) {
-                const dx = targetNode.position.x - sourceNode.position.x;
-                const dy = targetNode.position.y - sourceNode.position.y;
-                const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-                
-                // Spring force (attraction with ideal length)
-                const displacement = distance - this.springLength;
-                const force = (this.springForce / 1000) * displacement;
+            const edges = this.edges;
+            for (let e = 0; e < edges.length; e++) {
+              const edge = edges[e];
+              const i = idToIndex.get(edge.from);
+              const j = idToIndex.get(edge.to);
+              if (i === undefined || j === undefined) continue;
+              const sourceNode = nodes[i];
+              const targetNode = nodes[j];
 
-                const sourcePinned = this.pinnedSet.has(sourceNode.id);
-                const targetPinned = this.pinnedSet.has(targetNode.id);
-                
-                if (!sourcePinned && !targetPinned) {
-                  sourceNode.force.x += (dx / distance) * force;
-                  sourceNode.force.y += (dy / distance) * force;
-                  targetNode.force.x -= (dx / distance) * force;
-                  targetNode.force.y -= (dy / distance) * force;
-                } else if (sourcePinned && !targetPinned) {
-                  targetNode.force.x -= (dx / distance) * force;
-                  targetNode.force.y -= (dy / distance) * force;
-                } else if (!sourcePinned && targetPinned) {
-                  sourceNode.force.x += (dx / distance) * force;
-                  sourceNode.force.y += (dy / distance) * force;
-                }
+              const dx = targetNode.position.x - sourceNode.position.x;
+              const dy = targetNode.position.y - sourceNode.position.y;
+              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+              const invDist = 1 / distance;
+
+              // Spring force (attraction with ideal length)
+              const displacement = distance - springLength;
+              const force = (springForce / 1000) * displacement;
+
+              const sourcePinned = pinnedFlags[i];
+              const targetPinned = pinnedFlags[j];
+
+              if (!sourcePinned && !targetPinned) {
+                const fx = (dx * invDist) * force;
+                const fy = (dy * invDist) * force;
+                sourceNode.force.x += fx;
+                sourceNode.force.y += fy;
+                targetNode.force.x -= fx;
+                targetNode.force.y -= fy;
+              } else if (sourcePinned && !targetPinned) {
+                targetNode.force.x -= (dx * invDist) * force;
+                targetNode.force.y -= (dy * invDist) * force;
+              } else if (!sourcePinned && targetPinned) {
+                sourceNode.force.x += (dx * invDist) * force;
+                sourceNode.force.y += (dy * invDist) * force;
               }
-            });
+            }
 
-            // (isolate center pull removed)
-            
-            // Apply forces to velocities
-            this.nodes.forEach(node => {
-              const pinned = this.pinnedSet.has(node.id);
+            // Apply forces to velocities and update positions
+            const maxVelocitySq = maxVelocity * maxVelocity;
+            for (let i = 0; i < numNodes; i++) {
+              const node = nodes[i];
+              const pinned = pinnedFlags[i];
               if (!pinned) {
                 node.velocity.x += node.force.x;
                 node.velocity.y += node.force.y;
@@ -987,24 +1014,26 @@ const RelationshipWeb = ({
                 node.velocity.x = 0;
                 node.velocity.y = 0;
               }
-              
+
               // Apply damping
-              node.velocity.x *= this.damping;
-              node.velocity.y *= this.damping;
-              
-              // Limit velocity
-              const speed = Math.sqrt(node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y);
-              if (speed > this.maxVelocity) {
-                node.velocity.x = (node.velocity.x / speed) * this.maxVelocity;
-                node.velocity.y = (node.velocity.y / speed) * this.maxVelocity;
+              node.velocity.x *= damping;
+              node.velocity.y *= damping;
+
+              // Limit velocity (avoid sqrt when under cap)
+              const speedSq = node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y;
+              if (speedSq > maxVelocitySq) {
+                const speed = Math.sqrt(speedSq);
+                const scale = maxVelocity / speed;
+                node.velocity.x *= scale;
+                node.velocity.y *= scale;
               }
-              
+
               // Update position
               if (!pinned) {
                 node.position.x += node.velocity.x;
                 node.position.y += node.velocity.y;
               }
-            });
+            }
           }
         };
         
