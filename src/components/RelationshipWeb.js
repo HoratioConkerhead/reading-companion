@@ -63,6 +63,33 @@ const RelationshipWeb = ({
   const sizeAnimationLastTimeRef = useRef(null);
   const previousTargetSizesRef = useRef(new Map()); // id -> last seen target size
   const sizeAnimationFrameRef = useRef(null);
+  // FPS tracking (for auto-arrange)
+  const [fps, setFps] = useState(0);
+  const [showFps, setShowFps] = useState(false);
+  const fpsStatsRef = useRef({ frames: 0, lastReport: 0, lastFps: 0 });
+
+  useEffect(() => {
+    if (typeof performance !== 'undefined') {
+      fpsStatsRef.current.lastReport = performance.now();
+      fpsStatsRef.current.frames = 0;
+      fpsStatsRef.current.lastFps = 0;
+    }
+  }, []);
+
+  // Toggle FPS with F10
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // F10 has key === 'F10' across modern browsers
+      if (e.key === 'F10') {
+        e.preventDefault();
+        setShowFps(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   // Calculate character importance rating (1-100) based on multiple factors
   const calculateCharacterImportance = useCallback((character) => {
@@ -970,6 +997,23 @@ const RelationshipWeb = ({
         // Run one step
         simulation.step();
         
+        // FPS accounting (update roughly every 500ms)
+        if (typeof performance !== 'undefined') {
+          const now = performance.now();
+          const stats = fpsStatsRef.current;
+          stats.frames += 1;
+          const elapsed = now - stats.lastReport;
+          if (elapsed >= 500) {
+            const currentFps = Math.round((stats.frames * 1000) / elapsed);
+            stats.frames = 0;
+            stats.lastReport = now;
+            if (currentFps !== stats.lastFps) {
+              stats.lastFps = currentFps;
+              setFps(currentFps);
+            }
+          }
+        }
+
         // Schedule next step if still enabled
         if (isAutoArrangeOn && animationRef.current) {
           animationRef.current = requestAnimationFrame(runAutoArrange);
@@ -2067,6 +2111,12 @@ const RelationshipWeb = ({
             onMouseUp={handleMouseUp}
             onWheel={handleWheel}
           >
+            {/* FPS Overlay */}
+            {showFps && (
+              <div className="absolute left-4 top-4 z-10 px-2 py-1 rounded text-xs font-mono" style={{ background: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.8)', color: darkMode ? '#fff' : '#111', border: darkMode ? '1px solid #444' : '1px solid #ddd' }}>
+                FPS: {fps}
+              </div>
+            )}
             {/* Full Screen Button */}
             <button
               className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
