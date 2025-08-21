@@ -504,7 +504,6 @@ const RelationshipWeb = ({
   // Build legend items from relationships present up to the selected chapter (no fixed order)
   const relationshipLegendItems = useMemo(() => {
     const filtered = filterRelationshipsByChapter(relationshipsData, currentChapter) || [];
-    console.log(filtered);
     const colorByLabel = new Map();
     filtered.forEach(rel => {
       const label = rel.category || getRelationshipCategoryLabel(rel.type);
@@ -520,7 +519,7 @@ const RelationshipWeb = ({
 
     // Use natural insertion order of discovered categories
     return Array.from(colorByLabel, ([label, color]) => ({ label, color }));
-  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel, relationshipCategoryColors]);
+  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel]);
 
   // Page tutorial content for Relationships tab
   const tutorialTitle = 'Relationships — How to use this page';
@@ -641,7 +640,7 @@ const RelationshipWeb = ({
     });
 
           setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, currentChapter, getRelationshipCount, getGroupColor, calculateCharacterImportance, filterCharactersByChapter]); // Add currentChapter and filterCharactersByChapter dependencies
+  }, [charactersData, relationshipsData, focusedCharacter, currentChapter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize, scaleSizeByImportance, filterCharactersByChapter]); // Add currentChapter and filterCharactersByChapter dependencies
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -694,7 +693,7 @@ const RelationshipWeb = ({
       
       setPan({ x: newPanX, y: newPanY });
     }
-  }, [focusedCharacter]);
+  }, [focusedCharacter, initializeNodes]);
 
   // Initialize edges after nodes are set
   useEffect(() => {
@@ -796,7 +795,7 @@ const RelationshipWeb = ({
         setFocusedCharacter(selectedCharacter.id);
       }
     }
-  }, [selectedCharacter, charactersData, currentChapter, filterCharactersByChapter]);
+  }, [selectedCharacter, charactersData, currentChapter, filterCharactersByChapter, focusedCharacter]);
 
   // Ensure a default focused character when charactersData changes or current focus is missing
   useEffect(() => {
@@ -1027,7 +1026,7 @@ const RelationshipWeb = ({
 
     const same = autoPinnedNodeIds.size === nextAuto.size && Array.from(autoPinnedNodeIds).every(id => nextAuto.has(id));
     if (!same) setAutoPinnedNodeIds(nextAuto);
-  }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds.size, findConnectedComponents]);
+  }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds, autoPinnedNodeIds.size, findConnectedComponents]);
 
   // Handle node drag start
   const handleNodeMouseDown = (e, nodeId) => {
@@ -1270,7 +1269,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType]);
+  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
