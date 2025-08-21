@@ -46,8 +46,8 @@ const InteractiveReadingCompanion = () => {
       try {
         const data = await loadBookData(currentBookKey);
         setBookData(data);
-        const savedChapter = localStorage.getItem(`chapterFilter:${currentBookKey}`);
-        setChapterFilterId(savedChapter ? savedChapter : null);
+        // Do not restore any previously saved chapter filter
+        setChapterFilterId(null);
       } catch (error) {
         console.error('Failed to load book data:', error);
         // Fallback to default book if loading fails
@@ -62,12 +62,7 @@ const InteractiveReadingCompanion = () => {
     loadBook();
   }, [currentBookKey]);
 
-  // Persist chapter filter for current book
-  useEffect(() => {
-    if (bookData) {
-      localStorage.setItem(`chapterFilter:${currentBookKey}`, chapterFilterId ?? '');
-    }
-  }, [chapterFilterId, currentBookKey, bookData]);
+  // Do not persist chapter filter (session-only)
   
   // Check for first visit to potentially show tutorial
   useEffect(() => {
@@ -286,7 +281,7 @@ const InteractiveReadingCompanion = () => {
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <header className="p-3" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex justify-between">
           <div>
             <h1 className="text-3xl font-serif">{metadata.appTitle}</h1>
             <p className="text-sm mt-1">{metadata.appSubtitle}</p>
@@ -345,7 +340,7 @@ const InteractiveReadingCompanion = () => {
             {/* In-list global chapter filter trigger styled as a tab */}
             <button
               type="button"
-              className={`react-tabs__tab tablist-right-cta ml-2 cursor-pointer ${darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-800'}`}
+              className={`react-tabs__tab tablist-right-cta ml-2 cursor-pointer font-bold ${darkMode ? 'bg-gray-800' : 'bg-white text-gray-800'}`}
               onClick={() => setIsChapterPickerOpen(true)}
               title="Choose the latest chapter you've read to limit content across the app"
               style={{ userSelect: 'none' }}
@@ -353,9 +348,9 @@ const InteractiveReadingCompanion = () => {
               {(() => {
                 const chapters = bookData.chapters || [];
                 const label = chapterFilterId
-                  ? (chapters.find(ch => ch.id === chapterFilterId)?.title || 'Selected chapter')
-                  : 'Whole book';
-                return `Up To: ${label}`;
+                  ? 'Show up to ' + (chapters.find(ch => ch.id === chapterFilterId)?.title || 'Selected chapter')
+                  : 'Show whole book';
+                return `${label}`;
               })()}
             </button>
           </TabList>

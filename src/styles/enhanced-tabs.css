@@ -38,8 +38,8 @@
 .react-tabs__tab {
   border: none !important;
   padding: 12px 18px !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.8);
+  /*font-weight: 500;*/
   transition: all 0.3s ease !important;
   border-radius: 0 !important;
   position: relative;
