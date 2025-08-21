@@ -665,8 +665,23 @@ const RelationshipWeb = ({
       label: formatRelationshipType(relationship.type)
     }));
 
+    // Avoid unnecessary updates if edges haven't effectively changed
+    const sameLength = edges.length === newEdges.length;
+    if (sameLength) {
+      let identical = true;
+      for (let i = 0; i < newEdges.length; i++) {
+        const a = newEdges[i];
+        const b = edges[i];
+        if (!b || a.id !== b.id || a.type !== b.type || a.label !== b.label) {
+          identical = false;
+          break;
+        }
+      }
+      if (identical) return;
+    }
+
     setEdges(newEdges);
-  }, [relationshipsData, currentChapter, nodes, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
+  }, [relationshipsData, currentChapter, nodes, edges, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
 
   // Initialize graph when focused character changes (do not move nodes on chapter change)
   useEffect(() => {
@@ -967,7 +982,10 @@ const RelationshipWeb = ({
            // Run auto arrange when enabled
     useEffect(() => {
       if (isAutoArrangeOn) {
-        runAutoArrange();
+        // Start the animation loop if not already running
+        if (!animationRef.current) {
+          animationRef.current = requestAnimationFrame(runAutoArrange);
+        }
       } else {
         // Stop the animation when auto arrange is turned off
         if (animationRef.current) {
