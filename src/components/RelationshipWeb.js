@@ -1381,8 +1381,7 @@ const RelationshipWeb = ({
   };
 
   // Handle zoom
-  const handleWheel = (e) => {
-    e.preventDefault();
+  const handleWheel = useCallback((e) => {
     
     // Get the container's bounding rectangle
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -1405,7 +1404,26 @@ const RelationshipWeb = ({
     
     setZoom(newZoom);
     setPan({ x: newPanX, y: newPanY });
-  };
+  }, [pan, zoom]);
+
+  // Attach non-passive wheel listener so we can preventDefault and avoid page scroll
+  useEffect(() => {
+    const ref = containerRef.current;
+    if (!ref) return;
+    const nativeListener = (event) => {
+      // prevent page scroll and then run zoom logic
+      event.preventDefault();
+      handleWheel(event);
+    };
+    ref.addEventListener('wheel', nativeListener, { passive: false });
+    return () => {
+      try {
+        ref.removeEventListener('wheel', nativeListener, { passive: false });
+      } catch (_) {
+        // ignore
+      }
+    };
+  }, [handleWheel]);
 
   // Focus on character - clears everything and shows just that character
   const focusOnCharacter = (characterId) => {
@@ -2109,7 +2127,7 @@ const RelationshipWeb = ({
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            onWheel={handleWheel}
+            // Wheel handled via non-passive native listener to allow preventDefault
           >
             {/* FPS Overlay */}
             {showFps && (
