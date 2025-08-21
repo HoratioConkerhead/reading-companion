@@ -487,66 +487,20 @@ const RelationshipWeb = ({
     setCurrentChapter(chapterFilterId || null);
   }, [chapterFilterId]);
 
-  // Filter relationships by chapter
-  const filterRelationshipsByChapter = useCallback((relationships, chapterId) => {
-    if (!chapterId) return relationships;
-    
-    const getChapterIndex = (id) => {
-      if (!id) return -1;
-      return chaptersData.findIndex(ch => ch.id === id);
-    };
+  // Filtering now handled at App level; pass-through here
+  const filterRelationshipsByChapter = useCallback((relationships) => {
+    return relationships;
+  }, []);
 
-    const targetChapterIndex = getChapterIndex(chapterId);
-    if (targetChapterIndex === -1) return relationships;
-
-    // Precompute character introduction chapter indices for efficient lookup
-    const characterIntroIndexById = new Map(
-      (charactersData || []).map(c => [c.id, getChapterIndex(c.introducedInChapter)])
-    );
-
-    // Include only relationships introduced on/before the selected chapter.
-    // If a relationship lacks its own introduction, infer from earliest-known intro of its endpoints.
-    return relationships.filter(rel => {
-      let relationshipIntroIndex = -1;
-
-      if (rel.introducedInChapter) {
-        relationshipIntroIndex = getChapterIndex(rel.introducedInChapter);
-      } else {
-        const aIdx = characterIntroIndexById.get(rel.from) ?? -1;
-        const bIdx = characterIntroIndexById.get(rel.to) ?? -1;
-        const candidates = [aIdx, bIdx].filter(idx => idx !== -1);
-        relationshipIntroIndex = candidates.length > 0 ? Math.min(...candidates) : -1;
-      }
-
-      // If still unknown, exclude to avoid leaking future relationships
-      if (relationshipIntroIndex === -1) return false;
-      return relationshipIntroIndex <= targetChapterIndex;
-    });
-  }, [chaptersData, charactersData]);
-
-  // Filter characters by chapter
-  const filterCharactersByChapter = useCallback((characters, chapterId) => {
-    if (!chapterId) return characters;
-    
-    const chapterIndex = chaptersData.findIndex(ch => ch.id === chapterId);
-    if (chapterIndex === -1) return characters;
-    
-    // Filter characters based on when they are introduced
-    return characters.filter(char => {
-      if (char.introducedInChapter) {
-        const charChapterIndex = chaptersData.findIndex(ch => ch.id === char.introducedInChapter);
-        return charChapterIndex <= chapterIndex;
-      }
-      // If no chapter info, show the character
-      return true;
-    });
-  }, [chaptersData]);
+  // Filtering now handled at App level; pass-through here
+  const filterCharactersByChapter = useCallback((characters) => {
+    return characters;
+  }, []);
 
   // Build legend items from relationships present up to the selected chapter (no fixed order)
   const relationshipLegendItems = useMemo(() => {
-    const filtered = filterRelationshipsByChapter(relationshipsData, currentChapter) || [];
     const colorByLabel = new Map();
-    filtered.forEach(rel => {
+    relationshipsData.forEach(rel => {
       const label = rel.category || getRelationshipCategoryLabel(rel.type);
       if (!colorByLabel.has(label)) {
         colorByLabel.set(label, getRelationshipColor(rel.category || rel.type));
@@ -560,7 +514,7 @@ const RelationshipWeb = ({
 
     // Use natural insertion order of discovered categories
     return Array.from(colorByLabel, ([label, color]) => ({ label, color }));
-  }, [relationshipsData, currentChapter, filterRelationshipsByChapter, getRelationshipColor, getRelationshipCategoryLabel]);
+  }, [relationshipsData, getRelationshipColor, getRelationshipCategoryLabel]);
 
   // Page tutorial content for Relationships tab
   const tutorialTitle = 'Relationships — How to use this page';
@@ -612,18 +566,17 @@ const RelationshipWeb = ({
 
       // Initialize nodes in a circular layout with focused character in center
   const initializeNodes = useCallback(() => {
-    // Filter characters based on current chapter
-    const filteredCharacters = filterCharactersByChapter(charactersData, currentChapter);
+    // Use characters provided by parent (already filtered by chapter)
     
     const focusedCharacterFiltered = focusedCharacter 
-      ? filteredCharacters.filter(char => 
+      ? charactersData.filter(char => 
           char.id === focusedCharacter ||
           relationshipsData.some(rel => 
             (rel.from === focusedCharacter && rel.to === char.id) ||
             (rel.to === focusedCharacter && rel.from === char.id)
           )
         )
-      : filteredCharacters;
+      : charactersData;
 
     const centerX = 400;
     const centerY = 300;
@@ -681,14 +634,12 @@ const RelationshipWeb = ({
     });
 
           setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, currentChapter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize, scaleSizeByImportance, filterCharactersByChapter]); // Add currentChapter and filterCharactersByChapter dependencies
+  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
-    const filteredRelationships = filterRelationshipsByChapter(relationshipsData, currentChapter);
-    
     // Show ALL relationships between the initially visible characters
-    const relevantRelationships = filteredRelationships.filter(rel => {
+    const relevantRelationships = relationshipsData.filter(rel => {
       // Check if both characters in this relationship are visible
       const fromVisible = nodes.some(node => node.id === rel.from);
       const toVisible = nodes.some(node => node.id === rel.to);
@@ -722,7 +673,7 @@ const RelationshipWeb = ({
     }
 
     setEdges(newEdges);
-  }, [relationshipsData, currentChapter, nodes, edges, filterRelationshipsByChapter, getRelationshipColor, formatRelationshipType]);
+  }, [relationshipsData, nodes, edges, getRelationshipColor, formatRelationshipType]);
 
   // Initialize graph when focused character changes (do not move nodes on chapter change)
   useEffect(() => {
@@ -762,22 +713,14 @@ const RelationshipWeb = ({
     }
   }, [nodes, initializeEdges, startSizeAnimation]);
 
-  // When chapter filter changes, remove nodes introduced after the selected chapter
+  // Prune nodes when parent-provided characters change (after chapter filter changes at app level)
   // Do not reinitialize or move existing nodes
   useEffect(() => {
     setNodes(prevNodes => {
-      if (!currentChapter) return prevNodes; // show all
-      const chapterIndex = chaptersData.findIndex(ch => ch.id === currentChapter);
-      if (chapterIndex === -1) return prevNodes;
-
-      // Compute allowed character ids up to the selected chapter
-      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
-      const allowedIds = new Set(allowedCharacters.map(c => c.id));
-
-      const filtered = prevNodes.filter(n => allowedIds.has(n.id));
-      return filtered;
+      const allowedIds = new Set((charactersData || []).map(c => c.id));
+      return prevNodes.filter(n => allowedIds.has(n.id));
     });
-  }, [currentChapter, chaptersData, charactersData, filterCharactersByChapter]);
+  }, [charactersData]);
 
   // Update node sizes when the sizing option changes (without re-initializing)
   useEffect(() => {
@@ -842,8 +785,7 @@ const RelationshipWeb = ({
   // Sync with external selectedCharacter prop
   useEffect(() => {
     if (selectedCharacter && selectedCharacter.id !== focusedCharacter) {
-      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
-      const allowedIds = new Set(allowedCharacters.map(c => c.id));
+      const allowedIds = new Set((charactersData || []).map(c => c.id));
       if (allowedIds.has(selectedCharacter.id)) {
         // Clear all nodes and edges when changing focus
         setNodes([]);
@@ -851,7 +793,7 @@ const RelationshipWeb = ({
         setFocusedCharacter(selectedCharacter.id);
       }
     }
-  }, [selectedCharacter, charactersData, currentChapter, filterCharactersByChapter, focusedCharacter]);
+  }, [selectedCharacter, charactersData, focusedCharacter]);
 
   // Ensure a default focused character when charactersData changes or current focus is missing
   useEffect(() => {
@@ -862,15 +804,14 @@ const RelationshipWeb = ({
       return;
     }
     if (!charactersData || charactersData.length === 0) return;
-    const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
-    const existsInCurrent = focusedCharacter && allowedCharacters.some(c => c.id === focusedCharacter);
+    const existsInCurrent = focusedCharacter && charactersData.some(c => c.id === focusedCharacter);
     if (!existsInCurrent && !selectedCharacter) {
       setNodes([]);
       setEdges([]);
-      const nextFocus = allowedCharacters.length > 0 ? allowedCharacters[0].id : null;
+      const nextFocus = charactersData.length > 0 ? charactersData[0].id : null;
       setFocusedCharacter(nextFocus);
     }
-  }, [charactersData, currentChapter, filterCharactersByChapter, focusedCharacter, selectedCharacter, nodes.length]);
+  }, [charactersData, focusedCharacter, selectedCharacter, nodes.length]);
 
   // Keep show-all mode until user explicitly focuses a character
 
@@ -1281,9 +1222,8 @@ const RelationshipWeb = ({
       
       // Find new characters to add (respecting chapter filtering)
       const existingIds = new Set(currentNodes.map(n => n.id));
-      const filteredCharacters = filterCharactersByChapter(charactersData, currentChapter);
 
-      const newCharacters = filteredCharacters.filter(char => 
+      const newCharacters = charactersData.filter(char => 
         connectedCharacterIds.has(char.id) && !existingIds.has(char.id)
       );
       
@@ -1355,11 +1295,8 @@ const RelationshipWeb = ({
         const allVisibleRelationships = relationshipsData.filter(rel => 
           allVisibleIds.has(rel.from) && allVisibleIds.has(rel.to)
         );
-                
-        // Filter by chapter if needed
-        const filteredRelationships = filterRelationshipsByChapter(allVisibleRelationships, currentChapter);
-        
-        const newEdges = filteredRelationships
+                        
+        const newEdges = allVisibleRelationships
           .filter(rel => {
             // Check if we already have any edge between these two characters
             const baseEdgeId = `${rel.from}-${rel.to}`;
@@ -1387,7 +1324,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, currentChapter, findLargestConnectedComponent, getRelationshipCount, getGroupColor, filterRelationshipsByChapter, filterCharactersByChapter, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
+  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, findLargestConnectedComponent, getRelationshipCount, getGroupColor, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
@@ -1485,11 +1422,8 @@ const RelationshipWeb = ({
   const focusOnCharacter = (characterId) => {
     // Respect chapter filter to avoid spoilers
     if (characterId) {
-      const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
-      const allowedIds = new Set(allowedCharacters.map(c => c.id));
-      if (!allowedIds.has(characterId)) {
-        return; // Ignore selection outside allowed range
-      }
+      const allowedIds = new Set((charactersData || []).map(c => c.id));
+      if (!allowedIds.has(characterId)) return;
     }
     // Only clear if we're actually changing focus, not during initial load
     if (focusedCharacter !== characterId) {
@@ -1525,10 +1459,10 @@ const RelationshipWeb = ({
     // Expand the current view as if we had clicked every visible node to reveal all
     // characters and relationships up to the selected chapter, without changing focus
 
-    const allowedCharacters = filterCharactersByChapter(charactersData, currentChapter);
-    const allowedById = new Map(allowedCharacters.map(c => [c.id, c]));
-    const allowedIds = new Set(allowedCharacters.map(c => c.id));
-    const filteredRels = filterRelationshipsByChapter(relationshipsData, currentChapter)
+    //const allowedCharacters = charactersData || [];
+    const allowedById = new Map((charactersData || []).map(c => [c.id, c]));
+    const allowedIds = new Set((charactersData || []).map(c => c.id));
+    const filteredRels = (relationshipsData || [])
       .filter(rel => allowedIds.has(rel.from) && allowedIds.has(rel.to));
 
     // Build adjacency map
@@ -1577,7 +1511,7 @@ const RelationshipWeb = ({
     if (updatedNodes.length === 0) {
       const seedId = (focusedCharacter && allowedIds.has(focusedCharacter))
         ? focusedCharacter
-        : (allowedCharacters[0]?.id || null);
+        : (charactersData[0]?.id || null);
       if (seedId) {
         const seedChar = allowedById.get(seedId);
         const relationshipCount = getRelationshipCount(seedId);
@@ -1600,7 +1534,7 @@ const RelationshipWeb = ({
     }
 
     // Iteratively add neighbors of all present nodes until closure over allowed set
-    let safety = allowedCharacters.length + 5;
+    let safety = charactersData.length + 5;
     while (safety-- > 0) {
       let addedAny = false;
       // Snapshot current nodes length at each pass
@@ -1851,7 +1785,7 @@ const RelationshipWeb = ({
             value={focusedCharacter || ''}
             onChange={(e) => focusOnCharacter(e.target.value || null)}
           >
-            {filterCharactersByChapter(charactersData, currentChapter).map(character => (
+            {(charactersData || []).map(character => (
               <option key={character.id} value={character.id}>
                 {character.name} ({character.group})
               </option>

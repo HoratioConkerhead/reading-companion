@@ -407,9 +407,9 @@ const InteractiveReadingCompanion = () => {
               <RelationshipWeb
                 onCharacterSelect={handleCharacterSelect}
                 selectedCharacter={selectedCharacter}
-                charactersData={bookData.characters}
-                relationshipsData={bookData.relationships}
-                eventsData={bookData.events}
+                charactersData={filteredCharacters}
+                relationshipsData={filteredRelationships}
+                eventsData={filteredEvents}
                 chaptersData={bookData.chapters}
                 darkMode={darkMode}
                 groupColors={bookData.bookMetadata?.characterGroupColors || {}}
