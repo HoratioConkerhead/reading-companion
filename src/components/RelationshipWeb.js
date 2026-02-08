@@ -554,7 +554,7 @@ const RelationshipWeb = ({
       'Then "Fit to View" to frame everything.'
     ],
     [
-      '"Pin Mode" pins/unpins nodes.',
+      '"Pin Mode" pins/unpins a single nodes',
       'This prevents clusters from drifting apart under repulsion.',
       'Click a pinned node to unpin it.At least one node per group must be pinned'
     ],
@@ -1459,7 +1459,6 @@ const RelationshipWeb = ({
     // Expand the current view as if we had clicked every visible node to reveal all
     // characters and relationships up to the selected chapter, without changing focus
 
-    //const allowedCharacters = charactersData || [];
     const allowedById = new Map((charactersData || []).map(c => [c.id, c]));
     const allowedIds = new Set((charactersData || []).map(c => c.id));
     const filteredRels = (relationshipsData || [])
