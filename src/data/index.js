@@ -113,10 +113,9 @@ export const loadBookData = async (bookKey) => {
   }
 };
 
-// Default book key (choose preferred if present, else first discovered)
+// Default book key (first discovered alphabetically)
 const computeDefaultBookKey = () => {
   const keys = getAvailableBookKeys().sort();
-  if (keys.includes('MattParry_StitchedUp')) return 'MattParry_StitchedUp';
   return keys[0] || '';
 };
 

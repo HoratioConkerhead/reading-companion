@@ -18,6 +18,7 @@ import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 
 // Import data from new structure - using dynamic loading
 import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
+import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
 import BookSelector from './components/BookSelector';
 
 const InteractiveReadingCompanion = () => {
@@ -204,79 +205,12 @@ const InteractiveReadingCompanion = () => {
 
     // Build filtered datasets based on global chapterFilterId (per-book)
     const chapters = bookData.chapters || [];
-    const getChapterIndex = (id) => {
-      if (!id) return -1;
-      return chapters.findIndex(ch => ch.id === id);
-    };
-    const targetIdx = chapterFilterId ? getChapterIndex(chapterFilterId) : null;
 
-    const filteredCharacters = (() => {
-      if (targetIdx === null || targetIdx === -1) return bookData.characters;
-      return (bookData.characters || []).filter(char => {
-        if (!char.introducedInChapter) return true;
-        const idx = getChapterIndex(char.introducedInChapter);
-        if (idx === -1) return true;
-        return idx <= targetIdx;
-      });
-    })();
-
-    const filteredRelationships = (() => {
-      if (targetIdx === null || targetIdx === -1) return bookData.relationships;
-      const introIdxByChar = new Map(
-        (bookData.characters || []).map(c => [c.id, getChapterIndex(c.introducedInChapter)])
-      );
-      return (bookData.relationships || []).filter(rel => {
-        let relIdx = -1;
-        if (rel.introducedInChapter) relIdx = getChapterIndex(rel.introducedInChapter);
-        else {
-          const a = introIdxByChar.get(rel.from) ?? -1;
-          const b = introIdxByChar.get(rel.to) ?? -1;
-          const cand = [a, b].filter(v => v !== -1);
-          relIdx = cand.length ? Math.min(...cand) : -1;
-        }
-        if (relIdx === -1) return false;
-        return relIdx <= targetIdx;
-      });
-    })();
-
-    const filteredEvents = (() => {
-      if (targetIdx === null || targetIdx === -1) return bookData.events;
-      const chapterIndexByEventId = new Map();
-      chapters.forEach((ch, idx) => {
-        (ch.events || []).forEach(eid => {
-          if (!chapterIndexByEventId.has(eid)) chapterIndexByEventId.set(eid, idx);
-        });
-      });
-
-      return (bookData.events || []).filter(ev => {
-        let idx = -1;
-        if (ev.introducedInChapter) idx = getChapterIndex(ev.introducedInChapter);
-        else if (chapterIndexByEventId.has(ev.id)) idx = chapterIndexByEventId.get(ev.id);
-        else if (ev.chapter) idx = getChapterIndex(String(ev.chapter));
-        if (idx === -1) return true; // keep unknowns
-        return idx <= targetIdx;
-      });
-    })();
-
-    const filteredLocations = (() => {
-      if (targetIdx === null || targetIdx === -1) return bookData.locations;
-      return (bookData.locations || []).filter(loc => {
-        if (!loc.introducedInChapter) return true;
-        const idx = getChapterIndex(loc.introducedInChapter);
-        if (idx === -1) return true;
-        return idx <= targetIdx;
-      });
-    })();
-
-    const filteredObjects = (() => {
-      if (targetIdx === null || targetIdx === -1) return bookData.objects;
-      return (bookData.objects || []).filter(obj => {
-        if (!obj.introducedInChapter) return true;
-        const idx = getChapterIndex(obj.introducedInChapter);
-        if (idx === -1) return true;
-        return idx <= targetIdx;
-      });
-    })();
+    const filteredCharacters = filterByChapter(bookData.characters, chapters, chapterFilterId, c => c.introducedInChapter);
+    const filteredRelationships = filterRelationshipsByChapter(bookData.relationships, bookData.characters, chapters, chapterFilterId);
+    const filteredEvents = filterEventsByChapter(bookData.events, chapters, chapterFilterId);
+    const filteredLocations = filterByChapter(bookData.locations, chapters, chapterFilterId, l => l.introducedInChapter);
+    const filteredObjects = filterByChapter(bookData.objects, chapters, chapterFilterId, o => o.introducedInChapter);
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>

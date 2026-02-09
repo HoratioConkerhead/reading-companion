@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getLocationName as _getLocationName, getLocationArea as _getLocationArea } from '../utils/dataAccessors';
 
 const Timeline = ({ 
   onEventSelect, 
@@ -456,15 +457,8 @@ const Timeline = ({
 };
 
 // Helper functions
-const getLocationName = (locationId, locationsData) => {
-  const location = locationsData.find(l => l.id === locationId);
-  return location ? location.name : locationId;
-};
-
-const getLocationArea = (locationId, locationsData) => {
-  const location = locationsData.find(l => l.id === locationId);
-  return location ? location.area : '';
-};
+const getLocationName = _getLocationName;
+const getLocationArea = _getLocationArea;
 
 const getEventColor = (event, charactersData) => {
   if (!event.characters || event.characters.length === 0) return '#6b7280';

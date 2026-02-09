@@ -28,18 +28,6 @@ const LocationExplorer = ({
     return matchesSearch && matchesType && matchesArea;
   });
   
-  // Get character name from ID
-  const getCharacterName = (characterId) => {
-    const character = charactersData.find(c => c.id === characterId);
-    return character ? character.name : characterId;
-  };
-  
-  // Get event title from ID
-  const getEventTitle = (eventId) => {
-    const event = eventsData.find(e => e.id === eventId);
-    return event ? event.title : eventId;
-  };
-  
   // Get events related to a location
   const getLocationEvents = (locationId) => {
     return eventsData.filter(event => event.location === locationId);

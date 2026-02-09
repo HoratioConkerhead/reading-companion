@@ -1,5 +1,12 @@
-import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import PageTutorial from './PageTutorial';
+import { toRelationshipCategory } from '../utils/relationships';
+import { findConnectedComponents, findLargestConnectedComponent, createNode, createEdge } from '../utils/graphUtils';
+import { useForceSimulation } from '../hooks/useForceSimulation';
+import { useSizeAnimation } from '../hooks/useSizeAnimation';
+import SVGEdge from './relationship-web/SVGEdge';
+import SVGNode from './relationship-web/SVGNode';
+import SidePanel from './relationship-web/SidePanel';
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
@@ -24,7 +31,6 @@ const RelationshipWeb = ({
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [currentChapter, setCurrentChapter] = useState(null);
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
@@ -47,63 +53,22 @@ const RelationshipWeb = ({
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
-  const animationRef = useRef(null);
   const wasClick = useRef(false);
   const clickStartPos = useRef({ x: 0, y: 0 });
   const wasAutoArrangeOn = useRef(false);
   const textWidthCache = useRef(new Map());
   const suppressAutoFocusRef = useRef(false);
-  // Keep a live reference to nodes to avoid stale closures in RAF
-  const nodesRef = useRef(nodes);
-  // Keep nodesRef synchronized before paint so RAF sees latest targets
-  useLayoutEffect(() => { nodesRef.current = nodes; }, [nodes]);
-  // Spring animation state for node sizes
-  const sizeAnimationVelocitiesRef = useRef(new Map()); // id -> velocity
-  const sizeAnimationActiveRef = useRef(false);
-  const sizeAnimationLastTimeRef = useRef(null);
-  const previousTargetSizesRef = useRef(new Map()); // id -> last seen target size
-  const sizeAnimationFrameRef = useRef(null);
-  // FPS tracking (for auto-arrange)
-  const [fps, setFps] = useState(0);
-  const [showFps, setShowFps] = useState(false);
-  const [fpsHistory, setFpsHistory] = useState([]);
-  const fpsStatsRef = useRef({ frames: 0, lastReport: 0, lastFps: 0 });
-  // Live refs for values used inside RAF loop to avoid stale closures
-  const springForceRef = useRef(springForce);
-  const repulsionForceRef = useRef(repulsionForce);
-  const edgesRef = useRef(edges);
-  const pinnedNodeIdsRef = useRef(pinnedNodeIds);
-  const autoPinnedNodeIdsRef = useRef(autoPinnedNodeIds);
+  const scaleSizeByImportanceRef = useRef(scaleSizeByImportance);
+  scaleSizeByImportanceRef.current = scaleSizeByImportance;
 
-  useEffect(() => {
-    if (typeof performance !== 'undefined') {
-      fpsStatsRef.current.lastReport = performance.now();
-      fpsStatsRef.current.frames = 0;
-      fpsStatsRef.current.lastFps = 0;
-    }
-  }, []);
+  // Force simulation hook (physics engine, FPS tracking)
+  const { fps, showFps, fpsHistory, animationRef } = useForceSimulation({
+    nodes, setNodes, edges, springForce, repulsionForce,
+    isAutoArrangeOn, pinnedNodeIds, autoPinnedNodeIds
+  });
 
-  // Keep physics-related refs up to date for the RAF loop
-  useEffect(() => { springForceRef.current = springForce; }, [springForce]);
-  useEffect(() => { repulsionForceRef.current = repulsionForce; }, [repulsionForce]);
-  useEffect(() => { edgesRef.current = edges; }, [edges]);
-  useEffect(() => { pinnedNodeIdsRef.current = pinnedNodeIds; }, [pinnedNodeIds]);
-  useEffect(() => { autoPinnedNodeIdsRef.current = autoPinnedNodeIds; }, [autoPinnedNodeIds]);
-
-  // Toggle FPS with F10
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // F10 has key === 'F10' across modern browsers
-      if (e.key === 'F10') {
-        e.preventDefault();
-        setShowFps(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  // Size animation hook (spring-based node size transitions)
+  const { startAnimation: startSizeAnimation, resetAnimation: resetSizeAnimation } = useSizeAnimation(nodes, setNodes);
 
   // Calculate character importance rating (1-100) based on multiple factors
   const calculateCharacterImportance = useCallback((character) => {
@@ -160,95 +125,7 @@ const RelationshipWeb = ({
     return Math.max(1, Math.min(100, Math.round(score)));
   }, [relationshipsData, eventsData, importanceConfig]);
 
-  // Find the largest connected component in the graph
-  const findLargestConnectedComponent = useCallback((currentNodes, currentEdges) => {
-    if (currentNodes.length === 0) return [];
-    
-    // Build adjacency list
-    const adjacencyList = new Map();
-    currentNodes.forEach(node => {
-      adjacencyList.set(node.id, new Set());
-    });
-    
-    currentEdges.forEach(edge => {
-      if (adjacencyList.has(edge.from) && adjacencyList.has(edge.to)) {
-        adjacencyList.get(edge.from).add(edge.to);
-        adjacencyList.get(edge.to).add(edge.from);
-      }
-    });
-    
-    // Find all connected components using DFS
-    const visited = new Set();
-    const components = [];
-    
-    const dfs = (nodeId, component) => {
-      visited.add(nodeId);
-      component.push(nodeId);
-      
-      const neighbors = adjacencyList.get(nodeId) || new Set();
-      neighbors.forEach(neighborId => {
-        if (!visited.has(neighborId)) {
-          dfs(neighborId, component);
-        }
-      });
-    };
-    
-    currentNodes.forEach(node => {
-      if (!visited.has(node.id)) {
-        const component = [];
-        dfs(node.id, component);
-        components.push(component);
-      }
-    });
-    
-    // Return the largest component
-    if (components.length === 0) return [];
-    
-    const largestComponent = components.reduce((largest, current) => 
-      current.length > largest.length ? current : largest
-    );
-    
-    return largestComponent;
-  }, []);
-
-  // Find all connected components in the graph
-  const findConnectedComponents = useCallback((currentNodes, currentEdges) => {
-    if (!currentNodes || currentNodes.length === 0) return [];
-
-    const adjacencyList = new Map();
-    currentNodes.forEach(node => {
-      adjacencyList.set(node.id, new Set());
-    });
-
-    currentEdges.forEach(edge => {
-      if (adjacencyList.has(edge.from) && adjacencyList.has(edge.to)) {
-        adjacencyList.get(edge.from).add(edge.to);
-        adjacencyList.get(edge.to).add(edge.from);
-      }
-    });
-
-    const visited = new Set();
-    const components = [];
-
-    const dfs = (nodeId, component) => {
-      visited.add(nodeId);
-      component.push(nodeId);
-      const neighbors = adjacencyList.get(nodeId) || new Set();
-      neighbors.forEach(neighborId => {
-        if (!visited.has(neighborId)) dfs(neighborId, component);
-      });
-    };
-
-    currentNodes.forEach(node => {
-      if (!visited.has(node.id)) {
-        const component = [];
-        dfs(node.id, component);
-        components.push(component);
-      }
-    });
-
-    return components;
-  }, []);
+  // Graph algorithms imported from ../utils/graphUtils
 
   // Count relationships for a character
   const getRelationshipCount = useCallback((characterId) => {
@@ -344,76 +221,7 @@ const RelationshipWeb = ({
     return Math.max(scale, 15);
   }, []);
 
-  // Ensure each node has an animatedSize initialized to its current target
-  useEffect(() => {
-    setNodes(prev => prev.map(n => ({
-      ...n,
-      animatedSize: n.animatedSize != null ? n.animatedSize : (n.size != null ? n.size : 30)
-    })));
-  }, [nodes.length]);
-
-  // Spring-based animation towards target size (node.size)
-  const stepSizeAnimation = useCallback((timestamp) => {
-    if (!sizeAnimationActiveRef.current) {
-      sizeAnimationFrameRef.current = null;
-      return;
-    }
-    const last = sizeAnimationLastTimeRef.current;
-    sizeAnimationLastTimeRef.current = timestamp;
-    const dt = Math.min(0.05, last ? (timestamp - last) / 1000 : 0.016); // seconds
-
-    // Spring params for node size animation (tuned for a subtle, bouncy feel)
-    const stiffness = 260; // higher -> faster
-    const damping = 14; // lower -> more oscillation
-
-    const velocities = sizeAnimationVelocitiesRef.current;
-    let anyChange = false;
-
-    const currentNodes = nodesRef.current;
-    const updatedNodes = currentNodes.map(node => {
-      const target = node.size != null ? node.size : 30;
-      const current = node.animatedSize != null ? node.animatedSize : target;
-      let v = velocities.get(node.id) || 0;
-
-      const displacement = current - target; // positive if larger than target
-      // Acceleration from Hooke's law with damping: a = -k*x - c*v
-      const acceleration = (-stiffness * displacement) - (damping * v);
-      v = v + acceleration * dt;
-      let next = current + v * dt;
-
-      // Convergence check
-      const close = Math.abs(next - target) < 0.1 && Math.abs(v) < 0.1;
-      if (close) {
-        next = target;
-        v = 0;
-      } else {
-        anyChange = true;
-      }
-
-      velocities.set(node.id, v);
-      if (next !== node.animatedSize) {
-        return { ...node, animatedSize: next };
-      }
-      return node;
-    });
-
-    // stop when converged
-    if (anyChange) {
-      setNodes(updatedNodes);
-      sizeAnimationFrameRef.current = window.requestAnimationFrame(stepSizeAnimation);
-    } else {
-      sizeAnimationActiveRef.current = false;
-      sizeAnimationFrameRef.current = null;
-    }
-  }, [setNodes]);
-
-  const startSizeAnimation = useCallback(() => {
-    sizeAnimationActiveRef.current = true;
-    sizeAnimationLastTimeRef.current = null;
-    if (!sizeAnimationFrameRef.current) {
-      sizeAnimationFrameRef.current = window.requestAnimationFrame(stepSizeAnimation);
-    }
-  }, [stepSizeAnimation]);
+  // Size animation handled by useSizeAnimation hook
 
   // Get appropriate stroke color for nodes based on theme
   const getNodeStrokeColor = useCallback((isDark = false, characterId = null) => {
@@ -447,19 +255,8 @@ const RelationshipWeb = ({
     }
   }, [relationshipsData, nodes]);
 
-  // Map a relationship type string to a display category label used in the legend
-  const getRelationshipCategoryLabel = useCallback((type) => {
-    const t = (type || '').toLowerCase();
-    if (t.includes('spouse')) return 'Spouse';
-    if (t.includes('handler') || t.includes('asset')) return 'Handler/Asset';
-    if (t.includes('conspirator') || t.includes('enemy')) return 'Conspirator/Enemy';
-    if (t.includes('colleague') || t.includes('partner')) return 'Colleague/Partner';
-    if (t.includes('superior') || t.includes('subordinate')) return 'Superior/Subordinate';
-    if (t.includes('friend')) return 'Friend';
-    if (t.includes('informant') || t.includes('double-agent')) return 'Informant/Double-Agent';
-    if (t.includes('target') || t.includes('victim')) return 'Conspirator/Enemy';
-    return 'Other';
-  }, []);
+  // Use shared relationship category mapping from utils
+  const getRelationshipCategoryLabel = toRelationshipCategory;
 
   // Get relationship color
   const getRelationshipColor = useCallback((type) => {
@@ -482,20 +279,7 @@ const RelationshipWeb = ({
       .join(' - ');
   }, []);
 
-  // Sync local chapter state with global filter
-  useEffect(() => {
-    setCurrentChapter(chapterFilterId || null);
-  }, [chapterFilterId]);
-
-  // Filtering now handled at App level; pass-through here
-  const filterRelationshipsByChapter = useCallback((relationships) => {
-    return relationships;
-  }, []);
-
-  // Filtering now handled at App level; pass-through here
-  const filterCharactersByChapter = useCallback((characters) => {
-    return characters;
-  }, []);
+  // Chapter filtering handled at App level
 
   // Build legend items from relationships present up to the selected chapter (no fixed order)
   const relationshipLegendItems = useMemo(() => {
@@ -588,53 +372,29 @@ const RelationshipWeb = ({
     
     const newNodes = [];
     
+    const makeNode = (char, position, isFocused) => {
+      const relationshipCount = getRelationshipCount(char.id);
+      const importance = calculateCharacterImportance(char);
+      const size = scaleSizeByImportanceRef.current ? getNodeSize(importance, isFocused) : 30;
+      return createNode(char, position, { isFocused, relationshipCount, importance, size, getGroupColor });
+    };
+
     // Add focused character in center
     if (focusedChar) {
-             const relationshipCount = getRelationshipCount(focusedChar.id);
-      const importance = calculateCharacterImportance(focusedChar);
-      const size = scaleSizeByImportance ? getNodeSize(importance, true) : 30;
-      newNodes.push({
-        id: focusedChar.id,
-        name: focusedChar.name,
-        role: focusedChar.role,
-        group: focusedChar.group,
-        position: { x: centerX, y: centerY },
-        color: getGroupColor(focusedChar.group, relationshipCount),
-        relationshipCount,
-        importance,
-        size,
-        isFocused: true
-      });
+      newNodes.push(makeNode(focusedChar, { x: centerX, y: centerY }, true));
     }
-    
+
     // Place other characters in a circle around the focused character
-            otherCharacters.forEach((character, index) => {
-      const relationshipCount = getRelationshipCount(character.id);
-      const importance = calculateCharacterImportance(character);
-      const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
+    otherCharacters.forEach((character, index) => {
       const totalInCircle = otherCharacters.length;
-      
-      // Calculate angle evenly around the circle
       const angle = (index * 2 * Math.PI) / totalInCircle;
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
-      
-      newNodes.push({
-        id: character.id,
-        name: character.name,
-        role: character.role,
-        group: character.group,
-        position: { x, y },
-        color: getGroupColor(character.group, relationshipCount),
-        relationshipCount,
-        importance,
-        size,
-        isFocused: false
-      });
+      newNodes.push(makeNode(character, { x, y }, false));
     });
 
           setNodes(newNodes);
-  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
+  }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -648,14 +408,9 @@ const RelationshipWeb = ({
       return fromVisible && toVisible;
     });
 
-    const newEdges = relevantRelationships.map((relationship, index) => ({
-      id: `${relationship.from}-${relationship.to}-${index}`,
-      from: relationship.from,
-      to: relationship.to,
-      type: relationship.type,
-      color: getRelationshipColor(relationship.type),
-      label: formatRelationshipType(relationship.type)
-    }));
+    const newEdges = relevantRelationships.map((relationship, index) =>
+      createEdge(relationship, `${relationship.from}-${relationship.to}-${index}`, getRelationshipColor, formatRelationshipType)
+    );
 
     // Avoid unnecessary updates if edges haven't effectively changed
     const sameLength = edges.length === newEdges.length;
@@ -724,63 +479,20 @@ const RelationshipWeb = ({
 
   // Update node sizes when the sizing option changes (without re-initializing)
   useEffect(() => {
-    if (nodes.length > 0) {
-      // Stop any in-progress size RAF to avoid race conditions, reset velocities
-      if (sizeAnimationFrameRef.current) {
-        cancelAnimationFrame(sizeAnimationFrameRef.current);
-        sizeAnimationFrameRef.current = null;
-      }
-      sizeAnimationActiveRef.current = false;
-      sizeAnimationVelocitiesRef.current.clear();
-
-      setNodes(currentNodes => {
-        const mapped = currentNodes.map(node => {
-          const newTarget = scaleSizeByImportance
-            ? getNodeSize(node.importance, node.isFocused)
-            : 30;
-          const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
-          return {
-            ...node,
-            // seed animation from whatever is currently rendered
-            animatedSize: currentRendered,
-            size: newTarget
-          };
-        });
-        return mapped;
+    setNodes(currentNodes => {
+      if (currentNodes.length === 0) return currentNodes;
+      return currentNodes.map(node => {
+        const newTarget = scaleSizeByImportance
+          ? getNodeSize(node.importance, node.isFocused)
+          : 30;
+        const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
+        return { ...node, animatedSize: currentRendered, size: newTarget };
       });
-      // kick the spring animation after the DOM commit; schedule on next frame
-      if (typeof window !== 'undefined' && window.requestAnimationFrame) {
-        window.requestAnimationFrame(() => startSizeAnimation());
-      } else {
-        startSizeAnimation();
-      }
-    }
-  }, [scaleSizeByImportance, getNodeSize, nodes.length, startSizeAnimation]);
-
-  // Restart size animation whenever any node's target size changes
-  useEffect(() => {
-    if (nodes.length === 0) return;
-    let anyTargetChanged = false;
-    const prev = previousTargetSizesRef.current;
-    nodes.forEach(n => {
-      const target = n.size != null ? n.size : 30;
-      const last = prev.get(n.id);
-      if (last == null || Math.abs(last - target) > 0.25) {
-        anyTargetChanged = true;
-      }
-      prev.set(n.id, target);
     });
-    if (anyTargetChanged) {
-      // If the toggle changed mid-flight, restart cleanly
-      if (sizeAnimationFrameRef.current) {
-        cancelAnimationFrame(sizeAnimationFrameRef.current);
-        sizeAnimationFrameRef.current = null;
-      }
-      sizeAnimationActiveRef.current = false;
-      sizeAnimationVelocitiesRef.current.clear();
-      startSizeAnimation();
-    }
-  }, [nodes, startSizeAnimation]);
+    // useSizeAnimation's target-change detection will auto-start the animation
+  }, [scaleSizeByImportance, getNodeSize, setNodes]);
+
+  // Target size change detection now handled by useSizeAnimation hook
 
   // Sync with external selectedCharacter prop
   useEffect(() => {
@@ -815,228 +527,7 @@ const RelationshipWeb = ({
 
   // Keep show-all mode until user explicitly focuses a character
 
-       // Auto arrange simulation - runs continuously when enabled
-    const runAutoArrange = useCallback(() => {
-      if (!isAutoArrangeOn) return;
-      
-      setNodes(currentNodes => {
-        if (currentNodes.length === 0) return currentNodes;
-        
-        const pinnedSet = new Set([
-          ...Array.from(pinnedNodeIdsRef.current || new Set()),
-          ...Array.from(autoPinnedNodeIdsRef.current || new Set())
-        ]);
-
-        const simulation = {
-          nodes: currentNodes.map(node => ({
-            ...node,
-            velocity: { x: 0, y: 0 },
-            force: { x: 0, y: 0 }
-          })),
-          edges: edgesRef.current,
-          pinnedSet,
-          // (center pull for isolates removed per user request)
-          
-          // Physics constants - use ref values (live updates)
-          repulsionForce: repulsionForceRef.current,
-          springForce: springForceRef.current,
-          springLength: 120,
-          damping: 0.85,
-          maxVelocity: 40,
-          // centerPull removed
-          
-          // Run simulation step
-          step: function() {
-            const nodes = this.nodes;
-            const numNodes = nodes.length;
-            const pinnedSet = this.pinnedSet;
-            const damping = this.damping;
-            const maxVelocity = this.maxVelocity;
-            const repulsionForce = this.repulsionForce;
-            const springForce = this.springForce;
-            const springLength = this.springLength;
-
-            // Reset forces
-            for (let i = 0; i < numNodes; i++) {
-              const node = nodes[i];
-              node.force.x = 0;
-              node.force.y = 0;
-            }
-
-            // Precompute pinned flags and id->index map for fast lookup
-            const pinnedFlags = new Array(numNodes);
-            const idToIndex = new Map();
-            for (let i = 0; i < numNodes; i++) {
-              const node = nodes[i];
-              idToIndex.set(node.id, i);
-              pinnedFlags[i] = pinnedSet.has(node.id);
-            }
-
-            // Repulsion between all node pairs (push them apart)
-            for (let i = 0; i < numNodes; i++) {
-              const node1 = nodes[i];
-              for (let j = i + 1; j < numNodes; j++) {
-                const node2 = nodes[j];
-                const dx = node2.position.x - node1.position.x;
-                const dy = node2.position.y - node1.position.y;
-                const distSq = dx * dx + dy * dy;
-                if (distSq === 0) continue;
-                const distance = Math.sqrt(distSq);
-                const invDist = 1 / distance;
-                const force = repulsionForce / distSq;
-
-                const node1Pinned = pinnedFlags[i];
-                const node2Pinned = pinnedFlags[j];
-
-                if (!node1Pinned && !node2Pinned) {
-                  const fx = (dx * invDist) * force;
-                  const fy = (dy * invDist) * force;
-                  node1.force.x -= fx;
-                  node1.force.y -= fy;
-                  node2.force.x += fx;
-                  node2.force.y += fy;
-                } else if (node1Pinned && !node2Pinned) {
-                  node2.force.x += (dx * invDist) * force;
-                  node2.force.y += (dy * invDist) * force;
-                } else if (!node1Pinned && node2Pinned) {
-                  node1.force.x -= (dx * invDist) * force;
-                  node1.force.y -= (dy * invDist) * force;
-                }
-              }
-            }
-
-            // Spring attraction along edges (pull connected nodes together)
-            const edges = this.edges;
-            for (let e = 0; e < edges.length; e++) {
-              const edge = edges[e];
-              const i = idToIndex.get(edge.from);
-              const j = idToIndex.get(edge.to);
-              if (i === undefined || j === undefined) continue;
-              const sourceNode = nodes[i];
-              const targetNode = nodes[j];
-
-              const dx = targetNode.position.x - sourceNode.position.x;
-              const dy = targetNode.position.y - sourceNode.position.y;
-              const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-              const invDist = 1 / distance;
-
-              // Spring force (attraction with ideal length)
-              const displacement = distance - springLength;
-              const force = (springForce / 1000) * displacement;
-
-              const sourcePinned = pinnedFlags[i];
-              const targetPinned = pinnedFlags[j];
-
-              if (!sourcePinned && !targetPinned) {
-                const fx = (dx * invDist) * force;
-                const fy = (dy * invDist) * force;
-                sourceNode.force.x += fx;
-                sourceNode.force.y += fy;
-                targetNode.force.x -= fx;
-                targetNode.force.y -= fy;
-              } else if (sourcePinned && !targetPinned) {
-                targetNode.force.x -= (dx * invDist) * force;
-                targetNode.force.y -= (dy * invDist) * force;
-              } else if (!sourcePinned && targetPinned) {
-                sourceNode.force.x += (dx * invDist) * force;
-                sourceNode.force.y += (dy * invDist) * force;
-              }
-            }
-
-            // Apply forces to velocities and update positions
-            const maxVelocitySq = maxVelocity * maxVelocity;
-            for (let i = 0; i < numNodes; i++) {
-              const node = nodes[i];
-              const pinned = pinnedFlags[i];
-              if (!pinned) {
-                node.velocity.x += node.force.x;
-                node.velocity.y += node.force.y;
-              } else {
-                node.velocity.x = 0;
-                node.velocity.y = 0;
-              }
-
-              // Apply damping
-              node.velocity.x *= damping;
-              node.velocity.y *= damping;
-
-              // Limit velocity (avoid sqrt when under cap)
-              const speedSq = node.velocity.x * node.velocity.x + node.velocity.y * node.velocity.y;
-              if (speedSq > maxVelocitySq) {
-                const speed = Math.sqrt(speedSq);
-                const scale = maxVelocity / speed;
-                node.velocity.x *= scale;
-                node.velocity.y *= scale;
-              }
-
-              // Update position
-              if (!pinned) {
-                node.position.x += node.velocity.x;
-                node.position.y += node.velocity.y;
-              }
-            }
-          }
-        };
-        
-        // Run one step
-        simulation.step();
-        
-        // FPS accounting (update roughly every 500ms)
-        if (typeof performance !== 'undefined') {
-          const now = performance.now();
-          const stats = fpsStatsRef.current;
-          stats.frames += 1;
-          const elapsed = now - stats.lastReport;
-          if (elapsed >= 500) {
-            const currentFps = Math.round((stats.frames * 1000) / elapsed);
-            stats.frames = 0;
-            stats.lastReport = now;
-            // push into history buffer (always push, even if unchanged)
-            setFpsHistory(prev => {
-              const next = [...prev, currentFps];
-              const MAX = 60; // history length
-              return next.length > MAX ? next.slice(next.length - MAX) : next;
-            });
-            if (currentFps !== stats.lastFps) {
-              stats.lastFps = currentFps;
-              setFps(currentFps);
-            }
-          }
-        }
-
-        // Schedule next step if still enabled
-        if (isAutoArrangeOn && animationRef.current) {
-          animationRef.current = requestAnimationFrame(runAutoArrange);
-        }
-        
-        return simulation.nodes;
-      });
-    }, [isAutoArrangeOn]);
-  
-           // Run auto arrange when enabled
-    useEffect(() => {
-      if (isAutoArrangeOn) {
-        // Start the animation loop if not already running
-        if (!animationRef.current) {
-          animationRef.current = requestAnimationFrame(runAutoArrange);
-        }
-      } else {
-        // Stop the animation when auto arrange is turned off
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-          animationRef.current = null;
-        }
-
-      }
-    }, [isAutoArrangeOn, runAutoArrange]);
-
-  // Cleanup animation on unmount
-  useEffect(() => {
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (sizeAnimationFrameRef.current) cancelAnimationFrame(sizeAnimationFrameRef.current);
-    };
-  }, []);
+  // Physics simulation and animation cleanup handled by useForceSimulation and useSizeAnimation hooks
 
   // Auto-pin one node per disconnected component when multiple components exist
   useEffect(() => {
@@ -1078,7 +569,7 @@ const RelationshipWeb = ({
 
     const same = autoPinnedNodeIds.size === nextAuto.size && Array.from(autoPinnedNodeIds).every(id => nextAuto.has(id));
     if (!same) setAutoPinnedNodeIds(nextAuto);
-  }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds, autoPinnedNodeIds.size, findConnectedComponents]);
+  }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds, autoPinnedNodeIds.size]);
 
   // Handle node drag start
   const handleNodeMouseDown = (e, nodeId) => {
@@ -1270,18 +761,7 @@ const RelationshipWeb = ({
          const relationshipCount = getRelationshipCount(char.id);
          const importance = calculateCharacterImportance(char);
          const size = scaleSizeByImportance ? getNodeSize(importance, false) : 30;
-         return {
-           id: char.id,
-           name: char.name,
-           role: char.role,
-           group: char.group,
-           position: position,
-           color: getGroupColor(char.group, relationshipCount),
-           relationshipCount,
-           importance,
-           size,
-           isFocused: false
-         };
+         return createNode(char, position, { isFocused: false, relationshipCount, importance, size, getGroupColor });
       })] : currentNodes;
              
       // Update edges to show ALL relationships between visible characters
@@ -1305,14 +785,12 @@ const RelationshipWeb = ({
             );
             return !hasExistingEdge;
           })
-          .map((relationship, index) => ({
-            id: `${relationship.from}-${relationship.to}-${Date.now()}-${index}`,
-            from: relationship.from,
-            to: relationship.to,
-            type: relationship.type,
-            color: getRelationshipColor(relationship.type),
-            label: formatRelationshipType(relationship.type)
-          }));
+          .map((relationship, index) => createEdge(
+            relationship,
+            `${relationship.from}-${relationship.to}-${Date.now()}-${index}`,
+            getRelationshipColor,
+            formatRelationshipType
+          ));
         
         // Always update edges, even if no new characters were added
         if (newEdges.length > 0) {
@@ -1324,7 +802,7 @@ const RelationshipWeb = ({
       
       return updatedNodes;
     });
-  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, findLargestConnectedComponent, getRelationshipCount, getGroupColor, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
+  }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, getRelationshipCount, getGroupColor, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
 
   // Handle node drag end
   const handleNodeMouseUp = useCallback((e, nodeId) => {
@@ -1493,18 +971,7 @@ const RelationshipWeb = ({
       const x = anchorNode.position.x + radius * Math.cos(angle);
       const y = anchorNode.position.y + radius * Math.sin(angle);
 
-      return {
-        id: character.id,
-        name: character.name,
-        role: character.role,
-        group: character.group,
-        position: { x, y },
-        color: getGroupColor(character.group, relationshipCount),
-        relationshipCount,
-        importance,
-        size,
-        isFocused: false
-      };
+      return createNode(character, { x, y }, { isFocused: false, relationshipCount, importance, size, getGroupColor });
     };
 
     if (updatedNodes.length === 0) {
@@ -1516,18 +983,7 @@ const RelationshipWeb = ({
         const relationshipCount = getRelationshipCount(seedId);
         const importance = calculateCharacterImportance(seedChar);
         const size = scaleSizeByImportance ? getNodeSize(importance, true) : 30;
-        updatedNodes.push({
-          id: seedChar.id,
-          name: seedChar.name,
-          role: seedChar.role,
-          group: seedChar.group,
-          position: { x: centerX, y: centerY },
-          color: getGroupColor(seedChar.group, relationshipCount),
-          relationshipCount,
-          importance,
-          size,
-          isFocused: true
-        });
+        updatedNodes.push(createNode(seedChar, { x: centerX, y: centerY }, { isFocused: true, relationshipCount, importance, size, getGroupColor }));
         existingIds.add(seedId);
       }
     }
@@ -1570,18 +1026,7 @@ const RelationshipWeb = ({
         const angle = (idx * 2 * Math.PI) / missingIds.length;
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
-        updatedNodes.push({
-          id: character.id,
-          name: character.name,
-          role: character.role,
-          group: character.group,
-          position: { x, y },
-          color: getGroupColor(character.group, relationshipCount),
-          relationshipCount,
-          importance,
-          size,
-          isFocused: false
-        });
+        updatedNodes.push(createNode(character, { x, y }, { isFocused: false, relationshipCount, importance, size, getGroupColor }));
       });
     }
 
@@ -1592,14 +1037,12 @@ const RelationshipWeb = ({
     const visibleIds = new Set(updatedNodes.map(n => n.id));
     const newEdges = filteredRels
       .filter(rel => visibleIds.has(rel.from) && visibleIds.has(rel.to))
-      .map((relationship, index) => ({
-        id: `${relationship.from}-${relationship.to}-${index}`,
-        from: relationship.from,
-        to: relationship.to,
-        type: relationship.type,
-        color: getRelationshipColor(relationship.type),
-        label: formatRelationshipType(relationship.type)
-      }));
+      .map((relationship, index) => createEdge(
+        relationship,
+        `${relationship.from}-${relationship.to}-${index}`,
+        getRelationshipColor,
+        formatRelationshipType
+      ));
 
     setEdges(newEdges);
   };
@@ -1654,23 +1097,18 @@ const RelationshipWeb = ({
       setAutoPinnedNodeIds(new Set());
       setHoveredNode(null);
       setActiveMode('none');
-      setCurrentChapter(null);
 
       // Stop any ongoing animations
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
       }
-      if (sizeAnimationFrameRef.current) {
-        cancelAnimationFrame(sizeAnimationFrameRef.current);
-        sizeAnimationFrameRef.current = null;
-      }
-      sizeAnimationActiveRef.current = false;
-      sizeAnimationVelocitiesRef.current.clear();
+      resetSizeAnimation();
 
       // Update ref to new book key
       previousBookKeyRef.current = currentBookKey;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentBookKey, charactersData]);
 
   // Add event listeners
@@ -1904,28 +1342,6 @@ const RelationshipWeb = ({
             <span className="whitespace-pre leading-tight text-center">{`Page\nTutorial`}</span>
           </button>
 
-          <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors flex-shrink-0"
-                  title="How to use the Relationship Web"
-                  onClick={() => {
-                                         alert(`How to use the Relationship Web:
-
- • Start by selecting a character to focus on their relationships
- • Choose a chapter to avoid spoilers
- • Drag characters to rearrange, or use "Auto Arrange" for automatic layout
- • Click on any character to view their details and add their relationships
- • Use mouse wheel to zoom, and drag the background to pan
- • Toggle "Remove Mode" to click and remove characters (only the largest connected component will be kept)
- • Use "Fit to View" to see all characters at once
- • Use the full screen button (↗) for maximum viewing area
- • Toggle "Size by Importance" to make important characters larger`);
-                  }}
-                >
-            <span className="whitespace-pre leading-tight text-center">{`ℹ️\nHelp`}</span>
-            
-                </button>
-
-
 
         </div>
       </div>
@@ -1935,173 +1351,26 @@ const RelationshipWeb = ({
 
       {/* Main Content Area with Left Panel and Map */}
       <div className="flex gap-4">
-        {/* Left Panel */}
-        <div className="w-48 flex-shrink-0">
-          <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 p-4 h-full" style={{ height: isFullPage ? 'calc(100vh - 95px)' : '840px' }}>
-
-            {/* Physics Controls */}
-            <div className="mb-6">
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-xs text-gray-600 dark:text-gray-400">
-                      Spring Force
-                    </label>
-                    <span className="text-xs text-gray-500">{springForce}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={springForce}
-                    onChange={(e) => setSpringForce(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-xs text-gray-600 dark:text-gray-400">
-                      Repulsion Force
-                    </label>
-                    <span className="text-xs text-gray-500">{repulsionForce}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500000"
-                    step="100"
-                    value={repulsionForce}
-                    onChange={(e) => setRepulsionForce(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* View Options */}
-            <div className="mb-6">
-              <div>
-                <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  View Options
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={showDescription}
-                      onChange={(e) => setShowDescription(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Description</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={showRelationship}
-                      onChange={(e) => setShowRelationship(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Relationship</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={showNumber}
-                      onChange={(e) => {
-                        setShowNumber(e.target.checked);
-                        if (e.target.checked) setShowImportance(false);
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Relationship Count</span>
-                  </label>
-                                     <label className="flex items-center">
-                     <input
-                       type="checkbox"
-                       checked={showImportance}
-                       onChange={(e) => {
-                         setShowImportance(e.target.checked);
-                         if (e.target.checked) setShowNumber(false);
-                       }}
-                       className="mr-2"
-                     />
-                     <span className="text-sm text-gray-700 dark:text-gray-300">Importance Rating</span>
-                   </label>
-                   <label className="flex items-center">
-                     <input
-                       type="checkbox"
-                       checked={scaleSizeByImportance}
-                       onChange={(e) => {
-                         setScaleSizeByImportance(e.target.checked);
-                         if (nodes && nodes.length > 0) {
-                           if (sizeAnimationFrameRef.current) {
-                             cancelAnimationFrame(sizeAnimationFrameRef.current);
-                             sizeAnimationFrameRef.current = null;
-                           }
-                           sizeAnimationActiveRef.current = false;
-                           sizeAnimationVelocitiesRef.current.clear();
-                           setNodes(currentNodes => currentNodes.map(node => {
-                             const newTarget = e.target.checked ? getNodeSize(node.importance, node.isFocused) : 30;
-                             const currentRendered = node.animatedSize != null ? node.animatedSize : (node.size != null ? node.size : 30);
-                             return { ...node, animatedSize: currentRendered, size: newTarget };
-                           }));
-                           if (typeof window !== 'undefined' && window.requestAnimationFrame) {
-                             window.requestAnimationFrame(() => startSizeAnimation());
-                           } else {
-                             startSizeAnimation();
-                           }
-                         }
-                       }}
-                       className="mr-2"
-                     />
-                     <span className="text-sm text-gray-700 dark:text-gray-300">Size is Importance</span>
-                   </label>
-                </div>
-              </div>
-            </div>
-
-
-            {/* Character Groups Key */}
-            <div className="mb-6">
-
-              <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
-                 Character Groups
-              </label>
-
-              <div className="space-y-2">
-                {Object.keys(groupColors).map(group => (
-                  <div key={group} className="flex items-center">
-                    <div 
-                      className="w-3 h-3 rounded-full mr-2 flex-shrink-0"
-                      style={{ backgroundColor: getGroupColor(group) }}
-                    ></div>
-                    <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{group}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Relationship Types Key */}
-            {relationshipLegendItems.length > 0 && (
-              <div className="mb-6">
-                <label className="block text-m font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Relationship Types
-                </label>
-                <div className="space-y-2">
-                  {relationshipLegendItems.map(item => (
-                    <div key={item.label} className="flex items-center">
-                      <div className="w-3 h-3 mr-2 flex-shrink-0" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-xs text-gray-700 dark:text-gray-300 truncate">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-          </div>
-        </div>
+        <SidePanel
+          isFullPage={isFullPage}
+          springForce={springForce}
+          setSpringForce={setSpringForce}
+          repulsionForce={repulsionForce}
+          setRepulsionForce={setRepulsionForce}
+          showDescription={showDescription}
+          setShowDescription={setShowDescription}
+          showRelationship={showRelationship}
+          setShowRelationship={setShowRelationship}
+          showNumber={showNumber}
+          setShowNumber={setShowNumber}
+          showImportance={showImportance}
+          setShowImportance={setShowImportance}
+          scaleSizeByImportance={scaleSizeByImportance}
+          setScaleSizeByImportance={setScaleSizeByImportance}
+          groupColors={groupColors}
+          getGroupColor={getGroupColor}
+          relationshipLegendItems={relationshipLegendItems}
+        />
 
         {/* Relationship Graph */}
         <div className="flex-1">
@@ -2215,227 +1484,41 @@ const RelationshipWeb = ({
               {/* Transform for zoom and pan */}
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
                 {/* Edges */}
-                                 {edges.map((edge) => {
-                   const sourceNode = nodes.find(n => n.id === edge.from);
-                   const targetNode = nodes.find(n => n.id === edge.to);
-                   
-                   if (!sourceNode || !targetNode) return null;
-                   
-                   const sourceRadius = (sourceNode.animatedSize ?? sourceNode.size ?? 30);
-                   const targetRadius = (targetNode.animatedSize ?? targetNode.size ?? 30);
-                  
-                  // Calculate angle between nodes
-                  const dx = targetNode.position.x - sourceNode.position.x;
-                  const dy = targetNode.position.y - sourceNode.position.y;
-                  const angle = Math.atan2(dy, dx);
-                  
-                   // Calculate start and end points (on the edge of the circles, but inset by 4 pixels becuase of the arrowheads)
-                   const startX = sourceNode.position.x + (sourceRadius + 4) * Math.cos(angle);
-                   const startY = sourceNode.position.y + (sourceRadius + 4) * Math.sin(angle);
-                   const endX = targetNode.position.x - (targetRadius + 4) * Math.cos(angle);
-                   const endY = targetNode.position.y - (targetRadius + 4) * Math.sin(angle);
-
-                   
-                  // Calculate label position (middle of the line)
-                  const labelX = (startX + endX) / 2;
-                  const labelY = (startY + endY) / 2;
-                  
-                  return (
-                    <g key={edge.id}>
-                      <line
-                        x1={startX}
-                        y1={startY}
-                        x2={endX}
-                        y2={endY}
-                        stroke={edge.color}
-                        strokeWidth="2"
-                        markerEnd="url(#arrow-end)"
-                        markerStart="url(#arrow-start)"
-                      />
-                       {/* Relationship label - show if showRelationship is true OR hovering over either connected node */}
-                       {(showRelationship || hoveredNode === edge.from || hoveredNode === edge.to) && (
-                        <>
-                          {/* Background rectangle with dynamic width - tight to text */}
-                          <rect
-                            x={labelX - getTextWidth(edge.label) / 2}
-                            y={labelY - 8}
-                            width={getTextWidth(edge.label)}
-                            height="16"
-                            fill={darkMode ? "rgb(34, 33, 33)" : "rgba(255, 255, 255, 0.9)"}
-                            stroke={edge.color}
-                            strokeWidth="1"
-                            rx="3"
-                          />
-                          <text
-                            x={labelX}
-                            y={labelY}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fontSize="10"
-                            fill={getTextColor(darkMode)}
-                            className="select-none font-medium"
-                            style={{
-                              textShadow: darkMode
-                                ? '1px 1px 2px rgba(0,0,0,0.8)'
-                                : '1px 1px 2px rgba(255,255,255,0.8)'
-                            }}
-                          >
-                            {edge.label}
-                          </text>
-                        </>
-                      )}
-                    </g>
-                  );
-                })}
+                {edges.map((edge) => (
+                  <SVGEdge
+                    key={edge.id}
+                    edge={edge}
+                    sourceNode={nodes.find(n => n.id === edge.from)}
+                    targetNode={nodes.find(n => n.id === edge.to)}
+                    showRelationship={showRelationship}
+                    hoveredNode={hoveredNode}
+                    darkMode={darkMode}
+                    getTextWidth={getTextWidth}
+                    getTextColor={getTextColor}
+                  />
+                ))}
 
                 {/* Nodes */}
                 {nodes.map(node => (
-                  <g key={node.id}>
-                                                              <circle
-                        cx={node.position.x}
-                        cy={node.position.y}
-                        r={node.animatedSize ?? node.size ?? 30}
-                        fill={node.color}
-                        stroke={getNodeStrokeColor(darkMode, node.id)}
-                        strokeWidth={2}
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                        onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                        onMouseEnter={() => setHoveredNode(node.id)}
-                        onMouseLeave={() => setHoveredNode(null)}
-                      />
-                      {/* Pin icon overlay if node is pinned */}
-                      { (pinnedNodeIds.has(node.id) || autoPinnedNodeIds.has(node.id)) && (
-                        <g transform={`translate(${node.position.x + (node.animatedSize ?? node.size ?? 30) * 0.3}, ${node.position.y - (node.animatedSize ?? node.size ?? 30) * 1.0})`} pointerEvents="none">
-                          {/* Scale the provided 512x512 SVG to a small overlay relative to node size */}
-                          <g transform={`scale(${10 / 256})`}>
-                            <path fill="#C0392B" d="M394.6,81.1L161.5,314.3l18.1,18.1l115,115c9.5-30.7,12.6-63,7.1-93.7L445,210.3c22.1,0,45.7-4.7,67-11.8l-99.2-99.2L394.6,81.1z"/>
-                            <polygon fill="#BDC3C7" points="161.5,314.3 125.2,350.5 53.6,422.2 18.1,458.4 0,512 36.2,475.8 143.4,368.6 179.6,332.4 "/>
-                            <polygon fill="#7F8C8D" points="179.6,332.4 143.4,368.6 71.7,440.3 36.2,475.8 0,512 53.6,493.9 89.8,458.4 161.5,386.8 197.7,350.5 "/>
-                            <path fill="#E74C3C" d="M313.5,0c-7.1,21.3-12.6,44.9-11.8,67L157.5,210.3c-29.9-5.5-63-2.4-93.7,7.1l115,115L412,99.2 L313.5,0z"/>
-                          </g>
-                        </g>
-                      )}
-                                                                                     {/* Number above node - show relationship count OR importance rating */}
-                                          {(showNumber || showImportance || hoveredNode === node.id) && (
-                                               <text
-                          x={node.position.x}
-                          y={node.position.y - (node.animatedSize ?? node.size ?? 30) - 10}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fontSize="12"
-                          fontWeight="bold"
-                          fill={getContrastTextColor(node.color, darkMode)}
-                          className="select-none pointer-events-none"
-                          style={{
-                            textShadow: darkMode 
-                              ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                              : '1px 1px 2px rgba(255,255,255,0.8)'
-                          }}
-                        >
-                          {showImportance ? (node.importance || 0) : (node.relationshipCount || 0)}
-                        </text>
-                     )}                  
-                    
-                                         {/* Character name - always show with text wrapping */}
-                     <text
-                       x={node.position.x}
-                       y={node.position.y}
-                       textAnchor="middle"
-                       dominantBaseline="middle"
-                       fontSize="12"
-                       fontWeight="bold"
-                       fill={getTextColor(darkMode)}
-                       className="select-none pointer-events-none"
-                       style={{
-                         textShadow: darkMode 
-                           ? '1px 1px 2px rgba(0,0,0,0.8)' 
-                           : '1px 1px 2px rgba(255,255,255,0.8)'
-                       }}
-                     >
-                                             {/* Text wrapping for character names */}
-                       {(() => {
-                                                   const maxWidth = 60 * 1.2; // slightly larger than diameter
-                         const words = node.name.split(' ');
-                         const lines = [];
-                         let currentLine = '';
-                         
-                         words.forEach(word => {
-                           const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                           const testWidth = getTextWidth(testLine, 12);
-                           
-                           if (testWidth <= maxWidth) {
-                             currentLine = testLine;
-                           } else {
-                             if (currentLine) lines.push(currentLine);
-                             currentLine = word;
-                           }
-                         });
-                         
-                         if (currentLine) lines.push(currentLine);
-                         
-                         // Calculate total height of all lines to center them on the node
-                         const lineHeight = 14; // Slightly larger than fontSize for spacing
-                         const totalHeight = lines.length * lineHeight;
-                         const startY = -(totalHeight / 2) + (lineHeight / 2);
-                         
-                         return lines.map((line, index) => (
-                           <tspan key={index} x={node.position.x} dy={index === 0 ? startY : 14}>
-                             {line}
-                           </tspan>
-                         ));
-                       })()}
-                    </text>
-                    
-                     {/* Character description - show if showDescription is true OR hovering over this node */}
-                     {(showDescription || hoveredNode === node.id) && node.role && (
-                      <text
-                        x={node.position.x}
-                        y={node.position.y}
-                        textAnchor="middle"
-                        fontSize="10"
-                        fill={getTextColor(darkMode)}
-                        className="select-none pointer-events-none"
-                        style={{
-                          textShadow: darkMode
-                            ? '1px 1px 2px rgba(0,0,0,0.8)'
-                            : '1px 1px 2px rgba(255,255,255,0.8)'
-                        }}
-                      >
-                        {/* Text wrapping for character descriptions */}
-                        {(() => {
-                                                     const maxWidth = 60 * 2;
-                          const words = node.role.split(' ');
-                          const lines = [];
-                          let currentLine = '';
-                          
-                          words.forEach(word => {
-                            const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                            const testWidth = getTextWidth(testLine, 10);
-                            
-                            if (testWidth <= maxWidth) {
-                              currentLine = testLine;
-                            } else {
-                              if (currentLine) lines.push(currentLine);
-                              currentLine = word;
-                            }
-                          });
-                          
-                          if (currentLine) lines.push(currentLine);
-                          
-                           // Calculate total height of all lines and position below the node
-                           const lineHeight = 12; // Slightly larger than fontSize for spacing
-                           const totalHeight = lines.length * lineHeight;
-                           const startY = (node.animatedSize ?? node.size ?? 30) + 15; 
-                          
-                          return lines.map((line, index) => (
-                            <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
-                              {line}
-                            </tspan>
-                          ));
-                        })()}
-                      </text>
-                    )}
-                  </g>
+                  <SVGNode
+                    key={node.id}
+                    node={node}
+                    darkMode={darkMode}
+                    hoveredNode={hoveredNode}
+                    pinnedNodeIds={pinnedNodeIds}
+                    autoPinnedNodeIds={autoPinnedNodeIds}
+                    showNumber={showNumber}
+                    showImportance={showImportance}
+                    showDescription={showDescription}
+                    showRelationship={showRelationship}
+                    getNodeStrokeColor={getNodeStrokeColor}
+                    getContrastTextColor={getContrastTextColor}
+                    getTextColor={getTextColor}
+                    getTextWidth={getTextWidth}
+                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                    onMouseEnter={() => setHoveredNode(node.id)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                  />
                 ))}
               </g>
             </svg>
