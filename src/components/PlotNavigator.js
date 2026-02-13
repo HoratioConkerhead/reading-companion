@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getCharacterName as _getCharacterName, getEventTitle as _getEventTitle } from '../utils/dataAccessors';
 
 const PlotNavigator = ({ 
   onEventSelect, 
@@ -14,17 +15,8 @@ const PlotNavigator = ({
   const [readerKnowledge, setReaderKnowledge] = useState('full'); // 'progressive', 'full'
   const [expandedChapter, setExpandedChapter] = useState(null);
   
-  // Get character name from ID
-  const getCharacterName = (characterId) => {
-    const character = charactersData.find(c => c.id === characterId);
-    return character ? character.name : characterId;
-  };
-  
-  // Get event title from ID
-  const getEventTitle = (eventId) => {
-    const event = eventsData.find(e => e.id === eventId);
-    return event ? event.title : eventId;
-  };
+  const getCharacterName = (characterId) => _getCharacterName(characterId, charactersData);
+  const getEventTitle = (eventId) => _getEventTitle(eventId, eventsData);
   
   // Handle character click
   const handleCharacterClick = (characterId) => {

@@ -387,7 +387,7 @@ To add a new book to the series (no rebuild needed):
 1. Create a new folder in `/src/data/` with the book's name (e.g., `/src/data/MyBook/`).
 2. Add a `metadata.js` file exporting `bookMetadata` (required for discovery and selection UI).
 3. Add data files as needed: `characters.js`, `events.js`, `locations.js`, `objects.js`, `relationships.js` (optional), `positions.js`, `mysteryElements.js`, `chapters.js`, `spycraftEntries.js`, `themeElements.js`.
-4. Recommended: create an `index.js` that exports a neutral `book` object aggregating your data. The loader will also accept a named `stitchedUp` export or a default export. If `index.js` is omitted, the loader will automatically assemble the book object from the individual files.
+4. Recommended: create an `index.js` that exports a `book` object aggregating your data. The loader will also accept a default export. If `index.js` is omitted, the loader will automatically assemble the book object from the individual files.
 5. Refresh the browser. The app rescans on load and the new book appears in the selector.
 
 Example `index.js` (recommended):
@@ -427,7 +427,7 @@ export const book = {
 
 Loader behavior:
 - Prefers `export const book = {...}`
-- Falls back to `export const stitchedUp = {...}` or `export default {...}`
+- Falls back to `export default {...}`
 - If no `index.js`, it aggregates named exports from per-type files
 
 ## Runtime Loader APIs (recommended)
@@ -437,7 +437,7 @@ The app dynamically discovers books and loads data at runtime via `src/data/inde
 Available functions:
 - `getAvailableBookKeys(): string[]` — discovered book directory names.
 - `getAvailableBookMetadata(): Record<bookKey, { key, title, author, shortDescription }>` — lightweight selection metadata from each book’s `metadata.js`.
-- `loadBookData(bookKey): Promise<Book>` — loads the full book data. Prefers `export const book = {...}` from `index.js`, then `stitchedUp`, then `default`. If no `index.js` exists, it aggregates named exports from per‑type files.
+- `loadBookData(bookKey): Promise<Book>` — loads the full book data. Prefers `export const book = {...}` from `index.js`, then `default`. If no `index.js` exists, it aggregates named exports from per‑type files.
 - `defaultBookKey: string` — preferred default if present (e.g., `MattParry_StitchedUp_v2`), else first discovered.
 
 Example:

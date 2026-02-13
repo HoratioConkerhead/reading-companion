@@ -78,12 +78,9 @@ export const loadBookData = async (bookKey) => {
       return { ...book, relationships };
     };
 
-    // Prefer neutral export name 'book', then 'stitchedUp', then default
+    // Prefer neutral export name 'book', then default
     if (bookModule.book) {
       return ensureRelationshipCategories(bookModule.book);
-    }
-    if (bookModule.stitchedUp) {
-      return ensureRelationshipCategories(bookModule.stitchedUp);
     }
     if (bookModule.default) {
       return ensureRelationshipCategories(bookModule.default);
@@ -113,10 +110,9 @@ export const loadBookData = async (bookKey) => {
   }
 };
 
-// Default book key (choose preferred if present, else first discovered)
+// Default book key (first discovered alphabetically)
 const computeDefaultBookKey = () => {
   const keys = getAvailableBookKeys().sort();
-  if (keys.includes('MattParry_StitchedUp')) return 'MattParry_StitchedUp';
   return keys[0] || '';
 };
 

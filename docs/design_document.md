@@ -1,4 +1,4 @@
-# "Stitched Up" Interactive App Design Document
+# Interactive Reading Companion Design Document
 
 ## Executive Summary
 
@@ -271,7 +271,7 @@ The app can support the novel's marketing through:
 
 ## Conclusion
 
-The "Stitched Up" interactive app has been successfully implemented and transforms a compelling spy thriller into an immersive, multi-layered experience. By helping readers navigate the complex web of characters, locations, and plot developments, the app enhances understanding and enjoyment of the novel while providing educational value about the historical period and spy craft.
+The Interactive Reading Companion has been successfully implemented and transforms compelling novels into immersive, multi-layered experiences. By helping readers navigate the complex web of characters, locations, and plot developments, the app enhances understanding and enjoyment of the novel while providing educational value about the historical period and spy craft.
 
 This app represents a new frontier in digital literary companions, offering readers multiple ways to engage with and explore a rich narrative world. The implementation includes advanced features like the relationship web with physics-based layout and character importance scoring, making it a sophisticated tool for literary analysis and enjoyment.
 

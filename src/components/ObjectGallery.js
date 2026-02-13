@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getCharacterName as _getCharacterName, getEventTitle as _getEventTitle } from '../utils/dataAccessors';
 const ObjectGallery = ({ 
   onObjectSelect, 
   selectedObject,
@@ -14,17 +15,8 @@ const ObjectGallery = ({
     object.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // Get character name from ID
-  const getCharacterName = (characterId) => {
-    const character = charactersData.find(c => c.id === characterId);
-    return character ? character.name : characterId;
-  };
-  
-  // Get event title from ID
-  const getEventTitle = (eventId) => {
-    const event = eventsData.find(e => e.id === eventId);
-    return event ? event.title : eventId;
-  };
+  const getCharacterName = (characterId) => _getCharacterName(characterId, charactersData);
+  const getEventTitle = (eventId) => _getEventTitle(eventId, eventsData);
   
   // Helper to format time periods
   const formatTimePeriod = (period) => {

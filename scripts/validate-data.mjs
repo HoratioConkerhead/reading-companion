@@ -42,9 +42,9 @@ const validateBook = async (bookKey, bookModulePath) => {
   logHeader(`Validating book: ${bookKey}`);
   const mod = await importFromRoot(bookModulePath);
 
-  // Support both default export style (stitchedUp) and individual exports
-  const book = mod.stitchedUp
-    ? mod.stitchedUp
+  // Support both consolidated (book) and individual exports
+  const book = mod.book
+    ? mod.book
     : {
         bookMetadata: mod.bookMetadata,
         characters: mod.characters,

@@ -1,6 +1,6 @@
-# Stitched Up Companion - User Interaction Flow
+# Interactive Reading Companion - User Interaction Flow
 
-This diagram illustrates how users interact with the different components of the Stitched Up Companion app, showing the flow of actions and navigation between different parts of the application.
+This diagram illustrates how users interact with the different components of the Interactive Reading Companion app, showing the flow of actions and navigation between different parts of the application.
 
 ```mermaid
 flowchart TD

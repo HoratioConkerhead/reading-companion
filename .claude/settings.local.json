@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:\\\\REPOSITORIES\\\\stitched-up-companion\" log --oneline -20)",
+      "WebFetch(domain:localhost)",
+      "WebFetch(domain:horatioconkerhead.github.io)",
+      "Bash(reg query:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(du:*)",
+      "Bash(npm test:*)",
+      "Bash(npx react-scripts build:*)",
+      "Bash(findstr:*)"
+    ]
+  }
+}
