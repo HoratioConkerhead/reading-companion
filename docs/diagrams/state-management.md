@@ -1,6 +1,6 @@
-# Stitched Up Companion - State Management and Component Interaction
+# Interactive Reading Companion - State Management and Component Interaction
 
-This sequence diagram illustrates how the components in the Stitched Up Companion app interact with each other and how state is managed throughout the application.
+This sequence diagram illustrates how the components in the Interactive Reading Companion app interact with each other and how state is managed throughout the application.
 
 ```mermaid
 sequenceDiagram

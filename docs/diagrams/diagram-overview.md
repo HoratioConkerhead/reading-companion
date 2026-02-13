@@ -1,10 +1,10 @@
-# Stitched Up Companion - Diagram Overview
+# Interactive Reading Companion - Diagram Overview
 
-This document provides a high-level summary of all the architectural and flow diagrams for the Stitched Up Interactive Companion application.
+This document provides a high-level summary of all the architectural and flow diagrams for the Interactive Reading Companion application.
 
 ## Project Overview
 
-The Stitched Up Interactive Companion is a web application designed to help readers explore Matt Parry's spy thriller novel "Stitched Up." The application allows users to navigate characters, relationships, locations, events, and plot elements from the novel through an interactive interface organized into tabs.
+The Interactive Reading Companion is a web application designed to help readers explore complex novels through characters, relationships, locations, events, and plot elements. The application allows users to navigate these elements through an interactive interface organized into tabs.
 
 ## Diagram Types and Their Purpose
 
@@ -102,7 +102,7 @@ These diagrams provide complementary views of the application:
 4. The **Data Model** diagram illustrates the relationships between different types of data.
 5. The **State Management** diagram shows how components communicate and share state.
 
-Together, these diagrams provide a comprehensive understanding of how the Stitched Up Interactive Companion works, from high-level architecture to detailed interaction patterns.
+Together, these diagrams provide a comprehensive understanding of how the Interactive Reading Companion works, from high-level architecture to detailed interaction patterns.
 
 ## Using These Diagrams
 

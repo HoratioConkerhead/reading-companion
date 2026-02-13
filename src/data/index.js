@@ -78,12 +78,9 @@ export const loadBookData = async (bookKey) => {
       return { ...book, relationships };
     };
 
-    // Prefer neutral export name 'book', then 'stitchedUp', then default
+    // Prefer neutral export name 'book', then default
     if (bookModule.book) {
       return ensureRelationshipCategories(bookModule.book);
-    }
-    if (bookModule.stitchedUp) {
-      return ensureRelationshipCategories(bookModule.stitchedUp);
     }
     if (bookModule.default) {
       return ensureRelationshipCategories(bookModule.default);

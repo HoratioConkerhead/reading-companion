@@ -1,6 +1,6 @@
-# Stitched Up Companion - Data Model and Relationships
+# Interactive Reading Companion - Data Model and Relationships
 
-This diagram illustrates the data model of the Stitched Up Companion app, showing the relationships between different data entities.
+This diagram illustrates the data model of the Interactive Reading Companion app, showing the relationships between different data entities.
 
 ```mermaid
 erDiagram

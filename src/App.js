@@ -47,6 +47,8 @@ const InteractiveReadingCompanion = () => {
       try {
         const data = await loadBookData(currentBookKey);
         setBookData(data);
+        // Update page title from book metadata
+        document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
         // Do not restore any previously saved chapter filter
         setChapterFilterId(null);
       } catch (error) {

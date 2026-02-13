@@ -1,6 +1,6 @@
-# Stitched Up Companion - Diagrams
+# Interactive Reading Companion - Diagrams
 
-This directory contains architectural and flow diagrams for the Stitched Up Companion application, providing visual documentation of the project structure, data model, and interaction patterns.
+This directory contains architectural and flow diagrams for the Interactive Reading Companion application, providing visual documentation of the project structure, data model, and interaction patterns.
 
 ## Available Diagrams
 

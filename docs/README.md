@@ -1,6 +1,6 @@
-# Stitched Up Companion - Documentation
+# Interactive Reading Companion - Documentation
 
-This directory contains documentation for the Stitched Up Interactive Companion application.
+This directory contains documentation for the Interactive Reading Companion application.
 
 ## Documentation Files
 
@@ -24,7 +24,7 @@ For a comprehensive overview of all diagrams, see the [Diagram Overview](diagram
 
 ## Purpose
 
-This documentation serves as a reference for developers working on the Stitched Up Interactive Companion application. It provides information on the application's architecture, data structure, and design principles.
+This documentation serves as a reference for developers working on the Interactive Reading Companion application. It provides information on the application's architecture, data structure, and design principles.
 
 ## Updating Documentation
 

@@ -1,4 +1,4 @@
-// Index file for "Stitched Up" data - exports all data from domain-specific files
+// Index file for book data - exports all data from domain-specific files
 
 export { characters } from './characters.js';
 export { locations } from './locations.js';

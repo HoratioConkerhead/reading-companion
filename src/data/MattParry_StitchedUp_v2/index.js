@@ -1,4 +1,4 @@
-// MattParry_StitchedUp data structure
+// Book data structure
 import { characters } from './characters.js';
 import { events } from './events.js';
 import { locations } from './locations.js';
@@ -15,7 +15,7 @@ import { deriveRelationshipsFromCharacters } from '../../utils/relationships.js'
 const relationships = deriveRelationshipsFromCharacters(characters, chapters);
 
 // Export the complete book data structure
-export const stitchedUp = {
+export const book = {
   bookMetadata,
   characters,
   events,
@@ -33,9 +33,6 @@ export const stitchedUp = {
   objectPositions,
   mapBoundaries
 };
-
-// Neutral export name preferred by the loader
-export const book = stitchedUp;
 
 // Export individual modules for direct access if needed
 export {
