@@ -1,6 +1,6 @@
 {
-  "homepage": "http://HoratioConkerhead.github.io/interactive-reading-companion",
-  "name": "interactive-reading-companion",
+  "homepage": "https://horatioconkerhead.github.io/reading-companion",
+  "name": "reading-companion",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
