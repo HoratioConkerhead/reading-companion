@@ -11,7 +11,11 @@
       "Bash(du:*)",
       "Bash(npm test:*)",
       "Bash(npx react-scripts build:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm audit:*)",
+      "Bash(npx react-scripts test --watchAll=false)",
+      "Bash(npm run build:*)"
     ]
   }
 }
