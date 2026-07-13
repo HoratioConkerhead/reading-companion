@@ -249,10 +249,6 @@ The app can be deployed to:
    - Cross-book character and plot connections
    - Series-wide relationship mapping
 
-## Easter Egg
-
-A faithful Windows 98 Disk Defragmenter simulator (with sounds) lives at [`/defrag/`](https://horatioconkerhead.github.io/reading-companion/defrag/) — a self-contained page in `public/defrag/index.html` that also runs by opening the file directly in a browser.
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
