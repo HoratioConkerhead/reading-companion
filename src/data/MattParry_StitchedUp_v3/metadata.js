@@ -1,5 +1,7 @@
 export const bookMetadata = {
   title: 'Stitched Up (v3)',
+  // Empty scaffold for the next extraction: hidden from the book picker (open with ?drafts)
+  draft: true,
   author: 'Matt Parry',
   characterGroups: {
     'Protagonists': 'Main characters working for British intelligence',

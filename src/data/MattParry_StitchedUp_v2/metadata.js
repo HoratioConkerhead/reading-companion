@@ -1,5 +1,7 @@
 export const bookMetadata = {
   title: "Stitched Up",
+  // Shown to first-time visitors
+  isDefault: true,
   author: "Matt Parry",
   genre: "Spy Thriller / Historical Fiction",
   setting: "England and Germany, 1932-1943",

@@ -65,7 +65,12 @@ const BookSelector = ({ isOpen, onClose, currentBook, onBookSelect, availableBoo
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
               />
               <div className="flex-1">
-                <div className="font-medium">{bookMetadata.title || bookKey}</div>
+                <div className="font-medium">
+                  {bookMetadata.title || bookKey}
+                  {bookMetadata.draft && (
+                    <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-amber-200 text-amber-900 align-middle">Draft</span>
+                  )}
+                </div>
                 <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   {bookMetadata.author || 'Unknown Author'}
                 </div>

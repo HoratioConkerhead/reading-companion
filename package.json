@@ -23,7 +23,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "validate:data": "node scripts/validate-data.mjs",
-    "build:data": "node scripts/consolidate-data.mjs --book MattParry_StitchedUp && npm run validate:data"
+    "build:data": "node scripts/consolidate-data.mjs --book MattParry_StitchedUp_v3 && npm run validate:data -- --book MattParry_StitchedUp_v3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

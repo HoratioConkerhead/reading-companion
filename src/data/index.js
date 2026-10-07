@@ -1,117 +1,77 @@
-// Automatic book discovery and lightweight selection metadata
-// We discover books by scanning for per-book metadata and index files.
-// Note: We intentionally import only each book's metadata for selection (small),
-// and load the full book data on demand when selected (each book is its own chunk).
-import { toRelationshipCategory } from '../utils/relationships.js';
+// Automatic book discovery and loading.
+// Every folder here with a metadata.js is a book. Metadata is loaded eagerly
+// (it is small and feeds the book picker); the rest of a book's data is loaded
+// on demand when it is selected, as its own chunk.
+//
+// Book metadata flags:
+// - draft: true      hidden from the book picker unless the URL has ?drafts
+//                    (for books still being written, e.g. an empty scaffold)
+// - isDefault: true  the book shown to first-time visitors
+import { assembleBook } from './bookAssembly.js';
 
 const metadataModules = import.meta.glob('./*/metadata.js', { eager: true });
 const indexLoaders = import.meta.glob('./*/index.js');
-// Per-file modules for books without an index.js (extractions are build inputs, not app data)
-// (metadata.js is already loaded eagerly above)
+// Per-file modules for books without an index.js (metadata.js is already loaded above)
 const bookFileLoaders = import.meta.glob(['./*/*.js', '!./*/index.js', '!./*/metadata.js']);
 
-// Temporarily ignore certain book folders while under construction
-const IGNORED_BOOK_KEYS = new Set([''
-]);
+const showDrafts = typeof window !== 'undefined'
+  && new URLSearchParams(window.location.search).has('drafts');
 
-const toBookKey = (p) => {
-  // p looks like './BookKey/metadata.js' → return 'BookKey'
-  const parts = p.split('/');
-  // ['.', 'BookKey', 'metadata.js']
-  return parts.length >= 3 ? parts[1] : null;
-};
+const toBookKey = (path) => path.split('/')[1]; // './BookKey/metadata.js' -> 'BookKey'
 
-const discoverSelectionMetadata = () => {
-  const result = {};
-  Object.keys(metadataModules).forEach((k) => {
-    const bookKey = toBookKey(k);
-    if (!bookKey) return;
-    if (IGNORED_BOOK_KEYS.has(bookKey)) return;
-    try {
-      const mod = metadataModules[k];
-      const meta = mod.bookMetadata || mod.default || {};
-      if (meta && (meta.title || meta.author)) {
-        result[bookKey] = {
-          key: bookKey,
-          title: meta.title || bookKey,
-          author: meta.author || '',
-          shortDescription: meta.shortDescription || ''
-        };
-      }
-    } catch (e) {
-      // Ignore broken metadata files
-      // console.warn('Failed to read metadata for', bookKey, e);
-    }
+// Discovery is static, so compute the catalog once: callers get the same object
+// every time (it is used as an effect dependency in App).
+const bookCatalog = (() => {
+  const catalog = {};
+  Object.keys(metadataModules).forEach((path) => {
+    const bookKey = toBookKey(path);
+    const meta = metadataModules[path].bookMetadata || metadataModules[path].default || {};
+    if (!meta.title && !meta.author) return;
+    if (meta.draft && !showDrafts) return;
+    catalog[bookKey] = {
+      key: bookKey,
+      title: meta.title || bookKey,
+      author: meta.author || '',
+      shortDescription: meta.shortDescription || '',
+      draft: Boolean(meta.draft),
+      isDefault: Boolean(meta.isDefault)
+    };
   });
-  return result;
-};
+  return catalog;
+})();
 
-// Helper: all available book keys discovered from metadata files
-export const getAvailableBookKeys = () => Object.keys(discoverSelectionMetadata());
+// All books available in the picker
+export const getAvailableBookKeys = () => Object.keys(bookCatalog);
 
-// Helper: selection metadata per book (lightweight)
-export const getAvailableBookMetadata = () => discoverSelectionMetadata();
+// Lightweight selection metadata per book (the same object on every call)
+export const getAvailableBookMetadata = () => bookCatalog;
 
-// Load a specific book's full data from its index.js
+// Load a book's full data (from its index.js, or assembled from its individual files)
 export const loadBookData = async (bookKey) => {
   try {
-    if (IGNORED_BOOK_KEYS.has(bookKey)) {
-      throw new Error(`Book "${bookKey}" is currently disabled`);
+    if (!metadataModules[`./${bookKey}/metadata.js`]) {
+      throw new Error(`Unknown book "${bookKey}"`);
     }
-    // Try to load via index.js if present
     const indexPath = `./${bookKey}/index.js`;
-    let bookModule = null;
     if (indexLoaders[indexPath]) {
-      bookModule = await indexLoaders[indexPath]();
+      const indexModule = await indexLoaders[indexPath]();
+      if (indexModule.book || indexModule.default) return assembleBook({ indexModule });
     }
 
-    // Helper to ensure every relationship has a general category
-    const ensureRelationshipCategories = (book) => {
-      if (!book || !book.relationships) return book;
-      const relationships = (book.relationships || []).map(rel => (
-        rel && rel.category ? rel : { ...rel, category: toRelationshipCategory(rel?.type || '') }
-      ));
-      return { ...book, relationships };
-    };
-
-    // Prefer neutral export name 'book', then default
-    if (bookModule.book) {
-      return ensureRelationshipCategories(bookModule.book);
-    }
-    if (bookModule.default) {
-      return ensureRelationshipCategories(bookModule.default);
-    }
-
-    // Fallback: construct object by aggregating per-file exports within the book folder
-    const constructed = {};
-    const wantedKeys = new Set([
-      'bookMetadata', 'characters', 'events', 'locations', 'objects', 'relationships', 'chapters', 'timeline',
-      'mysteryElements', 'themeElements', 'spycraftEntries', 'locationPositions', 'eventPositions',
-      'characterPositions', 'objectPositions', 'mapBoundaries'
-    ]);
-    const files = Object.keys(bookFileLoaders).filter(k => k.startsWith(`./${bookKey}/`));
-    const modules = await Promise.all(files.map(filePath => bookFileLoaders[filePath]()));
-    const metadataModule = metadataModules[`./${bookKey}/metadata.js`];
-    if (metadataModule) modules.push(metadataModule);
-    modules.forEach((mod) => {
-      Object.keys(mod).forEach((exp) => {
-        if (wantedKeys.has(exp) && constructed[exp] == null) {
-          constructed[exp] = mod[exp];
-        }
-      });
-    });
-    if (!constructed.timeline) constructed.timeline = [];
-    return ensureRelationshipCategories(constructed);
+    const files = Object.keys(bookFileLoaders).filter(path => toBookKey(path) === bookKey);
+    const fileModules = await Promise.all(files.map(path => bookFileLoaders[path]()));
+    fileModules.push(metadataModules[`./${bookKey}/metadata.js`]);
+    return assembleBook({ fileModules });
   } catch (error) {
     console.error(`Failed to load book "${bookKey}":`, error);
     throw error;
   }
 };
 
-// Default book key (first discovered alphabetically)
+// The book flagged isDefault, else the first alphabetically
 const computeDefaultBookKey = () => {
   const keys = getAvailableBookKeys().sort();
-  return keys[0] || '';
+  return keys.find(key => bookCatalog[key].isDefault) || keys[0] || '';
 };
 
 export const defaultBookKey = computeDefaultBookKey();
