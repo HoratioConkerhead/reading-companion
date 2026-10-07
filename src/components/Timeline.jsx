@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLocationName as _getLocationName, getLocationArea as _getLocationArea } from '../utils/dataAccessors';
+import { getBookConfig, eventInPeriod, getEventGroupColor } from '../utils/bookConfig';
 
 const Timeline = ({ 
   onEventSelect, 
@@ -7,28 +8,22 @@ const Timeline = ({
   onCharacterSelect,
   eventsData,
   charactersData,
-  locationsData
+  locationsData,
+  bookConfig = getBookConfig()
 }) => {
-  const [timelineFilter, setTimelineFilter] = useState('all');
+  const [timelineFilter, setTimelineFilter] = useState('all'); // 'all' or a time period id
   const [characterFilter, setCharacterFilter] = useState('all');
   const [layoutMode, setLayoutMode] = useState('chronological'); // 'chronological' or 'parallel'
-  const [zoomLevel, setZoomLevel] = useState(50); // Default zoom level at 50%
   
-  // Refs for scrolling
+  // Ref for scrolling the event strip
   const timelineRef = useRef(null);
-  const eventDetailsRef = useRef(null);
-  const timelinePosition = useRef(null);
+  const selectedPeriod = bookConfig.timePeriods.find(p => p.id === timelineFilter) || null;
+  const getEventColor = (event) => getEventGroupColor(event, charactersData, bookConfig);
   
   // Filter events based on selection
   const filteredEvents = eventsData.filter(event => {
     // Filter by time period
-    const matchesTimePeriod = (() => {
-      if (timelineFilter === 'all') return true;
-      if (timelineFilter === 'early' && event.date.includes('193')) return true;
-      if (timelineFilter === 'mid' && (event.date.includes('1941') || event.date.includes('1942'))) return true;
-      if (timelineFilter === 'late' && (event.date.includes('1943') || event.date.includes('1944'))) return true;
-      return false;
-    })();
+    const matchesTimePeriod = eventInPeriod(event, selectedPeriod);
     
     // Filter by character
     const matchesCharacter = (() => {
@@ -72,51 +67,30 @@ const Timeline = ({
     return monthA - monthB;
   });
   
-  // Group events by year for visual organization
-  const groupedEvents = sortedEvents.reduce((groups, event) => {
-    const year = event.date.match(/\d{4}/) ? event.date.match(/\d{4}/)[0] : 'Unknown';
-    if (!groups[year]) groups[year] = [];
-    groups[year].push(event);
-    return groups;
-  }, {});
-  
   // For parallel storylines view, group by character faction
   const getCharacterGroup = (characterId) => {
     const character = charactersData.find(c => c.id === characterId);
     return character ? character.group : 'Unknown';
   };
   
+  // Parallel storylines: one column per character group, each event under the group
+  // most represented among its characters
   const parallelEvents = (() => {
-    const groups = {
-      'Protagonists': [],
-      'Fifth Columnists': [],
-      'German Connection': []
-    };
-    
+    const groups = Object.fromEntries(bookConfig.groups.map(g => [g.name, []]));
     filteredEvents.forEach(event => {
-      if (!event.characters) return;
-      
-      // Determine primary group for this event
-      const characterGroups = event.characters.map(c => getCharacterGroup(c.characterId));
-      const primaryGroup = (() => {
-        const groupCounts = {};
-        characterGroups.forEach(group => {
-          groupCounts[group] = (groupCounts[group] || 0) + 1;
-        });
-        
-        // Return the most common group, or 'Protagonists' as default
-        const maxGroup = Object.keys(groupCounts).reduce((a, b) => 
-          groupCounts[a] > groupCounts[b] ? a : b
-        );
-        return groups[maxGroup] ? maxGroup : 'Protagonists';
-      })();
-      
-      if (groups[primaryGroup]) {
-        groups[primaryGroup].push(event);
-      }
+      if (!event.characters || event.characters.length === 0) return;
+      const groupCounts = {};
+      event.characters.forEach(c => {
+        const group = getCharacterGroup(c.characterId);
+        if (groups[group]) groupCounts[group] = (groupCounts[group] || 0) + 1;
+      });
+      const primaryGroup = Object.keys(groupCounts).reduce(
+        (best, group) => (best === null || groupCounts[group] > groupCounts[best] ? group : best), null
+      );
+      if (primaryGroup) groups[primaryGroup].push(event);
     });
-    
-    return groups;
+    // Only groups that have events
+    return Object.fromEntries(Object.entries(groups).filter(([, events]) => events.length > 0));
   })();
   
   // Handle event selection
@@ -173,51 +147,26 @@ const Timeline = ({
       
       {/* Timeline Controls */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
-          <div className="flex">
-            <button 
-              className={`px-3 py-1 text-sm rounded-l transition-colors ${
-                timelineFilter === 'all' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setTimelineFilter('all')}
-            >
-              All
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm transition-colors ${
-                timelineFilter === 'early' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setTimelineFilter('early')}
-            >
-              1932-1939
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm transition-colors ${
-                timelineFilter === 'mid' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setTimelineFilter('mid')}
-            >
-              1940-1942
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded-r transition-colors ${
-                timelineFilter === 'late' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setTimelineFilter('late')}
-            >
-              1943-1944
-            </button>
+        {bookConfig.timePeriods.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
+            <div className="flex">
+              {[{ id: 'all', label: 'All' }, ...bookConfig.timePeriods].map((period, index, all) => (
+                <button
+                  key={period.id}
+                  className={`px-3 py-1 text-sm transition-colors ${index === 0 ? 'rounded-l' : ''} ${index === all.length - 1 ? 'rounded-r' : ''} ${
+                    timelineFilter === period.id
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                  onClick={() => setTimelineFilter(period.id)}
+                >
+                  {period.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">View</label>
@@ -253,30 +202,19 @@ const Timeline = ({
             onChange={(e) => setCharacterFilter(e.target.value)}
           >
             <option value="all">All Characters</option>
-            <optgroup label="Protagonists">
-              {charactersData
-                .filter(c => c.group === 'Protagonists')
-                .map(character => (
-                  <option key={character.id} value={character.id}>{character.name}</option>
-                ))
-              }
-            </optgroup>
-            <optgroup label="Fifth Columnists">
-              {charactersData
-                .filter(c => c.group === 'Fifth Columnists')
-                .map(character => (
-                  <option key={character.id} value={character.id}>{character.name}</option>
-                ))
-              }
-            </optgroup>
-            <optgroup label="German Connection">
-              {charactersData
-                .filter(c => c.group === 'German Connection')
-                .map(character => (
-                  <option key={character.id} value={character.id}>{character.name}</option>
-                ))
-              }
-            </optgroup>
+            {bookConfig.groups
+              .filter(group => charactersData.some(c => c.group === group.name))
+              .map(group => (
+                <optgroup key={group.name} label={group.name}>
+                  {charactersData
+                    .filter(c => c.group === group.name)
+                    .map(character => (
+                      <option key={character.id} value={character.id}>{character.name}</option>
+                    ))
+                  }
+                </optgroup>
+              ))
+            }
           </select>
         </div>
       </div>
@@ -320,7 +258,7 @@ const Timeline = ({
                           top: '106px', /* Centred on the line (top-28 = 112px, 4px tall); labels sit above */
                           left: '50%',
                           transform: 'translateX(-50%)',
-                          backgroundColor: getEventColor(event, charactersData)
+                          backgroundColor: getEventColor(event)
                         }}
                       ></div>
                       
@@ -466,7 +404,7 @@ const Timeline = ({
                       </div>
                       <div 
                         className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: getEventColor(event, charactersData) }}
+                        style={{ backgroundColor: getEventColor(event) }}
                       ></div>
                     </div>
                   </div>
@@ -483,35 +421,5 @@ const Timeline = ({
 // Helper functions
 const getLocationName = _getLocationName;
 const getLocationArea = _getLocationArea;
-
-const getEventColor = (event, charactersData) => {
-  if (!event.characters || event.characters.length === 0) return '#6b7280';
-  
-  // Determine color based on character groups involved
-  const groups = event.characters.map(c => {
-    const character = charactersData.find(char => char.id === c.characterId);
-    return character ? character.group : 'Unknown';
-  });
-  
-  // Return color based on primary group
-  if (groups.includes('Protagonists')) return '#3182ce'; // Blue
-  if (groups.includes('Fifth Columnists')) return '#e53e3e'; // Red
-  if (groups.includes('German Connection')) return '#d69e2e'; // Yellow
-  
-  return '#6b7280'; // Gray
-};
-
-const getGroupColor = (group) => {
-  switch (group) {
-    case 'Protagonists':
-      return 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200';
-    case 'Fifth Columnists':
-      return 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200';
-    case 'German Connection':
-      return 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200';
-    default:
-      return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  }
-};
 
 export default Timeline;

@@ -10,10 +10,19 @@ export const BOOK_ARRAY_KEYS = [
 export const BOOK_OBJECT_KEYS = ['locationPositions', 'eventPositions', 'characterPositions', 'objectPositions'];
 const BOOK_EXPORTS = new Set(['bookMetadata', 'mapBoundaries', ...BOOK_ARRAY_KEYS, ...BOOK_OBJECT_KEYS]);
 
+// Books describe mysteries with two vocabularies (firstMentioned/revealedInChapter
+// and introducedInChapter/resolvedInChapter); give every mystery both
+const normalizeMystery = (mystery) => ({
+  ...mystery,
+  introducedInChapter: mystery.introducedInChapter ?? mystery.firstMentioned ?? null,
+  firstMentioned: mystery.firstMentioned ?? mystery.introducedInChapter ?? null,
+  revealedInChapter: mystery.revealedInChapter ?? mystery.resolvedInChapter ?? null
+});
+
 /**
  * Fill in missing parts with empty values, derive relationships from
- * characters[].relations when a book has no relationships list, and make sure
- * every relationship has a general category.
+ * characters[].relations when a book has no relationships list, make sure
+ * every relationship has a general category, and normalise mystery fields.
  */
 export const normalizeBook = (book = {}) => {
   const result = { ...book, bookMetadata: book.bookMetadata || {} };
@@ -32,6 +41,7 @@ export const normalizeBook = (book = {}) => {
   result.relationships = result.relationships.map(rel => (
     rel.category ? rel : { ...rel, category: toRelationshipCategory(rel.type) }
   ));
+  result.mysteryElements = result.mysteryElements.map(normalizeMystery);
   return result;
 };
 

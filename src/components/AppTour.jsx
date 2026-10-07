@@ -1,17 +1,28 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Steps } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import './AppTour.css'; // Import our custom styles
 
-const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => {
-  // Track when tab changes are needed based on steps
-  useEffect(() => {
-    // If the tour is open and we're on steps that need specific tabs
-    if (isOpen) {
-      // Match step index to tab index for steps 1-8
-      // We'll do this in the onBeforeChange handler
-    }
-  }, [isOpen, currentTab, onTabChange]);
+// What each tab is for, keyed by tab id
+const TAB_DESCRIPTIONS = {
+  characters: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.',
+  relationships: 'Visualize the complex connections between characters with this interactive network diagram.',
+  timeline: 'Follow the chronological events of the story from beginning to end.',
+  locations: 'Discover key locations where the story takes place and their significance.',
+  map: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.',
+  plot: 'Understand the structure of the plot and explore key themes and mystery elements.',
+  objects: 'Browse important items and artifacts that play a role in the story.',
+  encyclopedia: 'Learn about the techniques and ideas referenced in the novel.'
+};
+
+const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata, tabs = [] }) => {
+  // One step per tab the current book has
+  const tabSteps = tabs.map(tab => ({
+    element: `.react-tabs__tab[data-tab-id="${tab.id}"]`,
+    intro: TAB_DESCRIPTIONS[tab.id] || `Open the ${tab.label} tab.`,
+    position: 'bottom',
+    tabId: tab.id
+  }));
 
   // Array of steps for the tour
   const steps = [
@@ -33,51 +44,7 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => 
       intro: 'Use this Up To control to set the latest chapter you\'ve read. The entire app will limit content to avoid spoilers.',
       position: 'bottom'
     },
-    {
-      element: '.react-tabs__tab:nth-child(1)',
-      intro: 'Explore detailed profiles of all characters in the novel, including their backgrounds, traits, and relationships.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(2)',
-      intro: 'Visualize the complex connections between characters with this interactive network diagram.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(3)',
-      intro: 'Follow the chronological events of the story from beginning to end.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(4)',
-      intro: 'Discover key locations where the story takes place and their significance.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(5)',
-      intro: 'Explore the geographic setting of the novel with this detailed map showing locations, character movements, and event sites.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(6)',
-      intro: 'Understand the structure of the plot and explore key themes and mystery elements.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(7)',
-      intro: 'Browse important items and artifacts that play a role in the story.',
-      position: 'bottom'
-    },
-    {
-      element: '.react-tabs__tab:nth-child(8)',
-      intro: 'Learn about spy techniques and tradecraft mentioned in the novel.',
-      position: 'bottom'
-    },
-    {
-      element: '.current-selections',
-      intro: 'This panel shows your currently selected items for quick cross-reference. Click any item to jump to its detailed view.',
-      position: 'top'
-    },
+    ...tabSteps,
     {
       element: 'footer',
       intro: bookMetadata?.tourConclusion || 'You\'re now ready to explore the world of the book! Click any tab to begin your adventure.',
@@ -87,16 +54,10 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => 
 
   // Called before each step change
   const onBeforeChange = (nextStepIndex) => {
-    // Change tabs appropriately based on where the tab steps begin in the steps array
-    const firstTabStepIndex = steps.findIndex(s => String(s.element).includes('.react-tabs__tab:nth-child(1)'));
-    if (firstTabStepIndex !== -1) {
-      const lastTabStepIndex = firstTabStepIndex + 7; // 8 tabs total
-      if (nextStepIndex >= firstTabStepIndex && nextStepIndex <= lastTabStepIndex) {
-        const tabIndex = nextStepIndex - firstTabStepIndex; // map step to tab index 0..7
-        if (currentTab !== tabIndex) {
-          onTabChange(tabIndex);
-        }
-      }
+    // Switch to the tab a step describes
+    const tabId = steps[nextStepIndex]?.tabId;
+    if (tabId && currentTab !== tabId) {
+      onTabChange(tabId);
     }
   };
 

@@ -170,12 +170,8 @@
   }
 }
 
-/* Spy tab specific styling - for the "Spy Encyclopedia" tab */
-.react-tabs__tab:last-child {
-  position: relative;
-}
-
-.react-tabs__tab:last-child::after {
+/* Encyclopedia tab (e.g. "Spycraft") gets a magnifying glass */
+.react-tabs__tab.tab-encyclopedia::after {
   content: '🔍';
   margin-left: 5px;
   font-size: 12px;

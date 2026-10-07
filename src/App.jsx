@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import 'leaflet/dist/leaflet.css';
@@ -19,10 +19,11 @@ import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 // Import data from new structure - using dynamic loading
 import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
+import { getBookConfig } from './utils/bookConfig';
 import BookSelector from './components/BookSelector';
 
 const InteractiveReadingCompanion = () => {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTabId, setActiveTabId] = useState('relationships');
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -37,6 +38,9 @@ const InteractiveReadingCompanion = () => {
   const [chapterFilterId, setChapterFilterId] = useState(null);
   const [isChapterPickerOpen, setIsChapterPickerOpen] = useState(false);
   
+  // UI configuration for the loaded book (groups, time periods, tab labels...)
+  const bookConfig = useMemo(() => (bookData ? getBookConfig(bookData.bookMetadata, bookData) : null), [bookData]);
+
   // Available books metadata (lightweight, no heavy data)
   const availableBooks = getAvailableBookMetadata();
   
@@ -118,31 +122,25 @@ const InteractiveReadingCompanion = () => {
   // Character selection handler
   const handleCharacterSelect = (character) => {
     setSelectedCharacter(character);
-    // If we're not already on the character tab, switch to it
-    if (activeTab !== 0) {
-      setActiveTab(0);
-    }
+    setActiveTabId('characters');
   };
   
   // Location selection handler
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
-    // Switch to locations tab
-    setActiveTab(3);
+    setActiveTabId('locations');
   };
   
   // Event selection handler
   const handleEventSelect = (event) => {
     setSelectedEvent(event);
-    // Switch to timeline tab
-    setActiveTab(2);
+    setActiveTabId('timeline');
   };
   
   // Object selection handler
   const handleObjectSelect = (object) => {
     setSelectedObject(object);
-    // Switch to objects tab
-    setActiveTab(6);
+    setActiveTabId('objects');
   };
   
   // Start app tour
@@ -156,8 +154,8 @@ const InteractiveReadingCompanion = () => {
   }, []);
   
   // Handle tab change from tour
-  const handleTabChangeFromTour = useCallback((tabIndex) => {
-    setActiveTab(tabIndex);
+  const handleTabChangeFromTour = useCallback((tabId) => {
+    setActiveTabId(tabId);
   }, []);
 
   // On narrow screens the tab bar scrolls sideways; keep the selected tab in view when the
@@ -173,7 +171,7 @@ const InteractiveReadingCompanion = () => {
     } else if (right > list.scrollLeft + list.clientWidth) {
       list.scrollLeft = right - list.clientWidth;
     }
-  }, [activeTab, isLoading]);
+  }, [activeTabId, isLoading]);
 
   // Per-tab tutorials are managed inside each tab component
   
@@ -228,6 +226,146 @@ const InteractiveReadingCompanion = () => {
     const filteredEvents = filterEventsByChapter(bookData.events, chapters, chapterFilterId);
     const filteredLocations = filterByChapter(bookData.locations, chapters, chapterFilterId, l => l.introducedInChapter);
     const filteredObjects = filterByChapter(bookData.objects, chapters, chapterFilterId, o => o.introducedInChapter);
+    const byIntroChapter = item => item.introducedInChapter;
+    const filteredEncyclopedia = filterByChapter(bookData.spycraftEntries, chapters, chapterFilterId, byIntroChapter);
+    const filteredMysteries = filterByChapter(bookData.mysteryElements, chapters, chapterFilterId, byIntroChapter);
+    const filteredThemes = filterByChapter(bookData.themeElements, chapters, chapterFilterId, byIntroChapter);
+
+
+    // Tabs only appear when the book has content for them (judged on the whole book, not the
+    // chapter-filtered data, so tabs don't come and go while reading)
+    const tabs = [
+      {
+        id: 'characters',
+        content: (
+          <CharacterExplorer 
+            onCharacterSelect={handleCharacterSelect} 
+            selectedCharacter={selectedCharacter}
+            charactersData={filteredCharacters}
+            relationshipsData={filteredRelationships}
+            groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
+            groups={bookConfig.groups}
+          />
+        )
+      },
+      {
+        id: 'relationships',
+        // Always rendered so the graph keeps its layout while other tabs are open
+        forceRender: true,
+        content: (
+          <RelationshipWeb
+            onCharacterSelect={handleCharacterSelect}
+            selectedCharacter={selectedCharacter}
+            charactersData={filteredCharacters}
+            relationshipsData={filteredRelationships}
+            eventsData={filteredEvents}
+            chaptersData={bookData.chapters}
+            darkMode={darkMode}
+            groupColors={bookData.bookMetadata?.characterGroupColors || {}}
+            importanceConfig={bookData.bookMetadata?.importanceWeights || {}}
+            relationshipCategoryColors={bookData.bookMetadata?.relationshipCategoryColors || {}}
+            currentBookKey={currentBookKey}
+            chapterFilterId={chapterFilterId}
+            onChapterFilterChange={setChapterFilterId}
+          />
+        )
+      },
+      {
+        id: 'timeline',
+        show: bookData.events.length > 0,
+        content: (
+          <Timeline 
+            onEventSelect={handleEventSelect}
+            selectedEvent={selectedEvent}
+            onCharacterSelect={handleCharacterSelect}
+            eventsData={filteredEvents}
+            charactersData={filteredCharacters}
+            locationsData={filteredLocations}
+            bookConfig={bookConfig}
+          />
+        )
+      },
+      {
+        id: 'locations',
+        show: bookData.locations.length > 0,
+        content: (
+          <LocationExplorer
+            onLocationSelect={handleLocationSelect}
+            selectedLocation={selectedLocation}
+            onEventSelect={handleEventSelect}
+            locationsData={filteredLocations}
+            eventsData={filteredEvents}
+            charactersData={filteredCharacters}
+          />
+        )
+      },
+      {
+        id: 'map',
+        show: Object.keys(bookData.locationPositions).length > 0,
+        content: (
+          <InteractiveMap
+            onLocationSelect={handleLocationSelect}
+            onEventSelect={handleEventSelect}
+            onCharacterSelect={handleCharacterSelect}
+            onObjectSelect={handleObjectSelect}
+            locationsData={filteredLocations}
+            eventsData={filteredEvents}
+            charactersData={filteredCharacters}
+            objectsData={filteredObjects}
+            // Position data from the book
+            locationPositions={bookData.locationPositions || {}}
+            eventPositions={bookData.eventPositions || {}}
+            characterPositions={bookData.characterPositions || {}}
+            objectPositions={bookData.objectPositions || {}}
+            mapBoundaries={bookData.mapBoundaries || null}
+            bookConfig={bookConfig}
+          />
+        )
+      },
+      {
+        id: 'plot',
+        show: chapters.length > 0,
+        content: (
+          <PlotNavigator
+            onEventSelect={handleEventSelect}
+            onCharacterSelect={handleCharacterSelect}
+            eventsData={filteredEvents}
+            charactersData={filteredCharacters}
+            chaptersData={bookData.chapters}
+            mysteryElements={filteredMysteries}
+            themeElements={filteredThemes}
+            bookMetadata={bookData.bookMetadata}
+            chapterFilterId={chapterFilterId}
+          />
+        )
+      },
+      {
+        id: 'objects',
+        show: bookData.objects.length > 0,
+        content: (
+          <ObjectGallery
+            onObjectSelect={handleObjectSelect}
+            selectedObject={selectedObject}
+            objectsData={filteredObjects}
+            charactersData={filteredCharacters}
+            eventsData={filteredEvents}
+          />
+        )
+      },
+      {
+        id: 'encyclopedia',
+        show: bookData.spycraftEntries.length > 0,
+        className: 'tab-encyclopedia',
+        content: (
+          <SpycraftEncyclopedia 
+            spycraftEntries={filteredEncyclopedia}
+            config={bookConfig.encyclopedia}
+          />
+        )
+      }
+    ].filter(tab => tab.show !== false);
+    const selectedTabIndex = Math.max(0, tabs.findIndex(tab => tab.id === activeTabId));
+
 
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
@@ -294,16 +432,17 @@ const InteractiveReadingCompanion = () => {
           </span>
           <span aria-hidden="true">▾</span>
         </button>
-        <Tabs selectedIndex={activeTab} onSelect={(index) => setActiveTab(index)}>
+        <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setActiveTabId(tabs[index].id)}>
           <TabList>
-            <Tab>Characters</Tab>
-            <Tab>Relationships</Tab>
-            <Tab>Timeline</Tab>
-            <Tab>Locations</Tab>
-            <Tab>Map</Tab>
-            <Tab>Plot</Tab>
-            <Tab>Objects</Tab>
-            <Tab>Spycraft</Tab>
+            {tabs.map(tab => (
+              <Tab
+                key={tab.id}
+                data-tab-id={tab.id}
+                className={tab.className ? ['react-tabs__tab', tab.className] : 'react-tabs__tab'}
+              >
+                {bookConfig.tabLabels[tab.id]}
+              </Tab>
+            ))}
             {/* In-list global chapter filter trigger styled as a tab */}
             <button
               type="button"
@@ -358,111 +497,11 @@ const InteractiveReadingCompanion = () => {
           )}
 
           <div>
-            {/* Characters Tab */}
-            <TabPanel>
-              <CharacterExplorer 
-                onCharacterSelect={handleCharacterSelect} 
-                selectedCharacter={selectedCharacter}
-                charactersData={filteredCharacters}
-                relationshipsData={filteredRelationships}
-                groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
-              />
-            </TabPanel>
-            
-            {/* Relationship Web Tab */}
-            <TabPanel forceRender>
-              <RelationshipWeb
-                onCharacterSelect={handleCharacterSelect}
-                selectedCharacter={selectedCharacter}
-                charactersData={filteredCharacters}
-                relationshipsData={filteredRelationships}
-                eventsData={filteredEvents}
-                chaptersData={bookData.chapters}
-                darkMode={darkMode}
-                groupColors={bookData.bookMetadata?.characterGroupColors || {}}
-                importanceConfig={bookData.bookMetadata?.importanceWeights || {}}
-                relationshipCategoryColors={bookData.bookMetadata?.relationshipCategoryColors || {}}
-                currentBookKey={currentBookKey}
-                chapterFilterId={chapterFilterId}
-                onChapterFilterChange={setChapterFilterId}
-              />
-            </TabPanel>
-            
-            {/* Timeline Tab */}
-            <TabPanel>
-              <Timeline 
-                onEventSelect={handleEventSelect}
-                selectedEvent={selectedEvent}
-                onCharacterSelect={handleCharacterSelect}
-                eventsData={filteredEvents}
-                charactersData={filteredCharacters}
-                locationsData={filteredLocations}
-              />
-            </TabPanel>
-            
-            {/* Locations Tab */}
-            <TabPanel>
-              <LocationExplorer
-                onLocationSelect={handleLocationSelect}
-                selectedLocation={selectedLocation}
-                onEventSelect={handleEventSelect}
-                locationsData={filteredLocations}
-                eventsData={filteredEvents}
-                charactersData={filteredCharacters}
-              />
-            </TabPanel>
-            
-            {/* Map Tab */}
-            <TabPanel>
-              <InteractiveMap
-                onLocationSelect={handleLocationSelect}
-                onEventSelect={handleEventSelect}
-                onCharacterSelect={handleCharacterSelect}
-                onObjectSelect={handleObjectSelect}
-                locationsData={filteredLocations}
-                eventsData={filteredEvents}
-                charactersData={filteredCharacters}
-                objectsData={filteredObjects}
-                // Position data from the book
-                locationPositions={bookData.locationPositions || {}}
-                eventPositions={bookData.eventPositions || {}}
-                characterPositions={bookData.characterPositions || {}}
-                objectPositions={bookData.objectPositions || {}}
-                mapBoundaries={bookData.mapBoundaries || null}
-              />
-            </TabPanel>
-            
-            {/* Plot Navigator Tab */}
-            <TabPanel>
-              <PlotNavigator
-                onEventSelect={handleEventSelect}
-                onCharacterSelect={handleCharacterSelect}
-                eventsData={filteredEvents}
-                charactersData={filteredCharacters}
-                chaptersData={bookData.chapters}
-                mysteryElements={bookData.mysteryElements}
-                themeElements={bookData.themeElements}
-                bookMetadata={bookData.bookMetadata}
-              />
-            </TabPanel>
-            
-            {/* Objects Tab */}
-            <TabPanel>
-              <ObjectGallery
-                onObjectSelect={handleObjectSelect}
-                selectedObject={selectedObject}
-                objectsData={filteredObjects}
-                charactersData={filteredCharacters}
-                eventsData={filteredEvents}
-              />
-            </TabPanel>
-            
-            {/* Spycraft Encyclopedia Tab */}
-            <TabPanel>
-              <SpycraftEncyclopedia 
-                spycraftEntries={bookData.spycraftEntries}
-              />
-            </TabPanel>
+            {tabs.map(tab => (
+              <TabPanel key={tab.id} forceRender={tab.forceRender}>
+                {tab.content}
+              </TabPanel>
+            ))}
           </div>
         </Tabs>
         
@@ -507,7 +546,8 @@ const InteractiveReadingCompanion = () => {
       <AppTour 
         isOpen={appTour} 
         onClose={closeTour}
-        currentTab={activeTab}
+        currentTab={activeTabId}
+        tabs={tabs.map(tab => ({ id: tab.id, label: bookConfig.tabLabels[tab.id] }))}
         onTabChange={handleTabChangeFromTour}
         bookMetadata={metadata}
       />

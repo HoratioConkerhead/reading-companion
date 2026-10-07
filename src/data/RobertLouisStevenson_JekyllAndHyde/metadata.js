@@ -76,6 +76,15 @@ export const bookMetadata = {
     ]
   },
   
+  // Wording for the encyclopedia tab (spycraftEntries): here, Utterson's methods of inquiry
+  encyclopedia: {
+    tabLabel: 'Investigation',
+    intro: 'Explore the methods of inquiry used in the novella and the Victorian context behind them.',
+    searchPlaceholder: 'Search methods...',
+    listTitle: 'Methods',
+    emptyPrompt: 'Select a method to view details'
+  },
+
   // Footer copyright
   copyright: "Text is public domain; dataset © 2025 by Contributors"
 };
