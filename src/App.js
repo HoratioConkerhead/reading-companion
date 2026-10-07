@@ -160,6 +160,21 @@ const InteractiveReadingCompanion = () => {
     setActiveTab(tabIndex);
   }, []);
 
+  // On narrow screens the tab bar scrolls sideways; keep the selected tab in view when the
+  // tab changes programmatically (e.g. selecting a character jumps to the Characters tab)
+  useEffect(() => {
+    const selected = document.querySelector('.react-tabs__tab--selected');
+    const list = selected?.parentElement;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const left = selected.offsetLeft - list.offsetLeft;
+    const right = left + selected.offsetWidth;
+    if (left < list.scrollLeft) {
+      list.scrollLeft = left;
+    } else if (right > list.scrollLeft + list.clientWidth) {
+      list.scrollLeft = right - list.clientWidth;
+    }
+  }, [activeTab, isLoading]);
+
   // Per-tab tutorials are managed inside each tab component
   
   // Close first visit message
@@ -217,16 +232,18 @@ const InteractiveReadingCompanion = () => {
   return (
     <div className={`app-container min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
       <header className="p-3" style={{ backgroundColor: 'var(--color-header-bg)', color: 'var(--color-header-text)' }}>
-        <div className="container mx-auto flex justify-between">
-          <div>
-            <h1 className="text-3xl font-serif">{metadata.appTitle}</h1>
-            <p className="text-sm mt-1">{metadata.appSubtitle}</p>
+        <div className="container mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-serif">{metadata.appTitle}</h1>
+            <p className="text-xs sm:text-sm mt-1">{metadata.appSubtitle}</p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                          <button 
-               className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white text-sm"
+               className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white text-sm"
                onClick={openBookSelector}
+               title="Choose a book"
+               aria-label="Choose a book"
              >
                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -234,10 +251,11 @@ const InteractiveReadingCompanion = () => {
                 </svg>
              </button>
             <button 
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white text-sm"
+              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white text-sm whitespace-nowrap"
               onClick={startTour}
             >
-              Tour the App
+              <span className="sm:hidden">Tour</span>
+              <span className="hidden sm:inline">Tour the App</span>
             </button>
           </div>
         </div>
@@ -262,7 +280,20 @@ const InteractiveReadingCompanion = () => {
         </div>
       )}
       
-      <main className="p-4">
+      <main className="p-2 sm:p-4">
+        {/* Phones: the spoiler filter gets its own full-width button, since the tab bar scrolls */}
+        <button
+          type="button"
+          className={`chapter-filter-mobile md:hidden w-full mb-2 px-3 py-2 rounded flex items-center justify-between gap-2 text-sm font-bold ${darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-800 border border-gray-300'}`}
+          onClick={() => setIsChapterPickerOpen(true)}
+        >
+          <span className="truncate">
+            {chapterFilterId
+              ? 'Show up to ' + (chapters.find(ch => ch.id === chapterFilterId)?.title || 'Selected chapter')
+              : 'Show whole book'}
+          </span>
+          <span aria-hidden="true">▾</span>
+        </button>
         <Tabs selectedIndex={activeTab} onSelect={(index) => setActiveTab(index)}>
           <TabList>
             <Tab>Characters</Tab>

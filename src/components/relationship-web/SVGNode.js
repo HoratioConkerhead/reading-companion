@@ -15,9 +15,8 @@ const SVGNode = ({
   getContrastTextColor,
   getTextColor,
   getTextWidth,
-  onMouseDown,
-  onMouseEnter,
-  onMouseLeave
+  onPointerEnter,
+  onPointerLeave
 }) => {
   const size = node.animatedSize ?? node.size ?? 30;
   const textShadowStyle = {
@@ -27,7 +26,8 @@ const SVGNode = ({
   };
 
   return (
-    <g>
+    // data-node-id lets the graph's pointer handler find which node was pressed
+    <g data-node-id={node.id}>
       <circle
         cx={node.position.x}
         cy={node.position.y}
@@ -36,9 +36,8 @@ const SVGNode = ({
         stroke={getNodeStrokeColor(darkMode, node.id)}
         strokeWidth={2}
         className="cursor-pointer hover:opacity-80 transition-opacity"
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
       />
 
       {/* Pin icon overlay */}
