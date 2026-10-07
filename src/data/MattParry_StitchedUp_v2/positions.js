@@ -30,9 +30,9 @@ export const eventPositions = {
 
 export const characterPositions = {
   // Characters with their primary locations
-  'cynthia_childreth': { locationId: 'bucklebury', name: 'Lady Cynthia Childreth' },
+  'lady_cynthia_childreth': { locationId: 'bucklebury', name: 'Lady Cynthia Childreth' },
   'richard_childreth': { locationId: 'bucklebury', name: 'Richard Childreth' },
-  'bill_lawrie': { locationId: 'london', name: 'Wing Commander William Lawrie' },
+  'wing_commander_bill_lawrie': { locationId: 'london', name: 'Wing Commander William Lawrie' },
   'hannah_park': { locationId: 'london', name: 'Hannah Park' },
   'jane_maclean': { locationId: 'london', name: 'Jane Maclean' },
   'peter_snowden': { locationId: 'aldworth', name: 'Colonel Peter Snowden' },

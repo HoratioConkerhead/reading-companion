@@ -18,7 +18,7 @@ export const timeline = [
     category: 'Recruitment',
     significance: 'Sets up Cynthia\'s recruitment for intelligence work',
     chapter: 'chapter_01',
-    characters: ['cynthia_childreth', 'amy_wyndholme', 'peter_snowden', 'marjorie_snowden', 'bob_harrington', 'louise_harrington'],
+    characters: ['lady_cynthia_childreth', 'amy_wyndholme', 'peter_snowden', 'marjorie_snowden', 'bob_harrington', 'louise_harrington'],
     locations: ['denleigh_manor']
   },
   {
@@ -40,7 +40,7 @@ export const timeline = [
     category: 'Recruitment',
     significance: 'Cynthia is recruited for British intelligence',
     chapter: 'chapter_03',
-    characters: ['cynthia_childreth', 'hannah_park', 'bill_lawrie'],
+    characters: ['lady_cynthia_childreth', 'hannah_park', 'wing_commander_bill_lawrie'],
     locations: ['denleigh_manor']
   },
   {
@@ -51,7 +51,7 @@ export const timeline = [
     category: 'German Connection',
     significance: 'Establishes connections with German Nazi sympathizers',
     chapter: 'chapter_04',
-    characters: ['cynthia_childreth', 'richard_childreth', 'gerda_stammer', 'franz_stammer'],
+    characters: ['lady_cynthia_childreth', 'richard_childreth', 'gerda_stammer', 'franz_stammer'],
     locations: ['hotel_adlon_berlin', 'berlin']
   },
   {
@@ -62,7 +62,7 @@ export const timeline = [
     category: 'Intelligence Operations',
     significance: 'First major intelligence-gathering operation hosted by Cynthia',
     chapter: 'chapter_05',
-    characters: ['cynthia_childreth', 'gerda_stammer', 'lena_weber'],
+    characters: ['lady_cynthia_childreth', 'gerda_stammer', 'lena_weber'],
     locations: ['cynthia_house_bucklebury']
   },
   {
@@ -73,7 +73,7 @@ export const timeline = [
     category: 'Fascist Operations',
     significance: 'Reveals the extent of fascist operations and Mosley\'s involvement',
     chapter: 'chapter_06',
-    characters: ['cynthia_childreth', 'oswald_mosley'],
+    characters: ['lady_cynthia_childreth', 'oswald_mosley'],
     locations: ['cynthia_house_bucklebury']
   },
   {
@@ -84,7 +84,7 @@ export const timeline = [
     category: 'Time Transition',
     significance: 'Moves the story to the wartime period',
     chapter: 'chapter_07',
-    characters: ['cynthia_childreth', 'marjorie_snowden', 'oswald_mosley'],
+    characters: ['lady_cynthia_childreth', 'marjorie_snowden', 'oswald_mosley'],
     locations: ['various']
   },
   {
@@ -95,7 +95,7 @@ export const timeline = [
     category: 'Network Operations',
     significance: 'Shows the network is actively using Cynthia\'s house',
     chapter: 'chapter_08',
-    characters: ['sir_john_davies', 'cynthia_childreth'],
+    characters: ['sir_john_davies', 'lady_cynthia_childreth'],
     locations: ['cynthia_house_bucklebury']
   },
   {
@@ -106,7 +106,7 @@ export const timeline = [
     category: 'Intelligence Operations',
     significance: 'Shows the intelligence operation is actively monitoring the network',
     chapter: 'chapter_09',
-    characters: ['intelligence_teams', 'cynthia_childreth'],
+    characters: ['intelligence_teams', 'lady_cynthia_childreth'],
     locations: ['various']
   },
   {
@@ -140,7 +140,7 @@ export const timeline = [
     significance: 'Shows the network\'s operational methods and case-switching techniques',
     chapter: 'chapter_12',
     characters: ['tg_edwards', 'louise_harrington', 'sir_john_davies'],
-    locations: ['train_box_tunnel', 'box_tunnel']
+    locations: ['box_tunnel']
   },
   {
     id: 'chapter_13_1943',
@@ -183,7 +183,7 @@ export const timeline = [
     category: 'Double Agent',
     significance: 'Provides an inside source in the Nazi network',
     chapter: 'chapter_16',
-    characters: ['louise_harrington', 'bill_lawrie'],
+    characters: ['louise_harrington', 'wing_commander_bill_lawrie'],
     locations: ['various']
   },
   {
@@ -271,7 +271,7 @@ export const timeline = [
     category: 'Justice',
     significance: 'Shows the legal consequences and recognition',
     chapter: 'chapter_24',
-    characters: ['bob_harrington', 'sir_john_davies', 'cynthia_childreth'],
+    characters: ['bob_harrington', 'sir_john_davies', 'lady_cynthia_childreth'],
     locations: ['uk']
   },
   {
@@ -447,7 +447,7 @@ export const timeline = [
     category: 'Intelligence Planning',
     significance: 'Shows coordination between Special Branch and intelligence',
     chapter: 'chapter_40',
-    characters: ['george_bennet', 'bill_lawrie'],
+    characters: ['george_bennet', 'wing_commander_bill_lawrie'],
     locations: ['london']
   },
   {
@@ -469,7 +469,7 @@ export const timeline = [
     category: 'Intelligence Operations',
     significance: 'Shows shift to proactive intelligence gathering',
     chapter: 'chapter_42',
-    characters: ['bill_lawrie', 'cynthia_childreth'],
+    characters: ['wing_commander_bill_lawrie', 'lady_cynthia_childreth'],
     locations: ['various']
   },
   {
@@ -480,7 +480,7 @@ export const timeline = [
     category: 'Intelligence Operations',
     significance: 'Sets up the final intelligence operation',
     chapter: 'chapter_43',
-    characters: ['cynthia_childreth', 'conspirators'],
+    characters: ['lady_cynthia_childreth', 'conspirators'],
     locations: ['various']
   },
   {
@@ -491,7 +491,7 @@ export const timeline = [
     category: 'Intelligence Operations',
     significance: 'Shows the conspirators falling into the trap',
     chapter: 'chapter_44',
-    characters: ['conspirators', 'cynthia_childreth'],
+    characters: ['conspirators', 'lady_cynthia_childreth'],
     locations: ['cynthia_house_bucklebury']
   },
   {
@@ -568,7 +568,7 @@ export const timeline = [
     category: 'Resolution',
     significance: 'Shows the final resolution of all storylines',
     chapter: 'epilogue',
-    characters: ['cynthia_childreth', 'bob_harrington', 'sir_john_davies', 'louise_harrington'],
+    characters: ['lady_cynthia_childreth', 'bob_harrington', 'sir_john_davies', 'louise_harrington'],
     locations: ['uk', 'ireland']
   }
 ];
