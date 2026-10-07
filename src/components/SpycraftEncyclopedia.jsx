@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getBookConfig } from '../utils/bookConfig';
 
 // The book's encyclopedia tab ("Spycraft" for Stitched Up); its wording comes from
 // the book's metadata (bookMetadata.encyclopedia)
 const SpycraftEncyclopedia = ({
   spycraftEntries,
-  config = getBookConfig().encyclopedia
+  config = getBookConfig().encyclopedia,
+  selectedEntryId = null
 }) => {
   const [selectedEntry, setSelectedEntry] = useState(null);
+
+  // Open an entry chosen elsewhere (e.g. from search)
+  useEffect(() => {
+    if (!selectedEntryId) return;
+    const entry = spycraftEntries.find(e => e.id === selectedEntryId);
+    if (entry) setSelectedEntry(entry);
+  }, [selectedEntryId, spycraftEntries]);
   const [searchQuery, setSearchQuery] = useState('');
   
   const filteredEntries = spycraftEntries.filter(entry => 

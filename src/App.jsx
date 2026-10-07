@@ -21,6 +21,7 @@ import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
 import { getBookConfig } from './utils/bookConfig';
 import BookSelector from './components/BookSelector';
+import GlobalSearch from './components/GlobalSearch';
 
 // The URL hash records the view so it can be shared or bookmarked, and so the browser's
 // Back button steps through tabs: #book=<bookKey>&tab=<tabId>&upto=<chapterId>
@@ -65,6 +66,8 @@ const InteractiveReadingCompanion = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [chapterFilterId, setChapterFilterId] = useState(null);
   const [isChapterPickerOpen, setIsChapterPickerOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedEncyclopediaId, setSelectedEncyclopediaId] = useState(null);
   // Chapter filter to apply once the next book has loaded (from the URL)
   const pendingChapterRef = useRef(readViewFromHash().upto);
   
@@ -213,6 +216,24 @@ const InteractiveReadingCompanion = () => {
     setSelectedObject(object);
     setActiveTabId('objects');
   };
+
+  const handleEncyclopediaSelect = (entry) => {
+    setSelectedEncyclopediaId(entry.id);
+    setActiveTabId('encyclopedia');
+  };
+
+  // Search shortcuts: "/" (when not typing) or Ctrl/Cmd+K
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
+      if ((e.key === '/' && !typing) || (e.key.toLowerCase() === 'k' && (e.ctrlKey || e.metaKey))) {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
   
   // Start app tour
   const startTour = () => {
@@ -432,6 +453,7 @@ const InteractiveReadingCompanion = () => {
           <SpycraftEncyclopedia 
             spycraftEntries={filteredEncyclopedia}
             config={bookConfig.encyclopedia}
+            selectedEntryId={selectedEncyclopediaId}
           />
         )
       }
@@ -448,6 +470,16 @@ const InteractiveReadingCompanion = () => {
             <p className="text-xs sm:text-sm mt-1">{metadata.appSubtitle}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              className="p-2 rounded text-white bg-gray-600 hover:bg-gray-700"
+              onClick={() => setIsSearchOpen(true)}
+              title="Search (press / or Ctrl+K)"
+              aria-label="Search the book"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+              </svg>
+            </button>
             <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                          <button 
                className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white text-sm"
@@ -622,6 +654,24 @@ const InteractiveReadingCompanion = () => {
         tabs={tabs.map(tab => ({ id: tab.id, label: bookConfig.tabLabels[tab.id] }))}
         onTabChange={handleTabChangeFromTour}
         bookMetadata={metadata}
+      />
+
+      {/* Search across the (chapter-filtered) book */}
+      <GlobalSearch
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        darkMode={darkMode}
+        characters={filteredCharacters}
+        events={filteredEvents}
+        locations={filteredLocations}
+        objects={filteredObjects}
+        encyclopediaEntries={filteredEncyclopedia}
+        encyclopediaLabel={bookConfig.tabLabels.encyclopedia}
+        onSelectCharacter={handleCharacterSelect}
+        onSelectEvent={handleEventSelect}
+        onSelectLocation={handleLocationSelect}
+        onSelectObject={handleObjectSelect}
+        onSelectEncyclopediaEntry={handleEncyclopediaSelect}
       />
 
       {/* Book Selector Component */}
