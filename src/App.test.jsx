@@ -27,4 +27,18 @@ describe('App', () => {
       expect(panel).not.toBeEmptyDOMElement();
     }
   });
+
+  it('opens a character profile from the Characters tab', async () => {
+    const { container } = render(<App />);
+    const tabList = await screen.findByRole('tablist', {}, { timeout: 5000 });
+    await act(async () => { within(tabList).getByRole('tab', { name: 'Characters' }).click(); });
+
+    const panel = container.querySelector('.react-tabs__tab-panel--selected');
+    const firstName = within(panel).getAllByRole('heading', { level: 3 })[0];
+    await act(async () => { firstName.click(); });
+
+    // The profile (whose development entries are { phase, description } objects) renders
+    expect(within(panel).getByRole('heading', { level: 2, name: firstName.textContent })).toBeInTheDocument();
+    expect(within(panel).getByText('Character Development:')).toBeInTheDocument();
+  });
 });

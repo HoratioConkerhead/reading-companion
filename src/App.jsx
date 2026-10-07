@@ -316,6 +316,7 @@ const InteractiveReadingCompanion = () => {
             relationshipsData={filteredRelationships}
             groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
             groups={bookConfig.groups}
+            chapterFilterId={chapterFilterId}
           />
         )
       },
