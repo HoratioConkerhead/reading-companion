@@ -66,15 +66,15 @@ Learn about espionage techniques referenced in the novel and their historical co
 ## Getting Started
 
 ### Prerequisites
-- Node.js (LTS version recommended)
+- Node.js 20.19+ or 22.12+ (required by Vite 7)
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/interactive-reading-companion.git
-   cd interactive-reading-companion
+   git clone https://github.com/HoratioConkerhead/reading-companion.git
+   cd reading-companion
    ```
 
 2. Install dependencies:
@@ -87,7 +87,7 @@ Learn about espionage techniques referenced in the novel and their historical co
    npm start
    ```
 
-4. Open your browser and navigate to `http://localhost:3000`
+4. Open your browser at `http://localhost:3000/reading-companion/` (Vite opens it automatically)
 
 ## Project Structure
 
@@ -129,13 +129,13 @@ Learn about espionage techniques referenced in the novel and their historical co
     ├── styles/            # CSS and styling
     │   ├── style.css
     │   └── enhanced-tabs.css
-    ├── App.js             # Main app component
+    ├── App.jsx            # Main app component
     └── index.js           # Entry point
 ```
 
 ## Components
 
-### App.js
+### App.jsx
 The main container component that manages global state and navigation between tabs.
 
 ### CharacterExplorer
@@ -195,6 +195,8 @@ The data structure is designed to be easily extensible for different books and s
 ## Technologies Used
 
 - React: Front-end library for building the user interface
+- Vite: Dev server and production bundler; Vitest for tests
+- Leaflet / React-Leaflet: Interactive maps
 - React Tabs: Tab navigation component
 - Tailwind CSS: Utility-first CSS framework for styling
 - Custom Physics Engine: For relationship web visualization and auto-arrangement
@@ -208,7 +210,15 @@ The data structure is designed to be easily extensible for different books and s
    npm run build
    ```
 
-2. The build artifacts will be stored in the `build/` directory.
+2. The build artifacts will be stored in the `dist/` directory.
+
+### Deploy to GitHub Pages
+
+```
+npm run deploy
+```
+
+This builds the app and publishes `dist/` to the `gh-pages` branch, served at https://horatioconkerhead.github.io/reading-companion/.
 
 ### Hosting Options
 
