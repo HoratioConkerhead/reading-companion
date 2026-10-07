@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      # Reports data integrity problems (e.g. one-sided relationships). Informational
+      # until the existing book data is cleaned up, so it doesn't block merges yet.
+      - name: Validate book data
+        run: npm run validate:data
+        continue-on-error: true

@@ -1,18 +1,14 @@
 // Automatic book discovery and lightweight selection metadata
 // We discover books by scanning for per-book metadata and index files.
 // Note: We intentionally import only each book's metadata for selection (small),
-// and load the full book data on demand from its index.js when selected.
+// and load the full book data on demand when selected (each book is its own chunk).
+import { toRelationshipCategory } from '../utils/relationships.js';
 
-// eslint-disable-next-line no-undef
-const metadataContext = require.context('./', true, /metadata\.js$/);
-// eslint-disable-next-line no-undef
-const indexContext = require.context('./', true, /index\.js$/);
-// eslint-disable-next-line no-undef
-const allJsContext = require.context('./', true, /\.js$/);
-
-// Derivation helper for relationship category (use require to avoid import/first issues)
-// eslint-disable-next-line no-undef
-const { toRelationshipCategory } = require('../utils/relationships.js');
+const metadataModules = import.meta.glob('./*/metadata.js', { eager: true });
+const indexLoaders = import.meta.glob('./*/index.js');
+// Per-file modules for books without an index.js (extractions are build inputs, not app data)
+// (metadata.js is already loaded eagerly above)
+const bookFileLoaders = import.meta.glob(['./*/*.js', '!./*/index.js', '!./*/metadata.js']);
 
 // Temporarily ignore certain book folders while under construction
 const IGNORED_BOOK_KEYS = new Set([''
@@ -27,12 +23,12 @@ const toBookKey = (p) => {
 
 const discoverSelectionMetadata = () => {
   const result = {};
-  metadataContext.keys().forEach((k) => {
+  Object.keys(metadataModules).forEach((k) => {
     const bookKey = toBookKey(k);
     if (!bookKey) return;
     if (IGNORED_BOOK_KEYS.has(bookKey)) return;
     try {
-      const mod = metadataContext(k);
+      const mod = metadataModules[k];
       const meta = mod.bookMetadata || mod.default || {};
       if (meta && (meta.title || meta.author)) {
         result[bookKey] = {
@@ -65,8 +61,8 @@ export const loadBookData = async (bookKey) => {
     // Try to load via index.js if present
     const indexPath = `./${bookKey}/index.js`;
     let bookModule = null;
-    if (indexContext.keys().includes(indexPath)) {
-      bookModule = indexContext(indexPath);
+    if (indexLoaders[indexPath]) {
+      bookModule = await indexLoaders[indexPath]();
     }
 
     // Helper to ensure every relationship has a general category
@@ -93,9 +89,11 @@ export const loadBookData = async (bookKey) => {
       'mysteryElements', 'themeElements', 'spycraftEntries', 'locationPositions', 'eventPositions',
       'characterPositions', 'objectPositions', 'mapBoundaries'
     ]);
-    const files = allJsContext.keys().filter(k => k.startsWith(`./${bookKey}/`) && !k.includes('/extractions/'));
-    files.forEach((filePath) => {
-      const mod = allJsContext(filePath);
+    const files = Object.keys(bookFileLoaders).filter(k => k.startsWith(`./${bookKey}/`));
+    const modules = await Promise.all(files.map(filePath => bookFileLoaders[filePath]()));
+    const metadataModule = metadataModules[`./${bookKey}/metadata.js`];
+    if (metadataModule) modules.push(metadataModule);
+    modules.forEach((mod) => {
       Object.keys(mod).forEach((exp) => {
         if (wantedKeys.has(exp) && constructed[exp] == null) {
           constructed[exp] = mod[exp];
