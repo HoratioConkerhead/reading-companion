@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLocationName as _getLocationName, getLocationArea as _getLocationArea } from '../utils/dataAccessors';
-import { getBookConfig, eventInPeriod, getEventGroupColor } from '../utils/bookConfig';
+import { getBookConfig, eventInPeriod, getEventGroupColor, extractYear } from '../utils/bookConfig';
 
 const Timeline = ({ 
   onEventSelect, 
@@ -9,6 +9,7 @@ const Timeline = ({
   eventsData,
   charactersData,
   locationsData,
+  chaptersData = [],
   bookConfig = getBookConfig()
 }) => {
   const [timelineFilter, setTimelineFilter] = useState('all'); // 'all' or a time period id
@@ -36,35 +37,35 @@ const Timeline = ({
   });
   
   // Sort events chronologically
+  // Story order (by chapter), used to place events whose date has no year
+  const chapterIndex = new Map(chaptersData.map((ch, index) => [ch.id, index]));
+  const storyIndex = (event) => chapterIndex.get(event.introducedInChapter || event.chapter) ?? Number.MAX_SAFE_INTEGER;
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const extractMonth = (dateStr) => {
+    const index = MONTHS.findIndex(month => (dateStr || '').includes(month));
+    return index === -1 ? null : index + 1;
+  };
+  // An event without a year ("May 27, unknown year") takes the year of the last fully
+  // dated (month and year) event before it in the story, rather than sorting first
+  const yearByEventId = new Map();
+  let lastDatedYear = null;
+  [...filteredEvents].sort((a, b) => storyIndex(a) - storyIndex(b)).forEach(event => {
+    const year = extractYear(event.date);
+    if (year !== null && extractMonth(event.date) !== null) lastDatedYear = year;
+    yearByEventId.set(event.id, year ?? lastDatedYear ?? Number.MAX_SAFE_INTEGER);
+  });
+
   const sortedEvents = [...filteredEvents].sort((a, b) => {
-    // Extract years or use default values for sorting
-    const extractYear = (dateStr) => {
-      const match = dateStr.match(/\d{4}/);
-      return match ? parseInt(match[0]) : 1900;
-    };
-    
-    const yearA = extractYear(a.date);
-    const yearB = extractYear(b.date);
+    const yearA = yearByEventId.get(a.id);
+    const yearB = yearByEventId.get(b.id);
     
     if (yearA !== yearB) return yearA - yearB;
     
-    // If years are the same, sort by month if available
-    const monthOrder = {
-      'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
-      'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12
-    };
-    
-    const extractMonth = (dateStr) => {
-      for (const month in monthOrder) {
-        if (dateStr.includes(month)) return monthOrder[month];
-      }
-      return 0;
-    };
-    
+    // Same year: by month when both have one, otherwise in story order
     const monthA = extractMonth(a.date);
     const monthB = extractMonth(b.date);
-    
-    return monthA - monthB;
+    if (monthA !== null && monthB !== null && monthA !== monthB) return monthA - monthB;
+    return storyIndex(a) - storyIndex(b);
   });
   
   // For parallel storylines view, group by character faction
