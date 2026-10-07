@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
 import { getBookConfig, eventInPeriod } from '../utils/bookConfig';
 import L from 'leaflet';
@@ -190,58 +190,15 @@ const InteractiveMap = ({
     }
   };
 
-  // Pan to item position
+  // Centre the map on a position. The detail panel narrows the map on desktop, so
+  // first let Leaflet re-measure its container.
   const panToItem = (position) => {
     if (!position || !mapRef.current) return;
-    
-    // Get the current map container size
-    const mapSize = mapRef.current.getSize();
-    
-    // If the panel is shown, adjust the center point
-    if (showDetailPanel) {
-      // Calculate offset based on panel width (adjust as needed)
-      const offsetX = mapSize.x / 6;
-      
-      // First pan to the position
-      mapRef.current.panTo(position);
-      
-      // Then offset to account for the panel
-      setTimeout(() => {
-        mapRef.current.panBy([-offsetX, 0]);
-      }, 10);
-    } else {
-      // Just pan to the position if no panel is shown
-      mapRef.current.panTo(position);
-    }
+    mapRef.current.invalidateSize();
+    mapRef.current.panTo(position);
   };
 
-  // Simplify select handler for any item type
-  const selectItem = (itemId, itemType) => {
-    if (!itemId) {
-      setSelectedItem(null);
-      setSelectedItemType(null);
-      setSelectedItemData(null);
-      setShowDetailPanel(false);
-      return;
-    }
-    
-    // Get item data
-    const itemData = getItemData(itemId, itemType);
-    if (!itemData) return;
-    
-    // Update state
-    setSelectedItem(itemId);
-    setSelectedItemType(itemType);
-    setSelectedItemData(itemData);
-    setShowDetailPanel(true);
-    
-    // Pan to item position
-    const position = getItemPosition(itemId, itemType);
-    panToItem(position);
-  };
-
-
-  // capture the map instance:
+// capture the map instance:
   const MapInstanceCapture = () => {
     const map = useMap();
     
@@ -366,168 +323,29 @@ const InteractiveMap = ({
     }
   };
   
-// Handle selection from dropdowns
-const handleItemSelect = (itemId, type) => {
-  if (!itemId) {
-    setSelectedItem(null);
-    setSelectedItemType(null);
-    setSelectedItemData(null);
-    setShowDetailPanel(false);
-    return;
-  }
-  
-  setSelectedItem(itemId);
-  setSelectedItemType(type);
-  
-  // Find selected item data and set detail panel
-  let latLng = null;
-  let itemData = null;
-  
-  switch (type) {
-    case 'location': {
-      // For locations, get coordinates directly
-      const location = locationPositions[itemId];
-      if (location) {
-        latLng = [location.lat, location.lon];
-      }
-      itemData = locationsData.find(loc => loc.id === itemId);
-      //if (itemData) onLocationSelect(itemData);
-      break;
+  // Handle selection from dropdowns: show the item's details and centre the map on it
+  const handleItemSelect = (itemId, type) => {
+    if (!itemId) {
+      setSelectedItem(null);
+      setSelectedItemType(null);
+      setSelectedItemData(null);
+      setShowDetailPanel(false);
+      return;
     }
-    case 'event': {
-      // For events, either use location or path
-      const event = eventPositions[itemId];
-      if (event) {
-        if (event.locationId) {
-          // Get coordinates from referenced location
-          const location = locationPositions[event.locationId];
-          if (location) {
-            latLng = [location.lat, location.lon];
-          }
-        } else if (event.path && event.path.length > 0) {
-          // Use midpoint of path for positioning
-          const midIndex = Math.floor(event.path.length / 2);
-          latLng = [event.path[midIndex].lat, event.path[midIndex].lon];
-        }
-      }
-      itemData = eventsData.find(e => e.id === itemId);
-      //if (itemData) onEventSelect(itemData);
-      break;
-    }
-    case 'character': {
-      // For characters, get location from the character's position data
-      const character = characterPositions[itemId];
-      if (character && character.locationId) {
-        const location = locationPositions[character.locationId];
-        if (location) {
-          latLng = [location.lat, location.lon];
-        }
-      }
-      itemData = charactersData.find(c => c.id === itemId);
-      //if (itemData && onCharacterSelect) onCharacterSelect(itemData);
-      break;
-    }
-    case 'object': {
-      // For objects, get location from the object's position data
-      const object = objectPositions[itemId];
-      if (object && object.locationId) {
-        const location = locationPositions[object.locationId];
-        if (location) {
-          latLng = [location.lat, location.lon];
-        }
-      }
-      itemData = objectsData.find(o => o.id === itemId);
-      //if (itemData && onObjectSelect) onObjectSelect(itemData);
-      break;
-    }
-    default:
-      break;
-  }
 
-  setSelectedItemData(itemData);
-  setShowDetailPanel(!!itemData);
-  
-  // Now pan to the position if we have valid coordinates
-  if (latLng && mapRef.current) {
-    const mapSize = mapRef.current.getSize();
+    setSelectedItem(itemId);
+    setSelectedItemType(type);
+    const itemData = getItemData(itemId, type);
+    setSelectedItemData(itemData);
+    setShowDetailPanel(Boolean(itemData));
 
-//    mapRef.current.panTo(latLng);
-
-//    if (showDetailPanel) {
-      // Calculate offset based on panel width (1/6 of map width to the left)
-      // This moves the center point left so the selected item isn't hidden behind the panel
-      const offsetX = mapSize.x / 3; // Adjust this value as needed
-//      mapRef.current.panTo([latLng[0], latLng[1] + offsetX/1]);
-//      setTimeout(() => {
-        //mapRef.current.panBy([-offsetX, 0]);
-//      }, 10);
-    //} else {
-//      mapRef.current.panTo(latLng);
-    //}
-
-  }
-};
-
-
-  // Focus map on an item
-  const focusMapOnItem = (itemId, type) => {
-
-    let latLng = null;
-    
-    switch (type) {
-      case 'location': {
-        const location = locationPositions[itemId];
-        if (location) {
-          latLng = [location.lat, location.lon];
-        }
-        break;
-      }
-      case 'event': {
-        const event = eventPositions[itemId];
-        if (event) {
-          if (event.locationId) {
-            const location = locationPositions[event.locationId];
-            if (location) {
-              latLng = [location.lat, location.lon];
-            }
-          } else if (event.path && event.path.length > 0) {
-            // Use midpoint of path
-            const midIndex = Math.floor(event.path.length / 2);
-            latLng = [event.path[midIndex].lat, event.path[midIndex].lon];
-          }
-        }
-        break;
-      }
-      case 'character': {
-        const character = characterPositions[itemId];
-        if (character && character.locationId) {
-          const location = locationPositions[character.locationId];
-          if (location) {
-            latLng = [location.lat, location.lon];
-          }
-        }
-        break;
-      }
-      case 'object': {
-        const object = objectPositions[itemId];
-        if (object && object.locationId) {
-          const location = locationPositions[object.locationId];
-          if (location) {
-            latLng = [location.lat, location.lon];
-          }
-        }
-        break;
-      }
-      default:
-        break;
-    }
-    
-    if (latLng && mapRef.current) {
-      mapRef.current.panTo(latLng);
-    }
+    // Wait for the detail panel's width transition (300ms) before panning
+    const position = getItemPosition(itemId, type);
+    if (position) setTimeout(() => panToItem(position), 350);
   };
-  
-  // Handle closing the detail panel
+
+
+// Handle closing the detail panel
   const handleCloseDetailPanel = () => {
     setShowDetailPanel(false);
   };

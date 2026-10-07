@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // ESM Node script to validate data integrity for all books
 // Run with: node scripts/validate-data.mjs
 
