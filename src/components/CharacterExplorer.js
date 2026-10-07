@@ -66,7 +66,7 @@ const CharacterExplorer = ({
   return (
     <div className="character-explorer">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-1 h-screen overflow-y-auto pr-4">
+        <div className="md:col-span-1 max-h-[60vh] md:max-h-none md:h-screen overflow-y-auto md:pr-4">
           <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Character List</h2>
           
           <div className="mb-4">
@@ -79,7 +79,7 @@ const CharacterExplorer = ({
             />
           </div>
           
-          <div className="mb-4 flex space-x-2">
+          <div className="mb-4 flex flex-wrap gap-2">
             <button 
               className={`px-3 py-1 text-sm rounded transition-colors ${
                 groupFilter === 'all' 

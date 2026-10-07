@@ -16,9 +16,17 @@
   border-radius: 8px 8px 0 0;
   padding: 0 !important;
   margin: 0 !important;
-  overflow: hidden;
+  /* Scroll sideways (swipe on touch screens) when the tabs don't fit */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   width: 100%; /* Full width */
   transition: all 0.3s ease;
+}
+
+.react-tabs__tab-list::-webkit-scrollbar {
+  display: none;
 }
 
 .dark .react-tabs__tab-list {
@@ -36,6 +44,8 @@
 }
 
 .react-tabs__tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
   border: none !important;
   padding: 12px 18px !important;
   color: rgba(255, 255, 255, 0.8);
@@ -144,15 +154,19 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .react-tabs__tab {
     padding: 10px 12px !important;
     font-size: 14px !important;
   }
   
   .react-tabs__tab-panel {
-    padding: 20px;
-    width: 98%; /* Slightly wider on mobile */
+    padding: 12px;
+  }
+
+  /* The chapter filter has its own button above the tabs on phones */
+  .react-tabs__tab-list .tablist-right-cta {
+    display: none !important;
   }
 }
 

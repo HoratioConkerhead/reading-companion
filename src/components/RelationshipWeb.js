@@ -4,9 +4,14 @@ import { toRelationshipCategory } from '../utils/relationships';
 import { findConnectedComponents, findLargestConnectedComponent, createNode, createEdge } from '../utils/graphUtils';
 import { useForceSimulation } from '../hooks/useForceSimulation';
 import { useSizeAnimation } from '../hooks/useSizeAnimation';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import SVGEdge from './relationship-web/SVGEdge';
 import SVGNode from './relationship-web/SVGNode';
 import SidePanel from './relationship-web/SidePanel';
+
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 3;
+const clampZoom = (z) => Math.min(Math.max(z, MIN_ZOOM), MAX_ZOOM);
 
 const RelationshipWeb = ({ 
   onCharacterSelect, 
@@ -26,16 +31,20 @@ const RelationshipWeb = ({
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [focusedCharacter, setFocusedCharacter] = useState(() => (charactersData && charactersData.length > 0 ? charactersData[0].id : null));
-  const [draggedNode, setDraggedNode] = useState(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isAutoArrangeOn, setIsAutoArrangeOn] = useState(false);
   const [springForce, setSpringForce] = useState(100);
   const [repulsionForce, setRepulsionForce] = useState(100000);
   const [isFullPage, setIsFullPage] = useState(false);
   const [hoveredNode, setHoveredNode] = useState(null);
+  // Node tapped/clicked last: keeps its labels visible on touch screens, where there is no hover
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
   const [activeMode, setActiveMode] = useState('none'); // 'none' | 'pin' | 'remove'
   const isPinMode = activeMode === 'pin';
   const isRemoveMode = activeMode === 'remove';
@@ -53,9 +62,17 @@ const RelationshipWeb = ({
   
   const svgRef = useRef(null);
   const containerRef = useRef(null);
-  const wasClick = useRef(false);
-  const clickStartPos = useRef({ x: 0, y: 0 });
   const wasAutoArrangeOn = useRef(false);
+  // Pointer gesture tracking (mouse, touch and pen): active pointers and the current gesture
+  const pointersRef = useRef(new Map());
+  const gestureRef = useRef(null);
+  // Live view/nodes values for event handlers that fire between renders
+  const panRef = useRef(pan);
+  const zoomRef = useRef(zoom);
+  const nodesRef = useRef(nodes);
+  panRef.current = pan;
+  zoomRef.current = zoom;
+  nodesRef.current = nodes;
   const textWidthCache = useRef(new Map());
   const suppressAutoFocusRef = useRef(false);
   const scaleSizeByImportanceRef = useRef(scaleSizeByImportance);
@@ -223,37 +240,35 @@ const RelationshipWeb = ({
 
   // Size animation handled by useSizeAnimation hook
 
+  // Visible characters that still have related characters not shown in the graph.
+  // Keyed on the visible id list so it is not recomputed on every physics frame.
+  const visibleIdsKey = nodes.map(n => n.id).join('|');
+  const nodesWithHiddenRelations = useMemo(() => {
+    const visible = new Set(visibleIdsKey ? visibleIdsKey.split('|') : []);
+    const result = new Set();
+    relationshipsData.forEach(rel => {
+      if (visible.has(rel.from) && !visible.has(rel.to)) result.add(rel.from);
+      if (visible.has(rel.to) && !visible.has(rel.from)) result.add(rel.to);
+    });
+    return result;
+  }, [relationshipsData, visibleIdsKey]);
+
+  const nodeById = useMemo(() => new Map(nodes.map(n => [n.id, n])), [nodes]);
+
   // Get appropriate stroke color for nodes based on theme
   const getNodeStrokeColor = useCallback((isDark = false, characterId = null) => {
     if (!characterId) {
       return isDark ? '#ffffff' : '#000000';
     }
-    
-    // Check if this character is missing any relationships
-    const characterRelationships = relationshipsData.filter(rel => 
-      rel.from === characterId || rel.to === characterId
-    );
-    
-    // Get all characters connected to this one
-    const connectedCharacterIds = new Set();
-    characterRelationships.forEach(rel => {
-      connectedCharacterIds.add(rel.from);
-      connectedCharacterIds.add(rel.to);
-    });
-    
-    // Check if any connected characters are not currently visible in nodes
-    const isMissingRelationships = Array.from(connectedCharacterIds).some(id => 
-      id !== characterId && !nodes.some(node => node.id === id)
-    );
-    
-    if (isMissingRelationships) {
+
+    if (nodesWithHiddenRelations.has(characterId)) {
       // Missing relationships: white in dark mode, black in light mode
       return isDark ? '#ffffff' : '#000000';
     } else {
       // Not missing relationships: black in dark mode, white in light mode
       return isDark ? '#000000' : '#ffffff';
     }
-  }, [relationshipsData, nodes]);
+  }, [nodesWithHiddenRelations]);
 
   // Use shared relationship category mapping from utils
   const getRelationshipCategoryLabel = toRelationshipCategory;
@@ -308,12 +323,12 @@ const RelationshipWeb = ({
       'Start by using "Focus on Character" to select someone.'
     ],
     [
-      'Hover a character to see connected relationships and a brief description.',
-      'Use your mouse wheel to zoom, and drag the background to pan.'
+      'Hover a character (or tap it on a touch screen) to see its relationships and a brief description.',
+      'Use your mouse wheel or pinch to zoom, and drag the background to pan.'
     ],
     [
       'Characters with a white outline have relationships not yet shown.',
-      'Click a character to add their related characters and edges.'
+      'Click or tap a character to add their related characters and edges.'
     ],
     [
       'The view may now be cluttered, Click "Auto arrange" to toggle automatic layout.',
@@ -326,21 +341,22 @@ const RelationshipWeb = ({
     ],
     [
       'Under "View Options" you can control labels and sizing.',
+      'On a phone, open them with the sliders button at the top right of the graph.',
       'Click "Size is Importance" to scale node size by calculated importance.',
       'Toggle labels like Relationship, Description, and Counts/Importance.'
     ],
     [
-      'If the view is cluttered, toggle "Remove Mode" to click and remove nodes.',
-      'Only the largest remaining connected component is kept to you can remove whole branches.'
+      'If the view is cluttered, toggle "Remove Mode" and click a node to remove it.',
+      'Only the largest remaining connected component is kept, so you can remove whole branches.'
     ],
     [
       'Click "Show All" to reveal all characters up to the selected chapter.',
       'Then "Fit to View" to frame everything.'
     ],
     [
-      '"Pin Mode" pins/unpins a single nodes',
+      '"Pin Mode" pins or unpins a single node.',
       'This prevents clusters from drifting apart under repulsion.',
-      'Click a pinned node to unpin it.At least one node per group must be pinned'
+      'Click a pinned node to unpin it. At least one node per group must be pinned.'
     ],
     [
       '"Reset View" restores defaults without changing the chapter filter or full-screen.',
@@ -364,11 +380,16 @@ const RelationshipWeb = ({
 
     const centerX = 400;
     const centerY = 300;
-    const radius = 200; // Fixed radius of 200 pixels
 
     // Separate focused character from others for proper circle calculation
     const focusedChar = focusedCharacterFiltered.find(char => char.id === focusedCharacter);
     const otherCharacters = focusedCharacterFiltered.filter(char => char.id !== focusedCharacter);
+
+    // Fixed 200px ring; on phones use the smallest ring that still keeps nodes apart,
+    // so the initial view needs less zooming out and names stay readable
+    const radius = isMobileRef.current
+      ? Math.max(120, Math.min(200, (otherCharacters.length * 72) / (2 * Math.PI)))
+      : 200;
     
     const newNodes = [];
     
@@ -393,8 +414,60 @@ const RelationshipWeb = ({
       newNodes.push(makeNode(character, { x, y }, false));
     });
 
-          setNodes(newNodes);
+    setNodes(newNodes);
+    return newNodes;
   }, [charactersData, relationshipsData, focusedCharacter, getRelationshipCount, getGroupColor, calculateCharacterImportance, getNodeSize]);
+
+  // Set zoom and pan together, updating the refs immediately so gesture handlers
+  // that run before the next render see the new view
+  const applyView = useCallback((newZoom, newPan) => {
+    zoomRef.current = newZoom;
+    panRef.current = newPan;
+    setZoom(newZoom);
+    setPan(newPan);
+  }, []);
+
+  // Zoom by a factor while keeping the given container point fixed on screen
+  const zoomAt = useCallback((point, factor) => {
+    const currentZoom = zoomRef.current;
+    const currentPan = panRef.current;
+    const newZoom = clampZoom(currentZoom * factor);
+    const worldX = (point.x - currentPan.x) / currentZoom;
+    const worldY = (point.y - currentPan.y) / currentZoom;
+    applyView(newZoom, { x: point.x - worldX * newZoom, y: point.y - worldY * newZoom });
+  }, [applyView]);
+
+  const zoomAroundCenter = (factor) => {
+    const container = containerRef.current;
+    if (!container) return;
+    zoomAt({ x: container.clientWidth / 2, y: container.clientHeight / 2 }, factor);
+  };
+
+  // Zoom and center so the given nodes (including their outlines and labels) fit in view
+  const fitNodesInView = useCallback((nodeList, maxZoom = 2) => {
+    const container = containerRef.current;
+    if (!container || !nodeList || nodeList.length === 0) return;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    // Hidden (e.g. another tab is selected): fit once it becomes visible instead
+    if (!width || !height) return;
+
+    const extent = (n) => (n.animatedSize ?? n.size ?? 30) + 20;
+    const minX = Math.min(...nodeList.map(n => n.position.x - extent(n)));
+    const maxX = Math.max(...nodeList.map(n => n.position.x + extent(n)));
+    const minY = Math.min(...nodeList.map(n => n.position.y - extent(n)));
+    const maxY = Math.max(...nodeList.map(n => n.position.y + extent(n)));
+
+    const padding = width < 500 ? 16 : 40;
+    const newZoom = clampZoom(Math.min(
+      width / (maxX - minX + padding * 2),
+      height / (maxY - minY + padding * 2),
+      maxZoom
+    ));
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    applyView(newZoom, { x: width / 2 - centerX * newZoom, y: height / 2 - centerY * newZoom });
+  }, [applyView]);
 
   // Initialize edges
   const initializeEdges = useCallback(() => {
@@ -438,24 +511,9 @@ const RelationshipWeb = ({
       return;
     }
 
-    initializeNodes();
-    
-    // Center the view on the focused character after initialization
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth;
-      const containerHeight = containerRef.current.clientHeight;
-      const centerX = containerWidth / 2;
-      const centerY = containerHeight / 2;
-      const characterX = 400; // This matches the centerX in initializeNodes
-      const characterY = 300; // This matches the centerY in initializeNodes
-      
-      // Calculate pan to center the character
-      const newPanX = centerX - characterX;
-      const newPanY = centerY - characterY;
-      
-      setPan({ x: newPanX, y: newPanY });
-    }
-  }, [focusedCharacter, initializeNodes]);
+    // Center the focused character's circle, zooming out only if it does not fit
+    fitNodesInView(initializeNodes(), 1);
+  }, [focusedCharacter, initializeNodes, fitNodesInView]);
 
   // Initialize edges after nodes are set
   useEffect(() => {
@@ -570,86 +628,6 @@ const RelationshipWeb = ({
     const same = autoPinnedNodeIds.size === nextAuto.size && Array.from(autoPinnedNodeIds).every(id => nextAuto.has(id));
     if (!same) setAutoPinnedNodeIds(nextAuto);
   }, [nodes, edges, pinnedNodeIds, autoPinnedNodeIds, autoPinnedNodeIds.size]);
-
-  // Handle node drag start
-  const handleNodeMouseDown = (e, nodeId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setNodes(currentNodes => {
-      const node = currentNodes.find(n => n.id === nodeId);
-      if (!node) return currentNodes;
-      
-      // Reset click detection for this interaction
-      wasClick.current = true;
-      clickStartPos.current = { x: e.clientX, y: e.clientY };
-      
-      setIsDragging(true);
-      setDraggedNode(nodeId);
-      // Store the offset between the mouse (in world coords) and the node position
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const worldMouseX = (mouseX - pan.x) / zoom;
-        const worldMouseY = (mouseY - pan.y) / zoom;
-        setDragStart({ x: worldMouseX - node.position.x, y: worldMouseY - node.position.y });
-      } else {
-        // Fallback: no container ref, assume no pan/zoom
-        setDragStart({ x: 0, y: 0 });
-      }
-      
-      // Stop auto arrange if it's running
-      if (isAutoArrangeOn) {
-        wasAutoArrangeOn.current = true;
-        setIsAutoArrangeOn(false);
-      }
-      
-      return currentNodes;
-    });
-  };
-
-  // Handle node drag
-  const handleNodeMouseMove = useCallback((e) => {
-    if (!isDragging) return;
-    
-    if (isDragging && draggedNode) {
-      setNodes(prevNodes => {
-        const node = prevNodes.find(n => n.id === draggedNode);
-        if (!node) return prevNodes;
-        
-        // Convert mouse to world coordinates taking current pan/zoom into account
-        let newX = node.position.x;
-        let newY = node.position.y;
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect();
-          const mouseX = e.clientX - rect.left;
-          const mouseY = e.clientY - rect.top;
-          const worldMouseX = (mouseX - pan.x) / zoom;
-          const worldMouseY = (mouseY - pan.y) / zoom;
-          newX = worldMouseX - dragStart.x;
-          newY = worldMouseY - dragStart.y;
-        }
-        
-        // Check if mouse moved enough to not be a click
-        const moveDistance = Math.sqrt(
-          Math.pow(e.clientX - clickStartPos.current.x, 2) + 
-          Math.pow(e.clientY - clickStartPos.current.y, 2)
-        );
-        
-        // Increase threshold to make click detection more reliable
-        if (moveDistance > 8) {
-          wasClick.current = false;
-        }
-        
-        return prevNodes.map(n => 
-          n.id === draggedNode 
-            ? { ...n, position: { x: newX, y: newY } }
-            : n
-        );
-      });
-    }
-  }, [isDragging, draggedNode, dragStart, pan, zoom]);
 
   // Handle node click - add character's relationships or remove node
   const handleNodeClick = useCallback((nodeId) => {
@@ -766,7 +744,7 @@ const RelationshipWeb = ({
              
       // Update edges to show ALL relationships between visible characters
       setEdges(currentEdges => {
-        const existingEdgeIds = new Set(currentEdges.map(e => e.id));
+        const existingPairs = new Set(currentEdges.map(e => `${e.from}|${e.to}`));
         
         // Get all characters that will be visible after adding new ones
         const allVisibleIds = new Set(updatedNodes.map(n => n.id));
@@ -778,12 +756,9 @@ const RelationshipWeb = ({
                         
         const newEdges = allVisibleRelationships
           .filter(rel => {
-            // Check if we already have any edge between these two characters
-            const baseEdgeId = `${rel.from}-${rel.to}`;
-            const hasExistingEdge = Array.from(existingEdgeIds).some(existingId => 
-              existingId.startsWith(baseEdgeId)
-            );
-            return !hasExistingEdge;
+            // Skip if we already have an edge between these two characters
+            // (matching on ids rather than an id prefix, which wrongly matched e.g. "a-b" against "a-bob")
+            return !existingPairs.has(`${rel.from}|${rel.to}`);
           })
           .map((relationship, index) => createEdge(
             relationship,
@@ -804,78 +779,161 @@ const RelationshipWeb = ({
     });
   }, [isPinMode, isRemoveMode, edges, relationshipsData, charactersData, getRelationshipCount, getGroupColor, getRelationshipColor, formatRelationshipType, calculateCharacterImportance, getNodeSize, scaleSizeByImportance]);
 
-  // Handle node drag end
-  const handleNodeMouseUp = useCallback((e, nodeId) => {
-    if (isDragging) {
-      setIsDragging(false);
-      setDraggedNode(null);
-      
-      // Restore auto arrange if it was on before dragging
-      if (wasAutoArrangeOn.current) {
-        setIsAutoArrangeOn(true);
-        wasAutoArrangeOn.current = false;
+  const restoreAutoArrange = () => {
+    if (wasAutoArrangeOn.current) {
+      wasAutoArrangeOn.current = false;
+      setIsAutoArrangeOn(true);
+    }
+  };
+
+  // Pointer position relative to the graph container
+  const getLocalPoint = (e) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+
+  // Container point -> graph (world) coordinates under the current pan/zoom
+  const toWorld = (point) => ({
+    x: (point.x - panRef.current.x) / zoomRef.current,
+    y: (point.y - panRef.current.y) / zoomRef.current
+  });
+
+  const getPinchGeometry = () => {
+    const [a, b] = Array.from(pointersRef.current.values());
+    return {
+      mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+      dist: Math.hypot(a.x - b.x, a.y - b.y) || 1
+    };
+  };
+
+  // Pointer events cover mouse, touch and pen. One pointer drags a node or pans the
+  // background; a second pointer turns the gesture into pinch-zoom (with two-finger pan).
+  const handlePointerDown = (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    // Buttons and panels floating over the graph handle their own events
+    if (e.target.closest('[data-graph-overlay]')) return;
+    const container = containerRef.current;
+    if (!container) return;
+    try {
+      container.setPointerCapture(e.pointerId);
+    } catch (_) {
+      // ignore: capture is a nicety (keeps receiving moves outside the container)
+    }
+
+    const point = getLocalPoint(e);
+    pointersRef.current.set(e.pointerId, point);
+
+    if (pointersRef.current.size === 2) {
+      // Second finger: abandon any node drag/tap and start pinching
+      if (gestureRef.current?.type === 'node') restoreAutoArrange();
+      const { mid, dist } = getPinchGeometry();
+      gestureRef.current = { type: 'pinch', startDist: dist, startZoom: zoomRef.current, worldMid: toWorld(mid) };
+      return;
+    }
+    if (pointersRef.current.size > 2) return;
+
+    const nodeId = e.target.closest('[data-node-id]')?.getAttribute('data-node-id');
+    const node = nodeId ? nodesRef.current.find(n => n.id === nodeId) : null;
+    if (node) {
+      const world = toWorld(point);
+      gestureRef.current = {
+        type: 'node',
+        nodeId,
+        start: point,
+        offset: { x: world.x - node.position.x, y: world.y - node.position.y },
+        moved: false
+      };
+      // Pause auto arrange while a node is held so it stays under the pointer
+      if (isAutoArrangeOn) {
+        wasAutoArrangeOn.current = true;
+        setIsAutoArrangeOn(false);
       }
+    } else {
+      gestureRef.current = { type: 'pan', start: point, last: point, moved: false };
     }
-    
-    // Handle click to add relationships
-    if (wasClick.current && nodeId) {
-      handleNodeClick(nodeId);
-    }
-  }, [isDragging, handleNodeClick]);
+    setIsDragging(true);
+  };
 
-  // Handle pan
-  const handleMouseDown = (e) => {
-    if (e.target === svgRef.current) {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
+  const handlePointerMove = (e) => {
+    if (!pointersRef.current.has(e.pointerId)) return;
+    const point = getLocalPoint(e);
+    pointersRef.current.set(e.pointerId, point);
+    const gesture = gestureRef.current;
+    if (!gesture) return;
+
+    if (gesture.type === 'pinch') {
+      if (pointersRef.current.size < 2) return;
+      const { mid, dist } = getPinchGeometry();
+      const newZoom = clampZoom(gesture.startZoom * (dist / gesture.startDist));
+      // Keep the graph point that started under the fingers' midpoint under it
+      applyView(newZoom, {
+        x: mid.x - gesture.worldMid.x * newZoom,
+        y: mid.y - gesture.worldMid.y * newZoom
+      });
+      return;
+    }
+
+    // Fingers wobble, so touch needs a larger threshold before a tap becomes a drag
+    const threshold = e.pointerType === 'mouse' ? 4 : 10;
+    if (!gesture.moved && Math.hypot(point.x - gesture.start.x, point.y - gesture.start.y) > threshold) {
+      gesture.moved = true;
+    }
+    if (!gesture.moved) return;
+
+    if (gesture.type === 'node') {
+      const world = toWorld(point);
+      const x = world.x - gesture.offset.x;
+      const y = world.y - gesture.offset.y;
+      setNodes(prev => prev.map(n => (n.id === gesture.nodeId ? { ...n, position: { x, y } } : n)));
+    } else if (gesture.type === 'pan') {
+      const dx = point.x - gesture.last.x;
+      const dy = point.y - gesture.last.y;
+      gesture.last = point;
+      applyView(zoomRef.current, { x: panRef.current.x + dx, y: panRef.current.y + dy });
     }
   };
 
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging || draggedNode) return;
+  const handlePointerUp = (e) => {
+    if (!pointersRef.current.has(e.pointerId)) return;
+    pointersRef.current.delete(e.pointerId);
+    const gesture = gestureRef.current;
+    const remaining = pointersRef.current.size;
 
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
+    if (gesture?.type === 'pinch') {
+      if (remaining === 1) {
+        // Lifting one finger of a pinch continues as a pan with the other, never a tap
+        const [point] = Array.from(pointersRef.current.values());
+        gestureRef.current = { type: 'pan', start: point, last: point, moved: true };
+      } else if (remaining === 0) {
+        gestureRef.current = null;
+        setIsDragging(false);
+      }
+      return;
+    }
+    if (remaining > 0) return;
 
-    setPan(prev => ({
-      x: prev.x + deltaX,
-      y: prev.y + deltaY
-    }));
+    gestureRef.current = null;
+    setIsDragging(false);
+    if (!gesture) return;
+    const isTap = !gesture.moved && e.type !== 'pointercancel';
 
-    setDragStart({ x: e.clientX, y: e.clientY });
-  }, [isDragging, draggedNode, dragStart]);
-
-  const handleMouseUp = () => {
-    if (!draggedNode) {
-      setIsDragging(false);
+    if (gesture.type === 'node') {
+      restoreAutoArrange();
+      if (isTap) {
+        if (activeMode === 'none') setSelectedNodeId(gesture.nodeId);
+        handleNodeClick(gesture.nodeId);
+      }
+    } else if (gesture.type === 'pan' && isTap) {
+      // Tapping empty background clears the selection
+      setSelectedNodeId(null);
     }
   };
 
-  // Handle zoom
+  // Handle mouse wheel zoom around the cursor
   const handleWheel = useCallback((e) => {
-    
-    // Get the container's bounding rectangle
-    const containerRect = containerRef.current.getBoundingClientRect();
-    
-    // Calculate mouse position relative to the container
-    const mouseX = e.clientX - containerRect.left;
-    const mouseY = e.clientY - containerRect.top;
-    
-    // Calculate mouse position relative to the current pan and zoom
-    const worldMouseX = (mouseX - pan.x) / zoom;
-    const worldMouseY = (mouseY - pan.y) / zoom;
-    
-    // Calculate zoom factor
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    const newZoom = Math.min(Math.max(zoom * delta, 0.5), 2);
-    
-    // Calculate new pan to keep the mouse position fixed
-    const newPanX = mouseX - worldMouseX * newZoom;
-    const newPanY = mouseY - worldMouseY * newZoom;
-    
-    setZoom(newZoom);
-    setPan({ x: newPanX, y: newPanY });
-  }, [pan, zoom]);
+    const rect = containerRef.current.getBoundingClientRect();
+    zoomAt({ x: e.clientX - rect.left, y: e.clientY - rect.top }, e.deltaY > 0 ? 0.9 : 1.1);
+  }, [zoomAt]);
 
   // Attach non-passive wheel listener so we can preventDefault and avoid page scroll
   useEffect(() => {
@@ -906,29 +964,11 @@ const RelationshipWeb = ({
     // Only clear if we're actually changing focus, not during initial load
     if (focusedCharacter !== characterId) {
       setFocusedCharacter(characterId);
-      // Clear all nodes and edges when changing focus
+      // Clear all nodes and edges when changing focus; the graph is rebuilt and
+      // fitted to the view by the focus effect
       setNodes([]);
       setEdges([]);
-      
-      // Center the view on the new character
-      setZoom(1);
-      // Center the character in the middle of the screen
-      // The character will be positioned at (400, 300) in initializeNodes
-      // So we need to pan to center it in the container
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.clientWidth;
-        const containerHeight = containerRef.current.clientHeight;
-        const centerX = containerWidth / 2;
-        const centerY = containerHeight / 2;
-        const characterX = 400; // This matches the centerX in initializeNodes
-        const characterY = 300; // This matches the centerY in initializeNodes
-        
-        // Calculate pan to center the character
-        const newPanX = centerX - characterX;
-        const newPanY = centerY - characterY;
-        
-        setPan({ x: newPanX, y: newPanY });
-      }
+      setSelectedNodeId(null);
     }
   };
 
@@ -1055,29 +1095,14 @@ const RelationshipWeb = ({
     setNodes([]);
     setEdges([]);
     setIsAutoArrangeOn(false);
+    setSelectedNodeId(null);
     // Keep the current focused character, don't change it
     // Don't reset full screen mode
     
     // Force re-initialization by calling initializeNodes directly
     // This avoids the flash of all characters
     setTimeout(() => {
-      initializeNodes();
-      
-      // Center the view on the focused character after initialization
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.clientWidth;
-        const containerHeight = containerRef.current.clientHeight;
-        const centerX = containerWidth / 2;
-        const centerY = containerHeight / 2;
-        const characterX = 400; // This matches the centerX in initializeNodes
-        const characterY = 300; // This matches the centerY in initializeNodes
-        
-        // Calculate pan to center the character
-        const newPanX = centerX - characterX;
-        const newPanY = centerY - characterY;
-        
-        setPan({ x: newPanX, y: newPanY });
-      }
+      fitNodesInView(initializeNodes(), 1);
     }, 0);
   };
 
@@ -1096,6 +1121,7 @@ const RelationshipWeb = ({
       setPinnedNodeIds(new Set());
       setAutoPinnedNodeIds(new Set());
       setHoveredNode(null);
+      setSelectedNodeId(null);
       setActiveMode('none');
 
       // Stop any ongoing animations
@@ -1111,113 +1137,107 @@ const RelationshipWeb = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentBookKey, charactersData]);
 
-  // Add event listeners
+  // Drop the selection when its node leaves the graph (removed, chapter filter, refocus)
   useEffect(() => {
-    const handleGlobalMouseMove = (e) => handleNodeMouseMove(e);
-    const handleGlobalMouseUp = (e) => {
-      // If we were dragging a node, handle the mouse up on that node
-      if (draggedNode) {
-        handleNodeMouseUp(e, draggedNode);
-      }
-      
-      if (isDragging) {
-        setIsDragging(false);
-        setDraggedNode(null);
-        
-        // Restore auto arrange if it was on before dragging
-        if (wasAutoArrangeOn.current) {
-          setIsAutoArrangeOn(true);
-          wasAutoArrangeOn.current = false;
-        }
-      }
-    };
+    if (selectedNodeId && !nodeById.has(selectedNodeId)) setSelectedNodeId(null);
+  }, [selectedNodeId, nodeById]);
 
-    // Global wheel event handler to prevent scrolling when over the relationship web
-    const handleGlobalWheel = (e) => {
-      if (containerRef.current && containerRef.current.contains(e.target)) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-    }
-
-    // Add global wheel listener with passive: false to ensure preventDefault works
-    document.addEventListener('wheel', handleGlobalWheel, { passive: false });
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-      document.removeEventListener('wheel', handleGlobalWheel);
-    };
-  }, [isDragging, draggedNode, handleNodeMouseMove, handleNodeMouseUp]);
-
-  // Handle window resize to keep focused character centered
+  // Keep the view centred when the graph area changes size (window resize, phone
+  // rotation, full screen, side panel). If the graph has never been visible (it is
+  // rendered while another tab is selected), fit the nodes once it first appears.
   useEffect(() => {
-    let previousContainerWidth = 0;
-    let previousContainerHeight = 0;
-    
-    const handleResize = () => {
-      // Only adjust view if we have a focused character and nodes are visible
-      if (focusedCharacter && nodes.length > 0 && containerRef.current) {
-        const containerWidth = containerRef.current.clientWidth;
-        const containerHeight = containerRef.current.clientHeight;
-        
-        // If this is the first resize, just save the dimensions
-        if (previousContainerWidth === 0) {
-          previousContainerWidth = containerWidth;
-          previousContainerHeight = containerHeight;
-          return;
-        }
-        
-        // Calculate the difference in container dimensions
-        const widthDifference = containerWidth - previousContainerWidth;
-        const heightDifference = containerHeight - previousContainerHeight;
-        
-        // Pan by half the difference to keep the character centered
-        setPan(prevPan => ({
-          x: prevPan.x + (widthDifference / 2),
-          y: prevPan.y + (heightDifference / 2)
-        }));
-        
-        // Update the previous dimensions for next resize
-        previousContainerWidth = containerWidth;
-        previousContainerHeight = containerHeight;
+    const el = containerRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    let lastVisibleSize = null;
+    const observer = new ResizeObserver(() => {
+      const width = el.clientWidth;
+      const height = el.clientHeight;
+      if (!width || !height) return; // hidden tab: keep the last visible size
+      if (!lastVisibleSize) {
+        fitNodesInView(nodesRef.current, 1);
+      } else if (width !== lastVisibleSize.width || height !== lastVisibleSize.height) {
+        applyView(zoomRef.current, {
+          x: panRef.current.x + (width - lastVisibleSize.width) / 2,
+          y: panRef.current.y + (height - lastVisibleSize.height) / 2
+        });
       }
-    };
+      lastVisibleSize = { width, height };
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fitNodesInView, applyView]);
 
-    // Add resize listener
-    window.addEventListener('resize', handleResize);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
+  // Full screen: stop the page behind from scrolling and let Escape exit
+  useEffect(() => {
+    if (!isFullPage) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setIsFullPage(false);
     };
-  }, [focusedCharacter, nodes.length]);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isFullPage]);
+
+  // The options drawer is a phone-only overlay
+  useEffect(() => {
+    if (!isMobile) setIsOptionsOpen(false);
+  }, [isMobile]);
+
+  const highlightedNodeId = hoveredNode ?? selectedNodeId;
+  const selectedNode = selectedNodeId ? nodeById.get(selectedNodeId) : null;
+
+  const toolbarButtonClass = 'flex-shrink-0 px-2 py-2 text-sm md:px-4 md:text-base text-white rounded transition-colors';
+  // Labels are written "Show\nAll": two lines on desktop, one line (newline collapses to a space) on phones
+  const toolbarLabelClass = 'whitespace-normal md:whitespace-pre leading-tight text-center';
+  const toggleButtonColor = (isOn) => (isOn ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600');
+  const overlayButtonClass = 'w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300';
+
+  const sidePanelProps = {
+    springForce,
+    setSpringForce,
+    repulsionForce,
+    setRepulsionForce,
+    showDescription,
+    setShowDescription,
+    showRelationship,
+    setShowRelationship,
+    showNumber,
+    setShowNumber,
+    showImportance,
+    setShowImportance,
+    scaleSizeByImportance,
+    setScaleSizeByImportance,
+    groupColors,
+    getGroupColor,
+    relationshipLegendItems
+  };
 
   return (
     <div 
-      className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}
+      className={`relationship-web ${isFullPage ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col' : ''}`}
     >
       {!isFullPage && (
-        <div className="mb-6">
+        <div className="mb-4 md:mb-6">
           <p className="text-gray-600 dark:text-gray-400">
-            Explore character connections. Drag nodes to rearrange, select a character to focus, and choose a chapter to avoid spoilers.
+            {isMobile
+              ? 'Explore character connections. Tap a character to reveal their relationships, drag to pan and pinch to zoom.'
+              : 'Explore character connections. Drag nodes to rearrange, select a character to focus, and choose a chapter to avoid spoilers.'}
           </p>
         </div>
       )}
 
       {/* Controls */}
-      <div className={`${isFullPage ? 'p-4' : 'mb-4'} grid grid-cols-1 md:[grid-template-columns:minmax(0,1fr)_auto] gap-4`}>
+      <div className={`${isFullPage ? 'p-2 md:p-4 flex-shrink-0' : 'mb-4'} grid grid-cols-1 md:[grid-template-columns:minmax(0,1fr)_auto] gap-2 md:gap-4`}>
         <div className="min-w-0">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="relationship-web-focus" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Focus on Character
           </label>
           <select
+            id="relationship-web-focus"
             className="w-full min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
             value={focusedCharacter || ''}
             onChange={(e) => focusOnCharacter(e.target.value || null)}
@@ -1232,159 +1252,91 @@ const RelationshipWeb = ({
 
         {/* Removed local chapter dropdown – now controlled globally from the tab bar */}
 
-
-        <div className="flex flex-wrap gap-2 items-end md:w-max md:justify-self-start">
-        <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
-              onClick={showAllUpToChapter}
-              title="Show all characters and relationships up to the selected chapter"
-            >
-              <span className="whitespace-pre leading-tight text-center">{`Show\nAll`}</span>
-            </button>
+        <div className="grid grid-cols-4 gap-2 md:flex md:flex-wrap md:items-end md:w-max md:justify-self-start">
+          <button
+            className={`${toolbarButtonClass} bg-blue-500 hover:bg-blue-600`}
+            onClick={showAllUpToChapter}
+            title="Show all characters and relationships up to the selected chapter"
+          >
+            <span className={toolbarLabelClass}>{`Show\nAll`}</span>
+          </button>
 
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
+            className={`${toolbarButtonClass} bg-blue-500 hover:bg-blue-600`}
             onClick={resetView}
             title="Reset zoom, pan, and focus to defaults"
           >
-            <span className="whitespace-pre leading-tight text-center">{`Reset\nView`}</span>
+            <span className={toolbarLabelClass}>{`Reset\nView`}</span>
           </button>
 
           <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0"
-              onClick={() => {
-                if (nodes.length === 0) return;
-                
-                // Calculate the bounding box of all current nodes
-                const minX = Math.min(...nodes.map(n => n.position.x));
-                const maxX = Math.max(...nodes.map(n => n.position.x));
-                const minY = Math.min(...nodes.map(n => n.position.y));
-                const maxY = Math.max(...nodes.map(n => n.position.y));
-                
-                // Add some padding around the nodes
-                const padding = 100;
-                const nodeWidth = maxX - minX + padding * 2;
-                const nodeHeight = maxY - minY + padding * 2;
-                
-                // Get the container dimensions
-                const containerWidth = containerRef.current.clientWidth;
-                const containerHeight = containerRef.current.clientHeight;
-                
-                // Calculate the zoom level needed to fit all nodes
-                const scaleX = containerWidth / nodeWidth;
-                const scaleY = containerHeight / nodeHeight;
-                const newZoom = Math.min(scaleX, scaleY, 2); // Cap zoom at 2x
-                
-                // Calculate the center of the nodes
-                const centerX = (minX + maxX) / 2;
-                const centerY = (minY + maxY) / 2;
-                
-                // Calculate the center of the container
-                const containerCenterX = containerWidth / 2;
-                const containerCenterY = containerHeight / 2;
-                
-                // Calculate the pan needed to center the nodes
-                const newPanX = containerCenterX - centerX * newZoom;
-                const newPanY = containerCenterY - centerY * newZoom;
-                
-                // Apply the new zoom and pan
-                setZoom(newZoom);
-                setPan({ x: newPanX, y: newPanY });
-              }}
-              title="Zoom and center so all visible nodes fit in view"
-            >
-              <span className="whitespace-pre leading-tight text-center">{`Fit to\nView`}</span>
-            </button>
+            className={`${toolbarButtonClass} bg-blue-500 hover:bg-blue-600`}
+            onClick={() => fitNodesInView(nodes)}
+            title="Zoom and center so all visible nodes fit in view"
+          >
+            <span className={toolbarLabelClass}>{`Fit to\nView`}</span>
+          </button>
 
           <button
-            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
-              isAutoArrangeOn 
-                ? 'bg-green-500 hover:bg-green-600' 
-                : 'bg-gray-500 hover:bg-gray-600'
-            }`}
+            className={`${toolbarButtonClass} ${toggleButtonColor(isAutoArrangeOn)}`}
             onClick={() => setIsAutoArrangeOn(!isAutoArrangeOn)}
             title="Toggle automatic layout of nodes"
+            aria-pressed={isAutoArrangeOn}
           >
-            <span className="whitespace-pre leading-tight text-center">{`Auto\narrange`}</span>
+            <span className={toolbarLabelClass}>{`Auto\narrange`}</span>
           </button>
 
           <button
-            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
-              isPinMode
-                ? 'bg-green-500 hover:bg-green-600'
-                : 'bg-gray-500 hover:bg-gray-600'
-            }`}
+            className={`${toolbarButtonClass} ${toggleButtonColor(isPinMode)}`}
             onClick={() => setActiveMode(prev => (prev === 'pin' ? 'none' : 'pin'))}
             title="Toggle pin mode (click nodes to pin/unpin)"
+            aria-pressed={isPinMode}
           >
-            <span className="whitespace-pre leading-tight text-center">{`Pin\nMode`}</span>
+            <span className={toolbarLabelClass}>{`Pin\nMode`}</span>
           </button>
 
           {/* Removed Pin Isolated toggle */}
 
           <button
-            className={`flex-shrink-0 px-4 py-2 text-white rounded transition-colors ${
-              isRemoveMode 
-                ? 'bg-green-500 hover:bg-green-600' 
-                : 'bg-gray-500 hover:bg-gray-600'
-            }`}
+            className={`${toolbarButtonClass} ${toggleButtonColor(isRemoveMode)}`}
             onClick={() => setActiveMode(prev => (prev === 'remove' ? 'none' : 'remove'))}
             title="Toggle remove mode (click nodes to remove)"
+            aria-pressed={isRemoveMode}
           >
-            <span className="whitespace-pre leading-tight text-center">{`Remove\nMode`}</span>
+            <span className={toolbarLabelClass}>{`Remove\nMode`}</span>
           </button>
 
           <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors flex-shrink-0"
+            className={`${toolbarButtonClass} bg-indigo-600 hover:bg-indigo-700`}
             title="Step-by-step tutorial for this page"
             onClick={() => setIsTutorialOpen(true)}
           >
-            <span className="whitespace-pre leading-tight text-center">{`Page\nTutorial`}</span>
+            <span className={toolbarLabelClass}>{isMobile ? 'Help' : `Page\nTutorial`}</span>
           </button>
-
-
         </div>
       </div>
 
-
-
-
-      {/* Main Content Area with Left Panel and Map */}
-      <div className="flex gap-4">
-        <SidePanel
-          isFullPage={isFullPage}
-          springForce={springForce}
-          setSpringForce={setSpringForce}
-          repulsionForce={repulsionForce}
-          setRepulsionForce={setRepulsionForce}
-          showDescription={showDescription}
-          setShowDescription={setShowDescription}
-          showRelationship={showRelationship}
-          setShowRelationship={setShowRelationship}
-          showNumber={showNumber}
-          setShowNumber={setShowNumber}
-          showImportance={showImportance}
-          setShowImportance={setShowImportance}
-          scaleSizeByImportance={scaleSizeByImportance}
-          setScaleSizeByImportance={setScaleSizeByImportance}
-          groupColors={groupColors}
-          getGroupColor={getGroupColor}
-          relationshipLegendItems={relationshipLegendItems}
-        />
+      {/* Main Content Area with Left Panel and Graph */}
+      <div className={`flex gap-4 ${isFullPage ? 'flex-1 min-h-0 px-2 pb-2 md:px-4 md:pb-4' : ''}`}>
+        {!isMobile && <SidePanel variant="column" {...sidePanelProps} />}
 
         {/* Relationship Graph */}
-        <div className="flex-1">
+        <div className={`flex-1 min-w-0 ${isFullPage ? 'flex flex-col' : ''}`}>
           <div 
             ref={containerRef}
-            className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 relative ${
-              isFullPage ? 'flex-1' : ''
+            className={`border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-white dark:bg-gray-800 relative select-none ${
+              isFullPage ? 'flex-1 min-h-0' : ''
             }`}
             style={{ 
-              height: isFullPage ? 'calc(100vh - 95px)' : '840px'
+              height: isFullPage ? undefined : (isMobile ? '70vh' : '840px'),
+              minHeight: isFullPage ? undefined : 320,
+              // We handle drag, pan and pinch ourselves; stop the browser scrolling/zooming the page
+              touchAction: 'none'
             }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
             // Wheel handled via non-passive native listener to allow preventDefault
           >
             {/* FPS Overlay */}
@@ -1416,43 +1368,142 @@ const RelationshipWeb = ({
                 </svg>
               </div>
             )}
-            {/* Full Screen Button */}
-            <button
-              className="absolute top-4 right-4 z-10 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              onClick={() => setIsFullPage(!isFullPage)}
-              title={isFullPage ? 'Exit Full Screen' : 'Enter Full Screen'}
-            >
-              {isFullPage ? (
-                // Exit full screen - arrows pointing inward
-                <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
-                  <g>
-                  <path d="M 134.897 30.362 C 126.613 30.362 119.897 37.078 119.897 45.362 L 119.897 99.147 L 25.505 4.755 C 19.648 -1.103 10.15 -1.103 4.292 4.755 C -1.566 10.613 -1.566 20.11 4.292 25.968 L 98.682 120.358 L 44.896 120.362 C 36.612 120.362 29.896 127.079 29.897 135.363 C 29.898 143.647 36.614 150.362 44.898 150.362 L 134.898 150.356 C 143.182 150.356 149.897 143.64 149.897 135.356 L 149.897 45.362 C 149.897 37.078 143.181 30.362 134.897 30.362 Z"/>
-                  <path d="M 194.665 300.225 C 202.949 300.225 209.665 293.509 209.665 285.225 L 209.665 231.44 L 304.057 325.832 C 306.986 328.761 310.825 330.226 314.663 330.226 C 318.502 330.226 322.341 328.762 325.27 325.832 C 331.128 319.974 331.128 310.477 325.27 304.619 L 230.88 210.229 L 284.666 210.225 C 292.95 210.225 299.666 203.508 299.665 195.224 C 299.664 186.94 292.948 180.225 284.664 180.225 L 194.664 180.231 C 186.38 180.231 179.665 186.947 179.665 195.231 L 179.665 285.225 C 179.665 293.509 186.381 300.225 194.665 300.225 Z"/>
-                  <path d="M 303.77 3.972 L 209.38 98.362 L 209.376 44.576 C 209.376 36.292 202.659 29.577 194.375 29.577 C 186.091 29.577 179.376 36.294 179.376 44.578 L 179.382 134.578 C 179.382 142.862 186.098 149.577 194.382 149.577 L 284.376 149.577 C 292.66 149.577 299.376 142.861 299.376 134.577 C 299.376 126.293 292.66 119.577 284.376 119.577 L 230.591 119.577 L 324.983 25.185 C 330.841 19.327 330.841 9.83 324.983 3.972 C 319.125 -1.886 309.627 -1.886 303.77 3.972 Z"/>
-                  <path d="M 15.272 330.019 C 19.111 330.019 22.95 328.555 25.878 325.625 L 120.268 231.235 L 120.272 285.023 C 120.273 293.307 126.989 300.023 135.273 300.022 C 143.557 300.021 150.273 293.305 150.272 285.021 L 150.266 195.021 C 150.265 186.737 143.55 180.022 135.266 180.022 L 45.272 180.022 C 36.988 180.022 30.272 186.738 30.272 195.022 C 30.272 203.306 36.988 210.022 45.272 210.022 L 99.056 210.022 L 4.665 304.413 C -1.193 310.271 -1.193 319.768 4.665 325.626 C 7.594 328.555 11.433 330.019 15.272 330.019 Z"/>
-                  </g>
-                </svg>
-              ) : (
-                // Enter full screen - arrows pointing outward
-                <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
-                  <g>
+            {/* Floating view controls */}
+            <div data-graph-overlay className="absolute top-3 right-3 z-20 flex flex-col gap-2">
+              <button
+                className={overlayButtonClass}
+                onClick={() => setIsFullPage(!isFullPage)}
+                title={isFullPage ? 'Exit Full Screen' : 'Enter Full Screen'}
+                aria-label={isFullPage ? 'Exit full screen' : 'Enter full screen'}
+              >
+                {isFullPage ? (
+                  // Exit full screen - arrows pointing inward
+                  <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                    <g>
+                    <path d="M 134.897 30.362 C 126.613 30.362 119.897 37.078 119.897 45.362 L 119.897 99.147 L 25.505 4.755 C 19.648 -1.103 10.15 -1.103 4.292 4.755 C -1.566 10.613 -1.566 20.11 4.292 25.968 L 98.682 120.358 L 44.896 120.362 C 36.612 120.362 29.896 127.079 29.897 135.363 C 29.898 143.647 36.614 150.362 44.898 150.362 L 134.898 150.356 C 143.182 150.356 149.897 143.64 149.897 135.356 L 149.897 45.362 C 149.897 37.078 143.181 30.362 134.897 30.362 Z"/>
+                    <path d="M 194.665 300.225 C 202.949 300.225 209.665 293.509 209.665 285.225 L 209.665 231.44 L 304.057 325.832 C 306.986 328.761 310.825 330.226 314.663 330.226 C 318.502 330.226 322.341 328.762 325.27 325.832 C 331.128 319.974 331.128 310.477 325.27 304.619 L 230.88 210.229 L 284.666 210.225 C 292.95 210.225 299.666 203.508 299.665 195.224 C 299.664 186.94 292.948 180.225 284.664 180.225 L 194.664 180.231 C 186.38 180.231 179.665 186.947 179.665 195.231 L 179.665 285.225 C 179.665 293.509 186.381 300.225 194.665 300.225 Z"/>
+                    <path d="M 303.77 3.972 L 209.38 98.362 L 209.376 44.576 C 209.376 36.292 202.659 29.577 194.375 29.577 C 186.091 29.577 179.376 36.294 179.376 44.578 L 179.382 134.578 C 179.382 142.862 186.098 149.577 194.382 149.577 L 284.376 149.577 C 292.66 149.577 299.376 142.861 299.376 134.577 C 299.376 126.293 292.66 119.577 284.376 119.577 L 230.591 119.577 L 324.983 25.185 C 330.841 19.327 330.841 9.83 324.983 3.972 C 319.125 -1.886 309.627 -1.886 303.77 3.972 Z"/>
+                    <path d="M 15.272 330.019 C 19.111 330.019 22.95 328.555 25.878 325.625 L 120.268 231.235 L 120.272 285.023 C 120.273 293.307 126.989 300.023 135.273 300.022 C 143.557 300.021 150.273 293.305 150.272 285.021 L 150.266 195.021 C 150.265 186.737 143.55 180.022 135.266 180.022 L 45.272 180.022 C 36.988 180.022 30.272 186.738 30.272 195.022 C 30.272 203.306 36.988 210.022 45.272 210.022 L 99.056 210.022 L 4.665 304.413 C -1.193 310.271 -1.193 319.768 4.665 325.626 C 7.594 328.555 11.433 330.019 15.272 330.019 Z"/>
+                    </g>
+                  </svg>
+                ) : (
+                  // Enter full screen - arrows pointing outward
+                  <svg width="20" height="20" viewBox="0 0 330 330" fill="currentColor" className="text-gray-700 dark:text-gray-300">
+                    <g>
                  
-                  <path d="M315,210c-8.284,0-15,6.716-15,15v53.785l-94.392-94.392c-5.857-5.858-15.355-5.858-21.213,0
-		c-5.858,5.858-5.858,15.355,0,21.213l94.39,94.39L224.999,300c-8.284,0-15,6.717-14.999,15.001
-		c0.001,8.284,6.717,14.999,15.001,14.999l90-0.006c8.284,0,14.999-6.716,14.999-15V225C330,216.716,323.284,210,315,210z"/>
-	<path d="M15,120c8.284,0,15-6.716,15-15V51.215l94.392,94.392c2.929,2.929,6.768,4.394,10.606,4.394
-		c3.839,0,7.678-1.464,10.607-4.394c5.858-5.858,5.858-15.355,0-21.213l-94.39-94.39L105.001,30c8.284,0,15-6.717,14.999-15.001
-		S113.283,0,104.999,0l-90,0.006C6.715,0.006,0,6.722,0,15.006V105C0,113.284,6.716,120,15,120z"/>
-	<path d="M124.394,184.395l-94.39,94.39L30,224.999c0-8.284-6.717-14.999-15.001-14.999S0,216.717,0,225.001l0.006,90
-		c0,8.284,6.716,14.999,15,14.999H105c8.284,0,15-6.716,15-15s-6.716-15-15-15H51.215l94.392-94.392
-		c5.858-5.858,5.858-15.355,0-21.213C139.749,178.537,130.251,178.537,124.394,184.395z"/>
-	<path d="M195,149.997c3.839,0,7.678-1.464,10.606-4.394l94.39-94.39L300,105.001c0.001,8.284,6.717,15,15.001,14.999
-		c8.284-0.001,15-6.717,14.999-15.001l-0.006-90C329.993,6.715,323.278,0,314.994,0H225c-8.284,0-15,6.716-15,15s6.716,15,15,15
-		h53.784l-94.391,94.391c-5.858,5.858-5.858,15.355,0,21.213C187.322,148.533,191.161,149.997,195,149.997z"/>
-                  </g>
-                </svg>
+                    <path d="M315,210c-8.284,0-15,6.716-15,15v53.785l-94.392-94.392c-5.857-5.858-15.355-5.858-21.213,0
+  		c-5.858,5.858-5.858,15.355,0,21.213l94.39,94.39L224.999,300c-8.284,0-15,6.717-14.999,15.001
+  		c0.001,8.284,6.717,14.999,15.001,14.999l90-0.006c8.284,0,14.999-6.716,14.999-15V225C330,216.716,323.284,210,315,210z"/>
+  	<path d="M15,120c8.284,0,15-6.716,15-15V51.215l94.392,94.392c2.929,2.929,6.768,4.394,10.606,4.394
+  		c3.839,0,7.678-1.464,10.607-4.394c5.858-5.858,5.858-15.355,0-21.213l-94.39-94.39L105.001,30c8.284,0,15-6.717,14.999-15.001
+  		S113.283,0,104.999,0l-90,0.006C6.715,0.006,0,6.722,0,15.006V105C0,113.284,6.716,120,15,120z"/>
+  	<path d="M124.394,184.395l-94.39,94.39L30,224.999c0-8.284-6.717-14.999-15.001-14.999S0,216.717,0,225.001l0.006,90
+  		c0,8.284,6.716,14.999,15,14.999H105c8.284,0,15-6.716,15-15s-6.716-15-15-15H51.215l94.392-94.392
+  		c5.858-5.858,5.858-15.355,0-21.213C139.749,178.537,130.251,178.537,124.394,184.395z"/>
+  	<path d="M195,149.997c3.839,0,7.678-1.464,10.606-4.394l94.39-94.39L300,105.001c0.001,8.284,6.717,15,15.001,14.999
+  		c8.284-0.001,15-6.717,14.999-15.001l-0.006-90C329.993,6.715,323.278,0,314.994,0H225c-8.284,0-15,6.716-15,15s6.716,15,15,15
+  		h53.784l-94.391,94.391c-5.858,5.858-5.858,15.355,0,21.213C187.322,148.533,191.161,149.997,195,149.997z"/>
+                    </g>
+                  </svg>
+                )}
+              </button>
+              {isMobile && (
+                <button
+                  className={overlayButtonClass}
+                  onClick={() => setIsOptionsOpen(open => !open)}
+                  title="View options and legend"
+                  aria-label="View options and legend"
+                  aria-expanded={isOptionsOpen}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+                    <circle cx="16" cy="6" r="2" />
+                    <circle cx="10" cy="12" r="2" />
+                    <circle cx="18" cy="18" r="2" />
+                  </svg>
+                </button>
               )}
-            </button>            
+              <button
+                className={overlayButtonClass}
+                onClick={() => zoomAroundCenter(1.25)}
+                title="Zoom in"
+                aria-label="Zoom in"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+              <button
+                className={overlayButtonClass}
+                onClick={() => zoomAroundCenter(0.8)}
+                title="Zoom out"
+                aria-label="Zoom out"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M5 12h14" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Pin / remove mode hint (modes apply to the next character clicked) */}
+            {activeMode !== 'none' && (
+              <div
+                data-graph-overlay
+                className="absolute top-3 left-3 right-16 md:left-1/2 md:right-auto md:-translate-x-1/2 z-10 flex items-center justify-between gap-3 px-3 py-2 rounded-lg shadow-lg text-sm bg-green-600 text-white"
+              >
+                <span>{isPinMode ? 'Select a character to pin or unpin it' : 'Select a character to remove it'}</span>
+                <button
+                  className="px-2 py-1 rounded bg-green-700 hover:bg-green-800 flex-shrink-0"
+                  onClick={() => setActiveMode('none')}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+
+            {/* Selected character card: the touch-screen stand-in for hover details */}
+            {selectedNode && activeMode === 'none' && (
+              <div
+                data-graph-overlay
+                className="absolute bottom-3 left-3 right-3 md:right-auto md:w-80 z-10 p-3 rounded-lg shadow-lg border text-sm bg-white/95 dark:bg-gray-900/95 border-gray-200 dark:border-gray-600"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: selectedNode.color }}></span>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{selectedNode.name}</h4>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {selectedNode.group} · {selectedNode.relationshipCount} relationship{selectedNode.relationshipCount === 1 ? '' : 's'}
+                    </p>
+                  </div>
+                  <button
+                    className="w-8 h-8 -mt-1 -mr-1 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setSelectedNodeId(null)}
+                    aria-label="Close character details"
+                  >
+                    ✕
+                  </button>
+                </div>
+                {selectedNode.role && (
+                  <p className="mt-2 text-gray-700 dark:text-gray-300">{selectedNode.role}</p>
+                )}
+                {selectedNode.id !== focusedCharacter && (
+                  <button
+                    className="mt-2 px-3 py-1.5 rounded bg-blue-500 hover:bg-blue-600 text-white"
+                    onClick={() => focusOnCharacter(selectedNode.id)}
+                  >
+                    Focus on {selectedNode.name}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Phone: options and legend open as a drawer over the graph */}
+            {isMobile && isOptionsOpen && (
+              <SidePanel variant="overlay" onClose={() => setIsOptionsOpen(false)} {...sidePanelProps} />
+            )}
+
             <svg
               ref={svgRef}
               width="100%"
@@ -1488,10 +1539,10 @@ const RelationshipWeb = ({
                   <SVGEdge
                     key={edge.id}
                     edge={edge}
-                    sourceNode={nodes.find(n => n.id === edge.from)}
-                    targetNode={nodes.find(n => n.id === edge.to)}
+                    sourceNode={nodeById.get(edge.from)}
+                    targetNode={nodeById.get(edge.to)}
                     showRelationship={showRelationship}
-                    hoveredNode={hoveredNode}
+                    hoveredNode={highlightedNodeId}
                     darkMode={darkMode}
                     getTextWidth={getTextWidth}
                     getTextColor={getTextColor}
@@ -1504,7 +1555,7 @@ const RelationshipWeb = ({
                     key={node.id}
                     node={node}
                     darkMode={darkMode}
-                    hoveredNode={hoveredNode}
+                    hoveredNode={highlightedNodeId}
                     pinnedNodeIds={pinnedNodeIds}
                     autoPinnedNodeIds={autoPinnedNodeIds}
                     showNumber={showNumber}
@@ -1515,9 +1566,9 @@ const RelationshipWeb = ({
                     getContrastTextColor={getContrastTextColor}
                     getTextColor={getTextColor}
                     getTextWidth={getTextWidth}
-                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                    onMouseEnter={() => setHoveredNode(node.id)}
-                    onMouseLeave={() => setHoveredNode(null)}
+                    // Hover is mouse-only: touch fires enter/leave around every tap
+                    onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHoveredNode(node.id); }}
+                    onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHoveredNode(null); }}
                   />
                 ))}
               </g>

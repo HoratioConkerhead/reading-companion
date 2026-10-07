@@ -1,5 +1,20 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { wrapText } from '../../utils/graphUtils';
+
+const NAME_MAX_WIDTH = 72;
+const NAME_FONT_SIZES = [12, 11, 10, 9];
+
+// Largest font size at which the name wraps to two lines (else three), so long names
+// like "Wing Commander William Laurie" stay inside the node instead of spilling out
+const fitName = (name, getTextWidth) => {
+  const options = NAME_FONT_SIZES.map(fontSize => ({
+    fontSize,
+    lines: wrapText(name, NAME_MAX_WIDTH, fontSize, getTextWidth)
+  }));
+  return options.find(o => o.lines.length <= 2)
+    || options.find(o => o.lines.length <= 3)
+    || options[options.length - 1];
+};
 
 const SVGNode = ({
   node,
@@ -15,11 +30,11 @@ const SVGNode = ({
   getContrastTextColor,
   getTextColor,
   getTextWidth,
-  onMouseDown,
-  onMouseEnter,
-  onMouseLeave
+  onPointerEnter,
+  onPointerLeave
 }) => {
   const size = node.animatedSize ?? node.size ?? 30;
+  const nameLayout = useMemo(() => fitName(node.name, getTextWidth), [node.name, getTextWidth]);
   const textShadowStyle = {
     textShadow: darkMode
       ? '1px 1px 2px rgba(0,0,0,0.8)'
@@ -27,7 +42,8 @@ const SVGNode = ({
   };
 
   return (
-    <g>
+    // data-node-id lets the graph's pointer handler find which node was pressed
+    <g data-node-id={node.id}>
       <circle
         cx={node.position.x}
         cy={node.position.y}
@@ -36,9 +52,8 @@ const SVGNode = ({
         stroke={getNodeStrokeColor(darkMode, node.id)}
         strokeWidth={2}
         className="cursor-pointer hover:opacity-80 transition-opacity"
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
       />
 
       {/* Pin icon overlay */}
@@ -76,19 +91,19 @@ const SVGNode = ({
         y={node.position.y}
         textAnchor="middle"
         dominantBaseline="middle"
-        fontSize="12"
+        fontSize={nameLayout.fontSize}
         fontWeight="bold"
         fill={getTextColor(darkMode)}
         className="select-none pointer-events-none"
         style={textShadowStyle}
       >
         {(() => {
-          const lines = wrapText(node.name, 72, 12, getTextWidth);
-          const lineHeight = 14;
+          const { lines, fontSize } = nameLayout;
+          const lineHeight = fontSize + 2;
           const totalHeight = lines.length * lineHeight;
           const startY = -(totalHeight / 2) + (lineHeight / 2);
           return lines.map((line, index) => (
-            <tspan key={index} x={node.position.x} dy={index === 0 ? startY : 14}>
+            <tspan key={index} x={node.position.x} dy={index === 0 ? startY : lineHeight}>
               {line}
             </tspan>
           ));

@@ -26,7 +26,10 @@ const AppTour = ({ isOpen, onClose, onTabChange, currentTab, bookMetadata }) => 
       position: 'bottom'
     },
     {
-      element: '.tablist-right-cta',
+      // Phones show the chapter filter as its own button above the tabs
+      element: typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)').matches
+        ? '.chapter-filter-mobile'
+        : '.tablist-right-cta',
       intro: 'Use this Up To control to set the latest chapter you\'ve read. The entire app will limit content to avoid spoilers.',
       position: 'bottom'
     },
