@@ -1,6 +1,7 @@
 import React from 'react';
 
-const SVGEdge = ({ edge, sourceNode, targetNode, showRelationship, hoveredNode, darkMode, getTextWidth, getTextColor }) => {
+// emphasis: 'highlight' (part of a shown connection), 'dim' (not part of it) or undefined
+const SVGEdge = ({ edge, sourceNode, targetNode, showRelationship, hoveredNode, emphasis, darkMode, getTextWidth, getTextColor }) => {
   if (!sourceNode || !targetNode) return null;
 
   const sourceRadius = (sourceNode.animatedSize ?? sourceNode.size ?? 30);
@@ -21,17 +22,18 @@ const SVGEdge = ({ edge, sourceNode, targetNode, showRelationship, hoveredNode, 
   const labelX = (startX + endX) / 2;
   const labelY = (startY + endY) / 2;
 
-  const showLabel = showRelationship || hoveredNode === edge.from || hoveredNode === edge.to;
+  const showLabel = emphasis === 'highlight'
+    || (emphasis !== 'dim' && (showRelationship || hoveredNode === edge.from || hoveredNode === edge.to));
 
   return (
-    <g>
+    <g opacity={emphasis === 'dim' ? 0.15 : 1}>
       <line
         x1={startX}
         y1={startY}
         x2={endX}
         y2={endY}
         stroke={edge.color}
-        strokeWidth="2"
+        strokeWidth={emphasis === 'highlight' ? 4 : 2}
         markerEnd="url(#arrow-end)"
         markerStart="url(#arrow-start)"
       />
