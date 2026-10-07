@@ -75,16 +75,21 @@ const ObjectGallery = ({
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <div className="border border-gray-200 dark:border-gray-700 rounded mb-4 overflow-hidden">
-                    <div className="h-64 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                      <p className="text-gray-500 dark:text-gray-400 p-4 text-center">
-                        {selectedObject.image_description || "No image available"}
-                      </p>
+                  {selectedObject.image && (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded mb-4 overflow-hidden">
+                      <img src={selectedObject.image} alt={selectedObject.name} className="w-full max-h-64 object-cover" />
                     </div>
-                  </div>
+                  )}
                   
                   <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Description</h3>
                   <p className="text-gray-700 dark:text-gray-300">{selectedObject.description}</p>
+
+                  {selectedObject.image_description && (
+                    <>
+                      <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Appearance</h3>
+                      <p className="text-gray-700 dark:text-gray-300">{selectedObject.image_description}</p>
+                    </>
+                  )}
                   
                   {selectedObject.physical_details && (
                     <>
