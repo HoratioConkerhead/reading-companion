@@ -62,4 +62,18 @@ describe('bookAssembly', () => {
     ]);
     expect(book.unrelatedExport).toBeUndefined();
   });
+
+  it('gives locations and objects one shape across books', () => {
+    const book = normalizeBook({
+      locations: [{ id: 'l', significance: 'Where it happens' }],
+      objects: [{ id: 'o', significance: 'Evidence', events: ['e1'], characters: ['c1'] }]
+    });
+    expect(book.locations[0].significance).toEqual(['Where it happens']);
+    expect(book.objects[0]).toMatchObject({ significance: ['Evidence'], related_events: ['e1'], related_characters: ['c1'] });
+  });
+
+  it('normalises both mystery vocabularies', () => {
+    const book = normalizeBook({ mysteryElements: [{ id: 'm', introducedInChapter: 'ch1', resolvedInChapter: 'ch3' }] });
+    expect(book.mysteryElements[0]).toMatchObject({ firstMentioned: 'ch1', revealedInChapter: 'ch3' });
+  });
 });

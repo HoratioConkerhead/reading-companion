@@ -442,6 +442,7 @@ const InteractiveReadingCompanion = () => {
             objectsData={filteredObjects}
             charactersData={filteredCharacters}
             eventsData={filteredEvents}
+            locationsData={filteredLocations}
           />
         )
       },
