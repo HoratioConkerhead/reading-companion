@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/reading-companion/static/css/main.859f8242.css",
-    "main.js": "/reading-companion/static/js/main.8eb6644b.js",
+    "main.css": "/reading-companion/static/css/main.5e8341b7.css",
+    "main.js": "/reading-companion/static/js/main.44df9a63.js",
     "index.html": "/reading-companion/index.html"
   },
   "entrypoints": [
-    "static/css/main.859f8242.css",
-    "static/js/main.8eb6644b.js"
+    "static/css/main.5e8341b7.css",
+    "static/js/main.44df9a63.js"
   ]
 }
