@@ -148,6 +148,19 @@ const Timeline = ({
       onEventSelect(sortedEvents[currentIndex + 1]);
     }
   };
+
+  // Keep the selected event visible in the scrolling strip (e.g. after Previous/Next)
+  useEffect(() => {
+    const strip = timelineRef.current;
+    if (!strip || !selectedEvent) return;
+    const item = strip.querySelector(`[data-event-id="${selectedEvent.id}"]`);
+    if (!item) return;
+    const left = item.offsetLeft;
+    const right = left + item.offsetWidth;
+    if (left < strip.scrollLeft || right > strip.scrollLeft + strip.clientWidth) {
+      strip.scrollLeft = left - (strip.clientWidth - item.offsetWidth) / 2;
+    }
+  }, [selectedEvent]);
   
   return (
     <div className="timeline-container">
@@ -280,8 +293,8 @@ const Timeline = ({
             3. Dot position: change "top-24" in the dot style to align with the line
             4. Label position: change "pt-6" to adjust the vertical position of date labels
           */}
-          <div className="overflow-x-auto mb-4 relative h-40 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded w-full"> {/* Added width constraint */}
-            <div className="w-max h-full max-w-[2000px]"> {/* Changed min-w-max to w-max with a max width */}
+          <div ref={timelineRef} className="overflow-x-auto mb-4 relative h-40 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded w-full"> {/* Added width constraint */}
+            <div className="w-max min-w-full h-full"> {/* Grows with the events; the container scrolls sideways */}
               <div className="relative h-full">
                 {/* Timeline line - positioned near the bottom */}
                 <div className="absolute left-0 right-0 h-1 bg-gray-300 dark:bg-gray-600 top-28"></div> {/* Line position - change top-24 to move up/down */}
@@ -291,7 +304,9 @@ const Timeline = ({
                   {sortedEvents.map((event, index) => (
                     <div 
                       key={event.id} 
-                      className="relative px-4 h-full" /* Further reduced horizontal spacing */
+                      data-event-id={event.id}
+                      // Fixed width: the labels are absolutely positioned, so they don't size the column
+                      className="relative w-28 flex-shrink-0 h-full cursor-pointer"
                       onClick={() => handleEventSelect(event)}
                     >
                       {/* Dot - positioned to match the line */}
@@ -302,7 +317,7 @@ const Timeline = ({
                             : ''
                         }`}
                         style={{
-                          top: '26px', /* Dot position - change to align with line */
+                          top: '106px', /* Centred on the line (top-28 = 112px, 4px tall); labels sit above */
                           left: '50%',
                           transform: 'translateX(-50%)',
                           backgroundColor: getEventColor(event, charactersData)
@@ -310,11 +325,20 @@ const Timeline = ({
                       ></div>
                       
                       {/* Event label */}
-                      <div className="absolute pt-6 text-center w-full">
-                        <div className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
+                      <div className="absolute pt-3 text-center w-full px-1">
+                        <div
+                          className="text-xs font-medium text-gray-900 dark:text-gray-100"
+                          title={event.title}
+                          // Two-line clamp (Tailwind 3.2 has no line-clamp utility)
+                          style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                        >
                           {event.title}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div
+                          className="text-xs text-gray-500 dark:text-gray-400"
+                          title={event.date}
+                          style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                        >
                           {event.date}
                         </div>
                       </div>
@@ -327,13 +351,13 @@ const Timeline = ({
           
           {/* Event Details Panel */}
           {selectedEvent ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <div className="flex justify-between items-start mb-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{selectedEvent.title}</h3>
                   <p className="text-gray-600 dark:text-gray-400">{selectedEvent.date}</p>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2 flex-shrink-0">
                   <button 
                     className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                     onClick={handlePreviousEvent}

@@ -1232,9 +1232,11 @@ const handleItemSelect = (itemId, type) => {
       </div>
       
       {/* Map and Detail Panel Container */}
-      <div className="flex flex-col md:flex-row border border-gray-200 dark:border-gray-700 rounded overflow-hidden" style={{ height: '600px' }}>
+      {/* Desktop: map and panel share a 600px row. Phones: the map keeps its own height and
+          the panel stacks below at its natural height, rather than both squeezing into 600px */}
+      <div className="flex flex-col md:flex-row md:h-[600px] border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
         {/* Leaflet Map - Adjusts width based on panel visibility */}
-        <div className={`${showDetailPanel ? 'w-full md:w-2/3' : 'w-full'} h-full transition-all duration-300`}>
+        <div className={`${showDetailPanel ? 'w-full md:w-2/3' : 'w-full'} h-[60vh] min-h-[320px] md:h-full md:min-h-0 transition-all duration-300`}>
           <MapContainer 
             center={mapCenter}
             zoom={mapZoom}
@@ -1270,7 +1272,7 @@ const handleItemSelect = (itemId, type) => {
         
         {/* Detail Panel - Conditionally shown */}
         {showDetailPanel && (
-          <div className="w-full md:w-1/3 h-full border-l border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
+          <div className="w-full md:w-1/3 md:h-full border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 md:overflow-hidden bg-white dark:bg-gray-800">
             {renderDetailPanel()}
           </div>
         )}
