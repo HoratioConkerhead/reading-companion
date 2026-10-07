@@ -32,7 +32,16 @@ const InteractiveReadingCompanion = () => {
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const [bookSelectorOpen, setBookSelectorOpen] = useState(false);
-  const [currentBookKey, setCurrentBookKey] = useState(defaultBookKey);
+  // Start with the saved book (if still available) so only one book is loaded on startup
+  const [currentBookKey, setCurrentBookKey] = useState(() => {
+    try {
+      const savedBook = localStorage.getItem('selectedBook');
+      if (savedBook && getAvailableBookMetadata()[savedBook]) return savedBook;
+    } catch {
+      // storage unavailable (private mode etc.)
+    }
+    return defaultBookKey;
+  });
   const [bookData, setBookData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [chapterFilterId, setChapterFilterId] = useState(null);
@@ -46,27 +55,34 @@ const InteractiveReadingCompanion = () => {
   
   // Load book data when currentBookKey changes
   useEffect(() => {
+    // Ignore the result if another book was chosen while this one was loading
+    let superseded = false;
     const loadBook = async () => {
       setIsLoading(true);
       try {
         const data = await loadBookData(currentBookKey);
+        if (superseded) return;
         setBookData(data);
         // Update page title from book metadata
         document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
         // Do not restore any previously saved chapter filter
         setChapterFilterId(null);
       } catch (error) {
+        if (superseded) return;
         console.error('Failed to load book data:', error);
         // Fallback to default book if loading fails
         if (currentBookKey !== defaultBookKey) {
           setCurrentBookKey(defaultBookKey);
         }
       } finally {
-        setIsLoading(false);
+        if (!superseded) setIsLoading(false);
       }
     };
     
     loadBook();
+    return () => {
+      superseded = true;
+    };
   }, [currentBookKey]);
 
   // Do not persist chapter filter (session-only)
@@ -97,13 +113,7 @@ const InteractiveReadingCompanion = () => {
       // No saved preference, use the default (which is true for dark mode)
       document.documentElement.classList.add('dark');
     }
-
-    // Check for saved book preference (localStorage only)
-    const savedBook = localStorage.getItem('selectedBook');
-    if (savedBook && availableBooks[savedBook]) {
-      setCurrentBookKey(savedBook);
-    }
-  }, [availableBooks]);
+  }, []);
   
   // Dark mode toggle handler
   const toggleDarkMode = () => {
