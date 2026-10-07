@@ -22,7 +22,7 @@ Advisory: each item is something to check, not necessarily a mistake.
 - Spoiler safety: nothing found
 - Relationships: **12**
 - Broken references: **90**
-- Chronology: **35**
+- Chronology: **33**
 - Map coverage: **61**
 - Characters introduced later than the text names them: **14**
 - Characters introduced earlier than the text names them: nothing found
@@ -153,39 +153,37 @@ Things that happen before they are introduced, which hides them from readers who
 
 - [ ] **Wing-Commander William “Bill” Lawrie** is introduced in Chapter 3: The Approach but takes part in **Weekend Party Introductions** in Chapter 1: Wiltshire — Arrival at Denleigh Manor
 - [ ] **Hannah Park** is introduced in Chapter 3: The Approach but takes part in **Weekend Party Introductions** in Chapter 1: Wiltshire — Arrival at Denleigh Manor
-- [ ] **Sir John Davies** is introduced in Chapter 11: The Mask Slips but takes part in **Mysterious Suitcase Delivery** in Chapter 8: Hotel Adlon
-- [ ] **Franz Stammer** is introduced in Chapter 9: First Meetings, First Impressions but takes part in **Berlin Trip** in Chapter 4: Signals and Masks
-- [ ] **Gerda Stammer** is introduced in Chapter 10: A Formal Welcome but takes part in **Berlin Trip** in Chapter 4: Signals and Masks
-- [ ] **Chief Inspector George Bennet** is introduced in Chapter 25: Atlantic Hotel Watch but takes part in **Investigation Begins** in Chapter 14: Terms Agreed
-- [ ] **Sir Oswald Mosley** is introduced in Chapter 22: Mosley Attends but takes part in **Second Party with Mosley** in Chapter 6: Imperial Aggregates
-- [ ] **Lieutenant General Bernard Montgomery** is introduced in Chapter 35: Targets and Timelines but takes part in **Assassination Attempt** in Chapter 19: The First Party
-- [ ] Chapter 25: Atlantic Hotel Watch has no events
+- [ ] **Franz Stammer** is introduced in Chapter 9: First Meetings, First Impressions but takes part in **Berlin Trip** in Chapter 8: Hotel Adlon
+- [ ] **Gerda Stammer** is introduced in Chapter 10: A Formal Welcome but takes part in **Berlin Trip** in Chapter 8: Hotel Adlon
+- [ ] Object **Mysterious Suitcase** is introduced in Chapter 36: What the Case Contained but appears in **Davies Uses Disguise** in Chapter 28: Crawford Place
+- [ ] Object **Cynthia's House** is introduced in Chapter 48: Contact but appears in **First Party at Bucklebury** in Chapter 19: The First Party
+- [ ] Object **American Transport Division Camp** is introduced in Chapter 45: Signals and Pressure but appears in **Montgomery as Target** in Chapter 40: Circles on a Map
+- [ ] Chapter 4: Signals and Masks has no events
+- [ ] Chapter 5: A Sunday Walk and a Plan has no events
+- [ ] Chapter 6: Imperial Aggregates has no events
+- [ ] Chapter 7: Tickets to Berlin has no events
+- [ ] Chapter 9: First Meetings, First Impressions has no events
+- [ ] Chapter 11: The Mask Slips has no events
+- [ ] Chapter 13: Banking Favors has no events
+- [ ] Chapter 14: Terms Agreed has no events
+- [ ] Chapter 16: The Quiet Winter has no events
+- [ ] Chapter 17: Chancellor has no events
+- [ ] Chapter 18: Tradecraft Delivery has no events
+- [ ] Chapter 20: Aftermath and a Click has no events
+- [ ] Chapter 21: A Second Gathering has no events
+- [ ] Chapter 24: Edwards has no events
 - [ ] Chapter 26: To London by Rail has no events
 - [ ] Chapter 27: Reading has no events
-- [ ] Chapter 28: Crawford Place has no events
-- [ ] Chapter 29: The Flat has no events
 - [ ] Chapter 30: Piece by Piece has no events
-- [ ] Chapter 31: Blenheim Link‑Up has no events
-- [ ] Chapter 32: Three in a Compartment has no events
 - [ ] Chapter 33: The Suitcase Left has no events
 - [ ] Chapter 34: National Gallery Meeting has no events
 - [ ] Chapter 35: Targets and Timelines has no events
-- [ ] Chapter 36: What the Case Contained has no events
 - [ ] Chapter 37: Addresses and a Ruse has no events
-- [ ] Chapter 38: Artists at Work has no events
 - [ ] Chapter 39: The Rifle has no events
-- [ ] Chapter 40: Circles on a Map has no events
-- [ ] Chapter 41: Knitting has no events
-- [ ] Chapter 42: Common and Camp has no events
 - [ ] Chapter 43: The Tower has no events
 - [ ] Chapter 44: Closing In has no events
-- [ ] Chapter 45: Signals and Pressure has no events
-- [ ] Chapter 46: A Test of Nerves has no events
 - [ ] Chapter 47: The Net Tightens has no events
-- [ ] Chapter 48: Contact has no events
 - [ ] Chapter 49: Break Point has no events
-- [ ] Chapter 50: Clearance has no events
-- [ ] Epilogue has no events
 
 ## Map coverage
 

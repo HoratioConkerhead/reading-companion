@@ -3,6 +3,7 @@
 Generated reports, one checklist per book:
 
 - [`StitchedUp_v2.md`](StitchedUp_v2.md): the default book, cross-checked against the text in `books/Matt Parry - Stitched Up/`
+- [`StitchedUp_v2_chapter_changes.md`](StitchedUp_v2_chapter_changes.md): the chapter corrections made to v2's events, objects and mysteries
 - [`JekyllAndHyde.md`](JekyllAndHyde.md)
 
 Regenerate (e.g. for v4) with:
@@ -26,6 +27,10 @@ data**, but the text doesn't mention an assassination or Montgomery until Chapte
 uses these chapters, readers part-way through can see late events on the Timeline, Map
 and Plot tabs. This is the most important thing to fix in v4: assign each event the
 chapter where it happens, and add events for Chapters 25 onwards.
+
+**Corrected for v2 in the meantime:** events, objects and mysteries now have chapters
+checked against the text; see [`StitchedUp_v2_chapter_changes.md`](StitchedUp_v2_chapter_changes.md)
+for every change and the evidence.
 
 ### 2. Characters missing from the character list
 
