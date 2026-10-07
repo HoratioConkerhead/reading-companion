@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import 'leaflet/dist/leaflet.css';
@@ -22,8 +22,24 @@ import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } 
 import { getBookConfig } from './utils/bookConfig';
 import BookSelector from './components/BookSelector';
 
+// The URL hash records the view so it can be shared or bookmarked, and so the browser's
+// Back button steps through tabs: #book=<bookKey>&tab=<tabId>&upto=<chapterId>
+const readViewFromHash = () => {
+  if (typeof window === 'undefined') return {};
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  return { book: params.get('book'), tab: params.get('tab'), upto: params.get('upto') };
+};
+
+const viewToHash = ({ book, tab, upto }) => {
+  const params = new URLSearchParams();
+  if (book) params.set('book', book);
+  if (tab) params.set('tab', tab);
+  if (upto) params.set('upto', upto);
+  return `#${params.toString()}`;
+};
+
 const InteractiveReadingCompanion = () => {
-  const [activeTabId, setActiveTabId] = useState('relationships');
+  const [activeTabId, setActiveTabId] = useState(() => readViewFromHash().tab || 'relationships');
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -32,8 +48,11 @@ const InteractiveReadingCompanion = () => {
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const [bookSelectorOpen, setBookSelectorOpen] = useState(false);
-  // Start with the saved book (if still available) so only one book is loaded on startup
+  // Start with the book in the URL, else the saved book (if still available), so only
+  // one book is loaded on startup
   const [currentBookKey, setCurrentBookKey] = useState(() => {
+    const fromHash = readViewFromHash().book;
+    if (fromHash && getAvailableBookMetadata()[fromHash]) return fromHash;
     try {
       const savedBook = localStorage.getItem('selectedBook');
       if (savedBook && getAvailableBookMetadata()[savedBook]) return savedBook;
@@ -46,6 +65,8 @@ const InteractiveReadingCompanion = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [chapterFilterId, setChapterFilterId] = useState(null);
   const [isChapterPickerOpen, setIsChapterPickerOpen] = useState(false);
+  // Chapter filter to apply once the next book has loaded (from the URL)
+  const pendingChapterRef = useRef(readViewFromHash().upto);
   
   // UI configuration for the loaded book (groups, time periods, tab labels...)
   const bookConfig = useMemo(() => (bookData ? getBookConfig(bookData.bookMetadata, bookData) : null), [bookData]);
@@ -65,8 +86,11 @@ const InteractiveReadingCompanion = () => {
         setBookData(data);
         // Update page title from book metadata
         document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
-        // Do not restore any previously saved chapter filter
-        setChapterFilterId(null);
+        // Chapter filter: from the URL if it named one for this book, else none
+        // (it is not otherwise saved between visits)
+        const pendingChapter = pendingChapterRef.current;
+        pendingChapterRef.current = null;
+        setChapterFilterId(pendingChapter && (data.chapters || []).some(ch => ch.id === pendingChapter) ? pendingChapter : null);
       } catch (error) {
         if (superseded) return;
         console.error('Failed to load book data:', error);
@@ -82,6 +106,43 @@ const InteractiveReadingCompanion = () => {
     loadBook();
     return () => {
       superseded = true;
+    };
+  }, [currentBookKey]);
+
+  // Keep the URL in step with the view: a new history entry per tab, so Back returns to
+  // the previous tab; book and chapter changes replace the current entry
+  const lastHashTabRef = useRef(activeTabId);
+  useEffect(() => {
+    if (isLoading) return;
+    const hash = viewToHash({ book: currentBookKey, tab: activeTabId, upto: chapterFilterId });
+    if (window.location.hash === hash) return;
+    const url = `${window.location.pathname}${window.location.search}${hash}`;
+    if (lastHashTabRef.current !== activeTabId && window.location.hash) {
+      window.history.pushState(null, '', url);
+    } else {
+      window.history.replaceState(null, '', url);
+    }
+    lastHashTabRef.current = activeTabId;
+  }, [currentBookKey, activeTabId, chapterFilterId, isLoading]);
+
+  // Back/Forward (or a pasted link): apply the view from the URL
+  useEffect(() => {
+    const applyHash = () => {
+      const { book, tab, upto } = readViewFromHash();
+      lastHashTabRef.current = tab || 'relationships';
+      setActiveTabId(tab || 'relationships');
+      if (book && book !== currentBookKey && getAvailableBookMetadata()[book]) {
+        pendingChapterRef.current = upto;
+        setCurrentBookKey(book);
+      } else {
+        setChapterFilterId(upto || null);
+      }
+    };
+    window.addEventListener('popstate', applyHash);
+    window.addEventListener('hashchange', applyHash);
+    return () => {
+      window.removeEventListener('popstate', applyHash);
+      window.removeEventListener('hashchange', applyHash);
     };
   }, [currentBookKey]);
 
