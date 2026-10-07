@@ -21,7 +21,7 @@
     "test:watch": "vitest",
     "lint": "eslint src scripts",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist --dotfiles",
     "validate:data": "node scripts/validate-data.mjs",
     "build:data": "node scripts/consolidate-data.mjs --book MattParry_StitchedUp_v3 && npm run validate:data -- --book MattParry_StitchedUp_v3"
   },
