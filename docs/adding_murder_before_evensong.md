@@ -1,52 +1,66 @@
-# Adding *Murder Before Evensong*
+# *Murder Before Evensong*
 
-A placeholder book exists at `src/data/RichardColes_MurderBeforeEvensong/`. It is
-marked `draft: true`, so it is hidden from the book picker; open the app with
-`?drafts` (e.g. `http://localhost:3000/reading-companion/?drafts`) to see it.
+The companion for Richard Coles's *Murder Before Evensong* lives in
+`src/data/RichardColes_MurderBeforeEvensong/`. It is still marked `draft: true`, so it
+is hidden from the book picker; open the app with `?drafts` (e.g.
+`https://horatioconkerhead.github.io/reading-companion/?drafts`) to see it. Remove
+`draft: true` from `metadata.js` once it has been reviewed.
 
-Only bibliographic facts are filled in. Everything else (characters, chapters,
-relationships, events, clues) must come from a source, because the app's spoiler
-filter depends on knowing which chapter each thing first appears in.
+## How it was made
 
-## Option A: from the novel's text (most accurate)
+The data was written from the novel's text, read chapter by chapter. The text is
+kept outside the repository (the novel is in copyright and the repository is public):
+only facts and short summaries in our own words are committed, with no quotations.
 
-1. Put the text in `books/private/Richard Coles - Murder Before Evensong/`, one file
-   per chapter (as with `books/Matt Parry - Stitched Up/`).
-   **`books/private/` is git-ignored.** This repository is public and the novel is
-   in copyright, so its text must never be committed. Only the extracted data
-   (names, short summaries, relationships) goes into `src/data/`.
-2. Fill in `chapters.js` with one entry per chapter (`id`, `title`, `summary`).
-3. Extract chapter by chapter into
-   `src/data/RichardColes_MurderBeforeEvensong/extractions/chapter_XX.json`
-   (format: `docs/extraction_format.md`; workflow and rules:
-   `docs/data_generation_guide.md`).
-4. Consolidate and validate:
-   ```
-   node scripts/consolidate-data.mjs --book RichardColes_MurderBeforeEvensong
-   npm run validate:data -- --book RichardColes_MurderBeforeEvensong
-   ```
-5. Add events, locations, objects, mysteries, themes and clues (`spycraftEntries.js`,
-   shown as the "Clues" tab).
-6. When it looks right, remove `draft: true` from `metadata.js`.
+| File | Contents |
+| --- | --- |
+| `chapters.js` | 38 chapters with plain titles ("Chapter 9") and a summary of each |
+| `characters.js` | 36 characters and 82 two-way relationships |
+| `events.js` | 55 events, dated (spring 1988, plus wartime and earlier history) |
+| `locations.js`, `positions.js` | 23 places, and a plan of the parish for the Map tab |
+| `objects.js` | 15 objects |
+| `mysteryElements.js` | 9 open questions, with clues and resolutions |
+| `spycraftEntries.js` | 13 clues (the "Clues" tab) |
+| `themeElements.js` | 7 themes |
 
-## Option B: from notes on the stage play
+The story's dates follow from real events the book mentions: Open Day falls on
+St George's Day, a Saturday (1988), the League Cup final is Arsenal v Luton, the
+Eurovision winner is Céline Dion, and Graeme Hick has just made 405 not out.
 
-Without the text, the play can supply the cast and the order of events: treat
-each scene (or act) as a "chapter" in `chapters.js`, and record who appears and
-what is revealed in each. Keep in mind the play may differ from the novel; the
-book's metadata and copy would then say it follows the play.
+## Keeping a whodunnit spoiler-free
 
-Useful notes to capture per scene: who is present (and their role), new
-relationships revealed, where it takes place, what happens, any clue noticed,
-and anything that is later revealed to mean something else.
+Every item has the chapter in which the reader learns of it, and the rule is that an
+item belongs to the earliest chapter by which **everything it says** is known. Where
+something is learned later, it goes in a separate list item tagged with that chapter
+(see "Chapter-tagged list items" in `docs/data_format_documentation.md`), for example:
 
-## Things to decide
+- a character's background only uses what is known when they first appear; their later
+  story is in `development` entries, each with its chapter, and their fate is hidden
+  while a chapter is chosen;
+- relationships appear from the chapter they become known (the killer's relationships
+  to the victims only from the solution);
+- a clue's `meaning` stays hidden until its `revealedInChapter`;
+- character groups describe where people belong in Champton (The Rectory, Estate &
+  House...), not their part in the mystery.
 
-- **Character groups**: `metadata.js` starts with generic mystery groups
-  (Investigators, Suspects, Victims, Police, Villagers). Rename them to suit the
-  cast; colours and badge styles are set alongside.
-- **Map**: the setting is a fictional village, so real coordinates may not apply.
-  Leave `positions.js` empty and the Map tab stays hidden, or place the village at
-  a plausible spot and position its locations around it.
-- **Time periods**: leave `timePeriods` out unless events have dates worth
-  filtering by.
+`metadata.js` sets `startSpoilerFree: true`, so a new reader starts at Chapter 1
+instead of seeing the whole book.
+
+## Checking it
+
+```
+npm run validate:data -- --book RichardColes_MurderBeforeEvensong
+node scripts/data-report.mjs --book RichardColes_MurderBeforeEvensong --text "<folder of chapter texts>"
+```
+
+The report's text check expects one file per chapter named like `09 - Chapter 9.txt`.
+It flags people who share a surname (the de Floures, the Thwaites) as introduced late;
+those are false positives.
+
+## To review
+
+- Whether any summary or description gives away more than its chapter has revealed.
+- The plan of the parish in `positions.js` (positions follow the book's layout of the
+  village, but are approximate).
+- Minor characters left out (e.g. Mr Williams the undertaker, Mrs Buckhurst, the
+  Stanilands, Mrs Lee, Will the gallery owner).

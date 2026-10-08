@@ -1,1 +1,195 @@
-export const spycraftEntries = [];
+// The "encyclopedia" for this book is its clues (the tab is labelled Clues in metadata).
+// Each clue appears in introducedInChapter; examples carry their own chapter, and
+// `meaning` (what the clue turns out to show) stays hidden until revealedInChapter.
+export const spycraftEntries = [
+  {
+    id: 'back_pew',
+    title: 'The back pew',
+    category: 'People',
+    description: 'Dora and Kath Sharman have always sat in the last pew on the north side. The rector\'s plan would move it twenty feet.',
+    introducedInChapter: 'chapter_03',
+    examples: [
+      { text: 'Dora begs Daniel to leave their place alone', chapter: 'chapter_03' },
+      { text: 'Anthony is killed in one of the pews chosen for removal', chapter: 'chapter_09' },
+      { text: 'Dora keeps vigil for Anthony there alone', chapter: 'chapter_24' },
+      { text: 'The sisters hold their pew at Anthony\'s funeral against all comers', chapter: 'chapter_26' }
+    ],
+    meaning: 'It was where Kath could weep, unseen, for her lover and her child. Losing it was more than she could bear.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'secateurs_clue',
+    title: 'The secateurs',
+    category: 'Weapons',
+    description: 'Anthony was killed with a pair of secateurs, probably from the flower room: an unlikely weapon for a planned murder.',
+    introducedInChapter: 'chapter_09',
+    examples: [
+      { text: 'Lying open beside the body', chapter: 'chapter_09' },
+      { text: 'Daniel has seen Anne Dollinger using them', chapter: 'chapter_13' },
+      { text: 'Blunt, yet used with enough force to pierce the artery', chapter: 'chapter_19' }
+    ],
+    meaning: 'The killing was not planned in advance, but the killer knew exactly how to use whatever came to hand.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'expert_blow',
+    title: 'One expert blow',
+    category: 'Method',
+    description: 'Both victims were killed with a single, well-aimed blow from behind. The police think it looks professional.',
+    introducedInChapter: 'chapter_13',
+    examples: [
+      { text: 'Audrey, a wartime ambulance driver, thinks it was a professional', chapter: 'chapter_13' },
+      { text: 'Bob Achurch, a former commando, says he is not the only one in Champton who can kill like that', chapter: 'chapter_13' },
+      { text: 'Vanloo describes the technique: head pulled back, artery struck, the spray directed away', chapter: 'chapter_19' },
+      { text: 'Ned was stunned by one blow from the grapnel', chapter: 'chapter_22' },
+      { text: 'Kath kills a large rabbit with one blow of a rolling pin', chapter: 'chapter_29' },
+      { text: 'Edgy, who once killed with a razor, cannot open his hands', chapter: 'chapter_33' }
+    ],
+    meaning: 'Kath was trained to kill during the war, when Champton was also a centre for preparing agents for occupied France.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'tidy_visitor',
+    title: 'The tidy visitor',
+    category: 'Places',
+    description: 'Someone has been making themselves at home in the bath house: a fire, a kettle, an estate mug, a cleaned window.',
+    introducedInChapter: 'chapter_14',
+    examples: [
+      { text: 'Ned and Daniel find signs of recent use', chapter: 'chapter_14' },
+      { text: 'Alex says village children would not tidy up', chapter: 'chapter_15' },
+      { text: 'No prints and no forensic traces', chapter: 'chapter_19' }
+    ],
+    meaning: 'It was Kath, visiting the mural of her lover.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'mural_clue',
+    title: 'The figures in the mural',
+    category: 'Places',
+    description: 'The wartime mural shows real people as caricatures, each with a telling stance or detail, and two lovers at its centre.',
+    introducedInChapter: 'chapter_14',
+    examples: [
+      { text: 'The lovers raise a cross of Lorraine, symbol of the Free French', chapter: 'chapter_14' },
+      { text: 'Hervé thinks it is connected to his father', chapter: 'chapter_16' },
+      { text: 'Alex wants to restage it as a tableau', chapter: 'chapter_26' },
+      { text: 'Daniel recognises a pose he sees every Sunday from the pulpit', chapter: 'chapter_36' }
+    ],
+    meaning: 'The painter put Kath Sharman at the centre of his mural as his lover.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'carpenters_mark',
+    title: 'Medieval or Victorian?',
+    category: 'Documents',
+    description: 'Whether the pews can be moved depends on their age, and no one knows it. Anthony is asked to find out.',
+    introducedInChapter: 'chapter_05',
+    examples: [
+      { text: 'Anthony thinks some may be Victorian and should be surveyed', chapter: 'chapter_05' },
+      { text: 'He is working on the carpentry-shop ledgers on Open Day', chapter: 'chapter_07' },
+      { text: 'He kneels close to the bench ends just before he dies', chapter: 'chapter_09' },
+      { text: 'Daniel reads an entry for church furnishings, made and installed', chapter: 'chapter_31' }
+    ],
+    meaning: 'The pews were made by the estate carpenter in the 1880s. Kath saw the open workbook in Anthony\'s office and understood.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'sisters_in_the_war',
+    title: 'The sisters in the war',
+    category: 'People',
+    description: 'In the war Dora went to the family\'s Norfolk house while Kath stayed to help the French run Champton. Then they swapped.',
+    introducedInChapter: 'chapter_18',
+    examples: [
+      { text: 'Dora enjoyed the French years and did not want the old order back', chapter: 'chapter_18' },
+      { text: 'Wartime babies were born away and adopted', chapter: 'chapter_20' },
+      { text: 'Bernard remembers Kath arriving at Rudnam around 1943 and Dora fussing over her', chapter: 'chapter_37' }
+    ],
+    meaning: 'Kath was sent to Norfolk to have the painter\'s baby, who was fostered back in Champton as Hervé.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'ned_research',
+    title: 'Ned\'s research',
+    category: 'Documents',
+    description: 'Ned was gathering memories of Champton in the war for the school\'s anniversary project.',
+    introducedInChapter: 'chapter_16',
+    examples: [
+      { text: 'He and Hervé are taping older villagers', chapter: 'chapter_16' },
+      { text: 'He questioned Gilbert Drage, who lives next to the Sharmans', chapter: 'chapter_22' },
+      { text: 'His camera, notebook and dictaphone are missing', chapter: 'chapter_22' },
+      { text: 'He was helping trace Hervé\'s French family', chapter: 'chapter_34' }
+    ],
+    meaning: 'His questions, overheard next door, threatened to uncover Kath\'s past.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'stella_surrender',
+    title: 'Stella gives way',
+    category: 'People',
+    description: 'Stella Harper, the pews\' fiercest defender, suddenly drops her opposition.',
+    introducedInChapter: 'chapter_19',
+    examples: [
+      { text: 'Audrey overheard Stella\'s cash deal', chapter: 'chapter_17' },
+      { text: 'Stella says she can see merit in other views', chapter: 'chapter_19' },
+      { text: 'Audrey announces Stella\'s surrender in the post office', chapter: 'chapter_27' },
+      { text: 'Kath looks startled when she hears', chapter: 'chapter_29' }
+    ],
+    meaning: 'To Kath it was a betrayal, and she poisoned Stella for it.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'poison',
+    title: 'Poison',
+    category: 'Method',
+    description: 'There are poisons about Champton for anyone who knows where to look.',
+    introducedInChapter: 'chapter_13',
+    examples: [
+      { text: 'The Sharmans are a gamekeeper\'s daughters', chapter: 'chapter_06' },
+      { text: 'A wartime chemist built a laboratory at the house', chapter: 'chapter_13' },
+      { text: 'Stella is found with a cake fork and a walnut cake', chapter: 'chapter_36' }
+    ],
+    meaning: 'Kath poisoned Stella\'s favourite walnut cake; the abandoned laboratory and gamekeepers\' stores were possible sources.',
+    revealedInChapter: 'chapter_37'
+  },
+  {
+    id: 'careless_talk',
+    title: 'Careless talk',
+    category: 'People',
+    description: 'At Anthony\'s vigil Dora quotes the wartime warning that careless talk costs lives.',
+    introducedInChapter: 'chapter_24',
+    examples: [
+      { text: 'Dora, unusually, is in tears', chapter: 'chapter_24' },
+      { text: 'Kath would not come to the vigil', chapter: 'chapter_24' },
+      { text: 'At the fire Dora says there is knowing and knowing', chapter: 'chapter_36' }
+    ],
+    meaning: 'Dora knew, or half-knew, what her sister had done.',
+    revealedInChapter: 'chapter_36'
+  },
+  {
+    id: 'norman_hurrying',
+    title: 'Norman by the brook',
+    category: 'Red herrings',
+    description: 'Norman Staveley is unusually anxious about the night of the first murder.',
+    introducedInChapter: 'chapter_12',
+    examples: [
+      { text: 'He wonders whether he was seen', chapter: 'chapter_12' },
+      { text: 'A panic attack on Main Street', chapter: 'chapter_26' },
+      { text: 'Anne saw him hurrying from the church about half past seven', chapter: 'chapter_30' }
+    ],
+    meaning: 'He confronted Anthony about a family secret and left; he was not the killer.',
+    revealedInChapter: 'chapter_31'
+  },
+  {
+    id: 'edgy_past',
+    title: 'Edgy\'s razor',
+    category: 'Red herrings',
+    description: 'Daniel alone knows that Edgy Liversedge once killed for money with a cut-throat razor.',
+    introducedInChapter: 'chapter_23',
+    examples: [
+      { text: 'Something has been burnt in the oil drum', chapter: 'chapter_23' },
+      { text: 'The police hear pub talk about his past', chapter: 'chapter_31' },
+      { text: 'He confesses to both murders', chapter: 'chapter_33' }
+    ],
+    meaning: 'He confessed to protect Nathan; arthritis had long since ended his old trade.',
+    revealedInChapter: 'chapter_33'
+  }
+];

@@ -1,1 +1,786 @@
-export const characters = [];
+// Characters of Murder Before Evensong. Relations are recorded on both characters,
+// from the chapter in which the relationship becomes known; a relation's type is the
+// other person's role (Daniel's relation to Audrey is 'mother'). Background, role and
+// personality only use what is known by the character's first chapter; later
+// facts are in development entries, each tagged with its chapter.
+export const characters = [
+  {
+    id: 'daniel_clement',
+    name: 'Daniel Clement',
+    title: 'Canon, Rector of Champton St Mary',
+    group: 'The Rectory',
+    role: 'Rector of Champton and the book\'s detective',
+    background: 'Born during the Battle of Britain, Daniel took a first in theology and served a smart Belgravia parish (St Martin\'s, Kinnerton Square) before Honoria de Floures helped him to the living of Champton eight years ago. He lives at the rectory with his mother and two dachshunds.',
+    personality: 'Fastidious, observant and kind; a lover of stationery, order and the Book of Common Prayer. He prefers reconciliation to confrontation, keeps confidences absolutely, and notices the small details that others miss.',
+    traits: ['Observant', 'Discreet', 'Conciliatory', 'Orderly', 'Prayerful'],
+    development: [
+      { chapter: 'chapter_01', phase: 'The lavatory sermon', description: 'Proposes installing a lavatory in church, which sets off a quarrel about pews.' },
+      { chapter: 'chapter_09', phase: 'Finding the body', description: 'Discovers Anthony Bowness dead in a back pew while saying Evensong.' },
+      { chapter: 'chapter_19', phase: 'Working with the police', description: 'Begins to trust DS Neil Vanloo; the two start to share what they know.' },
+      { chapter: 'chapter_25', phase: 'A conviction', description: 'Becomes sure that the murderer is someone from Champton, full of long-held anger.' },
+      { chapter: 'chapter_33', phase: 'Keeping a confidence', description: 'Will not repeat what Edgy told him in confidence, even when it puts him under suspicion.' },
+      { chapter: 'chapter_34', phase: 'The revelation', description: 'Stops in the middle of his sermon at Ned\'s funeral, suddenly seeing who the killer is and why.' },
+      { chapter: 'chapter_37', phase: 'Explaining', description: 'Sets out how Kath Sharman\'s hidden past and her place in the back pew led to the murders.' }
+    ],
+    aliases: ['Dan', 'Canon Clement', 'the Rector'],
+    fate: 'Solves the murders; ends the book playing the organ at the flower festival as Champton begins to heal.',
+    key_scenes: [
+      'The lavatory sermon',
+      'Finding Anthony\'s body',
+      'The interrupted sermon at Ned\'s funeral'
+    ],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      {
+        characterId: 'audrey_clement',
+        type: 'mother',
+        description: 'His widowed mother, who lives with him at the rectory and fights the battles he would rather avoid.',
+        introducedInChapter: 'chapter_01'
+      },
+      { characterId: 'theo_clement', type: 'brother', description: 'His younger brother, who wants to shadow him to research a vicar\'s part.', introducedInChapter: 'chapter_04' },
+      { characterId: 'cosmo_and_hilda', type: 'pets', description: 'His dachshunds, who follow him everywhere, even into church.', introducedInChapter: 'chapter_02' },
+      { characterId: 'bernard_de_floures', type: 'patron', description: 'Patron of his living, landowner and friend.', introducedInChapter: 'chapter_01' },
+      { characterId: 'honoria_de_floures', type: 'friend', description: 'A friend from London, who arranged his move to Champton.', introducedInChapter: 'chapter_03' },
+      { characterId: 'anthony_bowness', type: 'colleague', description: 'His churchwarden, who confides in him about his past.', introducedInChapter: 'chapter_05' },
+      { characterId: 'ned_thwaite', type: 'colleague', description: 'A member of the PCC who backs his plans.', introducedInChapter: 'chapter_01' },
+      { characterId: 'stella_harper', type: 'adversary', description: 'Leader of the opposition to his lavatory and pew plans.', introducedInChapter: 'chapter_01' },
+      { characterId: 'dora_sharman', type: 'parishioner', description: 'A parishioner who begs him to leave her back pew alone.', introducedInChapter: 'chapter_03' },
+      { characterId: 'bob_achurch', type: 'parishioner', description: 'His sexton, a quiet former commando.', introducedInChapter: 'chapter_06' },
+      { characterId: 'neil_vanloo', type: 'investigator', description: 'The detective sergeant who interviews him after he finds the body.', introducedInChapter: 'chapter_12' },
+      { characterId: 'angela_thwaite', type: 'acquaintance', description: 'Ned\'s daughter, who asks him to watch over her father.', introducedInChapter: 'chapter_08' },
+      { characterId: 'edgy_liversedge', type: 'confidant', description: 'An old parishioner whose secrets he keeps.', introducedInChapter: 'chapter_23' },
+      { characterId: 'canon_dolben', type: 'predecessor', description: 'His predecessor but one, whom he visits each month.', introducedInChapter: 'chapter_20' },
+      { characterId: 'bishop_of_stowe', type: 'bishop', description: 'His bishop, who has plans for the parish.', introducedInChapter: 'chapter_30' },
+      { characterId: 'mrs_braines', type: 'postmistress', description: 'Runs the post office, where the village news is exchanged.', introducedInChapter: 'chapter_19' },
+      { characterId: 'katrina_gauchet', type: 'colleague', description: 'The head teacher whose assemblies he takes.', introducedInChapter: 'chapter_16' }
+    ]
+  },
+  {
+    id: 'audrey_clement',
+    name: 'Audrey Clement',
+    group: 'The Rectory',
+    role: 'Daniel\'s widowed mother',
+    background: 'Educated at a Scottish boarding school, she drove ambulances and staff cars with the WVS in the war and later ran the local branch. She moved into the rectory four years ago after her husband died.',
+    personality: 'Forceful, snobbish, funny and combative; she enjoys a fight, especially with Stella Harper, and has little patience with her son\'s gentleness. Excellent in a crisis.',
+    traits: ['Combative', 'Shrewd', 'Snobbish', 'Witty', 'Resourceful'],
+    development: [
+      { chapter: 'chapter_05', phase: 'Opposition', description: 'Stands up to the flower guild at its AGM.' },
+      { chapter: 'chapter_17', phase: 'Leverage', description: 'Overhears Stella taking an off-the-books cash payment and quietly uses it against her.' },
+      { chapter: 'chapter_27', phase: 'Victory', description: 'Announces that Stella has given way over the lavatory and the pews.' },
+      { chapter: 'chapter_37', phase: 'The last piece', description: 'Remembers seeing Kath on Stella\'s doorstep with a cake tin.' }
+    ],
+    aliases: ['Mum'],
+    fate: 'Her pressure on Stella turns out to have had consequences she never intended; she champions going ahead with the flower festival.',
+    key_scenes: ['The flower guild AGM', 'Stella\'s shop', 'The post-office parliament'],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'son', description: 'Her elder son, the rector; she is proud of him and exasperated by his gentleness.', introducedInChapter: 'chapter_01' },
+      { characterId: 'theo_clement', type: 'son', description: 'Her younger son, whose visits she encourages.', introducedInChapter: 'chapter_04' },
+      { characterId: 'cosmo_and_hilda', type: 'pets', description: 'The dogs, whom she spoils against all the house rules.', introducedInChapter: 'chapter_04' },
+      { characterId: 'stella_harper', type: 'rival', description: 'Her chief adversary in the village.', introducedInChapter: 'chapter_05' },
+      { characterId: 'bernard_de_floures', type: 'neighbour', description: 'The lord of the manor, whom she has never quite known what to call.', introducedInChapter: 'chapter_02' },
+      { characterId: 'hugh_de_floures', type: 'neighbour', description: 'The heir, whom she helps with his wedding plans.', introducedInChapter: 'chapter_26' }
+    ]
+  },
+  {
+    id: 'theo_clement',
+    name: 'Theo Clement',
+    group: 'The Rectory',
+    role: 'Daniel\'s younger brother, an actor',
+    background: 'Ten years younger than Daniel. A voice-over artist and soap actor (PC Heseltine in Appletree End), he has been cast as a northern vicar in a new ITV comedy, Clerical and Medical.',
+    personality: 'Warm, demonstrative and nosy, with an actor\'s eye for detail; he wants to shadow his brother and often blunders in.',
+    traits: ['Affectionate', 'Curious', 'Tactless', 'Observant', 'Practical'],
+    development: [
+      { chapter: 'chapter_04', phase: 'Research', description: 'Arrives unannounced and asks to follow Daniel around.' },
+      { chapter: 'chapter_23', phase: 'Return', description: 'Comes back, with his mother\'s connivance, in the middle of the murder inquiry.' },
+      { chapter: 'chapter_33', phase: 'His hands', description: 'Points out why Edgy\'s confession cannot be true.' },
+      { chapter: 'chapter_38', phase: 'Comfort', description: 'Helps with the flower festival and comforts the heartbroken Alex.' }
+    ],
+    fate: 'Goes back to his new part having learned something about pastoral care.',
+    key_scenes: ['Compline in the dark', 'Afternoon with Edgy', 'Coffee with the Sharman sisters'],
+    introducedInChapter: 'chapter_04',
+    relations: [
+      { characterId: 'daniel_clement', type: 'brother', description: 'His clever older brother, whom he has looked up to since childhood.', introducedInChapter: 'chapter_04' },
+      { characterId: 'audrey_clement', type: 'mother', description: 'His mother, who takes his side against Daniel.', introducedInChapter: 'chapter_04' },
+      { characterId: 'anthony_bowness', type: 'acquaintance', description: 'A drinking acquaintance from London who once told him about his childhood.', introducedInChapter: 'chapter_13' },
+      { characterId: 'edgy_liversedge', type: 'acquaintance', description: 'His host for an afternoon of plum jerkum and stories.', introducedInChapter: 'chapter_11' },
+      { characterId: 'bob_achurch', type: 'acquaintance', description: 'A former prisoner of war whom he once pestered for stories.', introducedInChapter: 'chapter_04' },
+      { characterId: 'kath_sharman', type: 'acquaintance', description: 'One of the sisters he visits for research.', introducedInChapter: 'chapter_29' },
+      { characterId: 'dora_sharman', type: 'acquaintance', description: 'One of the sisters he visits for research.', introducedInChapter: 'chapter_29' },
+      { characterId: 'alex_de_floures', type: 'friend', description: 'Heartbroken, he needs comfort that Theo gives.', introducedInChapter: 'chapter_38' }
+    ]
+  },
+  {
+    id: 'cosmo_and_hilda',
+    name: 'Cosmo and Hilda',
+    group: 'The Rectory',
+    role: 'Daniel\'s two dachshunds',
+    background: 'A pair of miniature dachshunds who go everywhere with Daniel, including church. Hilda leads and Cosmo follows.',
+    personality: 'Noisy, greedy and devoted; they love scents, biscuits and visitors, and hate the Sharmans\' Jack Russell, Scamper.',
+    traits: ['Loyal', 'Greedy', 'Noisy'],
+    development: [
+      { chapter: 'chapter_09', phase: 'The discovery', description: 'Their silence in the dark church leads Daniel to Anthony\'s body.' }
+    ],
+    introducedInChapter: 'chapter_02',
+    relations: [
+      { characterId: 'daniel_clement', type: 'owner', description: 'Their master.', introducedInChapter: 'chapter_02' },
+      { characterId: 'audrey_clement', type: 'indulgent mistress', description: 'The person most likely to feed them from her plate.', introducedInChapter: 'chapter_04' }
+    ]
+  },
+  {
+    id: 'bernard_de_floures',
+    name: 'Bernard de Floures',
+    title: 'Lord de Floures',
+    group: 'The de Floures Family',
+    role: 'Owner of Champton House and patron of the parish',
+    background: 'Fifty-seven, three times married, master of a 15,000-acre estate that his family has held since long before Agincourt. He opens the house to the public only to ease death duties. He grew up with his cousin Anthony like brothers.',
+    personality: 'Gruff, foul-mouthed, hospitable and fond of a drink; protective of his family\'s position and his rights as patron.',
+    traits: ['Blunt', 'Hospitable', 'Proud', 'Hard-drinking'],
+    development: [
+      { chapter: 'chapter_10', phase: 'Grief', description: 'Brings whisky to the rectory and explains why he brought Anthony to Champton.' },
+      { chapter: 'chapter_31', phase: 'The patron', description: 'Is furious at the bishop\'s plan to merge Champton with the Badsaddles.' }
+    ],
+    aliases: ['Lord de Floures'],
+    fate: 'Turns to the insurance on the burnt-out bath house; his hold on the parish survives.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'rector', description: 'His rector, on first-name terms.', introducedInChapter: 'chapter_01' },
+      { characterId: 'audrey_clement', type: 'neighbour', description: 'The rector\'s mother.', introducedInChapter: 'chapter_02' },
+      { characterId: 'honoria_de_floures', type: 'daughter', description: 'His capable daughter, who would make the better heir.', introducedInChapter: 'chapter_02' },
+      { characterId: 'alex_de_floures', type: 'son', description: 'His provocative younger son.', introducedInChapter: 'chapter_02' },
+      { characterId: 'hugh_de_floures', type: 'son', description: 'His reluctant heir, farming in Canada.', introducedInChapter: 'chapter_15' },
+      { characterId: 'anthony_bowness', type: 'cousin', description: 'His cousin, raised alongside him like a brother, whom he brought to Champton to recover.', introducedInChapter: 'chapter_01' },
+      { characterId: 'margaret_porteous', type: 'admirer', description: 'Runs his Open Day volunteers.', introducedInChapter: 'chapter_01' },
+      { characterId: 'nicolas_meldrum', type: 'employee', description: 'His estate manager.', introducedInChapter: 'chapter_07' },
+      { characterId: 'mrs_shorely', type: 'employee', description: 'His housekeeper.', introducedInChapter: 'chapter_09' },
+      { characterId: 'edgy_liversedge', type: 'employee', description: 'Does the estate work no one else will do.', introducedInChapter: 'chapter_07' },
+      { characterId: 'nathan_liversedge', type: 'employee', description: 'A young estate handyman.', introducedInChapter: 'chapter_07' },
+      { characterId: 'dora_sharman', type: 'former servant', description: 'His mother\'s former lady\'s maid.', introducedInChapter: 'chapter_18' },
+      { characterId: 'kath_sharman', type: 'former servant', description: 'A former parlourmaid at the house.', introducedInChapter: 'chapter_18' },
+      { characterId: 'norman_staveley', type: 'adversary', description: 'A man he has always thought shifty, whose family once served his.', introducedInChapter: 'chapter_31' },
+      { characterId: 'bishop_of_stowe', type: 'adversary', description: 'The bishop who wants to take away his rights as patron.', introducedInChapter: 'chapter_31' },
+      { characterId: 'french_painter', type: 'acquaintance', description: 'A glamorous French officer he admired as a boy.', introducedInChapter: 'chapter_20' }
+    ]
+  },
+  {
+    id: 'honoria_de_floures',
+    name: 'Honoria de Floures',
+    group: 'The de Floures Family',
+    role: 'Bernard\'s daughter',
+    background: 'Lives in London, where she arranges grand events for a hotel. She met Daniel there and arranged his move to Champton.',
+    personality: 'Glamorous, capable and direct; the family\'s fixer and her brother Alex\'s fierce protector.',
+    traits: ['Capable', 'Glamorous', 'Loyal', 'Outspoken'],
+    development: [
+      { chapter: 'chapter_22', phase: 'Fixer', description: 'Arranges a press conference to get the reporters off the estate.' },
+      { chapter: 'chapter_32', phase: 'Protector', description: 'Stands by Alex as his secret comes out.' }
+    ],
+    introducedInChapter: 'chapter_02',
+    relations: [
+      { characterId: 'daniel_clement', type: 'friend', description: 'A friend from her London days, whom she helped to Champton.', introducedInChapter: 'chapter_03' },
+      { characterId: 'bernard_de_floures', type: 'father', description: 'Her father.', introducedInChapter: 'chapter_02' },
+      { characterId: 'alex_de_floures', type: 'brother', description: 'Her younger brother, whom she protects.', introducedInChapter: 'chapter_02' },
+      { characterId: 'hugh_de_floures', type: 'brother', description: 'Her elder brother, the heir.', introducedInChapter: 'chapter_15' },
+      { characterId: 'anthony_bowness', type: 'cousin', description: 'Her father\'s cousin.', introducedInChapter: 'chapter_02' }
+    ]
+  },
+  {
+    id: 'alex_de_floures',
+    name: 'Alex de Floures',
+    group: 'The de Floures Family',
+    role: 'Bernard\'s younger son, an artist',
+    background: 'Left the Courtauld without a degree and fell in with an anarchic art movement. He lives in the lodges at the park gates and stages provocative events in the estate\'s old buildings.',
+    personality: 'Provocative, theatrical and quick-witted, with a vulnerability he hides behind mischief.',
+    traits: ['Provocative', 'Theatrical', 'Secretive', 'Vulnerable'],
+    development: [
+      { chapter: 'chapter_07', phase: 'Mischief', description: 'Bursts into Anthony\'s office with a party of Open Day visitors.' },
+      { chapter: 'chapter_15', phase: 'The Red Book', description: 'Has secretly taken the Red Book that Anthony was looking for.' },
+      { chapter: 'chapter_26', phase: 'A masque', description: 'Plans a performance at the bath house based on its mural.' },
+      { chapter: 'chapter_32', phase: 'Love', description: 'Admits that he and Nathan Liversedge have been lovers for years.' },
+      { chapter: 'chapter_38', phase: 'Heartbreak', description: 'Is left heartbroken when Nathan leaves Champton.' }
+    ],
+    introducedInChapter: 'chapter_02',
+    relations: [
+      { characterId: 'theo_clement', type: 'friend', description: 'Comforts him after Nathan leaves.', introducedInChapter: 'chapter_38' },
+      { characterId: 'bernard_de_floures', type: 'father', description: 'His father.', introducedInChapter: 'chapter_02' },
+      { characterId: 'honoria_de_floures', type: 'sister', description: 'His sister and confidante.', introducedInChapter: 'chapter_02' },
+      { characterId: 'hugh_de_floures', type: 'brother', description: 'His elder brother, who knows how to wound him.', introducedInChapter: 'chapter_15' },
+      { characterId: 'anthony_bowness', type: 'cousin', description: 'The archivist cousin he likes to tease.', introducedInChapter: 'chapter_07' },
+      { characterId: 'nathan_liversedge', type: 'companion', description: 'Shows him round the estate\'s old buildings; Daniel realises there is more to it than that.', introducedInChapter: 'chapter_22' },
+      { characterId: 'edgy_liversedge', type: 'family friend', description: 'Fascinated by him since childhood.', introducedInChapter: 'chapter_23' }
+    ]
+  },
+  {
+    id: 'hugh_de_floures',
+    name: 'Hugh de Floures',
+    group: 'The de Floures Family',
+    role: 'Bernard\'s elder son and heir',
+    background: 'Hated Eton and Champton and found freedom farming wheat in Canada. He comes home rarely and reluctantly.',
+    personality: 'Shy, practical and blunt; uneasy in the role he will one day inherit.',
+    traits: ['Shy', 'Practical', 'Reluctant heir'],
+    development: [
+      { chapter: 'chapter_26', phase: 'Home', description: 'Returns for Anthony\'s funeral; Anthony was his godfather.' },
+      { chapter: 'chapter_28', phase: 'Engaged', description: 'Plans to marry Michelle, a Canadian vet, at St Mary\'s.' }
+    ],
+    introducedInChapter: 'chapter_15',
+    relations: [
+      { characterId: 'audrey_clement', type: 'neighbour', description: 'The rector\'s helpful mother.', introducedInChapter: 'chapter_26' },
+      { characterId: 'bernard_de_floures', type: 'father', description: 'His father, whose title and estate he will inherit.', introducedInChapter: 'chapter_15' },
+      { characterId: 'honoria_de_floures', type: 'sister', description: 'His sister.', introducedInChapter: 'chapter_15' },
+      { characterId: 'alex_de_floures', type: 'brother', description: 'His younger brother.', introducedInChapter: 'chapter_15' },
+      { characterId: 'anthony_bowness', type: 'godfather', description: 'His godfather, who was always just there.', introducedInChapter: 'chapter_26' }
+    ]
+  },
+  {
+    id: 'anthony_bowness',
+    name: 'Anthony Bowness',
+    group: 'The de Floures Family',
+    role: 'Bernard\'s cousin, estate archivist and churchwarden',
+    background: 'Bernard\'s cousin and the recently appointed archivist at Champton House, working through centuries of estate papers. He is also a churchwarden at St Mary\'s.',
+    personality: 'Clever, bookish, lonely and fastidious; irritated by careless visitors and fond of a gin.',
+    traits: ['Scholarly', 'Lonely', 'Diligent', 'Hard-drinking'],
+    development: [
+      { chapter: 'chapter_02', phase: 'The archivist', description: 'Finds records of an old quarrel about sanitation in the Champton Charities archive.' },
+      {
+        chapter: 'chapter_06',
+        phase: 'A confidence',
+        description: 'Tells Daniel that his father was killed at Anzio and his mother neglected him, so he spent his holidays at Champton; a first at Oxford led to literary journalism, drink and a stay at St Luke\'s to dry out.'
+      },
+      { chapter: 'chapter_09', phase: 'Murdered', description: 'Is found dead in a back pew on the evening of Open Day.' }
+    ],
+    fate: 'Murdered in St Mary\'s on the evening of Open Day by Kath Sharman, who feared what he had found out about the pews. Buried in the family plot.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'colleague', description: 'The rector, whom he trusts.', introducedInChapter: 'chapter_05' },
+      { characterId: 'theo_clement', type: 'acquaintance', description: 'An actor he knew from London.', introducedInChapter: 'chapter_13' },
+      { characterId: 'bernard_de_floures', type: 'cousin', description: 'His cousin and protector.', introducedInChapter: 'chapter_01' },
+      { characterId: 'honoria_de_floures', type: 'cousin', description: 'His cousin\'s daughter.', introducedInChapter: 'chapter_02' },
+      { characterId: 'alex_de_floures', type: 'cousin', description: 'His mischievous young cousin.', introducedInChapter: 'chapter_07' },
+      { characterId: 'hugh_de_floures', type: 'godson', description: 'His godson.', introducedInChapter: 'chapter_26' },
+      { characterId: 'french_painter', type: 'acquaintance', description: 'A glamorous French officer he admired as a boy.', introducedInChapter: 'chapter_20' },
+      { characterId: 'norman_staveley', type: 'adversary', description: 'A man with something to hide.', introducedInChapter: 'chapter_26' },
+      { characterId: 'kath_sharman', type: 'killer', description: 'Killed by her in the back pew.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'margaret_porteous',
+    name: 'Margaret Porteous',
+    group: 'Estate & House',
+    role: 'Organiser of the Champton House volunteers',
+    background: 'Neither family nor quite village, she runs the guides on Open Days and is devoted to Lord de Floures.',
+    personality: 'Bossy, eager and a great passer-on of news.',
+    traits: ['Officious', 'Devoted', 'Gossipy'],
+    development: [
+      { chapter: 'chapter_26', phase: 'Acting churchwarden', description: 'Takes over Anthony\'s duties as churchwarden.' }
+    ],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'The lord she devotedly follows.', introducedInChapter: 'chapter_01' }
+    ]
+  },
+  {
+    id: 'mrs_shorely',
+    name: 'Mrs Shorely',
+    group: 'Estate & House',
+    role: 'Housekeeper at Champton House',
+    background: 'Keeps the great house running with a handful of helpers, and the keys to every building on the estate.',
+    personality: 'Brisk and watchful.',
+    traits: ['Efficient', 'Watchful'],
+    aliases: ['Jean Shorely'],
+    introducedInChapter: 'chapter_09',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'His lordship.', introducedInChapter: 'chapter_09' }
+    ]
+  },
+  {
+    id: 'nicolas_meldrum',
+    name: 'Nicolas Meldrum',
+    group: 'Estate & House',
+    role: 'Estate manager',
+    background: 'Bernard\'s money-minded estate manager, keen on film fees and oilseed rape.',
+    personality: 'Practical and commercial.',
+    traits: ['Commercial', 'Practical'],
+    introducedInChapter: 'chapter_07',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'His employer.', introducedInChapter: 'chapter_07' }
+    ]
+  },
+  {
+    id: 'edgy_liversedge',
+    name: 'Edgy Liversedge',
+    group: 'Estate & House',
+    role: 'Odd-job man and gamekeeper of sorts',
+    background: 'From a travelling family, he does the estate\'s rough work from a damp woodsman\'s cottage, sells game on the side and charms warts.',
+    personality: 'Taciturn, formal and fiercely protective of his grandson; he keeps clear of the law.',
+    traits: ['Tough', 'Protective', 'Secretive', 'Old-fashioned'],
+    development: [
+      { chapter: 'chapter_11', phase: 'Host', description: 'Gives Theo plum jerkum and tobacco and tells him about his days as a prize fighter.' },
+      { chapter: 'chapter_23', phase: 'A dark past', description: 'Daniel alone knows that he once worked as a hired killer for overseas clients.' },
+      { chapter: 'chapter_33', phase: 'False confession', description: 'Confesses to both murders to protect Nathan, but his arthritic hands show it cannot be true.' }
+    ],
+    aliases: ['Mr Liversedge', 'Bap'],
+    fate: 'Disappears from Champton in the night with Nathan.',
+    introducedInChapter: 'chapter_07',
+    relations: [
+      { characterId: 'daniel_clement', type: 'confidant', description: 'The rector, whom he respects and trusts with his secrets.', introducedInChapter: 'chapter_23' },
+      { characterId: 'theo_clement', type: 'acquaintance', description: 'The rector\'s brother, who came to visit.', introducedInChapter: 'chapter_11' },
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'The landlord who gave him the woodsman\'s cottage.', introducedInChapter: 'chapter_07' },
+      { characterId: 'nathan_liversedge', type: 'grandson', description: 'His grandson, whom he took in and means to keep safe.', introducedInChapter: 'chapter_07' },
+      { characterId: 'alex_de_floures', type: 'family friend', description: 'The young lord who used to watch him chop wood.', introducedInChapter: 'chapter_23' }
+    ]
+  },
+  {
+    id: 'nathan_liversedge',
+    name: 'Nathan Liversedge',
+    group: 'Estate & House',
+    role: 'Edgy\'s grandson and estate handyman',
+    background: 'Came to the estate in his teens to live with his grandfather. He works all over the estate and knows where every tool is kept.',
+    personality: 'Shy, anxious and eager to please; hates Open Day and the public.',
+    traits: ['Anxious', 'Handy', 'Loyal', 'Secretive'],
+    development: [
+      { chapter: 'chapter_22', phase: 'The second body', description: 'Finds Ned Thwaite\'s body in the lake and thinks of the missing grapnel; admits he sometimes takes ducks to sell.' },
+      { chapter: 'chapter_23', phase: 'A troubled past', description: 'Was sent to his grandfather from the south as a troubled teenager.' },
+      { chapter: 'chapter_31', phase: 'Under suspicion', description: 'Is questioned about a robbery in Hampshire under another name.' },
+      { chapter: 'chapter_32', phase: 'Love', description: 'Is revealed as Alex\'s lover of several years.' }
+    ],
+    aliases: ['Joe Blewett (suspected)'],
+    fate: 'Leaves Champton in the night with his grandfather.',
+    introducedInChapter: 'chapter_07',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'His lordship.', introducedInChapter: 'chapter_07' },
+      { characterId: 'edgy_liversedge', type: 'grandfather', description: 'His grandfather, \'Bap\'.', introducedInChapter: 'chapter_07' },
+      { characterId: 'alex_de_floures', type: 'companion', description: 'Alex likes him to show him round the old places, and likes his company.', introducedInChapter: 'chapter_22' },
+      { characterId: 'kath_sharman', type: 'friend', description: 'Calls in with game for the sisters.', introducedInChapter: 'chapter_29' },
+      { characterId: 'dora_sharman', type: 'friend', description: 'Calls in with game for the sisters.', introducedInChapter: 'chapter_29' }
+    ]
+  },
+  {
+    id: 'bob_achurch',
+    name: 'Bob Achurch',
+    group: 'Estate & House',
+    role: 'Sexton, gardener and choir crucifer',
+    background: 'A wartime Royal Marines commando who was a prisoner of the Japanese. He tends Sexton\'s Cottage and its garden with care and digs the graves.',
+    personality: 'Quiet, dependable and private, still troubled by the war.',
+    traits: ['Reliable', 'Reserved', 'Tough'],
+    development: [
+      { chapter: 'chapter_13', phase: 'Under suspicion', description: 'Fears that his commando training makes him a suspect, and hints that someone else knows how to kill like that.' }
+    ],
+    introducedInChapter: 'chapter_04',
+    relations: [
+      { characterId: 'daniel_clement', type: 'rector', description: 'The rector, to whom he brings his worries.', introducedInChapter: 'chapter_06' },
+      { characterId: 'theo_clement', type: 'acquaintance', description: 'The rector\'s tactless brother.', introducedInChapter: 'chapter_04' },
+      { characterId: 'cynthia_achurch', type: 'spouse', description: 'His wife.', introducedInChapter: 'chapter_06' }
+    ]
+  },
+  {
+    id: 'cynthia_achurch',
+    name: 'Cynthia Achurch',
+    group: 'Estate & House',
+    role: 'Bob\'s wife',
+    background: 'Lives at Sexton\'s Cottage; her scones are better remembered than her baking skills deserve.',
+    personality: 'Nervous when left alone.',
+    traits: ['Nervous'],
+    aliases: ['Cynth'],
+    introducedInChapter: 'chapter_06',
+    relations: [
+      { characterId: 'bob_achurch', type: 'spouse', description: 'Her husband.', introducedInChapter: 'chapter_06' }
+    ]
+  },
+  {
+    id: 'dora_sharman',
+    name: 'Dora Sharman',
+    group: 'Estate & House',
+    role: 'Retired lady\'s maid; one of the twin Sharman sisters',
+    background: 'One of the unmarried Sharman twins, daughters of a head gamekeeper, who once worked in service at Champton House. She and her twin always sit in the same pew at the back of church.',
+    personality: 'The more sociable twin: sharp, unsentimental, quick to take offence and full of village lore.',
+    traits: ['Sharp-tongued', 'Loyal', 'Traditional', 'Discreet'],
+    development: [
+      { chapter: 'chapter_03', phase: 'The back pew', description: 'Asks Daniel to leave their pew alone.' },
+      {
+        chapter: 'chapter_18',
+        phase: 'Memories',
+        description: 'Was lady\'s maid to Bernard\'s mother; in the war the sisters were moved between Champton and the family\'s Norfolk house, and she enjoyed the years of the French.'
+      },
+      { chapter: 'chapter_24', phase: 'Vigil', description: 'Keeps vigil over Anthony\'s coffin alone and is unexpectedly moved.' },
+      { chapter: 'chapter_36', phase: 'Knowing', description: 'Watches the bath house burn and will say little about what she knew.' },
+      { chapter: 'chapter_38', phase: 'Family', description: 'Appears at the flower festival with Hervé, the nephew she had never been able to claim.' }
+    ],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'rector', description: 'The rector who wants to move her pew.', introducedInChapter: 'chapter_03' },
+      { characterId: 'theo_clement', type: 'acquaintance', description: 'The rector\'s brother, who comes for coffee.', introducedInChapter: 'chapter_29' },
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'The son of her old mistress.', introducedInChapter: 'chapter_18' },
+      { characterId: 'kath_sharman', type: 'twin sister', description: 'Her twin, with whom she has always lived and sat in church.', introducedInChapter: 'chapter_01' },
+      { characterId: 'dot_staveley', type: 'rival', description: 'Stuck-up Dot, whose mother was a lady\'s maid.', introducedInChapter: 'chapter_07' },
+      { characterId: 'gilbert_drage', type: 'neighbour', description: 'Her next-door neighbour.', introducedInChapter: 'chapter_06' },
+      { characterId: 'nathan_liversedge', type: 'friend', description: 'The lad who brings them rabbits.', introducedInChapter: 'chapter_29' },
+      { characterId: 'herve_gauchet', type: 'nephew', description: 'Her sister\'s son.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'kath_sharman',
+    name: 'Kath Sharman',
+    group: 'Estate & House',
+    role: 'Retired servant; Dora\'s twin sister',
+    background: 'One of the unmarried Sharman twins, who once worked in service at Champton House and now live together in an estate cottage. She and Dora always sit in the same pew at the back of church.',
+    personality: 'Flinty, private and unsmiling; grumbles about the stairs at Open Day and watches Appletree End.',
+    traits: ['Reserved', 'Capable', 'Unsentimental'],
+    development: [
+      { chapter: 'chapter_07', phase: 'Open Day', description: 'Shows visitors the kitchens and attics where she once worked.' },
+      { chapter: 'chapter_18', phase: 'The war', description: 'Was a parlourmaid at the house, and stayed on in the kitchens when the Free French arrived, while Dora went to Norfolk with the family.' },
+      { chapter: 'chapter_18', phase: 'Baker', description: 'Bakes the walnut cakes sold at The Flowers, the best in the village.' },
+      { chapter: 'chapter_29', phase: 'A startled look', description: 'Is taken aback to hear that Stella has given up defending the pews, and kills a rabbit with a single blow.' },
+      { chapter: 'chapter_36', phase: 'The fire', description: 'Dies in the burning bath house.' },
+      { chapter: 'chapter_37', phase: 'The truth', description: 'Is revealed as the wartime lover of a French officer, the mother of Hervé, and the killer of Anthony, Ned and Stella.' }
+    ],
+    fate: 'Murdered Anthony, Ned and Stella to protect her secret and her place in the back pew; took her own life in the bath house fire.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'theo_clement', type: 'acquaintance', description: 'The rector\'s brother, an actor from her favourite soap.', introducedInChapter: 'chapter_29' },
+      { characterId: 'bernard_de_floures', type: 'employer', description: 'The son of her old employers.', introducedInChapter: 'chapter_18' },
+      { characterId: 'dora_sharman', type: 'twin sister', description: 'Her twin sister.', introducedInChapter: 'chapter_01' },
+      { characterId: 'dot_staveley', type: 'rival', description: 'A social climber she enjoys putting in her place, though Dot sells her cakes.', introducedInChapter: 'chapter_07' },
+      { characterId: 'gilbert_drage', type: 'neighbour', description: 'Her next-door neighbour.', introducedInChapter: 'chapter_06' },
+      { characterId: 'nathan_liversedge', type: 'friend', description: 'The lad who brings her rabbits.', introducedInChapter: 'chapter_29' },
+      { characterId: 'french_painter', type: 'lover', description: 'Her wartime lover, killed in the plane crash.', introducedInChapter: 'chapter_37' },
+      { characterId: 'herve_gauchet', type: 'son', description: 'The son she gave up and never claimed.', introducedInChapter: 'chapter_37' },
+      { characterId: 'anthony_bowness', type: 'victim', description: 'She killed him to stop him proving the pews were Victorian.', introducedInChapter: 'chapter_37' },
+      { characterId: 'ned_thwaite', type: 'victim', description: 'She killed him because his research was coming too close to her past.', introducedInChapter: 'chapter_37' },
+      { characterId: 'stella_harper', type: 'victim', description: 'She poisoned her for giving up the fight over the pews.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'gilbert_drage',
+    name: 'Gilbert Drage',
+    group: 'Estate & House',
+    role: 'Retired estate carpenter',
+    background: 'Lives in the row of retired estate workers\' cottages next to the Sharman sisters.',
+    personality: 'Misanthropic; now confused and given to angry rants.',
+    traits: ['Misanthropic', 'Confused'],
+    development: [
+      {
+        chapter: 'chapter_22',
+        phase: 'A witness to the past',
+        description: 'Was estate carpenter in the war and helped convert the house for the French; he appears in a photograph of de Gaulle\'s visit, but only rants when Ned asks him about it.'
+      }
+    ],
+    introducedInChapter: 'chapter_06',
+    relations: [
+      { characterId: 'kath_sharman', type: 'neighbour', description: 'His next-door neighbour.', introducedInChapter: 'chapter_06' },
+      { characterId: 'dora_sharman', type: 'neighbour', description: 'His next-door neighbour.', introducedInChapter: 'chapter_06' }
+    ]
+  },
+  {
+    id: 'stella_harper',
+    name: 'Stella Harper',
+    group: 'Village & Church',
+    role: 'Chairman of the flower guild; owner of a dress shop',
+    background: 'Divorced from a town clerk, she used the settlement to open Stella: High Class Ladies\' Fashion on Main Street. She rules the flower guild and its annual festival.',
+    personality: 'Formidable, indignant and tactical; a match for Audrey Clement.',
+    traits: ['Domineering', 'Indignant', 'Resourceful'],
+    development: [
+      { chapter: 'chapter_05', phase: 'The buttery plan', description: 'Springs a plan to extend the flower room, funded by an anonymous donor.' },
+      { chapter: 'chapter_17', phase: 'Caught out', description: 'Is overheard by Audrey taking a large cash payment.' },
+      { chapter: 'chapter_19', phase: 'A change of heart', description: 'Suddenly says she can see merit in other views.' },
+      { chapter: 'chapter_36', phase: 'Found dead', description: 'Is found dead in her chair on the day of Ned\'s funeral.' }
+    ],
+    fate: 'Poisoned with a walnut cake by Kath Sharman, who saw her surrender over the pews as a betrayal.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'adversary', description: 'The rector whose plans she means to stop.', introducedInChapter: 'chapter_01' },
+      { characterId: 'audrey_clement', type: 'rival', description: 'The rector\'s formidable mother.', introducedInChapter: 'chapter_05' },
+      { characterId: 'anne_dollinger', type: 'friend', description: 'Her loyal sidekick.', introducedInChapter: 'chapter_01' },
+      { characterId: 'ned_thwaite', type: 'adversary', description: 'An irritating PCC member.', introducedInChapter: 'chapter_01' },
+      { characterId: 'kath_sharman', type: 'killer', description: 'Poisoned by her walnut cake.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'anne_dollinger',
+    name: 'Anne Dollinger',
+    group: 'Village & Church',
+    role: 'Treasurer of the flower guild; Stella\'s sidekick',
+    background: 'Lives in a cottage on Main Street and helps in Stella\'s shop.',
+    personality: 'Loyal, fussy and, on her own, rather timid.',
+    traits: ['Loyal', 'Fussy', 'Timid'],
+    development: [
+      { chapter: 'chapter_30', phase: 'A witness', description: 'Remembers seeing Norman Staveley hurrying away from the church on the night of the first murder.' }
+    ],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'stella_harper', type: 'friend', description: 'The chairman she follows.', introducedInChapter: 'chapter_01' }
+    ]
+  },
+  {
+    id: 'ned_thwaite',
+    name: 'Ned Thwaite',
+    group: 'Village & Church',
+    role: 'Retired headmaster, local historian and PCC member',
+    background: 'A blunt Yorkshireman and former rugby player, once head of the village school. In retirement he is absorbed in local history.',
+    personality: 'Cheerful, curious and outspoken; lately forgetful, which frightens him.',
+    traits: ['Curious', 'Outspoken', 'Kind', 'Forgetful'],
+    development: [
+      { chapter: 'chapter_05', phase: 'Ally', description: 'Backs Daniel against the flower guild.' },
+      { chapter: 'chapter_14', phase: 'The mural', description: 'Interested in the Free French at Champton, he shows Daniel the wartime mural in the bath house.' },
+      { chapter: 'chapter_21', phase: 'Killed', description: 'Is found dead.' }
+    ],
+    fate: 'Struck from behind with a grapnel anchor and drowned in the lake by Kath Sharman, whose wartime past he was close to uncovering.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'colleague', description: 'The rector, whose lavatory plan he supports.', introducedInChapter: 'chapter_01' },
+      { characterId: 'jane_thwaite', type: 'spouse', description: 'His wife, the organist.', introducedInChapter: 'chapter_01' },
+      { characterId: 'angela_thwaite', type: 'daughter', description: 'His elder daughter.', introducedInChapter: 'chapter_08' },
+      { characterId: 'gillian_thwaite', type: 'daughter', description: 'His younger daughter.', introducedInChapter: 'chapter_08' },
+      { characterId: 'stella_harper', type: 'adversary', description: 'He tells her to take her complaints to the PCC.', introducedInChapter: 'chapter_01' },
+      { characterId: 'katrina_gauchet', type: 'colleague', description: 'His successor at the school.', introducedInChapter: 'chapter_16' },
+      { characterId: 'herve_gauchet', type: 'colleague', description: 'Shares his research into the war.', introducedInChapter: 'chapter_16' },
+      { characterId: 'kath_sharman', type: 'killer', description: 'Killed by her at the bath house.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'jane_thwaite',
+    name: 'Jane Thwaite',
+    group: 'Village & Church',
+    role: 'Church organist; Ned\'s wife',
+    background: 'Plays the organ at St Mary\'s and worries about her husband\'s failing memory.',
+    personality: 'Gentle and anxious.',
+    traits: ['Gentle', 'Anxious'],
+    fate: 'Widowed; her daughters take turns to stay with her.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'ned_thwaite', type: 'spouse', description: 'Her husband.', introducedInChapter: 'chapter_01' },
+      { characterId: 'angela_thwaite', type: 'daughter', description: 'Her elder daughter.', introducedInChapter: 'chapter_08' },
+      { characterId: 'gillian_thwaite', type: 'daughter', description: 'Her younger daughter.', introducedInChapter: 'chapter_08' }
+    ]
+  },
+  {
+    id: 'angela_thwaite',
+    name: 'Angela Thwaite',
+    group: 'Village & Church',
+    role: 'Ned\'s elder daughter, a London litigator',
+    background: 'A divorced lawyer who keeps a sheaf of business cards and a vintage pen.',
+    personality: 'Brisk, direct and abrasive; fiercely wants justice.',
+    traits: ['Direct', 'Determined', 'Abrasive'],
+    development: [
+      { chapter: 'chapter_08', phase: 'Worry', description: 'Asks Daniel to keep an eye on her father\'s mind.' },
+      { chapter: 'chapter_22', phase: 'Anger', description: 'Wants her father\'s killer to suffer.' }
+    ],
+    introducedInChapter: 'chapter_08',
+    relations: [
+      { characterId: 'daniel_clement', type: 'acquaintance', description: 'The rector, whom she asks for help.', introducedInChapter: 'chapter_08' },
+      { characterId: 'ned_thwaite', type: 'father', description: 'Her father, whose memory worries her.', introducedInChapter: 'chapter_08' },
+      { characterId: 'jane_thwaite', type: 'mother', description: 'Her mother.', introducedInChapter: 'chapter_08' },
+      { characterId: 'gillian_thwaite', type: 'sister', description: 'Her younger sister.', introducedInChapter: 'chapter_08' }
+    ]
+  },
+  {
+    id: 'gillian_thwaite',
+    name: 'Gillian Thwaite',
+    group: 'Village & Church',
+    role: 'Ned\'s younger daughter, a teacher',
+    background: 'Followed her father into teaching.',
+    personality: 'A worrier, like her mother.',
+    traits: ['Anxious', 'Kind'],
+    introducedInChapter: 'chapter_08',
+    relations: [
+      { characterId: 'ned_thwaite', type: 'father', description: 'Her father.', introducedInChapter: 'chapter_08' },
+      { characterId: 'jane_thwaite', type: 'mother', description: 'Her mother.', introducedInChapter: 'chapter_08' },
+      { characterId: 'angela_thwaite', type: 'sister', description: 'Her elder sister.', introducedInChapter: 'chapter_08' }
+    ]
+  },
+  {
+    id: 'norman_staveley',
+    name: 'Norman Staveley',
+    group: 'Village & Church',
+    role: 'County councillor',
+    background: 'A county councillor who has bought and converted the Old School House, where he learned his catechism as a boy. He cares a great deal about his standing.',
+    personality: 'Pompous, anxious about appearances and a keen Arsenal fan.',
+    traits: ['Pompous', 'Anxious', 'Respectable'],
+    development: [
+      {
+        chapter: 'chapter_07',
+        phase: 'A family secret',
+        description: 'His father left service as a chauffeur and built up a garage; Norman fears that a secret his father told him about it will come out.'
+      },
+      { chapter: 'chapter_26', phase: 'Panic', description: 'Is haunted by the memory of Anthony at the back of the church.' },
+      { chapter: 'chapter_31', phase: 'Confession', description: 'Admits to the police that he confronted Anthony in church on the night he died.' }
+    ],
+    fate: 'Cleared of murder; his reputation is dented but his marriage is renewed.',
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'adversary', description: 'The chairman who is a constant reminder of an old family secret.', introducedInChapter: 'chapter_31' },
+      { characterId: 'dot_staveley', type: 'spouse', description: 'His wife.', introducedInChapter: 'chapter_06' },
+      { characterId: 'anthony_bowness', type: 'adversary', description: 'He fears what Anthony has found could ruin him.', introducedInChapter: 'chapter_26' }
+    ]
+  },
+  {
+    id: 'dot_staveley',
+    name: 'Dot Staveley',
+    group: 'Village & Church',
+    role: 'Norman\'s wife; runs The Flowers tea shop',
+    background: 'The daughter of a lady\'s maid who has married up. She prefers to be called Dorothy and resents the Sharman sisters, who remember where she came from.',
+    personality: 'Sociable, gossipy and touchy about class.',
+    traits: ['Gossipy', 'Social climber', 'Sociable'],
+    aliases: ['Dorothy'],
+    introducedInChapter: 'chapter_06',
+    relations: [
+      { characterId: 'dora_sharman', type: 'rival', description: 'One of the Sisters Grim.', introducedInChapter: 'chapter_07' },
+      { characterId: 'kath_sharman', type: 'rival', description: 'One of the Sisters Grim, who sniped about her mother.', introducedInChapter: 'chapter_07' },
+      { characterId: 'norman_staveley', type: 'spouse', description: 'Her husband.', introducedInChapter: 'chapter_06' }
+    ]
+  },
+  {
+    id: 'katrina_gauchet',
+    name: 'Katrina Gauchet',
+    group: 'Village & Church',
+    role: 'Head teacher of the village primary school',
+    background: 'Succeeded Ned Thwaite as head. She is planning a school project for the coming fiftieth anniversary of the war.',
+    personality: 'Practical, direct and kind.',
+    traits: ['Practical', 'Direct'],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'daniel_clement', type: 'colleague', description: 'The rector who takes the school assembly.', introducedInChapter: 'chapter_16' },
+      { characterId: 'herve_gauchet', type: 'spouse', description: 'Her husband.', introducedInChapter: 'chapter_01' },
+      { characterId: 'ned_thwaite', type: 'colleague', description: 'Her predecessor as head, who helps with the war project.', introducedInChapter: 'chapter_16' }
+    ]
+  },
+  {
+    id: 'herve_gauchet',
+    name: 'Hervé Gauchet',
+    group: 'Village & Church',
+    role: 'Katrina\'s husband',
+    background: 'Katrina\'s husband, who stays at home making brunch while his family goes to church.',
+    personality: 'A cheerful atheist.',
+    traits: ['Easy-going', 'Curious about his past'],
+    development: [
+      {
+        chapter: 'chapter_16',
+        phase: 'Searching',
+        description: 'Fostered in the village as a baby, he has been told his father was a French artist who died in the war; he never knew his mother, and is researching the Free French at Champton.'
+      }
+    ],
+    introducedInChapter: 'chapter_01',
+    relations: [
+      { characterId: 'katrina_gauchet', type: 'spouse', description: 'His wife.', introducedInChapter: 'chapter_01' },
+      { characterId: 'ned_thwaite', type: 'colleague', description: 'The local historian helping him research the Free French.', introducedInChapter: 'chapter_16' },
+      { characterId: 'french_painter', type: 'father', description: 'The father he never knew, said to have been a French artist.', introducedInChapter: 'chapter_16' },
+      { characterId: 'kath_sharman', type: 'mother', description: 'The mother he never knew.', introducedInChapter: 'chapter_37' },
+      { characterId: 'dora_sharman', type: 'aunt', description: 'The aunt he did not know he had.', introducedInChapter: 'chapter_37' }
+    ]
+  },
+  {
+    id: 'mrs_braines',
+    name: 'Mrs Braines',
+    group: 'Village & Church',
+    role: 'Runs the post office and general store',
+    background: 'Presides over the post-office counter, the village\'s unofficial parliament.',
+    personality: 'Formal when the rector comes in, chatty when he does not.',
+    traits: ['Gossipy', 'Watchful'],
+    introducedInChapter: 'chapter_19',
+    relations: [
+      { characterId: 'daniel_clement', type: 'customer', description: 'The rector, who buys his stamps plain.', introducedInChapter: 'chapter_19' }
+    ]
+  },
+  {
+    id: 'neil_vanloo',
+    name: 'Neil Vanloo',
+    title: 'Detective Sergeant, Braunstonbury CID',
+    group: 'Police',
+    role: 'Detective investigating the murders',
+    background: 'A big Mancunian from a family of Moravian Brethren, no longer a churchgoer.',
+    personality: 'Impassive, sharp-eyed and good with dogs; better informed about churches than he lets on.',
+    traits: ['Observant', 'Impassive', 'Fair'],
+    development: [
+      { chapter: 'chapter_12', phase: 'The interview', description: 'Interviews Daniel after he finds the body.' },
+      { chapter: 'chapter_19', phase: 'First names', description: 'Shares the timeline of the murder with Daniel and they move to first names.' },
+      { chapter: 'chapter_33', phase: 'Doubt', description: 'Takes Daniel in for questioning when he will not explain what he knows.' }
+    ],
+    aliases: ['DS Vanloo'],
+    introducedInChapter: 'chapter_12',
+    relations: [
+      { characterId: 'daniel_clement', type: 'witness', description: 'The rector who found the body, and who notices things.', introducedInChapter: 'chapter_12' },
+      { characterId: 'pc_scott', type: 'colleague', description: 'The local constable.', introducedInChapter: 'chapter_12' }
+    ]
+  },
+  {
+    id: 'pc_scott',
+    name: 'PC Scott',
+    group: 'Police',
+    role: 'Local police constable',
+    background: 'A Korean War veteran; the first officer at the rectory after the first murder.',
+    personality: 'Steady and deferential.',
+    traits: ['Steady', 'Deferential'],
+    introducedInChapter: 'chapter_10',
+    relations: [
+      { characterId: 'neil_vanloo', type: 'colleague', description: 'The CID officer.', introducedInChapter: 'chapter_12' }
+    ]
+  },
+  {
+    id: 'canon_dolben',
+    name: 'Canon Dolben',
+    group: 'Clergy',
+    role: 'Retired former rector of Champton',
+    background: 'Rector of Champton for thirty years from 1940, now in his nineties and nearly blind, living in a home at the Old Vicarage in Pitcote. Daniel takes him communion every month.',
+    personality: 'Clear-minded, mischievous and full of parish memory.',
+    traits: ['Wise', 'Mischievous', 'Long memory'],
+    development: [
+      { chapter: 'chapter_20', phase: 'Memories', description: 'Tells Daniel about the French painter at Champton in the war and about the babies who were quietly adopted.' }
+    ],
+    introducedInChapter: 'chapter_14',
+    relations: [
+      { characterId: 'daniel_clement', type: 'successor', description: 'The present rector, who takes him out for drives.', introducedInChapter: 'chapter_20' }
+    ]
+  },
+  {
+    id: 'bishop_of_stowe',
+    name: 'The Bishop of Stowe',
+    group: 'Clergy',
+    role: 'Diocesan bishop',
+    background: 'A bishop\'s son, a Cambridge scholar of New Testament manuscripts and a former rowing and rugby Blue.',
+    personality: 'Donnish, genial and politically astute.',
+    traits: ['Scholarly', 'Genial', 'Political'],
+    development: [
+      { chapter: 'chapter_30', phase: 'Reorganisation', description: 'Proposes merging Champton with the Badsaddle parishes, and advises Daniel to step back.' },
+      { chapter: 'chapter_34', phase: 'Ned\'s funeral', description: 'Presides at Ned\'s funeral at Daniel\'s request.' }
+    ],
+    aliases: ['the bishop'],
+    introducedInChapter: 'chapter_13',
+    relations: [
+      { characterId: 'daniel_clement', type: 'priest', description: 'One of his clergy, whom he asks to win over Bernard.', introducedInChapter: 'chapter_30' },
+      { characterId: 'bernard_de_floures', type: 'adversary', description: 'A patron who will not give up his rights.', introducedInChapter: 'chapter_31' },
+      { characterId: 'gareth_nuttall', type: 'subordinate', description: 'His punctilious chaplain.', introducedInChapter: 'chapter_30' }
+    ]
+  },
+  {
+    id: 'gareth_nuttall',
+    name: 'Gareth Nuttall',
+    group: 'Clergy',
+    role: 'The bishop\'s chaplain',
+    background: 'Sleek and well groomed; the Clements think him a modern Mr Slope.',
+    personality: 'Punctilious and ambitious.',
+    traits: ['Punctilious', 'Ambitious'],
+    introducedInChapter: 'chapter_30',
+    relations: [
+      { characterId: 'bishop_of_stowe', type: 'superior', description: 'His bishop.', introducedInChapter: 'chapter_30' }
+    ]
+  },
+  {
+    id: 'french_painter',
+    name: 'The French painter',
+    group: 'Wartime Champton',
+    role: 'Free French officer and artist at Champton during the war',
+    background: 'A painter of some reputation before the war who was at Champton with the Free French, put to work on camouflage or posters.',
+    personality: 'Charming, explosive and indifferent to class.',
+    traits: ['Charismatic', 'Artistic', 'Restless'],
+    development: [
+      { chapter: 'chapter_20', phase: 'Remembered', description: 'Canon Dolben remembers him, his production of As You Like It and his death in the plane crash in the park.' },
+      { chapter: 'chapter_37', phase: 'The lover', description: 'Is revealed as Kath Sharman\'s lover and the painter of the bath-house mural.' }
+    ],
+    fate: 'Killed when a plane crashed in the park during the war.',
+    introducedInChapter: 'chapter_13',
+    relations: [
+      { characterId: 'bernard_de_floures', type: 'admirer', description: 'One of the boys of the house.', introducedInChapter: 'chapter_20' },
+      { characterId: 'anthony_bowness', type: 'admirer', description: 'One of the boys of the house.', introducedInChapter: 'chapter_20' },
+      { characterId: 'herve_gauchet', type: 'son', description: 'A son born in the war.', introducedInChapter: 'chapter_16' },
+      { characterId: 'kath_sharman', type: 'lover', description: 'The woman he loved and painted.', introducedInChapter: 'chapter_37' }
+    ]
+  }
+];

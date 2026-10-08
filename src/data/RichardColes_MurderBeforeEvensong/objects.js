@@ -1,1 +1,199 @@
-export const objects = [];
+// Objects in Murder Before Evensong. Significance items with a chapter are shown only
+// once the reader has reached that chapter.
+export const objects = [
+  {
+    id: 'secateurs',
+    name: 'The secateurs',
+    type: 'Weapon',
+    description: 'A pair of secateurs found lying open beside Anthony\'s body. Daniel assumes they came from the flower room.',
+    significance: [
+      'The weapon used to kill Anthony',
+      { text: 'An odd choice: blunt, and apparently picked up on the spot, yet used with one expert blow', chapter: 'chapter_19' }
+    ],
+    events: ['anthony_murdered'],
+    introducedInChapter: 'chapter_09',
+    location: 'st_marys',
+    characters: ['anthony_bowness', 'daniel_clement']
+  },
+  {
+    id: 'grapnel_anchor',
+    name: 'The grapnel anchor',
+    type: 'Weapon',
+    description: 'A folding anchor about two feet long, kept at the bath house landing stage. With its prongs locked it makes a heavy club.',
+    significance: [
+      'Nathan notices it is missing after Ned is found',
+      { text: 'Recovered from the lake by a police diver', chapter: 'chapter_22' }
+    ],
+    events: ['ned_found'],
+    introducedInChapter: 'chapter_22',
+    location: 'bath_house',
+    characters: ['nathan_liversedge', 'ned_thwaite']
+  },
+  {
+    id: 'ned_camera',
+    name: 'Ned\'s camera, notebook and dictaphone',
+    type: 'Research tools',
+    description: 'Ned\'s Canon AE-1, which he carries with binoculars, notebooks and a dictaphone on his local-history walks.',
+    significance: [
+      'Ned records everything he finds',
+      { text: 'None of them are found on his body or at home', chapter: 'chapter_22' },
+      { text: 'The camera turns up, without its film, when Edgy makes his confession', chapter: 'chapter_33' }
+    ],
+    events: ['bath_house_discovery', 'thwaites_visit', 'edgy_confesses'],
+    introducedInChapter: 'chapter_14',
+    location: 'bath_house',
+    characters: ['ned_thwaite']
+  },
+  {
+    id: 'the_mural',
+    name: 'The bath-house mural',
+    type: 'Artwork',
+    description: 'A mouldy wartime mural in the grotto: Champton as a nightmare battlefield, swarming with grotesque but individual figures, and at the centre two lovers raising a cross of Lorraine beneath the words IN HOC SIGNO VINCES.',
+    significance: [
+      'A record of Champton in the war, painted where few would see it',
+      { text: 'Hervé believes it has something to do with his father', chapter: 'chapter_16' },
+      { text: 'Alex plans a performance based on it', chapter: 'chapter_26' },
+      { text: 'Daniel recognises the woman of the pair from the way she sits', chapter: 'chapter_36' },
+      { text: 'Painted by the French painter; the lovers are him and Kath Sharman', chapter: 'chapter_37' }
+    ],
+    events: ['bath_house_discovery'],
+    introducedInChapter: 'chapter_14',
+    location: 'bath_house',
+    characters: ['ned_thwaite', 'daniel_clement']
+  },
+  {
+    id: 'red_book',
+    name: 'Repton\'s Red Book',
+    type: 'Document',
+    description: 'Humphry Repton\'s book of drawings and plans for improving the park in the 1790s, kept in the Champton archive.',
+    significance: [
+      'Anthony showed it to Ned, which led him to the bath house',
+      { text: 'Alex has secretly taken it for his own plans', chapter: 'chapter_15' }
+    ],
+    events: ['red_book_and_hugh'],
+    introducedInChapter: 'chapter_14',
+    location: 'champton_house',
+    characters: ['anthony_bowness', 'ned_thwaite']
+  },
+  {
+    id: 'carpentry_ledgers',
+    name: 'The estate carpentry ledgers',
+    type: 'Document',
+    description: 'Ledgers and workbooks from the estate carpentry shop of the late nineteenth century, which Anthony is working through in his basement office on Open Day.',
+    significance: [
+      'Part of Anthony\'s work on the estate archive',
+      { text: 'Among the jobs listed is church furnishings, made and installed', chapter: 'chapter_31' },
+      { text: 'Evidence that the pews were made by an estate carpenter in the 1880s, and so are Victorian', chapter: 'chapter_37' }
+    ],
+    events: ['open_day', 'norman_confesses'],
+    introducedInChapter: 'chapter_07',
+    location: 'champton_house',
+    characters: ['anthony_bowness']
+  },
+  {
+    id: 'payoff_record',
+    name: 'The record of a payment',
+    type: 'Document',
+    description: 'Estate accounts showing a large sum paid long ago to a departing chauffeur, Norman Staveley\'s grandfather.',
+    significance: ['Norman\'s family secret, which Anthony had found'],
+    events: ['norman_confesses'],
+    introducedInChapter: 'chapter_31',
+    location: 'champton_house',
+    characters: ['norman_staveley', 'anthony_bowness']
+  },
+  {
+    id: 'flower_room_plan',
+    name: 'The buttery plan',
+    type: 'Document',
+    description: 'A detailed architect\'s drawing of an enlarged flower room and serving counter at the back of St Mary\'s, which Stella calls just a sketch.',
+    significance: ['Shows how far the flower guild had gone without telling the rector'],
+    events: ['flower_guild_agm'],
+    introducedInChapter: 'chapter_05',
+    location: 'st_marys',
+    characters: ['stella_harper', 'anne_dollinger']
+  },
+  {
+    id: 'tape_measure',
+    name: 'The tape measure',
+    type: 'Clue',
+    description: 'The snapping sound Audrey heard when she found Stella and Anne in church at night: a builder\'s metal tape measure.',
+    significance: ['The flower guild had been measuring up for their plan'],
+    events: [],
+    introducedInChapter: 'chapter_06',
+    location: 'st_marys',
+    characters: ['audrey_clement', 'anne_dollinger', 'stella_harper']
+  },
+  {
+    id: 'pocket_torch',
+    name: 'Anthony\'s pocket torch',
+    type: 'Clue',
+    description: 'A torch found with Anthony\'s body, although the church lights were off.',
+    significance: ['Raises the question of when Anthony arrived, and who turned the lights off'],
+    events: ['vanloo_interview'],
+    introducedInChapter: 'chapter_12',
+    location: 'st_marys',
+    characters: ['anthony_bowness', 'neil_vanloo']
+  },
+  {
+    id: 'de_gaulle_photograph',
+    name: 'The de Gaulle photograph',
+    type: 'Photograph',
+    description: 'A photograph from the archive of General de Gaulle on the steps of Champton House in 1943, surrounded by Free French officers and men.',
+    significance: [
+      'One of the few records of the French at Champton',
+      { text: 'Some of the locals who looked after the French are in it, including Gilbert Drage', chapter: 'chapter_22' }
+    ],
+    events: ['thwaites_visit'],
+    introducedInChapter: 'chapter_13',
+    location: 'champton_house',
+    characters: []
+  },
+  {
+    id: 'marseillaise_banner',
+    name: 'The Marseillaise banner',
+    type: 'Artefact',
+    description: 'A painted canvas found at the school, with a crest combining the Union Jack, the tricolour, the cross of Lorraine and a V for Victory above an English version of the Marseillaise.',
+    significance: ['In the war the children sang it every morning; French children attended the school'],
+    events: ['school_assembly'],
+    introducedInChapter: 'chapter_16',
+    location: 'school',
+    characters: ['katrina_gauchet']
+  },
+  {
+    id: 'baptism_registers',
+    name: 'The 1940s baptism registers',
+    type: 'Document',
+    description: 'Parish registers kept in the fireproof safe in the room above the church porch, which Daniel searches after Canon Dolben\'s visit.',
+    significance: ['Daniel looks for wartime babies'],
+    events: ['canon_dolben_visit'],
+    introducedInChapter: 'chapter_20',
+    location: 'st_marys',
+    characters: ['daniel_clement']
+  },
+  {
+    id: 'walnut_cake',
+    name: 'Walnut cake',
+    type: 'Food',
+    description: 'Kath Sharman\'s walnut cake, sold at The Flowers and the best in the village; Daniel\'s favourite.',
+    significance: [
+      'Kath\'s baking is famous in Champton',
+      { text: 'A walnut cake is found in Stella\'s kitchen', chapter: 'chapter_36' },
+      { text: 'Audrey saw Kath on Stella\'s doorstep with a cake tin the day before; the cake was poisoned', chapter: 'chapter_37' }
+    ],
+    events: ['dora_at_the_flowers', 'stella_found_dead'],
+    introducedInChapter: 'chapter_18',
+    location: 'the_flowers',
+    characters: ['kath_sharman']
+  },
+  {
+    id: 'biscuit_tin',
+    name: 'The biscuit tin',
+    type: 'Keepsake',
+    description: 'A dented green tin decorated with yellow roses, a wedding present to Daniel\'s parents that he treasures like a reliquary.',
+    significance: ['A small piece of Daniel\'s childhood, and a measure of the hospitality on offer'],
+    events: [],
+    introducedInChapter: 'chapter_02',
+    location: 'rectory',
+    characters: ['daniel_clement', 'audrey_clement']
+  }
+];

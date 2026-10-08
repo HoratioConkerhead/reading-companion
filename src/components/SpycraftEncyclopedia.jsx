@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { getBookConfig } from '../utils/bookConfig';
+import { itemText, visibleItems, isChapterReached } from '../utils/chapterItems';
 
-// The book's encyclopedia tab ("Spycraft" for Stitched Up); its wording comes from
-// the book's metadata (bookMetadata.encyclopedia)
+// The book's encyclopedia tab ("Spycraft" for Stitched Up, "Clues" for a mystery); its
+// wording comes from the book's metadata (bookMetadata.encyclopedia). Examples can be
+// { text, chapter } items, and an entry's `meaning` stays hidden until revealedInChapter.
 const SpycraftEncyclopedia = ({
   spycraftEntries,
   config = getBookConfig().encyclopedia,
-  selectedEntryId = null
+  selectedEntryId = null,
+  chaptersData = [],
+  chapterFilterId = null
 }) => {
+  const shownExamples = (entry) => visibleItems(entry.examples, chaptersData, chapterFilterId);
+  const isMeaningRevealed = (entry) => isChapterReached(entry.revealedInChapter, chaptersData, chapterFilterId);
+  const chapterTitle = (chapterId) => chaptersData.find(ch => ch.id === chapterId)?.title || 'a later chapter';
   const [selectedEntry, setSelectedEntry] = useState(null);
 
   // Open an entry chosen elsewhere (e.g. from search)
@@ -76,19 +83,39 @@ const SpycraftEncyclopedia = ({
                 <p className="text-gray-700 dark:text-gray-300">{selectedEntry.description}</p>
               </div>
               
-              <div className="mt-4">
-                <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Historical Context</h3>
-                <p className="text-gray-700 dark:text-gray-300">{selectedEntry.historicalContext}</p>
-              </div>
+              {selectedEntry.historicalContext && (
+                <div className="mt-4">
+                  <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Historical Context</h3>
+                  <p className="text-gray-700 dark:text-gray-300">{selectedEntry.historicalContext}</p>
+                </div>
+              )}
               
-              <div className="mt-4">
-                <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Examples in the Book</h3>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
-                  {selectedEntry.examples.map((example, index) => (
-                    <li key={index}>{example}</li>
-                  ))}
-                </ul>
-              </div>
+              {shownExamples(selectedEntry).length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">{config.examplesTitle || 'Examples in the Book'}</h3>
+                  <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
+                    {shownExamples(selectedEntry).map((example, index) => (
+                      <li key={index}>
+                        {itemText(example)}
+                        {example?.chapter && (
+                          <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">({chapterTitle(example.chapter)})</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {selectedEntry.meaning && (
+                <div className="mt-4">
+                  <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">{config.meaningTitle || 'What it means'}</h3>
+                  {isMeaningRevealed(selectedEntry) ? (
+                    <p className="text-gray-700 dark:text-gray-300">{selectedEntry.meaning}</p>
+                  ) : (
+                    <p className="italic text-gray-500 dark:text-gray-400">Revealed in {chapterTitle(selectedEntry.revealedInChapter)}</p>
+                  )}
+                </div>
+              )}
               
               <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded">
                 <h3 className="font-bold mb-2 text-gray-900 dark:text-gray-100">Related Items</h3>

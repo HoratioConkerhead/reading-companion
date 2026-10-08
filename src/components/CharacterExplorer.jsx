@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { itemText, visibleItems } from '../utils/chapterItems';
 
 const CharacterExplorer = ({ 
   onCharacterSelect, 
@@ -7,6 +8,7 @@ const CharacterExplorer = ({
   relationshipsData,
   groupStyles = {},
   groups = [],
+  chaptersData = [],
   chapterFilterId = null
 }) => {
   // With a "show up to" chapter set, hide details that describe the rest of the book
@@ -66,8 +68,15 @@ const CharacterExplorer = ({
       .filter(rel => (seen.has(rel.characterId) ? false : seen.add(rel.characterId)));
   };
 
-  // development is a list of { phase, description } (or plain strings in older data)
-  const developmentText = (dev) => (typeof dev === 'string' ? dev : [dev.phase, dev.description].filter(Boolean).join(': '));
+  // development is a list of { phase, description, chapter? } (or plain strings in older
+  // data). Entries with a chapter are shown up to the reader's chapter; without chapters,
+  // only the first entry is shown while filtering, since the rest may be spoilers.
+  const visibleDevelopment = (development) => {
+    if (!Array.isArray(development)) return [];
+    if (!isFiltered) return development;
+    const hasChapters = development.some(dev => dev && typeof dev === 'object' && dev.chapter);
+    return hasChapters ? visibleItems(development, chaptersData, chapterFilterId) : development.slice(0, 1);
+  };
 
   return (
     <div className="character-explorer">
@@ -198,18 +207,18 @@ const CharacterExplorer = ({
                         ))}
                       </div>
                     )}
-                    {Array.isArray(profile.development) && profile.development.length > 0 && (
+                    {visibleDevelopment(profile.development).length > 0 && (
                       <div>
                         <span className="font-medium text-gray-700 dark:text-gray-300">Character Development:</span>
                         <ul className="mt-1 list-disc list-inside text-gray-900 dark:text-gray-100">
-                          {(isFiltered ? profile.development.slice(0, 1) : profile.development).map((dev, index) => (
-                            <li key={index}>{developmentText(dev)}</li>
+                          {visibleDevelopment(profile.development).map((dev, index) => (
+                            <li key={index}>{itemText(dev)}</li>
                           ))}
                         </ul>
-                        {isFiltered && profile.development.length > 1 && (
-                          <p className="mt-1 text-sm italic text-gray-500 dark:text-gray-400">Later development is hidden while you're reading up to a chapter.</p>
-                        )}
                       </div>
+                    )}
+                    {isFiltered && visibleDevelopment(profile.development).length < (profile.development?.length || 0) && (
+                      <p className="mt-1 text-sm italic text-gray-500 dark:text-gray-400">Later development is hidden while you're reading up to a chapter.</p>
                     )}
                     {!isFiltered && typeof profile.fate === 'string' && profile.fate.trim() && (
                       <div>

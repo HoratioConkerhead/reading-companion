@@ -8,6 +8,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import SVGEdge from './relationship-web/SVGEdge';
 import SVGNode from './relationship-web/SVGNode';
 import SidePanel from './relationship-web/SidePanel';
+import { visibleItems } from '../utils/chapterItems';
 
 const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 3;
@@ -139,14 +140,14 @@ const RelationshipWeb = ({
     // Character group bonus
     score += groupBonuses[character.group] ?? weights.defaultGroupBonus;
 
-    // Development arc bonus
-    if (character.development) {
-      score += Math.min(character.development.length * weights.developmentPer, weights.developmentMax);
-    }
+    // Development arc bonus (only the development the reader has reached, so a
+    // character's later story doesn't make them look important early)
+    const development = visibleItems(character.development, chaptersData, chapterFilterId);
+    score += Math.min(development.length * weights.developmentPer, weights.developmentMax);
 
     // Ensure score is between 1 and 100
     return Math.max(1, Math.min(100, Math.round(score)));
-  }, [relationshipsData, eventsData, importanceConfig]);
+  }, [relationshipsData, eventsData, importanceConfig, chaptersData, chapterFilterId]);
 
   // Graph algorithms imported from ../utils/graphUtils
 

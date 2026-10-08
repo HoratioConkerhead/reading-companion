@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getCharacterName as _getCharacterName, getEventTitle as _getEventTitle } from '../utils/dataAccessors';
+import { itemText, visibleItems } from '../utils/chapterItems';
 
 const PlotNavigator = ({ 
   onEventSelect, 
@@ -30,6 +31,11 @@ const PlotNavigator = ({
 
   const getCharacterName = (characterId) => _getCharacterName(characterId, charactersData);
   const getEventTitle = (eventId) => _getEventTitle(eventId, eventsData);
+  // Lists can hold { text, chapter } items: only show those up to the reader's chapter,
+  // and only link to characters and events the reader has met (the data is pre-filtered)
+  const shownItems = (items) => visibleItems(items, chaptersData, chapterFilterId);
+  const metCharacters = (ids) => (ids || []).filter(id => charactersData.some(c => c.id === id));
+  const seenEvents = (ids) => (ids || []).filter(id => eventsData.some(e => e.id === id));
   
   // Handle character click
   const handleCharacterClick = (characterId) => {
@@ -326,11 +332,11 @@ const PlotNavigator = ({
                       {mystery.significance && (
                         <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Significance:</span> {mystery.significance}</p>
                       )}
-                      {Array.isArray(mystery.clues) && mystery.clues.length > 0 && (
+                      {shownItems(mystery.clues).length > 0 && (
                         <div className="mt-2">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Clues:</div>
                           <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
-                            {mystery.clues.map((clue, index) => <li key={index}>{clue}</li>)}
+                            {shownItems(mystery.clues).map((clue, index) => <li key={index}>{itemText(clue)}</li>)}
                           </ul>
                         </div>
                       )}
@@ -343,11 +349,11 @@ const PlotNavigator = ({
                       )}
                       
                       {/* Related characters */}
-                      {mystery.relatedCharacters && mystery.relatedCharacters.length > 0 && (
+                      {metCharacters(mystery.relatedCharacters).length > 0 && (
                         <div className="mt-2">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Related Characters:</div>
                           <div className="flex flex-wrap gap-2 mt-1">
-                            {mystery.relatedCharacters.map(charId => (
+                            {metCharacters(mystery.relatedCharacters).map(charId => (
                               <button
                                 key={charId}
                                 className="text-xs px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
@@ -361,11 +367,11 @@ const PlotNavigator = ({
                       )}
                       
                       {/* Related events */}
-                      {mystery.relatedEvents && mystery.relatedEvents.length > 0 && (
+                      {seenEvents(mystery.relatedEvents).length > 0 && (
                         <div className="mt-2">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Events:</div>
                           <div className="flex flex-wrap gap-2 mt-1">
-                            {mystery.relatedEvents.map(eventId => (
+                            {seenEvents(mystery.relatedEvents).map(eventId => (
                               <button
                                 key={eventId}
                                 className="text-xs px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
@@ -427,31 +433,31 @@ const PlotNavigator = ({
                 <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Significance:</span> {theme.significance}</p>
               )}
 
-              {Array.isArray(theme.examples) && theme.examples.length > 0 && (
+              {shownItems(theme.examples).length > 0 && (
                 <div className="mt-4">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Examples:</div>
                   <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
-                    {theme.examples.map((example, index) => (
-                      <li key={index}>{example}</li>
+                    {shownItems(theme.examples).map((example, index) => (
+                      <li key={index}>{itemText(example)}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {Array.isArray(theme.development) && theme.development.length > 0 && (
+              {shownItems(theme.development).length > 0 && (
                 <div className="mt-4">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">How it develops:</div>
                   <ol className="list-decimal pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
-                    {theme.development.map((step, index) => <li key={index}>{step}</li>)}
+                    {shownItems(theme.development).map((step, index) => <li key={index}>{itemText(step)}</li>)}
                   </ol>
                 </div>
               )}
               
-              {theme.relatedCharacters && theme.relatedCharacters.length > 0 && (
+              {metCharacters(theme.relatedCharacters).length > 0 && (
                 <div className="mt-4">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Characters:</div>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {theme.relatedCharacters.map(charId => (
+                    {metCharacters(theme.relatedCharacters).map(charId => (
                       <button
                         key={charId}
                         className="text-sm px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"

@@ -1,1 +1,271 @@
-export const chapters = [];
+// Chapters of Murder Before Evensong. The book's chapters are numbered, not named,
+// so titles stay plain (they appear in the chapter picker before the reader gets there).
+// Summaries are our own and only cover what happens in that chapter.
+export const chapters = [
+  {
+    id: 'chapter_01',
+    title: 'Chapter 1',
+    description: 'At the Sunday communion Canon Daniel Clement tells his congregation that St Mary\'s needs a lavatory. The village is scandalised. At the church door Stella Harper and Anne Dollinger of the flower guild object to losing pews at the back, Ned Thwaite tells them to take it to the parish church council, and Stella warns of an item at the flower guild AGM.',
+    events: ['lavatory_sermon'],
+    timeframe: 'Sunday 17 April 1988'
+  },
+  {
+    id: 'chapter_02',
+    title: 'Chapter 2',
+    description: 'Daniel comes home to his dachshunds and his mother, Audrey. They take tea with the de Floures at Champton House: Honoria, Alex in a shocking T-shirt, and the archivist Anthony Bowness, who has found an old feud about sanitation in the archive. Alex explains that the great window was rebuilt after a wartime plane crash.',
+    events: ['segrave_privy_row', 'plane_crash', 'tea_at_champton'],
+    timeframe: 'Sunday 17 April 1988'
+  },
+  {
+    id: 'chapter_03',
+    title: 'Chapter 3',
+    description: 'Driving home past the village shops, Audrey and Daniel talk about the war. We learn how Honoria brought Daniel from London to Champton. After Evensong Dora Sharman waits in the porch to plead for the back pew where she and her twin, Kath, have always sat.',
+    events: ['dora_pew_plea'],
+    timeframe: 'Sunday 17 April 1988'
+  },
+  {
+    id: 'chapter_04',
+    title: 'Chapter 4',
+    description: 'Sunday soup and sandwiches. Daniel\'s actor brother Theo arrives unannounced: he is to play a vicar on television and wants to follow Daniel around. Daniel takes him to Compline in the dark church.',
+    events: ['theo_arrives'],
+    timeframe: 'Sunday 17 April 1988'
+  },
+  {
+    id: 'chapter_05',
+    title: 'Chapter 5',
+    description: 'At the flower guild AGM Anne Dollinger springs a plan to extend the flower room with a buttery, paid for by an anonymous donor. Ned and Audrey object, and Anthony says the pews may be Victorian. Daniel refuses to take the plan to the PCC unless Stella names the donor; she threatens a public meeting.',
+    events: ['de_floures_chapel_built', 'flower_guild_agm'],
+    timeframe: 'Monday 18 April 1988'
+  },
+  {
+    id: 'chapter_06',
+    title: 'Chapter 6',
+    description: 'Audrey realises what Stella and Anne were doing in church one night. Walking the dogs, Daniel shows Theo who lives where along Main Street. Anthony asks Daniel in for a drink and tells him about his lonely childhood, his drinking and his debt to Bernard.',
+    events: ['anthony_confides'],
+    timeframe: 'Monday 18 April 1988'
+  },
+  {
+    id: 'chapter_07',
+    title: 'Chapter 7',
+    description: 'Open Day at Champton House. Margaret Porteous posts her volunteers through the house; Nathan Liversedge dreads showing visitors the gardens. Alex barges into Anthony\'s office with a tour, and Anthony escapes to the pub. Norman Staveley worries about a family secret.',
+    events: ['open_day'],
+    timeframe: 'Saturday 23 April 1988'
+  },
+  {
+    id: 'chapter_08',
+    title: 'Chapter 8',
+    description: 'Ned\'s daughter Angela asks Daniel to keep an eye on her father, whose memory is slipping. A French visitor tells Daniel that her uncle was at Champton when it was a Free French hospital.',
+    events: ['free_french_at_champton', 'de_gaulle_visit', 'angela_worry'],
+    timeframe: 'Saturday 23 April 1988'
+  },
+  {
+    id: 'chapter_09',
+    title: 'Chapter 9',
+    description: 'Late from the pub, Anthony goes to lock the church and kneels in a back pew to look closely at the carvings. That night, saying Evensong in the dark, Daniel notices that his dogs have gone quiet, follows their bloody paw prints and finds Anthony dead in the pew, a pair of secateurs beside him.',
+    events: ['anthony_murdered'],
+    timeframe: 'Saturday 23 April 1988'
+  },
+  {
+    id: 'chapter_10',
+    title: 'Chapter 10',
+    description: 'The church becomes a crime scene. Bernard brings whisky to the rectory and talks about why Anthony came to Champton. Theo comes home from the pub to the news.',
+    events: ['police_arrive'],
+    timeframe: 'Saturday 23 April 1988'
+  },
+  {
+    id: 'chapter_11',
+    title: 'Chapter 11',
+    description: 'Margaret Porteous calls at dawn, Open Day is cancelled and the reporters arrive. Theo describes his afternoon with Nathan, with Nathan\'s grandfather Edgy and at the pub, where he saw Anthony.',
+    events: ['morning_after'],
+    timeframe: 'Sunday 24 April 1988'
+  },
+  {
+    id: 'chapter_12',
+    title: 'Chapter 12',
+    description: 'DS Neil Vanloo interviews Daniel about the evening, the darkness and the blood. Stella talks to the press. Norman Staveley watches the cup final and worries about the night before.',
+    events: ['vanloo_interview'],
+    timeframe: 'Sunday 24 April 1988'
+  },
+  {
+    id: 'chapter_13',
+    title: 'Chapter 13',
+    description: 'A service in the old chapel at Champton House, then drinks. Bernard recalls the Free French at the house in the war. Daniel tells his mother and brother how Anthony died. Late that night Bob Achurch, a former commando, calls at the rectory.',
+    events: ['house_chapel_service', 'bob_visits'],
+    timeframe: 'Sunday 24 April 1988'
+  },
+  {
+    id: 'chapter_14',
+    title: 'Chapter 14',
+    description: 'Theo returns to London. Walking round the lake, Daniel finds Ned Thwaite at the bath house, where someone has been staying and where a strange wartime mural covers the grotto wall. The police seal it off.',
+    events: ['repton_improvements', 'bath_house_discovery'],
+    timeframe: 'Monday 25 April 1988'
+  },
+  {
+    id: 'chapter_15',
+    title: 'Chapter 15',
+    description: 'Alex and Honoria watch from the library. Alex has secretly taken the Red Book that Anthony was looking for, and Honoria has news: their brother Hugh is coming home.',
+    events: ['red_book_and_hugh'],
+    timeframe: 'Monday 25 April 1988'
+  },
+  {
+    id: 'chapter_16',
+    title: 'Chapter 16',
+    description: 'Daniel takes the school assembly. Katrina Gauchet tells him about her husband Hervé\'s French father and the school\'s plans to mark the war, and shows him a wartime banner.',
+    events: ['school_assembly'],
+    timeframe: 'Early May 1988'
+  },
+  {
+    id: 'chapter_17',
+    title: 'Chapter 17',
+    description: 'In Stella\'s dress shop Audrey overhears Stella settling a customer\'s account with a large cash payment that will not go through the books, and makes sure Stella knows it.',
+    events: ['audrey_at_stellas'],
+    timeframe: 'Early May 1988'
+  },
+  {
+    id: 'chapter_18',
+    title: 'Chapter 18',
+    description: 'At The Flowers tea shop Dora Sharman talks about life in service, the French in the war and how the sisters were moved about.',
+    events: ['dora_at_the_flowers'],
+    timeframe: 'Early May 1988'
+  },
+  {
+    id: 'chapter_19',
+    title: 'Chapter 19',
+    description: 'The post office is full of gossip, and Stella sounds less certain about her plans. Neil Vanloo goes over the timing of Anthony\'s death with Daniel, and they move to first names.',
+    events: ['stella_backs_down', 'vanloo_timeline'],
+    timeframe: 'Early May 1988'
+  },
+  {
+    id: 'chapter_20',
+    title: 'Chapter 20',
+    description: 'Daniel brings Canon Dolben, his predecessor but one, to the rectory. The old priest remembers a charismatic French painter at Champton in the war, killed in the plane crash, and the wartime babies who were quietly adopted. Afterwards Daniel looks through the old baptism registers, until Audrey calls him urgently.',
+    events: ['as_you_like_it', 'painter_dies', 'canon_dolben_visit'],
+    timeframe: 'Saturday 7 May 1988'
+  },
+  {
+    id: 'chapter_21',
+    title: 'Chapter 21',
+    description: 'Daniel and PC Scott call on Jane Thwaite to tell her that Ned is dead. Angela drives up from London.',
+    events: ['ned_news'],
+    timeframe: 'Saturday 7 May 1988'
+  },
+  {
+    id: 'chapter_22',
+    title: 'Chapter 22',
+    description: 'Nathan describes finding Ned in the lake. Reporters return; Honoria arranges a press conference. The Thwaites visit the rectory and talk about Ned\'s memory and his research. Daniel and Neil compare what they know.',
+    events: ['ned_found', 'press_conference', 'thwaites_visit'],
+    timeframe: 'Sunday 8 May 1988'
+  },
+  {
+    id: 'chapter_23',
+    title: 'Chapter 23',
+    description: 'Daniel visits Edgy Liversedge, whose past as a hired killer only Daniel knows. At the post office he learns that Theo is back, and has the flower-festival meeting postponed.',
+    events: ['visit_to_edgy', 'theo_returns'],
+    timeframe: 'Monday 9 May 1988'
+  },
+  {
+    id: 'chapter_24',
+    title: 'Chapter 24',
+    description: 'Anthony\'s coffin is brought into church for the night. Audrey tells a family story about shame. Late at night Daniel finds Dora Sharman keeping vigil alone, in tears, with a warning about careless talk.',
+    events: ['anthony_vigil'],
+    timeframe: 'Monday 9 May 1988'
+  },
+  {
+    id: 'chapter_25',
+    title: 'Chapter 25',
+    description: 'An early walk along Holly Walk. Beside the stream Daniel feels the victims\' terror and then something he recognises as the murderer: someone from Champton.',
+    events: ['holly_walk'],
+    timeframe: 'Tuesday 10 May 1988'
+  },
+  {
+    id: 'chapter_26',
+    title: 'Chapter 26',
+    description: 'Norman Staveley has a panic attack. Anthony\'s funeral: Hugh de Floures is home, and the wake at the house brings out old friends, the press and plans.',
+    events: ['norman_panic', 'anthony_funeral'],
+    timeframe: 'Tuesday 10 May 1988'
+  },
+  {
+    id: 'chapter_27',
+    title: 'Chapter 27',
+    description: 'Audrey goes to the post office for biscuits. Stella reveals that Hugh is getting married; Audrey announces that Stella has given way over the lavatory, to Dora\'s dismay.',
+    events: ['wedding_gossip'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_28',
+    title: 'Chapter 28',
+    description: 'A gossip column gets in first. Hugh comes to see Daniel about his wedding, and Audrey takes charge of the guest list.',
+    events: ['hugh_visit'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_29',
+    title: 'Chapter 29',
+    description: 'Theo has coffee with the Sharman sisters. Kath is startled to hear that Stella has given up defending the pews. Nathan and Alex call with a rabbit, which Kath kills with one blow.',
+    events: ['theo_at_sharmans'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_30',
+    title: 'Chapter 30',
+    description: 'Anne Dollinger remembers seeing Norman Staveley hurrying from the direction of the church on the night of the first murder. The Bishop of Stowe comes to tea with plans for the parish and some advice.',
+    events: ['anne_remembers', 'bishops_visit'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_31',
+    title: 'Chapter 31',
+    description: 'At Champton House Neil returns Anthony\'s papers. Bernard rages at the bishop\'s plans. Neil tells Daniel that Norman Staveley has admitted confronting Anthony in church over a family secret, and that Nathan is wanted for a robbery in Hampshire, and Daniel asks for half an hour.',
+    events: ['norman_confesses'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_32',
+    title: 'Chapter 32',
+    description: 'At the north lodge Alex and Honoria tell Daniel that Alex and Nathan have been lovers for years, and that Ned saw them together at the bath house.',
+    events: ['alex_and_nathan'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_33',
+    title: 'Chapter 33',
+    description: 'Edgy confesses to both murders and hands in Ned\'s camera. Daniel, who will not explain what he knows, is taken in for questioning, until Theo points out that Edgy\'s arthritic hands could not have done it.',
+    events: ['edgy_confesses'],
+    timeframe: 'Wednesday 11 May 1988'
+  },
+  {
+    id: 'chapter_34',
+    title: 'Chapter 34',
+    description: 'Ned\'s funeral, with the bishop presiding. Midway through his sermon Daniel stops: looking at the congregation, he has seen who the killer is.',
+    events: ['ned_funeral'],
+    timeframe: 'Friday 20 May 1988'
+  },
+  {
+    id: 'chapter_35',
+    title: 'Chapter 35',
+    description: 'Daniel leaves the committal to the bishop\'s chaplain and tells Neil to send officers to Stella Harper\'s house.',
+    events: ['daniel_tells_neil'],
+    timeframe: 'Friday 20 May 1988'
+  },
+  {
+    id: 'chapter_36',
+    title: 'Chapter 36',
+    description: 'Stella is found dead at home. Smoke rises over the lake: the bath house is ablaze, Kath Sharman is inside, and Dora watches from the bank.',
+    events: ['stella_found_dead', 'bath_house_fire'],
+    timeframe: 'Friday 20 May 1988'
+  },
+  {
+    id: 'chapter_37',
+    title: 'Chapter 37',
+    description: 'In the library Daniel, Neil and the family piece together Kath\'s story: her wartime lover, her lost child, her pew, and why Anthony, Ned and Stella died.',
+    events: ['kath_baby', 'solution'],
+    timeframe: 'Friday 20 May 1988'
+  },
+  {
+    id: 'chapter_38',
+    title: 'Chapter 38',
+    description: 'The flower festival goes ahead. Edgy and Nathan have gone; Dora appears with her nephew Hervé; Champton begins to mend.',
+    events: ['flower_festival'],
+    timeframe: 'Whitsun 1988'
+  }
+];

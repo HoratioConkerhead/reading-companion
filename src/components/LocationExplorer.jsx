@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
+import { itemText, visibleItems } from '../utils/chapterItems';
+
 const LocationExplorer = ({ 
   onLocationSelect, 
   selectedLocation, 
   onEventSelect,
   locationsData,
   eventsData,
-  charactersData
+  charactersData,
+  locationTypeLabels = {},
+  chaptersData = [],
+  chapterFilterId = null
 }) => {
+  // Type labels from the book's metadata (locationTypes), else the type itself
+  const typeLabel = (type) => locationTypeLabels[type]?.label || type;
+  // Significance and features can hold { text, chapter } items: show those reached so far
+  const shownItems = (items) => visibleItems(items, chaptersData, chapterFilterId);
   const [searchQuery, setSearchQuery] = useState('');
   const [locationTypeFilter, setLocationTypeFilter] = useState('all');
   const [areaFilter, setAreaFilter] = useState('all');
   
   // Extract unique location types and areas for filters
-  const locationTypes = Array.from(new Set(locationsData.map(loc => loc.type)));
-  const locationAreas = Array.from(new Set(locationsData.map(loc => loc.area)));
+  const locationTypes = Array.from(new Set(locationsData.map(loc => loc.type).filter(Boolean)));
+  const locationAreas = Array.from(new Set(locationsData.map(loc => loc.area).filter(Boolean)));
   
   // Filter locations based on search and filters
   const filteredLocations = locationsData.filter(location => {
@@ -63,11 +72,12 @@ const LocationExplorer = ({
               >
                 <option value="all">All Types</option>
                 {locationTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                  <option key={type} value={type}>{typeLabel(type)}</option>
                 ))}
               </select>
             </div>
             
+            {locationAreas.length > 0 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Area</label>
               <select 
@@ -81,6 +91,7 @@ const LocationExplorer = ({
                 ))}
               </select>
             </div>
+            )}
           </div>
           
           <div className="h-128 overflow-y-auto pr-2">
@@ -96,7 +107,7 @@ const LocationExplorer = ({
               >
                 <h3 className="font-bold text-gray-900 dark:text-gray-100">{location.name}</h3>
                 <div className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 inline-block mt-1">
-                  {location.type}
+                  {typeLabel(location.type)}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{location.area}</div>
                 
@@ -117,7 +128,7 @@ const LocationExplorer = ({
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{selectedLocation.name}</h2>
                 <div className="text-gray-600 dark:text-gray-400">{selectedLocation.area}</div>
                 <div className="mt-2 px-2 py-1 inline-block rounded bg-gray-200 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                  {selectedLocation.type}
+                  {typeLabel(selectedLocation.type)}
                 </div>
               </div>
               
@@ -132,12 +143,12 @@ const LocationExplorer = ({
                   <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Description</h3>
                   <p className="text-gray-700 dark:text-gray-300">{selectedLocation.description || "No detailed description available."}</p>
                   
-                  {selectedLocation.features && selectedLocation.features.length > 0 && (
+                  {shownItems(selectedLocation.features).length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Key Features</h3>
                       <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
-                        {selectedLocation.features.map((feature, index) => (
-                          <li key={index}>{feature}</li>
+                        {shownItems(selectedLocation.features).map((feature, index) => (
+                          <li key={index}>{itemText(feature)}</li>
                         ))}
                       </ul>
                     </>
@@ -159,12 +170,12 @@ const LocationExplorer = ({
                 </div>
                 
                 <div>
-                  {selectedLocation.significance && selectedLocation.significance.length > 0 && (
+                  {shownItems(selectedLocation.significance).length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 text-gray-900 dark:text-gray-100">Significance</h3>
                       <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
-                        {selectedLocation.significance.map((point, index) => (
-                          <li key={index}>{point}</li>
+                        {shownItems(selectedLocation.significance).map((point, index) => (
+                          <li key={index}>{itemText(point)}</li>
                         ))}
                       </ul>
                     </>

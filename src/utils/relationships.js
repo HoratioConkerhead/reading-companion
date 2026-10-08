@@ -81,16 +81,24 @@ export const deriveRelationshipsFromCharacters = (charactersList, chaptersList =
   return result;
 };
 
+// Whole words, so that e.g. 'parson' is not read as 'son'
+const FAMILY = /\b(mother|father|son|daughter|brother|sister|twin sister|twin brother|sibling|parent|child|cousin|aunt|uncle|nephew|niece|grand(mother|father|son|daughter)|god(mother|father|son|daughter)|step(mother|father|son|daughter))\b/;
+const ROMANTIC = /\b(lovers?|sweetheart|fianc[eé]e?|romance)\b/;
+
 /**
  * Map a specific relationship type string to a general category label
- * Categories align with legend and coloring: 'Spouse', 'Handler/Asset', 'Conspirator/Enemy',
- * 'Colleague/Partner', 'Superior/Subordinate', 'Friend', 'Informant/Double-Agent', 'Other'
+ * Categories align with legend and coloring: 'Spouse', 'Romantic', 'Family', 'Handler/Asset',
+ * 'Conspirator/Enemy', 'Colleague/Partner', 'Superior/Subordinate', 'Friend',
+ * 'Informant/Double-Agent', 'Other'
  */
 export const toRelationshipCategory = (type) => {
   const t = (type || '').toLowerCase();
   if (t.includes('spouse')) return 'Spouse';
+  if (ROMANTIC.test(t)) return 'Romantic';
   if (t.includes('handler') || t.includes('asset')) return 'Handler/Asset';
-  if (t.includes('conspirator') || t.includes('enemy') || t.includes('target') || t.includes('victim')) return 'Conspirator/Enemy';
+  if (t.includes('conspirator') || t.includes('enemy') || t.includes('target') || t.includes('victim')
+    || t.includes('killer') || t.includes('rival') || t.includes('adversary')) return 'Conspirator/Enemy';
+  if (FAMILY.test(t)) return 'Family';
   if (t.includes('colleague') || t.includes('partner')) return 'Colleague/Partner';
   if (t.includes('superior') || t.includes('subordinate')) return 'Superior/Subordinate';
   if (t.includes('friend')) return 'Friend';
