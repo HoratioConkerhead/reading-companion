@@ -19,10 +19,22 @@ const normalizeMystery = (mystery) => ({
   revealedInChapter: mystery.revealedInChapter ?? mystery.resolvedInChapter ?? null
 });
 
+// Books store some fields as text or as lists, and objects' links under two names;
+// give the UI one shape
+const toList = (value) => (Array.isArray(value) ? value : (value ? [value] : []));
+const normalizeLocation = (location) => ({ ...location, significance: toList(location.significance) });
+const normalizeObject = (object) => ({
+  ...object,
+  significance: toList(object.significance),
+  related_events: object.related_events ?? object.events ?? [],
+  related_characters: object.related_characters ?? object.characters ?? []
+});
+
 /**
  * Fill in missing parts with empty values, derive relationships from
  * characters[].relations when a book has no relationships list, make sure
- * every relationship has a general category, and normalise mystery fields.
+ * every relationship has a general category, and normalise field shapes that
+ * differ between books (mysteries, locations, objects).
  */
 export const normalizeBook = (book = {}) => {
   const result = { ...book, bookMetadata: book.bookMetadata || {} };
@@ -42,6 +54,8 @@ export const normalizeBook = (book = {}) => {
     rel.category ? rel : { ...rel, category: toRelationshipCategory(rel.type) }
   ));
   result.mysteryElements = result.mysteryElements.map(normalizeMystery);
+  result.locations = result.locations.map(normalizeLocation);
+  result.objects = result.objects.map(normalizeObject);
   return result;
 };
 

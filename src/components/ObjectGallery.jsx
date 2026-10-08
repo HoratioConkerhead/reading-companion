@@ -5,7 +5,8 @@ const ObjectGallery = ({
   selectedObject,
   objectsData,
   charactersData,
-  eventsData
+  eventsData,
+  locationsData = []
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -99,10 +100,16 @@ const ObjectGallery = ({
                     </>
                   )}
                   
-                  {selectedObject.significance && (
+                  {selectedObject.significance && selectedObject.significance.length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Significance</h3>
-                      <p className="text-gray-700 dark:text-gray-300">{selectedObject.significance}</p>
+                      {selectedObject.significance.length === 1 ? (
+                        <p className="text-gray-700 dark:text-gray-300">{selectedObject.significance[0]}</p>
+                      ) : (
+                        <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
+                          {selectedObject.significance.map((point, index) => <li key={index}>{point}</li>)}
+                        </ul>
+                      )}
                     </>
                   )}
                 </div>
@@ -124,7 +131,7 @@ const ObjectGallery = ({
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Location</h3>
                       <div className="p-2 border border-gray-200 dark:border-gray-700 rounded bg-gray-50 dark:bg-gray-700">
                         <div className="font-medium text-gray-900 dark:text-gray-100">
-                          {selectedObject.location}
+                          {locationsData.find(l => l.id === selectedObject.location)?.name || selectedObject.location}
                         </div>
                       </div>
                     </>
