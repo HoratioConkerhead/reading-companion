@@ -25,7 +25,7 @@ export const objects = [
     events: ['suitcase_delivery', 'davies_disguise'],
     introducedInChapter: 'chapter_08',
     location: 'cynthia_house_bucklebury',
-    characters: ['sir_john_davies', 'cynthia_childreth'],
+    characters: ['sir_john_davies', 'lady_cynthia_childreth'],
     features: [
       'Heavy suitcase',
       'Believed to contain radio',
@@ -76,7 +76,7 @@ export const objects = [
     events: ['first_party_bucklebury', 'second_party_mosley', 'suitcase_delivery', 'harringtons_takeover'],
     introducedInChapter: 'chapter_01',
     location: 'cynthia_house_bucklebury',
-    characters: ['cynthia_childreth', 'richard_childreth', 'bob_harrington', 'louise_harrington'],
+    characters: ['lady_cynthia_childreth', 'richard_childreth', 'bob_harrington', 'louise_harrington'],
     features: [
       'Expansive house and gardens',
       'Party venue',
@@ -93,7 +93,7 @@ export const objects = [
     events: ['cynthia_arrives_denleigh', 'weekend_party_introductions', 'dinner_politics', 'cynthia_recruited'],
     introducedInChapter: 'chapter_01',
     location: 'denleigh_manor',
-    characters: ['amy_wyndholme', 'horace_wyndholme', 'cynthia_childreth'],
+    characters: ['amy_wyndholme', 'horace_wyndholme', 'lady_cynthia_childreth'],
     features: [
       'Georgian architecture',
       'Extensive gardens and grounds',
@@ -113,7 +113,7 @@ export const objects = [
     events: ['berlin_trip', 'hotel_adlon_meeting', 'nazi_sympathizers_berlin'],
     introducedInChapter: 'chapter_04',
     location: 'hotel_adlon_berlin',
-    characters: ['cynthia_childreth', 'richard_childreth', 'gerda_stammer', 'franz_stammer'],
+    characters: ['lady_cynthia_childreth', 'richard_childreth', 'gerda_stammer', 'franz_stammer'],
     features: [
       'Luxury hotel',
       'Meeting rooms',
@@ -307,7 +307,7 @@ export const objects = [
     events: ['cynthia_obe'],
     introducedInChapter: 'chapter_24',
     location: 'uk',
-    characters: ['cynthia_childreth'],
+    characters: ['lady_cynthia_childreth'],
     features: [
       'OBE medal',
       'Royal honor',
@@ -392,7 +392,7 @@ export const objects = [
     events: ['cynthia_arrives_denleigh'],
     introducedInChapter: 'chapter_01',
     location: 'denleigh_manor',
-    characters: ['cynthia_childreth'],
+    characters: ['lady_cynthia_childreth'],
     features: [
       '1931 Alvis 12/50 tourer',
       'Dark green color',

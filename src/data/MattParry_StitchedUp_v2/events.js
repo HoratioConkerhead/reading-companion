@@ -25,7 +25,7 @@ export const events = [
     description: 'Lady Cynthia Childreth arrives at Denleigh Manor for a weekend party, where she meets various guests including Colonel Snowden and the Harringtons. She receives a mysterious note from Amy about being approached by one of the guests.',
     location: 'denleigh_manor',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Main guest' },
+      { characterId: 'lady_cynthia_childreth', role: 'Main guest' },
       { characterId: 'amy_wyndholme', role: 'Hostess' },
       { characterId: 'peter_snowden', role: 'Guest' },
       { characterId: 'marjorie_snowden', role: 'Guest' },
@@ -48,9 +48,9 @@ export const events = [
     description: 'The weekend party begins with introductions and social activities. Cynthia meets all the guests and observes their behavior, particularly noting the unusual Miss Gilchrist (Hannah Park) and the quiet Mr Newton (Bill Lawrie).',
     location: 'denleigh_manor',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Observer' },
+      { characterId: 'lady_cynthia_childreth', role: 'Observer' },
       { characterId: 'hannah_park', role: 'Guest (disguised as Miss Gilchrist)' },
-      { characterId: 'bill_lawrie', role: 'Guest (disguised as Mr Newton)' },
+      { characterId: 'wing_commander_bill_lawrie', role: 'Guest (disguised as Mr Newton)' },
       { characterId: 'jane_maclean', role: 'Guest' }
     ],
     significance: 'Cynthia begins to observe the guests and their behavior',
@@ -72,7 +72,7 @@ export const events = [
       { characterId: 'peter_snowden', role: 'Pro-Nazi sympathizer' },
       { characterId: 'bob_harrington', role: 'Pro-Nazi sympathizer' },
       { characterId: 'louise_harrington', role: 'Pro-Nazi sympathizer' },
-      { characterId: 'cynthia_childreth', role: 'Observer' }
+      { characterId: 'lady_cynthia_childreth', role: 'Observer' }
     ],
     significance: 'First revelation of pro-Nazi sympathies among the guests',
     chapter: 'chapter_02',
@@ -111,9 +111,9 @@ export const events = [
     description: 'In a secluded arbor in the garden, Miss Gilchrist (Hannah Park) and Mr Newton (Bill Lawrie) reveal their true identities and recruit Cynthia for British intelligence work. They explain that she has been chosen for her background and abilities.',
     location: 'denleigh_manor',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Recruit' },
+      { characterId: 'lady_cynthia_childreth', role: 'Recruit' },
       { characterId: 'hannah_park', role: 'Recruiter' },
-      { characterId: 'bill_lawrie', role: 'Recruiter' }
+      { characterId: 'wing_commander_bill_lawrie', role: 'Recruiter' }
     ],
     significance: 'Cynthia is recruited for British intelligence, beginning her transformation from socialite to operative',
     chapter: 'chapter_03',
@@ -131,8 +131,8 @@ export const events = [
     description: 'Bill Lawrie explains the nature of the intelligence operation to Cynthia, assuring her that she will never be in danger but that her role will be highly significant. They arrange to meet in London for further details.',
     location: 'denleigh_manor',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'New recruit' },
-      { characterId: 'bill_lawrie', role: 'Handler' },
+      { characterId: 'lady_cynthia_childreth', role: 'New recruit' },
+      { characterId: 'wing_commander_bill_lawrie', role: 'Handler' },
       { characterId: 'hannah_park', role: 'Recruiter' }
     ],
     significance: 'Cynthia learns about her role in British intelligence',
@@ -151,7 +151,7 @@ export const events = [
     description: 'Richard and Cynthia travel to Berlin, staying at the Hotel Adlon and meeting German Nazi sympathizers including Gerda and Franz Stammer. They are asked to act as sympathizers and hosts in England.',
     location: 'hotel_adlon_berlin',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Undercover operative' },
+      { characterId: 'lady_cynthia_childreth', role: 'Undercover operative' },
       { characterId: 'richard_childreth', role: 'Undercover operative' },
       { characterId: 'gerda_stammer', role: 'German Nazi sympathizer' },
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
@@ -172,7 +172,7 @@ export const events = [
     description: 'At the Hotel Adlon, Richard and Cynthia meet with German Nazi sympathizers and are briefed on their role as hosts for Nazi sympathizer gatherings in England. They also briefly see Hitler at a reception.',
     location: 'hotel_adlon_berlin',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Undercover operative' },
+      { characterId: 'lady_cynthia_childreth', role: 'Undercover operative' },
       { characterId: 'richard_childreth', role: 'Undercover operative' },
       { characterId: 'gerda_stammer', role: 'German Nazi sympathizer' },
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
@@ -193,7 +193,7 @@ export const events = [
     description: 'Cynthia and Richard meet various German Nazi sympathizers in Berlin, learning about the network and their role in supporting Nazi operations in England.',
     location: 'berlin',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Undercover operative' },
+      { characterId: 'lady_cynthia_childreth', role: 'Undercover operative' },
       { characterId: 'richard_childreth', role: 'Undercover operative' },
       { characterId: 'gerda_stammer', role: 'German Nazi sympathizer' },
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
@@ -214,7 +214,7 @@ export const events = [
     description: 'Cynthia hosts her first party for Nazi sympathizers at her house in Bucklebury, with intelligence agents attending in disguise. The party serves as an intelligence-gathering operation.',
     location: 'cynthia_house_bucklebury',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Host' },
+      { characterId: 'lady_cynthia_childreth', role: 'Host' },
       { characterId: 'gerda_stammer', role: 'Guest' },
       { characterId: 'lena_weber', role: 'Guest' },
       { characterId: 'intelligence_agents', role: 'Undercover operatives' }
@@ -236,7 +236,7 @@ export const events = [
     location: 'cynthia_house_bucklebury',
     characters: [
       { characterId: 'intelligence_agents', role: 'Undercover operatives' },
-      { characterId: 'cynthia_childreth', role: 'Host and operative' }
+      { characterId: 'lady_cynthia_childreth', role: 'Host and operative' }
     ],
     significance: 'Successful intelligence-gathering operation',
     chapter: 'chapter_05',
@@ -254,7 +254,7 @@ export const events = [
     description: 'Oswald Mosley attends Cynthia\'s second party, requesting her house as a safe house for fascist operations. This provides additional intelligence about the scope of fascist activities.',
     location: 'cynthia_house_bucklebury',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Host' },
+      { characterId: 'lady_cynthia_childreth', role: 'Host' },
       { characterId: 'oswald_mosley', role: 'Guest and fascist leader' }
     ],
     significance: 'Reveals the extent of fascist operations and Mosley\'s involvement',
@@ -273,7 +273,7 @@ export const events = [
     description: 'Oswald Mosley requests that Cynthia\'s house be used as a safe house for fascist operations, demonstrating the trust placed in her and the extent of fascist activities.',
     location: 'cynthia_house_bucklebury',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Host' },
+      { characterId: 'lady_cynthia_childreth', role: 'Host' },
       { characterId: 'oswald_mosley', role: 'Fascist leader' }
     ],
     significance: 'Shows the level of trust placed in Cynthia and the scope of fascist operations',
@@ -292,7 +292,7 @@ export const events = [
     description: 'The story jumps to 1943 where Mosley has been interned and released, and Marjorie Snowden contacts Cynthia. The situation has changed significantly with the war in progress.',
     location: 'various',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Established operative' },
+      { characterId: 'lady_cynthia_childreth', role: 'Established operative' },
       { characterId: 'marjorie_snowden', role: 'Contact' },
       { characterId: 'oswald_mosley', role: 'Recently released from internment' }
     ],
@@ -330,7 +330,7 @@ export const events = [
     description: 'Marjorie Snowden contacts Cynthia, indicating that the Nazi sympathizer network is still active and seeking to use her house for their operations.',
     location: 'various',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Contact' },
+      { characterId: 'lady_cynthia_childreth', role: 'Contact' },
       { characterId: 'marjorie_snowden', role: 'Network representative' }
     ],
     significance: 'Shows the network is still active and seeking to use Cynthia\'s resources',
@@ -350,7 +350,7 @@ export const events = [
     location: 'cynthia_house_bucklebury',
     characters: [
       { characterId: 'sir_john_davies', role: 'Deliverer (using alias "Young")' },
-      { characterId: 'cynthia_childreth', role: 'Recipient' }
+      { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Shows the network is actively using Cynthia\'s house and reveals Davies\' use of aliases',
     chapter: 'chapter_08',
@@ -369,7 +369,7 @@ export const events = [
     location: 'cynthia_house_bucklebury',
     characters: [
       { characterId: 'sir_john_davies', role: 'Deliverer using alias' },
-      { characterId: 'cynthia_childreth', role: 'Recipient' }
+      { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Reveals the network\'s operational methods and use of disguises',
     chapter: 'chapter_08',
@@ -388,7 +388,7 @@ export const events = [
     location: 'various',
     characters: [
       { characterId: 'intelligence_teams', role: 'Surveillance operatives' },
-      { characterId: 'cynthia_childreth', role: 'Subject of surveillance' }
+      { characterId: 'lady_cynthia_childreth', role: 'Subject of surveillance' }
     ],
     significance: 'Shows the intelligence operation is actively monitoring the network',
     chapter: 'chapter_09',
@@ -494,7 +494,7 @@ export const events = [
     title: 'Train Journey with Case Switching',
     date: '1943',
     description: 'Edwards travels by train with a grey-haired woman (Louise) and Davies/Young, with cases being switched in Box Tunnel. This operation is part of the network\'s logistics.',
-    location: 'train_box_tunnel',
+    location: 'box_tunnel',
     characters: [
       { characterId: 'tg_edwards', role: 'Traveler' },
       { characterId: 'louise_harrington', role: 'Grey-haired woman' },
@@ -665,7 +665,7 @@ export const events = [
     location: 'various',
     characters: [
       { characterId: 'louise_harrington', role: 'Double agent' },
-      { characterId: 'bill_lawrie', role: 'Handler' }
+      { characterId: 'wing_commander_bill_lawrie', role: 'Handler' }
     ],
     significance: 'Provides an inside source in the Nazi network and changes operational dynamics',
     chapter: 'chapter_16',
@@ -684,7 +684,7 @@ export const events = [
     location: 'various',
     characters: [
       { characterId: 'louise_harrington', role: 'Double agent' },
-      { characterId: 'bill_lawrie', role: 'Handler' }
+      { characterId: 'wing_commander_bill_lawrie', role: 'Handler' }
     ],
     significance: 'Demonstrates the success of British intelligence infiltration operations',
     chapter: 'chapter_16',
@@ -988,7 +988,7 @@ export const events = [
     description: 'Cynthia receives an OBE for "services to war work" in the next honours list, recognizing her contribution to British intelligence operations.',
     location: 'uk',
     characters: [
-      { characterId: 'cynthia_childreth', role: 'Recipient' }
+      { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Recognizes Cynthia\'s contribution to British intelligence and the war effort',
     chapter: 'chapter_24',
