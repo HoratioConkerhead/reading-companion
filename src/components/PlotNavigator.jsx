@@ -72,7 +72,17 @@ const PlotNavigator = ({
         </p>
       </div>
       
-      <div className="flex mb-4">
+      <div className="flex flex-wrap gap-y-2 mb-4">
+        <button 
+          className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 transition-colors ${
+            viewMode === 'recap' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
+          onClick={() => setViewMode('recap')}
+        >
+          Story So Far
+        </button>
         <button 
           className={`px-4 py-2 cursor-pointer focus:outline-none rounded mr-2 transition-colors ${
             viewMode === 'chapters' 
@@ -105,6 +115,37 @@ const PlotNavigator = ({
         </button>
       </div>
       
+      {viewMode === 'recap' && (
+        <div className="space-y-4">
+          {chapterFilterId ? (
+            <p className="text-gray-600 dark:text-gray-400">
+              A catch-up on everything up to {chapterTitle(chapterFilterId)}, with nothing from later chapters.
+            </p>
+          ) : (
+            <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 text-sm text-gray-700 dark:text-gray-300">
+              This is the whole book. To avoid spoilers, choose the chapter you have reached with &quot;Show up to&quot;.
+            </div>
+          )}
+          {visibleChapters.filter(ch => ch.description || ch.summary).map((chapter, index, list) => (
+            <div
+              key={chapter.id}
+              className={`p-4 rounded border ${index === list.length - 1
+                ? 'border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`}
+            >
+              <h3 className="font-bold text-gray-900 dark:text-gray-100">
+                {chapter.title}
+                {chapter.timeframe && (
+                  <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">{chapter.timeframe}</span>
+                )}
+              </h3>
+              <p className="mt-1 text-gray-700 dark:text-gray-300">{chapter.description || chapter.summary}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {viewMode !== 'recap' && (
       <div className="flex mb-4">
         <button 
           className={`px-4 py-2 text-sm rounded-l transition-colors ${
@@ -127,6 +168,7 @@ const PlotNavigator = ({
           Full Overview
         </button>
       </div>
+      )}
       
       {viewMode === 'chapters' && (
         <>

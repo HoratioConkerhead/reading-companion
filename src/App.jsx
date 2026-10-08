@@ -20,6 +20,7 @@ import SpycraftEncyclopedia from './components/SpycraftEncyclopedia';
 import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
 import { getBookConfig } from './utils/bookConfig';
+import { loadReadingPlace, saveReadingPlace, initialChapterFilter } from './utils/readingPlace';
 import BookSelector from './components/BookSelector';
 import GlobalSearch from './components/GlobalSearch';
 
@@ -70,6 +71,8 @@ const InteractiveReadingCompanion = () => {
   const [selectedEncyclopediaId, setSelectedEncyclopediaId] = useState(null);
   // Chapter filter to apply once the next book has loaded (from the URL)
   const pendingChapterRef = useRef(readViewFromHash().upto);
+  // The book whose data and chapter filter are currently loaded
+  const loadedBookKeyRef = useRef(null);
   
   // UI configuration for the loaded book (groups, time periods, tab labels...)
   const bookConfig = useMemo(() => (bookData ? getBookConfig(bookData.bookMetadata, bookData) : null), [bookData]);
@@ -89,17 +92,17 @@ const InteractiveReadingCompanion = () => {
         setBookData(data);
         // Update page title from book metadata
         document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
-        // Chapter filter: from the URL if it named one for this book; otherwise none, or
-        // the first chapter for books that ask to start spoiler-free (mysteries).
-        // It is not otherwise saved between visits.
+        // Chapter filter: from the URL if it named one for this book, else where the
+        // reader left off, else the first chapter for books that start spoiler-free
         const pendingChapter = pendingChapterRef.current;
         pendingChapterRef.current = null;
-        const chapterList = data.chapters || [];
-        if (pendingChapter && chapterList.some(ch => ch.id === pendingChapter)) {
-          setChapterFilterId(pendingChapter);
-        } else {
-          setChapterFilterId(data.bookMetadata?.startSpoilerFree ? (chapterList[0]?.id || null) : null);
-        }
+        setChapterFilterId(initialChapterFilter({
+          urlChapter: pendingChapter,
+          savedPlace: loadReadingPlace(currentBookKey),
+          chapters: data.chapters || [],
+          startSpoilerFree: Boolean(data.bookMetadata?.startSpoilerFree)
+        }));
+        loadedBookKeyRef.current = currentBookKey;
       } catch (error) {
         if (superseded) return;
         console.error('Failed to load book data:', error);
@@ -155,7 +158,11 @@ const InteractiveReadingCompanion = () => {
     };
   }, [currentBookKey]);
 
-  // Do not persist chapter filter (session-only)
+  // Remember the reader's place in each book (only once that book's data and filter are set)
+  useEffect(() => {
+    if (isLoading || loadedBookKeyRef.current !== currentBookKey) return;
+    saveReadingPlace(currentBookKey, chapterFilterId);
+  }, [currentBookKey, chapterFilterId, isLoading]);
   
   // Check for first visit to potentially show tutorial
   useEffect(() => {
