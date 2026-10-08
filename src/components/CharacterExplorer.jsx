@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const CharacterExplorer = ({ 
   onCharacterSelect, 
   selectedCharacter,
   charactersData,
   relationshipsData,
-  groupStyles = {}
+  groupStyles = {},
+  groups = []
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
@@ -90,36 +91,21 @@ const CharacterExplorer = ({
             >
               All
             </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded transition-colors ${
-                groupFilter === 'Protagonists' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setGroupFilter('Protagonists')}
-            >
-              Protagonists
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded transition-colors ${
-                groupFilter === 'Fifth Columnists' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setGroupFilter('Fifth Columnists')}
-            >
-              Fifth Columnists
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded transition-colors ${
-                groupFilter === 'German Connection' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => setGroupFilter('German Connection')}
-            >
-              German Connection
-            </button>
+            {/* One button per character group in the book that has characters to show */}
+            {groups.filter(group => charactersData.some(c => c.group === group.name)).map(group => (
+              <button
+                key={group.name}
+                className={`px-3 py-1 text-sm rounded transition-colors ${
+                  groupFilter === group.name
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+                onClick={() => setGroupFilter(group.name)}
+                title={group.description || undefined}
+              >
+                {group.name}
+              </button>
+            ))}
           </div>
           
           <div className="mb-4">

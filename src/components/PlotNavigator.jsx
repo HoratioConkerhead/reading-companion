@@ -9,12 +9,25 @@ const PlotNavigator = ({
   chaptersData,
   mysteryElements,
   themeElements,
-  bookMetadata
+  bookMetadata,
+  chapterFilterId = null
 }) => {
   const [viewMode, setViewMode] = useState('chapters'); // 'chapters', 'mysteries', 'themes'
   const [readerKnowledge, setReaderKnowledge] = useState('full'); // 'progressive', 'full'
   const [expandedChapter, setExpandedChapter] = useState(null);
   
+  // The global "show up to" chapter: nothing after it is shown, whatever the reader mode
+  const filterIndex = chapterFilterId ? chaptersData.findIndex(ch => ch.id === chapterFilterId) : -1;
+  const lastVisibleIndex = filterIndex === -1 ? chaptersData.length - 1 : filterIndex;
+  const visibleChapters = chaptersData.slice(0, lastVisibleIndex + 1);
+  const chapterIndexOf = (chapterId) => chaptersData.findIndex(ch => ch.id === chapterId);
+  const chapterTitle = (chapterId) => chaptersData.find(ch => ch.id === chapterId)?.title || 'a later chapter';
+  // A mystery's resolution is a spoiler until the reader has reached the chapter that reveals it
+  const isRevealedWithinFilter = (mystery) => {
+    const revealIndex = chapterIndexOf(mystery.revealedInChapter);
+    return revealIndex !== -1 && revealIndex <= lastVisibleIndex;
+  };
+
   const getCharacterName = (characterId) => _getCharacterName(characterId, charactersData);
   const getEventTitle = (eventId) => _getEventTitle(eventId, eventsData);
   
@@ -39,10 +52,10 @@ const PlotNavigator = ({
     if (readerKnowledge === 'full') return true;
     
     // In progressive mode, check the chapter index
-    const chapterIndex = chaptersData.findIndex(ch => ch.id === currentChapter);
-    const revealChapterIndex = chaptersData.findIndex(ch => ch.id === mystery.revealedInChapter);
+    const chapterIndex = chapterIndexOf(currentChapter);
+    const revealChapterIndex = chapterIndexOf(mystery.revealedInChapter);
     
-    return chapterIndex >= revealChapterIndex;
+    return revealChapterIndex !== -1 && chapterIndex >= revealChapterIndex;
   };
   
   return (
@@ -121,7 +134,7 @@ const PlotNavigator = ({
           )}
           
           <div className="space-y-4">
-            {chaptersData.map((chapter, index) => {
+            {visibleChapters.map((chapter, index) => {
               // In progressive mode, only show chapters up to the expanded one
               if (readerKnowledge === 'progressive' && 
                   expandedChapter && 
@@ -195,7 +208,7 @@ const PlotNavigator = ({
                               ).map(mystery => (
                                 <div key={mystery.id} className="text-sm">
                                   <div className="font-medium text-gray-900 dark:text-gray-100">{mystery.title}</div>
-                                  {mystery.revealedInChapter === chapter.id ? (
+                                  {mystery.revealedInChapter === chapter.id && isRevealedWithinFilter(mystery) ? (
                                     <div className="text-green-600 dark:text-green-400">Revealed in this chapter</div>
                                   ) : (
                                     <div className="text-blue-600 dark:text-blue-400">First mentioned, revealed later</div>
@@ -273,7 +286,7 @@ const PlotNavigator = ({
                   onChange={(e) => setExpandedChapter(e.target.value || null)}
                 >
                   <option value="">Select a chapter</option>
-                  {chaptersData.map(chapter => (
+                  {visibleChapters.map(chapter => (
                     <option key={chapter.id} value={chapter.id}>
                       {chapter.title}
                     </option>
@@ -302,13 +315,32 @@ const PlotNavigator = ({
                   }`}
                 >
                   <h4 className="font-bold text-gray-900 dark:text-gray-100">{mystery.title}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">First introduced: Chapter {
-                    chaptersData.findIndex(ch => ch.id === mystery.firstMentioned) + 1
-                  }</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">First introduced: {chapterTitle(mystery.firstMentioned)}</p>
+                  {mystery.type && (
+                    <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">{mystery.type}</span>
+                  )}
                   
                   {isUnlocked ? (
                     <>
                       <p className="mt-1 text-gray-700 dark:text-gray-300">{mystery.description}</p>
+                      {mystery.significance && (
+                        <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Significance:</span> {mystery.significance}</p>
+                      )}
+                      {Array.isArray(mystery.clues) && mystery.clues.length > 0 && (
+                        <div className="mt-2">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Clues:</div>
+                          <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
+                            {mystery.clues.map((clue, index) => <li key={index}>{clue}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {mystery.resolution && (
+                        isRevealedWithinFilter(mystery) ? (
+                          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Resolution:</span> {mystery.resolution}</p>
+                        ) : (
+                          <p className="mt-2 text-sm italic text-gray-500 dark:text-gray-400">Resolution hidden until {chapterTitle(mystery.revealedInChapter)}</p>
+                        )
+                      )}
                       
                       {/* Related characters */}
                       {mystery.relatedCharacters && mystery.relatedCharacters.length > 0 && (
@@ -354,20 +386,18 @@ const PlotNavigator = ({
                               ? 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200'
                               : 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
                         }`}>
-                          {mystery.status === 'twist' 
+                          {mystery.status === 'twist' || mystery.status === 'major_twist'
                             ? 'Major Plot Twist' 
                             : mystery.status === 'major_plot'
                               ? 'Central Plot Element'
-                              : 'Revealed Mystery'}
+                              : isRevealedWithinFilter(mystery) ? 'Revealed Mystery' : 'Unresolved Mystery'}
                         </span>
                       </div>
                     </>
                   ) : (
                     <div className="mt-2 flex items-center">
                       <span className="bg-gray-200 dark:bg-gray-700 text-sm px-2 py-1 rounded text-gray-700 dark:text-gray-300">
-                        Locked until Chapter {
-                          chaptersData.findIndex(ch => ch.id === mystery.revealedInChapter) + 1
-                        }
+                        Locked until {chapterTitle(mystery.revealedInChapter)}
                       </span>
                     </div>
                   )}
@@ -390,14 +420,32 @@ const PlotNavigator = ({
               <h3 className="font-bold text-lg text-blue-700 dark:text-blue-400 mb-2">{theme.title}</h3>
               <p className="mt-1 text-gray-700 dark:text-gray-300">{theme.description}</p>
               
-              <div className="mt-4">
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Examples:</div>
-                <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
-                  {theme.examples.map((example, index) => (
-                    <li key={index}>{example}</li>
-                  ))}
-                </ul>
-              </div>
+              {theme.category && (
+                <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">{theme.category}</span>
+              )}
+              {theme.significance && (
+                <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Significance:</span> {theme.significance}</p>
+              )}
+
+              {Array.isArray(theme.examples) && theme.examples.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Key Examples:</div>
+                  <ul className="list-disc pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
+                    {theme.examples.map((example, index) => (
+                      <li key={index}>{example}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {Array.isArray(theme.development) && theme.development.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">How it develops:</div>
+                  <ol className="list-decimal pl-5 text-sm mt-1 text-gray-700 dark:text-gray-300">
+                    {theme.development.map((step, index) => <li key={index}>{step}</li>)}
+                  </ol>
+                </div>
+              )}
               
               {theme.relatedCharacters && theme.relatedCharacters.length > 0 && (
                 <div className="mt-4">

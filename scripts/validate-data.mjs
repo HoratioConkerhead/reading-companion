@@ -2,12 +2,15 @@
 // ESM Node script to validate data integrity for all books
 // Run with: node scripts/validate-data.mjs
 
+import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { assembleBook } from '../src/data/bookAssembly.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
+const dataDir = path.join(projectRoot, 'src', 'data');
 
 const importFromRoot = async (relPath) => {
   const full = path.resolve(projectRoot, relPath);
@@ -38,26 +41,23 @@ const earliestChapter = (candidates, chapters) => {
   return best;
 };
 
-const validateBook = async (bookKey, bookModulePath) => {
-  logHeader(`Validating book: ${bookKey}`);
-  const mod = await importFromRoot(bookModulePath);
+// Load a book the same way the app does: its index.js if it exports a book,
+// otherwise every per-file module in the folder
+const loadBook = async (bookKey) => {
+  const bookDir = path.join(dataDir, bookKey);
+  const files = (await fs.readdir(bookDir)).filter(f => f.endsWith('.js'));
+  const importFile = (file) => importFromRoot(path.join('src/data', bookKey, file));
+  const indexModule = files.includes('index.js') ? await importFile('index.js') : null;
+  if (indexModule && (indexModule.book || indexModule.default)) {
+    return assembleBook({ indexModule });
+  }
+  const fileModules = await Promise.all(files.filter(f => f !== 'index.js').map(importFile));
+  return assembleBook({ fileModules });
+};
 
-  // Support both consolidated (book) and individual exports
-  const book = mod.book
-    ? mod.book
-    : {
-        bookMetadata: mod.bookMetadata,
-        characters: mod.characters,
-        events: mod.events,
-        locations: mod.locations,
-        objects: mod.objects,
-        relationships: mod.relationships,
-        chapters: mod.chapters,
-        timeline: mod.timeline || [],
-        mysteryElements: mod.mysteryElements,
-        themeElements: mod.themeElements,
-        spycraftEntries: mod.spycraftEntries,
-      };
+const validateBook = async (bookKey) => {
+  logHeader(`Validating book: ${bookKey}`);
+  const book = await loadBook(bookKey);
 
   const problems = [];
   const suggestions = [];
@@ -189,10 +189,35 @@ const validateBook = async (bookKey, bookModulePath) => {
   }
 };
 
+// Every folder in src/data with a metadata.js is a book (as in the app)
+const discoverBooks = async () => {
+  const entries = await fs.readdir(dataDir, { withFileTypes: true });
+  const books = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    try {
+      await fs.access(path.join(dataDir, entry.name, 'metadata.js'));
+      books.push(entry.name);
+    } catch {
+      // not a book folder
+    }
+  }
+  return books.sort();
+};
+
+// Usage: node scripts/validate-data.mjs [--book <BookDirectoryName>]
 const main = async () => {
-  await validateBook('MattParry_StitchedUp_v1', 'src/data/MattParry_StitchedUp_v1/index.js');
-  await validateBook('MattParry_StitchedUp_v2', 'src/data/MattParry_StitchedUp_v2/index.js');
-  await validateBook('MattParry_StitchedUp_v3', 'src/data/MattParry_StitchedUp_v3/index.js');
+  const args = process.argv.slice(2);
+  const bookArg = args.includes('--book') ? args[args.indexOf('--book') + 1] : null;
+  const books = await discoverBooks();
+  if (bookArg && !books.includes(bookArg)) {
+    console.error(`Unknown book "${bookArg}". Books: ${books.join(', ')}`);
+    process.exitCode = 1;
+    return;
+  }
+  for (const bookKey of (bookArg ? [bookArg] : books)) {
+    await validateBook(bookKey);
+  }
 };
 
 main().catch(err => {

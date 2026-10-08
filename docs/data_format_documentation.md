@@ -266,10 +266,15 @@ export const mysteryElements = [
     description: 'Description of the mystery',
     introducedInChapter: 'chapter_id',   // Required: earliest mention of this mystery element
     firstMentioned: 'chapter_reference', // Deprecated; use introducedInChapter
-    revealedInChapter: 'chapter_reference', // When revealed
+    revealedInChapter: 'chapter_reference', // When revealed (resolvedInChapter is accepted as an alias)
     relatedCharacters: ['character_id_1', 'character_id_2'],
     relatedEvents: ['event_id_1', 'event_id_2'], // Optional
-    status: 'revealed/twist/major_plot/background' // Current status
+    status: 'revealed/twist/major_plot/background', // Current status
+    // Optional, shown in the Plot tab when present:
+    type: 'Recruitment Mystery',   // Short label
+    significance: 'Why it matters',
+    clues: ['Clue 1', 'Clue 2'],
+    resolution: 'How it resolves'  // Hidden until the reader's chapter reaches revealedInChapter
   }
 ];
 ```
@@ -375,10 +380,57 @@ export const bookMetadata = {
     groupBonuses: { 'Group1': 10 }
   },
   
+  // Optional: catalog flags
+  isDefault: true,   // The book first-time visitors see
+  draft: true,       // Hidden from the book picker unless the URL has ?drafts
+
+  // Optional: time-period filters on the Timeline and Map. An event matches when
+  // the first four-digit year in its `date` is within from..to. Omit for books
+  // without dated events (the filter is then hidden).
+  timePeriods: [
+    { id: 'early', label: '1932-1939', from: 1932, to: 1939 }
+  ],
+
+  // Optional: Map views. Locations whose positions.js `type` is listed in
+  // hideLocationTypes are hidden in that view. With no views, the map fits all
+  // locations and the view picker is hidden.
+  mapViews: [
+    { id: 'uk', label: 'UK', center: [54, -4], zoom: 6, hideLocationTypes: ['german'] }
+  ],
+
+  // Optional: Map marker colours and legend labels per location type; `default`
+  // covers locations without a type
+  locationTypes: {
+    uk: { label: 'UK Locations', color: '#3182ce' },
+    default: { label: 'Locations', color: '#3182ce' }
+  },
+
+  // Optional: wording for the encyclopedia tab built from spycraftEntries
+  // (defaults are generic; Stitched Up calls it "Spycraft")
+  encyclopedia: {
+    tabLabel: 'Spycraft',
+    intro: 'Explore the spy techniques...',
+    searchPlaceholder: 'Search spy techniques...',
+    listTitle: 'Techniques',
+    emptyPrompt: 'Select a spy technique to view details',
+    historicalNote: 'Optional note shown under each entry'
+  },
+
+  // Optional: rename any tab (ids: characters, relationships, timeline, locations,
+  // map, plot, objects, encyclopedia)
+  tabLabels: { plot: 'Story' },
+
   // Footer copyright
   copyright: "Copyright text"
 };
 ```
+
+Character groups drive the Characters filter buttons, Timeline grouping and colours,
+and map colours and legend. Groups that characters use but metadata doesn't list
+still appear, with a colour from a fallback palette.
+
+Tabs only appear when the book has data for them (e.g. no `spycraftEntries` means
+no encyclopedia tab, no `locationPositions` means no Map tab).
 
 ## Adding a New Book
 
@@ -389,6 +441,10 @@ To add a new book to the series (no rebuild needed):
 3. Add data files as needed: `characters.js`, `events.js`, `locations.js`, `objects.js`, `relationships.js` (optional), `positions.js`, `mysteryElements.js`, `chapters.js`, `spycraftEntries.js`, `themeElements.js`.
 4. Recommended: create an `index.js` that exports a `book` object aggregating your data. The loader will also accept a default export. If `index.js` is omitted, the loader will automatically assemble the book object from the individual files.
 5. Refresh the browser. The app rescans on load and the new book appears in the selector.
+6. Run `npm run validate:data -- --book MyBook` to check references, reciprocal relations and chapter ids.
+
+While a book is being built, set `draft: true` in its metadata to keep it out of the
+public book picker; open the app with `?drafts` to see it.
 
 Example `index.js` (recommended):
 
@@ -436,9 +492,9 @@ The app dynamically discovers books and loads data at runtime via `src/data/inde
 
 Available functions:
 - `getAvailableBookKeys(): string[]` — discovered book directory names.
-- `getAvailableBookMetadata(): Record<bookKey, { key, title, author, shortDescription }>` — lightweight selection metadata from each book’s `metadata.js`.
+- `getAvailableBookMetadata(): Record<bookKey, { key, title, author, shortDescription, draft, isDefault }>` — lightweight selection metadata from each book’s `metadata.js` (draft books are left out unless the URL has `?drafts`).
 - `loadBookData(bookKey): Promise<Book>` — loads the full book data. Prefers `export const book = {...}` from `index.js`, then `default`. If no `index.js` exists, it aggregates named exports from per‑type files.
-- `defaultBookKey: string` — preferred default if present (e.g., `MattParry_StitchedUp_v2`), else first discovered.
+- `defaultBookKey: string` — the book whose metadata has `isDefault: true`, else the first alphabetically.
 
 Example:
 ```javascript

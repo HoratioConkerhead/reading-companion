@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { getBookConfig } from '../utils/bookConfig';
 
+// The book's encyclopedia tab ("Spycraft" for Stitched Up); its wording comes from
+// the book's metadata (bookMetadata.encyclopedia)
 const SpycraftEncyclopedia = ({
-  spycraftEntries
+  spycraftEntries,
+  config = getBookConfig().encyclopedia
 }) => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,14 +23,14 @@ const SpycraftEncyclopedia = ({
     <div className="spycraft-encyclopedia">
       <div className="mb-6">
         <p className="text-gray-600 dark:text-gray-400">
-          Explore the spy techniques and methods used in the book and learn about their historical context in WWII espionage.
+          {config.intro}
         </p>
       </div>
       
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search spy techniques..."
+          placeholder={config.searchPlaceholder}
           className="w-full p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -35,7 +39,7 @@ const SpycraftEncyclopedia = ({
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 h-128 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-4 bg-white dark:bg-gray-800">
-          <h3 className="font-bold mb-3 text-gray-900 dark:text-gray-100">Techniques</h3>
+          <h3 className="font-bold mb-3 text-gray-900 dark:text-gray-100">{config.listTitle}</h3>
           <div className="space-y-2">
             {filteredEntries.map(entry => (
               <div 
@@ -96,18 +100,20 @@ const SpycraftEncyclopedia = ({
                 </div>
               </div>
               
-              <div className="mt-6">
-                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100">Historical Note</h3>
-                <div className="p-4 border-l-4 border-yellow-500 dark:border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 mt-2">
-                  <p className="text-sm italic text-gray-700 dark:text-gray-300">
-                    The intelligence tactics portrayed in the book are based on real methods used during WWII. The British intelligence services were particularly adept at counter-espionage and the running of double agents.
-                  </p>
+              {config.historicalNote && (
+                <div className="mt-6">
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100">Historical Note</h3>
+                  <div className="p-4 border-l-4 border-yellow-500 dark:border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 mt-2">
+                    <p className="text-sm italic text-gray-700 dark:text-gray-300">
+                      {config.historicalNote}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="text-center text-gray-500 dark:text-gray-400">
-              <p className="text-lg">Select a spy technique to view details</p>
+              <p className="text-lg">{config.emptyPrompt}</p>
             </div>
           )}
         </div>

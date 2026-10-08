@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
+import { getBookConfig, eventInPeriod } from '../utils/bookConfig';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 // Position data will be passed as props from the parent component
@@ -103,46 +104,35 @@ const InteractiveMap = ({
   eventPositions = {},
   characterPositions = {},
   objectPositions = {},
-  mapBoundaries = null
+  mapBoundaries = null,
+  bookConfig = getBookConfig()
 }) => {
   // State
   const [mapMode, setMapMode] = useState('all'); // 'all', 'locations', 'events', 'characters', 'objects'
-  const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'early', 'mid', 'late'
-  const [mapView, setMapView] = useState('uk'); // 'uk', 'europe'
+  const [timeFilter, setTimeFilter] = useState('all'); // 'all' or a time period id
+  // Map views come from the book (e.g. UK / Europe); without any, one view fitted to the locations
+  const mapViews = bookConfig.mapViews;
+  const [mapView, setMapView] = useState(mapViews[0]?.id || 'all');
+  const currentView = mapViews.find(v => v.id === mapView) || null;
+  const isHiddenInView = (location) => Boolean(currentView?.hideLocationTypes?.includes(location.type));
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState(null);
-  const [mapCenter, setMapCenter] = useState([52.3555, -1.1743]); // Default to UK center
-  const [mapZoom, setMapZoom] = useState(6);
-  const [mapBounds, setMapBounds] = useState(null);
+  const [mapCenter] = useState(mapViews[0]?.center || [52.3555, -1.1743]);
+  const [mapZoom] = useState(mapViews[0]?.zoom || 6);
+  // Without configured views, start fitted to all the book's locations
+  const [mapBounds] = useState(() => {
+    if (mapViews.length > 0) return null;
+    const points = Object.values(locationPositions).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+    if (points.length === 0) return null;
+    const lats = points.map(p => p.lat);
+    const lons = points.map(p => p.lon);
+    return [[Math.min(...lats), Math.min(...lons)], [Math.max(...lats), Math.max(...lons)]];
+  });
   const [showDetailPanel, setShowDetailPanel] = useState(false);
 
   const currentZoom = useRef(mapZoom);
   const mapRef = useRef(null);  
-  // Get map view settings based on selected view
-  useEffect(() => {
-/*
-    if (mapView === 'uk') {
-      setMapCenter([54, -4]);
-      setMapZoom(6);
-      setMapBounds([
-        [49.5, -8.0], // Southwest
-        [59.0, 2.0]   // Northeast
-      ]);
-    } else if (mapView === 'europe') {
-      setMapCenter([50, 4]);
-      setMapZoom(5);
-      setMapBounds([
-        [47.0, -8.0], // Southwest
-        [59.0, 15.0]  // Northeast
-      ]);
-
-      }
-  */
-    }, [mapView]);
-
-
-
   // Get position for any item type
   const getItemPosition = (itemId, itemType) => {
     if (!itemId || !itemType) return null;
@@ -265,13 +255,8 @@ const InteractiveMap = ({
   };
 
   // Filter events based on time period
-  const filteredEvents = eventsData.filter(event => {
-    if (timeFilter === 'all') return true;
-    if (timeFilter === 'early' && event.date.includes('193')) return true;
-    if (timeFilter === 'mid' && event.date.includes('194') && !event.date.includes('1943')) return true;
-    if (timeFilter === 'late' && (event.date.includes('1943') || event.date.includes('1944'))) return true;
-    return false;
-  });
+  const selectedPeriod = bookConfig.timePeriods.find(p => p.id === timeFilter) || null;
+  const filteredEvents = eventsData.filter(event => eventInPeriod(event, selectedPeriod));
 
   // Update selected item data when selection changes
   useEffect(() => {
@@ -538,9 +523,7 @@ const handleItemSelect = (itemId, type) => {
     }
     
     if (latLng && mapRef.current) {
-        mapRef.current.panTo(latLng);
-      } else {
-        setMapCenter(latLng);
+      mapRef.current.panTo(latLng);
     }
   };
   
@@ -571,35 +554,12 @@ const handleItemSelect = (itemId, type) => {
     }
   };
   
-  // Get character group color
+  // Marker colours from the book's configuration
   const getCharacterGroupColor = (characterId) => {
     const character = charactersData.find(c => c.id === characterId);
-    if (!character) return "#718096"; // Default gray
-    
-    // Return color based on character group
-    switch (character.group) {
-      case 'Protagonists':
-        return "#3182ce"; // Blue
-      case 'Fifth Columnists':
-        return "#e53e3e"; // Red
-      case 'German Connection':
-        return "#d69e2e"; // Yellow/gold
-      default:
-        return "#718096"; // Gray
-    }
+    return character ? bookConfig.getGroupColor(character.group) : '#718096';
   };
-  
-  // Get location color
-  const getLocationColor = (locationType) => {
-    switch (locationType) {
-      case 'german':
-        return "#d69e2e"; // Yellow/gold for German
-      case 'irish':
-        return "#38a169"; // Green for Irish
-      default:
-        return "#3182ce"; // Blue for UK
-    }
-  };
+  const getLocationColor = (locationType) => bookConfig.getLocationType(locationType).color;
   
   // Prepare dropdown options
   const getLocationOptions = () => {
@@ -651,10 +611,12 @@ const handleItemSelect = (itemId, type) => {
   const renderLocations = () => {
     if (mapMode !== 'locations' && mapMode !== 'all') return null;
     
+    const visibleLocationIds = new Set(locationsData.map(l => l.id));
     return Object.entries(locationPositions).map(([id, location]) => {
+      // Not yet introduced at the reader's chapter (positions cover the whole book)
+      if (!visibleLocationIds.has(id)) return null;
       // Skip if location doesn't match view mode
-      if ((mapView === 'uk' && location.type === 'german') || 
-          (mapView === 'europe' && location.type === 'irish')) {
+      if (isHiddenInView(location)) {
         return null;
       }
       
@@ -693,8 +655,7 @@ const handleItemSelect = (itemId, type) => {
         if (!location) return null;
         
         // Skip if event location doesn't match view mode
-        if ((mapView === 'uk' && location.type === 'german') || 
-            (mapView === 'europe' && location.type === 'irish')) {
+        if (isHiddenInView(location)) {
           return null;
         }
         
@@ -787,8 +748,7 @@ const handleItemSelect = (itemId, type) => {
       if (!location) return null;
       
       // Skip if character location doesn't match view mode
-      if ((mapView === 'uk' && location.type === 'german') || 
-          (mapView === 'europe' && location.type === 'irish')) {
+      if (isHiddenInView(location)) {
         return null;
       }
       
@@ -832,8 +792,7 @@ const handleItemSelect = (itemId, type) => {
       if (!location) return null;
       
       // Skip if object location doesn't match view mode
-      if ((mapView === 'uk' && location.type === 'german') || 
-          (mapView === 'europe' && location.type === 'irish')) {
+      if (isHiddenInView(location)) {
         return null;
       }
       
@@ -961,12 +920,7 @@ const handleItemSelect = (itemId, type) => {
               )}
               {selectedItemData.group && (
                 <div className="mb-2">
-                  <span className={`inline-block px-2 py-1 rounded text-xs ${
-                    selectedItemData.group === 'Protagonists' ? 'bg-blue-100 text-blue-800' :
-                    selectedItemData.group === 'Fifth Columnists' ? 'bg-red-100 text-red-800' :
-                    selectedItemData.group === 'German Connection' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
+                  <span className={`inline-block px-2 py-1 rounded text-xs ${bookConfig.getGroupStyle(selectedItemData.group)}`}>
                     {selectedItemData.group}
                   </span>
                 </div>
@@ -1072,36 +1026,28 @@ const handleItemSelect = (itemId, type) => {
   return (
     <div className="map-container">
       <div className="mb-4 flex flex-wrap gap-4">
-        {/* View controls */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Map View</label>
-          <div className="flex">
-
-
-            <button 
-              className={`px-3 py-1 text-sm rounded-l ${mapView === 'uk' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => {
-                setMapView('uk');
-                if (mapRef.current) {
-                  mapRef.current.setView([54, -4], 6);
-                }
-              }}
-            >
-              UK
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded-r ${mapView === 'europe' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => {
-                setMapView('europe');
-                if (mapRef.current) {
-                  mapRef.current.setView([50, 4], 5);
-                }
-              }}
-            >
-              Europe
-            </button>
+        {/* View controls (only when the book defines more than one view) */}
+        {mapViews.length > 1 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Map View</label>
+            <div className="flex">
+              {mapViews.map((view, index) => (
+                <button
+                  key={view.id}
+                  className={`px-3 py-1 text-sm ${index === 0 ? 'rounded-l' : ''} ${index === mapViews.length - 1 ? 'rounded-r' : ''} ${mapView === view.id ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  onClick={() => {
+                    setMapView(view.id);
+                    if (mapRef.current && view.center) {
+                      mapRef.current.setView(view.center, view.zoom || mapRef.current.getZoom());
+                    }
+                  }}
+                >
+                  {view.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Display Mode controls */}
         <div>
@@ -1140,36 +1086,23 @@ const handleItemSelect = (itemId, type) => {
           </div>
         </div>
         
-        {/* Time Period filter */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
-          <div className="flex">
-            <button 
-              className={`px-3 py-1 text-sm rounded-l ${timeFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setTimeFilter('all')}
-            >
-              All
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm ${timeFilter === 'early' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setTimeFilter('early')}
-            >
-              1932-1939
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm ${timeFilter === 'mid' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setTimeFilter('mid')}
-            >
-              1940-1942
-            </button>
-            <button 
-              className={`px-3 py-1 text-sm rounded-r ${timeFilter === 'late' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              onClick={() => setTimeFilter('late')}
-            >
-              1943-1944
-            </button>
+        {/* Time Period filter (only for books that define time periods) */}
+        {bookConfig.timePeriods.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period</label>
+            <div className="flex">
+              {[{ id: 'all', label: 'All' }, ...bookConfig.timePeriods].map((period, index, all) => (
+                <button
+                  key={period.id}
+                  className={`px-3 py-1 text-sm ${index === 0 ? 'rounded-l' : ''} ${index === all.length - 1 ? 'rounded-r' : ''} ${timeFilter === period.id ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  onClick={() => setTimeFilter(period.id)}
+                >
+                  {period.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       
       {/* Item selection controls */}
@@ -1282,61 +1215,35 @@ const handleItemSelect = (itemId, type) => {
       <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
         <h3 className="text-sm font-bold mb-2 text-gray-900 dark:text-gray-100">Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2 rounded-full bg-blue-500"></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">UK Locations</span>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2 rounded-full bg-yellow-500"></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">German Locations</span>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2 rounded-full bg-green-500"></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Irish Locations</span>
-          </div>
+          {/* Location types used by this book's locations */}
+          {[...new Set(Object.values(locationPositions).map(p => p.type))].map(type => (
+            <div key={`loc-${type}`} className="flex items-center">
+              <div className="w-4 h-4 mr-2 rounded-full" style={{ backgroundColor: bookConfig.getLocationType(type).color }}></div>
+              <span className="text-xs text-gray-900 dark:text-gray-100">{bookConfig.getLocationType(type).label}</span>
+            </div>
+          ))}
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 bg-red-500"></div>
             <span className="text-xs text-gray-900 dark:text-gray-100">Events</span>
           </div>
           
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2" style={{ 
-              width: 0,
-              height: 0,
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderBottom: '10px solid blue',
-              marginLeft: '4px'
-            }}></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Protagonists</span>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2" style={{ 
-              width: 0,
-              height: 0,
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderBottom: '10px solid #e53e3e',
-              marginLeft: '4px'
-            }}></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Fifth Columnists</span>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="w-4 h-4 mr-2" style={{ 
-              width: 0,
-              height: 0,
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderBottom: '10px solid #d69e2e',
-              marginLeft: '4px'
-            }}></div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">German Connection</span>
-          </div>
+          {/* Character groups that have characters on the map */}
+          {bookConfig.groups
+            .filter(group => Object.keys(characterPositions).some(id => charactersData.find(c => c.id === id)?.group === group.name))
+            .map(group => (
+              <div key={`group-${group.name}`} className="flex items-center">
+                <div className="w-4 h-4 mr-2" style={{ 
+                  width: 0,
+                  height: 0,
+                  borderLeft: '6px solid transparent',
+                  borderRight: '6px solid transparent',
+                  borderBottom: `10px solid ${group.color}`,
+                  marginLeft: '4px'
+                }}></div>
+                <span className="text-xs text-gray-900 dark:text-gray-100">{group.name}</span>
+              </div>
+            ))}
           
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 rounded-full bg-purple-500"></div>
