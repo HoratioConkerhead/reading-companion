@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const CharacterExplorer = ({ 
   onCharacterSelect, 
@@ -6,8 +6,24 @@ const CharacterExplorer = ({
   charactersData,
   relationshipsData,
   groupStyles = {},
-  groups = []
+  groups = [],
+  chapterFilterId = null
 }) => {
+  // With a "show up to" chapter set, hide details that describe the rest of the book
+  const isFiltered = Boolean(chapterFilterId);
+  // Only show a profile for a character the reader has met
+  const profile = selectedCharacter && charactersData.some(c => c.id === selectedCharacter.id)
+    ? charactersData.find(c => c.id === selectedCharacter.id)
+    : null;
+
+  // On phones the profile is below the list: bring it into view when a character is chosen
+  const profileRef = useRef(null);
+  useEffect(() => {
+    if (!profile || !profileRef.current) return;
+    if (typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)').matches) {
+      profileRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const [searchQuery, setSearchQuery] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
@@ -35,35 +51,24 @@ const CharacterExplorer = ({
     return 0;
   });
   
-  // Get character relationships
+  // Relationships up to the reader's chapter (relationshipsData is already filtered),
+  // described from this character's side where their own relations say how
   const getCharacterRelationships = (characterId) => {
-    // Direct relationships from character's own data
-    const directRelations = charactersData.find(c => c.id === characterId)?.relations || [];
-    
-    // Relationships from the relationships data
-    const fromRelations = relationshipsData
-      .filter(rel => rel.from === characterId)
-      .map(rel => ({
-        characterId: rel.to,
-        type: rel.type
-      }));
-      
-    const toRelations = relationshipsData
-      .filter(rel => rel.to === characterId)
-      .map(rel => ({
-        characterId: rel.from,
-        type: rel.type
-      }));
-    
-    // Combine all relationships, removing duplicates
-    const allRelations = [...directRelations, ...fromRelations, ...toRelations];
-    const uniqueRelations = allRelations.filter((rel, index, self) => 
-      index === self.findIndex((r) => r.characterId === rel.characterId)
-    );
-    
-    return uniqueRelations;
+    const ownRelations = charactersData.find(c => c.id === characterId)?.relations || [];
+    const seen = new Set();
+    return relationshipsData
+      .filter(rel => rel.from === characterId || rel.to === characterId)
+      .map(rel => {
+        const otherId = rel.from === characterId ? rel.to : rel.from;
+        const own = ownRelations.find(r => r.characterId === otherId);
+        return { characterId: otherId, type: own?.type || rel.type, description: own?.description };
+      })
+      .filter(rel => (seen.has(rel.characterId) ? false : seen.add(rel.characterId)));
   };
-  
+
+  // development is a list of { phase, description } (or plain strings in older data)
+  const developmentText = (dev) => (typeof dev === 'string' ? dev : [dev.phase, dev.description].filter(Boolean).join(': '));
+
   return (
     <div className="character-explorer">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -152,17 +157,20 @@ const CharacterExplorer = ({
         
         {/* Character Details Panel */}
         <div className="md:col-span-2">
-          {selectedCharacter ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          {profile ? (
+            <div ref={profileRef} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6 scroll-mt-4">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{selectedCharacter.name}</h2>
-                  {selectedCharacter.title && (
-                    <p className="text-lg text-gray-600 dark:text-gray-400">{selectedCharacter.title}</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{profile.name}</h2>
+                  {profile.title && (
+                    <p className="text-lg text-gray-600 dark:text-gray-400">{profile.title}</p>
                   )}
-                  <span className={`inline-block mt-2 px-3 py-1 rounded text-sm ${groupStyles[selectedCharacter.group] || 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
-                    {selectedCharacter.group}
+                  <span className={`inline-block mt-2 px-3 py-1 rounded text-sm ${groupStyles[profile.group] || 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
+                    {profile.group}
                   </span>
+                  {!isFiltered && Array.isArray(profile.aliases) && profile.aliases.length > 0 && (
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Also known as: {profile.aliases.join(', ')}</p>
+                  )}
                 </div>
               </div>
               
@@ -170,25 +178,43 @@ const CharacterExplorer = ({
                 {/* Basic Information */}
                 <div>
                   <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Basic Information</h3>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div>
                       <span className="font-medium text-gray-700 dark:text-gray-300">Role:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-100">{selectedCharacter.role || "Unknown"}</span>
+                      <span className="ml-2 text-gray-900 dark:text-gray-100">{profile.role || "Unknown"}</span>
                     </div>
-                    {selectedCharacter.description && (
-                      <div>
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Description:</span>
-                        <p className="mt-1 text-gray-900 dark:text-gray-100">{selectedCharacter.description}</p>
+                    {[['Description', profile.description], ['Background', profile.background], ['Personality', profile.personality]]
+                      .filter(([, text]) => typeof text === 'string' && text.trim())
+                      .map(([label, text]) => (
+                        <div key={label}>
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{label}:</span>
+                          <p className="mt-1 text-gray-900 dark:text-gray-100">{text}</p>
+                        </div>
+                      ))}
+                    {Array.isArray(profile.traits) && profile.traits.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {profile.traits.map(trait => (
+                          <span key={trait} className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">{trait}</span>
+                        ))}
                       </div>
                     )}
-                    {selectedCharacter.development && selectedCharacter.development.length > 0 && (
+                    {Array.isArray(profile.development) && profile.development.length > 0 && (
                       <div>
                         <span className="font-medium text-gray-700 dark:text-gray-300">Character Development:</span>
                         <ul className="mt-1 list-disc list-inside text-gray-900 dark:text-gray-100">
-                          {selectedCharacter.development.map((dev, index) => (
-                            <li key={index}>{dev}</li>
+                          {(isFiltered ? profile.development.slice(0, 1) : profile.development).map((dev, index) => (
+                            <li key={index}>{developmentText(dev)}</li>
                           ))}
                         </ul>
+                        {isFiltered && profile.development.length > 1 && (
+                          <p className="mt-1 text-sm italic text-gray-500 dark:text-gray-400">Later development is hidden while you're reading up to a chapter.</p>
+                        )}
+                      </div>
+                    )}
+                    {!isFiltered && typeof profile.fate === 'string' && profile.fate.trim() && (
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Fate:</span>
+                        <p className="mt-1 text-gray-900 dark:text-gray-100">{profile.fate}</p>
                       </div>
                     )}
                   </div>
@@ -198,22 +224,29 @@ const CharacterExplorer = ({
                 <div>
                   <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Relationships</h3>
                   {(() => {
-                    const relationships = getCharacterRelationships(selectedCharacter.id);
+                    const relationships = getCharacterRelationships(profile.id);
                     if (relationships.length === 0) {
                       return <p className="text-gray-500 dark:text-gray-400">No relationships found.</p>;
                     }
                     
                     return (
                       <div className="space-y-2">
-                        {relationships.map((rel, index) => {
+                        {relationships.map((rel) => {
                           const relatedCharacter = charactersData.find(c => c.id === rel.characterId);
                           if (!relatedCharacter) return null;
                           
                           return (
-                            <div key={index} className="p-2 border border-gray-200 dark:border-gray-700 rounded">
+                            <button
+                              key={rel.characterId}
+                              className="w-full text-left p-2 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                              onClick={() => onCharacterSelect(relatedCharacter)}
+                            >
                               <div className="font-medium text-gray-900 dark:text-gray-100">{relatedCharacter.name}</div>
                               <div className="text-sm text-gray-600 dark:text-gray-400">{rel.type}</div>
-                            </div>
+                              {rel.description && (
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{rel.description}</div>
+                              )}
+                            </button>
                           );
                         })}
                       </div>

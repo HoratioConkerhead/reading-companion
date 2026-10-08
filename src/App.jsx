@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import 'leaflet/dist/leaflet.css';
@@ -21,9 +21,26 @@ import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
 import { getBookConfig } from './utils/bookConfig';
 import BookSelector from './components/BookSelector';
+import GlobalSearch from './components/GlobalSearch';
+
+// The URL hash records the view so it can be shared or bookmarked, and so the browser's
+// Back button steps through tabs: #book=<bookKey>&tab=<tabId>&upto=<chapterId>
+const readViewFromHash = () => {
+  if (typeof window === 'undefined') return {};
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  return { book: params.get('book'), tab: params.get('tab'), upto: params.get('upto') };
+};
+
+const viewToHash = ({ book, tab, upto }) => {
+  const params = new URLSearchParams();
+  if (book) params.set('book', book);
+  if (tab) params.set('tab', tab);
+  if (upto) params.set('upto', upto);
+  return `#${params.toString()}`;
+};
 
 const InteractiveReadingCompanion = () => {
-  const [activeTabId, setActiveTabId] = useState('relationships');
+  const [activeTabId, setActiveTabId] = useState(() => readViewFromHash().tab || 'relationships');
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -32,8 +49,11 @@ const InteractiveReadingCompanion = () => {
   const [firstVisit, setFirstVisit] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const [bookSelectorOpen, setBookSelectorOpen] = useState(false);
-  // Start with the saved book (if still available) so only one book is loaded on startup
+  // Start with the book in the URL, else the saved book (if still available), so only
+  // one book is loaded on startup
   const [currentBookKey, setCurrentBookKey] = useState(() => {
+    const fromHash = readViewFromHash().book;
+    if (fromHash && getAvailableBookMetadata()[fromHash]) return fromHash;
     try {
       const savedBook = localStorage.getItem('selectedBook');
       if (savedBook && getAvailableBookMetadata()[savedBook]) return savedBook;
@@ -46,6 +66,10 @@ const InteractiveReadingCompanion = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [chapterFilterId, setChapterFilterId] = useState(null);
   const [isChapterPickerOpen, setIsChapterPickerOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedEncyclopediaId, setSelectedEncyclopediaId] = useState(null);
+  // Chapter filter to apply once the next book has loaded (from the URL)
+  const pendingChapterRef = useRef(readViewFromHash().upto);
   
   // UI configuration for the loaded book (groups, time periods, tab labels...)
   const bookConfig = useMemo(() => (bookData ? getBookConfig(bookData.bookMetadata, bookData) : null), [bookData]);
@@ -65,8 +89,11 @@ const InteractiveReadingCompanion = () => {
         setBookData(data);
         // Update page title from book metadata
         document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
-        // Do not restore any previously saved chapter filter
-        setChapterFilterId(null);
+        // Chapter filter: from the URL if it named one for this book, else none
+        // (it is not otherwise saved between visits)
+        const pendingChapter = pendingChapterRef.current;
+        pendingChapterRef.current = null;
+        setChapterFilterId(pendingChapter && (data.chapters || []).some(ch => ch.id === pendingChapter) ? pendingChapter : null);
       } catch (error) {
         if (superseded) return;
         console.error('Failed to load book data:', error);
@@ -82,6 +109,43 @@ const InteractiveReadingCompanion = () => {
     loadBook();
     return () => {
       superseded = true;
+    };
+  }, [currentBookKey]);
+
+  // Keep the URL in step with the view: a new history entry per tab, so Back returns to
+  // the previous tab; book and chapter changes replace the current entry
+  const lastHashTabRef = useRef(activeTabId);
+  useEffect(() => {
+    if (isLoading) return;
+    const hash = viewToHash({ book: currentBookKey, tab: activeTabId, upto: chapterFilterId });
+    if (window.location.hash === hash) return;
+    const url = `${window.location.pathname}${window.location.search}${hash}`;
+    if (lastHashTabRef.current !== activeTabId && window.location.hash) {
+      window.history.pushState(null, '', url);
+    } else {
+      window.history.replaceState(null, '', url);
+    }
+    lastHashTabRef.current = activeTabId;
+  }, [currentBookKey, activeTabId, chapterFilterId, isLoading]);
+
+  // Back/Forward (or a pasted link): apply the view from the URL
+  useEffect(() => {
+    const applyHash = () => {
+      const { book, tab, upto } = readViewFromHash();
+      lastHashTabRef.current = tab || 'relationships';
+      setActiveTabId(tab || 'relationships');
+      if (book && book !== currentBookKey && getAvailableBookMetadata()[book]) {
+        pendingChapterRef.current = upto;
+        setCurrentBookKey(book);
+      } else {
+        setChapterFilterId(upto || null);
+      }
+    };
+    window.addEventListener('popstate', applyHash);
+    window.addEventListener('hashchange', applyHash);
+    return () => {
+      window.removeEventListener('popstate', applyHash);
+      window.removeEventListener('hashchange', applyHash);
     };
   }, [currentBookKey]);
 
@@ -152,6 +216,24 @@ const InteractiveReadingCompanion = () => {
     setSelectedObject(object);
     setActiveTabId('objects');
   };
+
+  const handleEncyclopediaSelect = (entry) => {
+    setSelectedEncyclopediaId(entry.id);
+    setActiveTabId('encyclopedia');
+  };
+
+  // Search shortcuts: "/" (when not typing) or Ctrl/Cmd+K
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
+      if ((e.key === '/' && !typing) || (e.key.toLowerCase() === 'k' && (e.ctrlKey || e.metaKey))) {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
   
   // Start app tour
   const startTour = () => {
@@ -255,6 +337,7 @@ const InteractiveReadingCompanion = () => {
             relationshipsData={filteredRelationships}
             groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
             groups={bookConfig.groups}
+            chapterFilterId={chapterFilterId}
           />
         )
       },
@@ -370,6 +453,7 @@ const InteractiveReadingCompanion = () => {
           <SpycraftEncyclopedia 
             spycraftEntries={filteredEncyclopedia}
             config={bookConfig.encyclopedia}
+            selectedEntryId={selectedEncyclopediaId}
           />
         )
       }
@@ -386,6 +470,16 @@ const InteractiveReadingCompanion = () => {
             <p className="text-xs sm:text-sm mt-1">{metadata.appSubtitle}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              className="p-2 rounded text-white bg-gray-600 hover:bg-gray-700"
+              onClick={() => setIsSearchOpen(true)}
+              title="Search (press / or Ctrl+K)"
+              aria-label="Search the book"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+              </svg>
+            </button>
             <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                          <button 
                className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white text-sm"
@@ -560,6 +654,24 @@ const InteractiveReadingCompanion = () => {
         tabs={tabs.map(tab => ({ id: tab.id, label: bookConfig.tabLabels[tab.id] }))}
         onTabChange={handleTabChangeFromTour}
         bookMetadata={metadata}
+      />
+
+      {/* Search across the (chapter-filtered) book */}
+      <GlobalSearch
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        darkMode={darkMode}
+        characters={filteredCharacters}
+        events={filteredEvents}
+        locations={filteredLocations}
+        objects={filteredObjects}
+        encyclopediaEntries={filteredEncyclopedia}
+        encyclopediaLabel={bookConfig.tabLabels.encyclopedia}
+        onSelectCharacter={handleCharacterSelect}
+        onSelectEvent={handleEventSelect}
+        onSelectLocation={handleLocationSelect}
+        onSelectObject={handleObjectSelect}
+        onSelectEncyclopediaEntry={handleEncyclopediaSelect}
       />
 
       {/* Book Selector Component */}

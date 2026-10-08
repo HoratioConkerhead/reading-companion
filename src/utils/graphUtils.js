@@ -123,3 +123,47 @@ export const wrapText = (text, maxWidth, fontSize, getTextWidth) => {
   if (currentLine) lines.push(currentLine);
   return lines;
 };
+
+/**
+ * Shortest chain of relationships between two characters (breadth-first search,
+ * treating relationships as undirected).
+ * @param {Array} relationships - Array of { from, to }
+ * @param {string} fromId - Start character id
+ * @param {string} toId - End character id
+ * @returns {Array<string>|null} Character ids from start to end, or null if unconnected
+ */
+export const findShortestPath = (relationships, fromId, toId) => {
+  if (!fromId || !toId) return null;
+  if (fromId === toId) return [fromId];
+
+  const adjacency = new Map();
+  const link = (a, b) => {
+    if (!adjacency.has(a)) adjacency.set(a, []);
+    adjacency.get(a).push(b);
+  };
+  relationships.forEach(({ from, to }) => {
+    link(from, to);
+    link(to, from);
+  });
+
+  const previous = new Map([[fromId, null]]);
+  const queue = [fromId];
+  while (queue.length > 0) {
+    const current = queue.shift();
+    for (const next of adjacency.get(current) || []) {
+      if (previous.has(next)) continue;
+      previous.set(next, current);
+      if (next === toId) {
+        const path = [toId];
+        let step = current;
+        while (step !== null) {
+          path.unshift(step);
+          step = previous.get(step);
+        }
+        return path;
+      }
+      queue.push(next);
+    }
+  }
+  return null;
+};

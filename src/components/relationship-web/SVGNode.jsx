@@ -20,6 +20,7 @@ const SVGNode = ({
   node,
   darkMode,
   hoveredNode,
+  dimmed = false,
   pinnedNodeIds,
   autoPinnedNodeIds,
   showNumber,
@@ -43,7 +44,7 @@ const SVGNode = ({
 
   return (
     // data-node-id lets the graph's pointer handler find which node was pressed
-    <g data-node-id={node.id}>
+    <g data-node-id={node.id} opacity={dimmed ? 0.3 : 1}>
       <circle
         cx={node.position.x}
         cy={node.position.y}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import PageTutorial from './PageTutorial';
 import { toRelationshipCategory } from '../utils/relationships';
-import { findConnectedComponents, findLargestConnectedComponent, createNode, createEdge } from '../utils/graphUtils';
+import { findConnectedComponents, findLargestConnectedComponent, createNode, createEdge, findShortestPath } from '../utils/graphUtils';
 import { useForceSimulation } from '../hooks/useForceSimulation';
 import { useSizeAnimation } from '../hooks/useSizeAnimation';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -42,6 +42,12 @@ const RelationshipWeb = ({
   // Node tapped/clicked last: keeps its labels visible on touch screens, where there is no hover
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  // "Find link": the shortest chain of relationships between two characters
+  const [isConnectionOpen, setIsConnectionOpen] = useState(false);
+  const [connectionFrom, setConnectionFrom] = useState('');
+  const [connectionTo, setConnectionTo] = useState('');
+  const [connectionPath, setConnectionPath] = useState(null); // array of character ids, or null
+  const [connectionMessage, setConnectionMessage] = useState('');
   const isMobile = useMediaQuery('(max-width: 767px)');
   const isMobileRef = useRef(isMobile);
   isMobileRef.current = isMobile;
@@ -352,6 +358,10 @@ const RelationshipWeb = ({
     [
       'Click "Show All" to reveal all characters up to the selected chapter.',
       'Then "Fit to View" to frame everything.'
+    ],
+    [
+      '"Find Link" shows the shortest chain of relationships between two characters.',
+      'Missing characters on the chain are added, and the rest of the graph fades back.'
     ],
     [
       '"Pin Mode" pins or unpins a single node.',
@@ -1137,6 +1147,87 @@ const RelationshipWeb = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentBookKey, charactersData]);
 
+  // A highlighted connection is only valid for the relationships it was found in
+  useEffect(() => {
+    setConnectionPath(null);
+    setConnectionMessage('');
+  }, [relationshipsData, currentBookKey]);
+
+  const openConnectionFinder = () => {
+    setActiveMode('none');
+    setIsConnectionOpen(true);
+    if (!connectionFrom) setConnectionFrom(selectedNodeId || focusedCharacter || '');
+  };
+
+  const closeConnectionFinder = () => {
+    setIsConnectionOpen(false);
+    setConnectionPath(null);
+    setConnectionMessage('');
+  };
+
+  // Find the shortest chain between the chosen characters, add any of its characters
+  // missing from the graph, and frame it
+  const showConnection = () => {
+    const nameOf = (id) => (charactersData || []).find(c => c.id === id)?.name || id;
+    if (!connectionFrom || !connectionTo || connectionFrom === connectionTo) {
+      setConnectionPath(null);
+      setConnectionMessage('Choose two different characters.');
+      return;
+    }
+    const path = findShortestPath(relationshipsData, connectionFrom, connectionTo);
+    if (!path) {
+      setConnectionPath(null);
+      setConnectionMessage(`${nameOf(connectionFrom)} and ${nameOf(connectionTo)} aren't connected${chapterFilterId ? ' up to this chapter' : ''}.`);
+      return;
+    }
+
+    const byId = new Map(nodesRef.current.map(n => [n.id, n]));
+    const added = [];
+    let anchor = byId.get(path.find(id => byId.has(id))) || null;
+    path.forEach((id, index) => {
+      if (byId.has(id)) {
+        anchor = byId.get(id);
+        return;
+      }
+      const character = (charactersData || []).find(c => c.id === id);
+      if (!character) return;
+      const base = anchor ? anchor.position : { x: 400, y: 300 };
+      const angle = index * 1.3;
+      const importance = calculateCharacterImportance(character);
+      const node = createNode(character, { x: base.x + 160 * Math.cos(angle), y: base.y + 160 * Math.sin(angle) }, {
+        isFocused: false,
+        relationshipCount: getRelationshipCount(id),
+        importance,
+        size: scaleSizeByImportance ? getNodeSize(importance, false) : 30,
+        getGroupColor
+      });
+      added.push(node);
+      byId.set(id, node);
+      anchor = node;
+    });
+    const nextNodes = [...nodesRef.current, ...added];
+    if (added.length > 0) {
+      setNodes(nextNodes);
+      // Show every relationship among the visible characters, as expanding a node does
+      setEdges(currentEdges => {
+        const visible = new Set(nextNodes.map(n => n.id));
+        const existingPairs = new Set(currentEdges.map(e => `${e.from}|${e.to}`));
+        const newEdges = relationshipsData
+          .filter(rel => visible.has(rel.from) && visible.has(rel.to) && !existingPairs.has(`${rel.from}|${rel.to}`))
+          .map((rel, index) => createEdge(rel, `${rel.from}-${rel.to}-${Date.now()}-${index}`, getRelationshipColor, formatRelationshipType));
+        return newEdges.length > 0 ? [...currentEdges, ...newEdges] : currentEdges;
+      });
+    }
+    setConnectionPath(path);
+    setConnectionMessage('');
+    setSelectedNodeId(null);
+    const pathSet = new Set(path);
+    fitNodesInView(nextNodes.filter(n => pathSet.has(n.id)), 1.5);
+  };
+
+  // The relationship between two neighbouring characters in a path (either direction)
+  const relationBetween = (a, b) => relationshipsData.find(rel => (rel.from === a && rel.to === b) || (rel.from === b && rel.to === a));
+
   // Drop the selection when its node leaves the graph (removed, chapter filter, refocus)
   useEffect(() => {
     if (selectedNodeId && !nodeById.has(selectedNodeId)) setSelectedNodeId(null);
@@ -1188,6 +1279,15 @@ const RelationshipWeb = ({
   }, [isMobile]);
 
   const highlightedNodeId = hoveredNode ?? selectedNodeId;
+  // With a connection shown, its characters and relationships stand out and the rest fade
+  const pathNodeIds = connectionPath ? new Set(connectionPath) : null;
+  const pathEdgeKeys = connectionPath
+    ? new Set(connectionPath.slice(1).map((id, i) => [connectionPath[i], id].sort().join('|')))
+    : null;
+  const edgeEmphasis = (edge) => {
+    if (!pathEdgeKeys) return undefined;
+    return pathEdgeKeys.has([edge.from, edge.to].sort().join('|')) ? 'highlight' : 'dim';
+  };
   const selectedNode = selectedNodeId ? nodeById.get(selectedNodeId) : null;
 
   const toolbarButtonClass = 'flex-shrink-0 px-2 py-2 text-sm md:px-4 md:text-base text-white rounded transition-colors';
@@ -1296,6 +1396,15 @@ const RelationshipWeb = ({
           </button>
 
           {/* Removed Pin Isolated toggle */}
+
+          <button
+            className={`${toolbarButtonClass} ${toggleButtonColor(isConnectionOpen)}`}
+            onClick={() => (isConnectionOpen ? closeConnectionFinder() : openConnectionFinder())}
+            title="Find the chain of relationships linking two characters"
+            aria-pressed={isConnectionOpen}
+          >
+            <span className={toolbarLabelClass}>{`Find\nLink`}</span>
+          </button>
 
           <button
             className={`${toolbarButtonClass} ${toggleButtonColor(isRemoveMode)}`}
@@ -1445,6 +1554,87 @@ const RelationshipWeb = ({
               </button>
             </div>
 
+            {/* Connection finder: on phones, a found link collapses to one line so the graph stays visible */}
+            {isConnectionOpen && isMobile && connectionPath && (
+              <div
+                data-graph-overlay
+                className="absolute top-3 left-3 right-16 z-10 px-3 py-2 rounded-lg shadow-lg border text-sm bg-white/95 dark:bg-gray-900/95 border-gray-200 dark:border-gray-600 flex items-start gap-2"
+              >
+                <span className="flex-1 min-w-0 text-gray-800 dark:text-gray-200">
+                  {connectionPath.map(id => (charactersData || []).find(c => c.id === id)?.name || id).join(' → ')}
+                </span>
+                <button
+                  className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 flex-shrink-0"
+                  onClick={() => setConnectionPath(null)}
+                >
+                  Change
+                </button>
+              </div>
+            )}
+            {isConnectionOpen && !(isMobile && connectionPath) && (
+              <div
+                data-graph-overlay
+                className="absolute top-3 left-3 right-16 md:right-auto md:w-96 z-10 p-3 rounded-lg shadow-lg border text-sm bg-white/95 dark:bg-gray-900/95 border-gray-200 dark:border-gray-600"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">Find the link between</span>
+                  <button
+                    className="w-8 h-8 -mt-1 -mr-1 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={closeConnectionFinder}
+                    aria-label="Close link finder"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[[connectionFrom, setConnectionFrom, 'First character'], [connectionTo, setConnectionTo, 'Second character']].map(([value, setValue, label]) => (
+                    <select
+                      key={label}
+                      aria-label={label}
+                      className="w-full min-w-0 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    >
+                      <option value="">{label}…</option>
+                      {[...(charactersData || [])].sort((a, b) => a.name.localeCompare(b.name)).map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  ))}
+                </div>
+                <button
+                  className="mt-2 px-3 py-1.5 rounded bg-blue-500 hover:bg-blue-600 text-white"
+                  onClick={showConnection}
+                >
+                  Show link
+                </button>
+                {connectionMessage && (
+                  <p className="mt-2 text-gray-600 dark:text-gray-400">{connectionMessage}</p>
+                )}
+                {connectionPath && (
+                  <ol className="mt-2 space-y-1 text-gray-800 dark:text-gray-200">
+                    {connectionPath.map((id, index) => {
+                      const character = (charactersData || []).find(c => c.id === id);
+                      const rel = index > 0 ? relationBetween(connectionPath[index - 1], id) : null;
+                      return (
+                        <li key={id}>
+                          {rel && (
+                            <span className="block pl-3 text-xs text-gray-500 dark:text-gray-400">↓ {formatRelationshipType(rel.type)}</span>
+                          )}
+                          <span className="font-medium">{character?.name || id}</span>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                )}
+                {connectionPath && (
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    {connectionPath.length - 1} step{connectionPath.length === 2 ? '' : 's'}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Pin / remove mode hint (modes apply to the next character clicked) */}
             {activeMode !== 'none' && (
               <div
@@ -1543,6 +1733,7 @@ const RelationshipWeb = ({
                     targetNode={nodeById.get(edge.to)}
                     showRelationship={showRelationship}
                     hoveredNode={highlightedNodeId}
+                    emphasis={edgeEmphasis(edge)}
                     darkMode={darkMode}
                     getTextWidth={getTextWidth}
                     getTextColor={getTextColor}
@@ -1556,6 +1747,7 @@ const RelationshipWeb = ({
                     node={node}
                     darkMode={darkMode}
                     hoveredNode={highlightedNodeId}
+                    dimmed={Boolean(pathNodeIds) && !pathNodeIds.has(node.id)}
                     pinnedNodeIds={pinnedNodeIds}
                     autoPinnedNodeIds={autoPinnedNodeIds}
                     showNumber={showNumber}

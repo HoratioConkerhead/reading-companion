@@ -1,4 +1,4 @@
-import { findConnectedComponents, findLargestConnectedComponent, createEdge, wrapText } from './graphUtils';
+import { findConnectedComponents, findLargestConnectedComponent, createEdge, wrapText, findShortestPath } from './graphUtils';
 
 const nodes = ['a', 'b', 'c', 'd', 'e'].map(id => ({ id }));
 const edges = [
@@ -41,5 +41,30 @@ describe('wrapText', () => {
 
   it('keeps a single over-long word on its own line', () => {
     expect(wrapText('Supercalifragilistic', 50, 12, width)).toEqual(['Supercalifragilistic']);
+  });
+});
+
+describe('findShortestPath', () => {
+  const rels = [
+    { from: 'a', to: 'b' },
+    { from: 'b', to: 'c' },
+    { from: 'c', to: 'd' },
+    { from: 'a', to: 'x' },
+    { from: 'x', to: 'd' },
+    { from: 'lonely', to: 'pair' }
+  ];
+
+  it('finds the shortest chain, following relationships in either direction', () => {
+    expect(findShortestPath(rels, 'a', 'd')).toEqual(['a', 'x', 'd']);
+    expect(findShortestPath(rels, 'd', 'b')).toEqual(['d', 'c', 'b']);
+  });
+
+  it('returns a single-step path for the same character', () => {
+    expect(findShortestPath(rels, 'a', 'a')).toEqual(['a']);
+  });
+
+  it('returns null when the characters are not connected', () => {
+    expect(findShortestPath(rels, 'a', 'pair')).toBeNull();
+    expect(findShortestPath(rels, 'a', null)).toBeNull();
   });
 });
