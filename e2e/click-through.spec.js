@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 
 // Click every button and clickable item on every tab of every book and fail on any
 // uncaught error. This catches crashes from data shapes a component doesn't expect.
-const BOOKS = ['MattParry_StitchedUp_v2', 'MattParry_StitchedUp_v1', 'RobertLouisStevenson_JekyllAndHyde'];
+const BOOKS = ['MattParry_StitchedUp_v2', 'MattParry_StitchedUp_v1', 'RobertLouisStevenson_JekyllAndHyde', 'RichardColes_MurderBeforeEvensong'];
+// Draft books are only listed with ?drafts
+const bookUrl = (book, rest = '') => `./?drafts#book=${book}${rest}`;
 const TABS = ['characters', 'relationships', 'timeline', 'locations', 'map', 'plot', 'objects', 'encyclopedia'];
 const SKIP = /^(Close|Back to Timeline|View Full Details|Show All|Remove Mode|Pin Mode|Auto\s*arrange)$/;
 
@@ -18,7 +20,7 @@ for (const book of BOOKS) {
     page.on('pageerror', error => errors.push(error.message));
 
     for (const tab of TABS) {
-      await page.goto(`./#book=${book}&tab=${tab}`);
+      await page.goto(bookUrl(book, `&tab=${tab}`));
       await expect(page.getByRole('tablist')).toBeVisible();
       if (!(await page.$(`[data-tab-id="${tab}"]`))) continue; // the book has no data for this tab
 
@@ -47,10 +49,39 @@ for (const book of BOOKS) {
 
 test('pages fit the screen width on phones', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone only');
-  for (const tab of TABS) {
-    await page.goto(`./#book=MattParry_StitchedUp_v2&tab=${tab}`);
-    await expect(page.getByRole('tablist')).toBeVisible();
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(overflow, `horizontal overflow on ${tab}`).toBeLessThanOrEqual(0);
+  for (const book of ['MattParry_StitchedUp_v2', 'RichardColes_MurderBeforeEvensong']) {
+    for (const tab of TABS) {
+      await page.goto(bookUrl(book, `&tab=${tab}`));
+      await expect(page.getByRole('tablist')).toBeVisible();
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow, `horizontal overflow on ${book} ${tab}`).toBeLessThanOrEqual(0);
+    }
   }
+});
+
+// A mystery starts at Chapter 1 and keeps later facts hidden until the reader gets there
+test('a mystery reveals its solution only at the chapter that reveals it', async ({ page }) => {
+  const book = 'RichardColes_MurderBeforeEvensong';
+  await page.goto(bookUrl(book, '&tab=characters'));
+  await expect(page.getByText('Show up to Chapter 1', { exact: true }).filter({ visible: true })).toBeVisible();
+
+  const kathProfile = async (chapter) => {
+    await page.goto(bookUrl(book, `&tab=characters&upto=${chapter}`));
+    await page.locator('.react-tabs__tab-panel--selected').getByText('Kath Sharman', { exact: true }).first().click();
+    return page.locator('.react-tabs__tab-panel--selected').innerText();
+  };
+  const early = await kathProfile('chapter_20');
+  expect(early).not.toMatch(/killer|murdered|lover/i);
+  expect(early).toContain('Later development is hidden');
+  const late = await kathProfile('chapter_37');
+  expect(late).toMatch(/killer of Anthony, Ned and Stella/);
+
+  const backPew = async (chapter) => {
+    await page.goto(bookUrl(book, `&tab=encyclopedia&upto=${chapter}`));
+    await page.getByText('The back pew', { exact: true }).first().click();
+    return page.locator('.react-tabs__tab-panel--selected').innerText();
+  };
+  expect(await backPew('chapter_09')).toContain('Revealed in Chapter 37');
+  expect(await backPew('chapter_09')).not.toContain('Dora keeps vigil');
+  expect(await backPew('chapter_37')).toContain('weep, unseen');
 });
