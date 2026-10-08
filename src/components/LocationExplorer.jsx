@@ -121,14 +121,11 @@ const LocationExplorer = ({
                 </div>
               </div>
               
-              <div className="border border-gray-200 dark:border-gray-700 rounded mb-4 overflow-hidden">
-                <div className="h-64 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                  <p className="text-gray-500 dark:text-gray-400 p-4 text-center">
-                    Location image would be displayed here in a full implementation. This would show a 
-                    period-appropriate illustration or photo of {selectedLocation.name}.
-                  </p>
+              {selectedLocation.image && (
+                <div className="border border-gray-200 dark:border-gray-700 rounded mb-4 overflow-hidden">
+                  <img src={selectedLocation.image} alt={selectedLocation.name} className="w-full max-h-64 object-cover" />
                 </div>
-              </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>

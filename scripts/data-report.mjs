@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 /**
  * Data review report for a book: a Markdown checklist of gaps, broken references,
  * one-sided relationships, chapter-order problems and (optionally) a cross-check of
