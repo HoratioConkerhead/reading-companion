@@ -32,3 +32,12 @@ export const visibleItems = (items, chapters = [], chapterFilterId = null) => {
   if (!Array.isArray(items)) return [];
   return items.filter(item => typeof item === 'string' || isChapterReached(item?.chapter, chapters, chapterFilterId));
 };
+
+/**
+ * Characters known by a cover name at first: `coverName` is shown in place of `name`
+ * (and `title` is hidden) until the reader reaches `nameRevealedInChapter`.
+ */
+export const applyCoverNames = (characters = [], chapters = [], chapterFilterId = null) => characters.map(character => {
+  if (!character.coverName || isChapterReached(character.nameRevealedInChapter, chapters, chapterFilterId)) return character;
+  return { ...character, name: character.coverName, title: undefined };
+});

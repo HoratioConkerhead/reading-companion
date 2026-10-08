@@ -21,6 +21,7 @@ import { getAvailableBookMetadata, loadBookData, defaultBookKey } from './data';
 import { filterByChapter, filterRelationshipsByChapter, filterEventsByChapter } from './utils/chapterFilter';
 import { getBookConfig } from './utils/bookConfig';
 import { loadReadingPlace, saveReadingPlace, initialChapterFilter } from './utils/readingPlace';
+import { applyCoverNames } from './utils/chapterItems';
 import BookSelector from './components/BookSelector';
 import GlobalSearch from './components/GlobalSearch';
 
@@ -326,7 +327,12 @@ const InteractiveReadingCompanion = () => {
     // Build filtered datasets based on global chapterFilterId (per-book)
     const chapters = bookData.chapters || [];
 
-    const filteredCharacters = filterByChapter(bookData.characters, chapters, chapterFilterId, c => c.introducedInChapter);
+    // Characters first met under a cover name keep it until the chapter that reveals them
+    const filteredCharacters = applyCoverNames(
+      filterByChapter(bookData.characters, chapters, chapterFilterId, c => c.introducedInChapter),
+      chapters,
+      chapterFilterId
+    );
     const filteredRelationships = filterRelationshipsByChapter(bookData.relationships, bookData.characters, chapters, chapterFilterId);
     const filteredEvents = filterEventsByChapter(bookData.events, chapters, chapterFilterId);
     const filteredLocations = filterByChapter(bookData.locations, chapters, chapterFilterId, l => l.introducedInChapter);
