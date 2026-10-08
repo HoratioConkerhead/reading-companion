@@ -24,7 +24,7 @@ for (const book of BOOKS) {
       await expect(page.getByRole('tablist')).toBeVisible();
       if (!(await page.$(`[data-tab-id="${tab}"]`))) continue; // the book has no data for this tab
 
-      const views = tab === 'plot' ? ['Chapter Progression', 'Mystery Elements', 'Theme Analysis'] : [null];
+      const views = tab === 'plot' ? ['Story So Far', 'Chapter Progression', 'Mystery Elements', 'Theme Analysis'] : [null];
       for (const view of views) {
         if (view) await page.getByRole('button', { name: view }).click();
         for (let i = 0; i < 40; i += 1) {
