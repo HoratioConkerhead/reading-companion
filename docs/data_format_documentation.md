@@ -85,7 +85,12 @@ export const characters = [
         chapter: 'chapter_id'     // Optional: shown from this chapter (see Chapter-Tagged List Items)
       }
     ],
-    aliases: ['Alias1', 'Alias2'], // Optional: Alternate names or disguises
+    aliases: ['Alias1', 'Alias2'], // Optional: Alternate names or disguises (hidden while a chapter is chosen)
+    coverName: 'Mr Newton',       // Optional: shown instead of name (title hidden) until...
+    nameRevealedInChapter: 'chapter_id', // ...the reader reaches this chapter
+    reveals: [                    // Optional: fields that change once a chapter reveals them
+      { chapter: 'chapter_id', role: 'What they turn out to be', group: 'Group', background: '...' }
+    ],
     fate: 'Character's ultimate fate', // Optional: What happens to character by the end
     key_scenes: ['scene_id_1', 'scene_id_2'], // Optional: Important scenes for this character
     introducedInChapter: 'chapter_id' // Required: chapter where character is first introduced

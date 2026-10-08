@@ -1,0 +1,3319 @@
+// Stitched Up v4: events. Generated from chapter-by-chapter notes on the text;
+// every item is tied to the chapter in which the reader learns it.
+export const events = [
+  {
+    id: 'uboat_lands_schnitter',
+    title: 'U-boat lands an agent on St Mary\'s',
+    date: 'Night, summer 1943',
+    description: 'A German Type VIIC U-boat from St Nazaire glides on the surface into a sound off St Mary\'s, where five crewmen launch a black inflatable. A sailor rows a lone passenger carrying two suitcases to the shingle, and the passenger, Helmut Schnitter of Hamburg, waves him off and waits behind the sea wall for daylight.',
+    location: 'st_marys_scilly',
+    characters: [{ characterId: 'helmut_schnitter', role: 'agent landed by U-boat' }],
+    significance: 'Opens the novel ten years after its main story begins, with a German agent secretly entering Britain.',
+    chapter: 'preface',
+    keyActions: [
+      'U-boat surfaces in an undefended sound',
+      'Crew lower a black inflatable',
+      'Schnitter is rowed ashore with two suitcases',
+      'He shelters by the sea wall until morning'
+    ]
+  },
+  {
+    id: 'schnitter_heads_for_hugh_town',
+    title: 'Schnitter heads for the Penzance ferry',
+    date: 'Morning, summer 1943',
+    description: 'After a fitful sleep Schnitter walks past the Duchy of Cornwall office and Star Castle into Hugh Town, intending to pass as a businessman, buy a ticket and catch the 16.30 Scillonian to Penzance. The ferry needs nothing more than an identity card, but unknown to him MI5 was warned in March by a source deep in the Abwehr that agents were being sent to watch for signs of an Allied invasion.',
+    location: 'st_marys_scilly',
+    characters: [{ characterId: 'helmut_schnitter', role: 'agent heading for the mainland' }],
+    significance: 'Shows the gap in Britain\'s defences that the agent exploits, and that British intelligence already expects him.',
+    chapter: 'preface',
+    keyActions: [
+      'Walks past Star Castle into Hugh Town',
+      'Plans to act like a man on business',
+      'Aims for the 16.30 boat to Penzance',
+      'MI5\'s earlier warning from inside the Abwehr is revealed'
+    ]
+  },
+  {
+    id: 'cynthia_arrives_at_denleigh',
+    title: 'Cynthia arrives at Denleigh Manor',
+    date: 'Friday, May 1932',
+    description: 'Cynthia drives her Alvis to Denleigh Manor, is greeted by the butler Patrick and welcomed by Amy. Colonel Snowden introduces the other guests, noting that Sir John and Lady Davies could not come. Over a cold lunch Miss Gilchrist calls herself a mere hanger-on, the Harringtons talk closely with the Colonel, and Mr Newton does not say a word.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reluctant guest' },
+      { characterId: 'amy_wyndholme', role: 'hostess' },
+      { characterId: 'peter_snowden', role: 'introduces the guests' },
+      { characterId: 'marjorie_snowden', role: 'guest' },
+      { characterId: 'bob_harrington', role: 'guest' },
+      { characterId: 'louise_harrington', role: 'guest' },
+      { characterId: 'jane_maclean', role: 'guest, Miss Maclean' },
+      { characterId: 'hannah_park', role: 'guest, \'Miss Gilchrist\'' },
+      { characterId: 'bill_laurie', role: 'guest, \'Mr Newton\'' },
+      { characterId: 'patrick', role: 'butler' }
+    ],
+    significance: 'Assembles the cast of the country-house weekend on which everything that follows turns.',
+    chapter: 'chapter_01',
+    keyActions: [
+      'Patrick greets Cynthia',
+      'The Colonel introduces the guests',
+      'The Davies couple send apologies',
+      'Mr Newton stays silent through lunch'
+    ]
+  },
+  {
+    id: 'amys_secret_note_found',
+    title: 'Amy\'s secret note',
+    date: 'Friday, May 1932',
+    description: 'In her bedroom Cynthia finds an envelope on the bedside cabinet. Amy\'s note apologises for the cloak-and-dagger approach, admits she was instructed to invite her, and warns that one of the guests, she does not know which, will approach Cynthia on an important matter.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'finds the note' },
+      { characterId: 'amy_wyndholme', role: 'writes the note' }
+    ],
+    significance: 'Reveals the weekend is a set-up and starts the question of who the contact is.',
+    chapter: 'chapter_01',
+    keyActions: [
+      'Cynthia finds a note on her bedside cabinet',
+      'Amy admits she was told to invite her',
+      'A guest will approach Cynthia',
+      'Even Amy does not know which one'
+    ]
+  },
+  {
+    id: 'richard_arrives_at_denleigh',
+    title: 'Richard arrives',
+    date: 'Friday afternoon, May 1932',
+    description: 'Cynthia dozes off over a Dorothy Sayers novel in the garden and is woken by Richard, who arrived an hour earlier. The maid Sheila brings tea and describes the household staff and the evening\'s arrangements.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'wakes in the garden' },
+      { characterId: 'richard_childreth', role: 'late arrival' },
+      { characterId: 'sheila', role: 'maid serving tea' }
+    ],
+    significance: 'Brings Cynthia\'s husband into the weekend and sets up the formal evening.',
+    chapter: 'chapter_01',
+    keyActions: [
+      'Richard wakes Cynthia',
+      'Sheila brings tea',
+      'Sheila names the house staff',
+      'Drinks at 7.15 and dinner at eight'
+    ]
+  },
+  {
+    id: 'war_service_conversation',
+    title: 'War service over the port',
+    date: 'Friday evening, May 1932',
+    description: 'With the ladies staying at table and Horace away, the half-drunk Colonel quizzes the men on the war. Harrington was an army doctor who gave up medicine, Mr Newton pauses before saying RFC then RAF, and Richard served at Passchendaele with the Royal Berkshires; Miss Maclean objects that the women served too, as VAD nurses with Miss Gilchrist.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'peter_snowden', role: 'leads the questioning' },
+      { characterId: 'bob_harrington', role: 'former army doctor' },
+      { characterId: 'bill_laurie', role: '\'Mr Newton\', hesitant answer' },
+      { characterId: 'richard_childreth', role: 'Passchendaele veteran' },
+      { characterId: 'jane_maclean', role: 'rebukes the Colonel' },
+      { characterId: 'hannah_park', role: '\'Miss Gilchrist\', said to be a VAD' },
+      { characterId: 'amy_wyndholme', role: 'hostess' }
+    ],
+    significance: 'The guests offer their war histories, some of which will prove to be cover stories.',
+    chapter: 'chapter_02',
+    keyActions: [
+      'Harrington explains he no longer practises',
+      'Newton hesitates before answering',
+      'Richard names Passchendaele',
+      'Jane claims VAD service'
+    ]
+  },
+  {
+    id: 'hitler_and_mosley_praised',
+    title: 'Hitler and Mosley praised at dinner',
+    date: 'Friday evening, May 1932',
+    description: 'The Colonel and Harrington extol Hitler, Harrington predicting he will soon be President or Chancellor. Louise speaks for the first time to say England needs someone like Mosley, and the party splits into enthusiasts and polite disapprovers despite Amy\'s efforts to change the subject.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'peter_snowden', role: 'praises Hitler' },
+      { characterId: 'bob_harrington', role: 'predicts Hitler\'s rise' },
+      { characterId: 'louise_harrington', role: 'wants an English Mosley' },
+      { characterId: 'amy_wyndholme', role: 'tries to steer away from politics' },
+      { characterId: 'adolf_hitler', role: 'subject of praise' },
+      { characterId: 'oswald_mosley', role: 'named as a model leader' }
+    ],
+    significance: 'Marks the Snowdens and Harringtons as admirers of fascism.',
+    chapter: 'chapter_02',
+    keyActions: [
+      'The Colonel and Harrington praise Hitler',
+      'Louise calls for a Mosley',
+      'The table splits into two camps',
+      'The men leave to play billiards'
+    ]
+  },
+  {
+    id: 'cynthia_terrace_reflection',
+    title: 'Taking stock on the terrace',
+    date: 'Friday night, May 1932',
+    description: 'Richard goes to bed and Cynthia sits alone on the terrace with her wine. She sums up the company as a pompous colonel, a war-scarred medic, two pro-Nazi wives, a quiet pilot and two apparently apolitical nurses, and still cannot work out which is her contact.',
+    location: 'denleigh_manor',
+    characters: [{ characterId: 'cynthia_childreth', role: 'weighs up the guests' }],
+    significance: 'Lays out the suspects for the identity of the contact.',
+    chapter: 'chapter_02',
+    keyActions: [
+      'Richard turns in early',
+      'Cynthia sits alone on the terrace',
+      'She sizes up every guest',
+      'The contact remains a puzzle'
+    ]
+  },
+  {
+    id: 'arbour_recruitment',
+    title: 'Recruitment in the arbour',
+    date: 'Saturday morning, May 1932',
+    description: 'While Richard fishes with the Colonel and Harrington, Cynthia is approached in a secluded arbour by Miss Gilchrist and Mr Newton. They reveal they are Hannah Park and Wing-Commander Bill Laurie, explain that Horace recommended her, and invite her into work concerning the security of the country, to be discussed in London. Until then she should simply listen and observe.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'recruit' },
+      { characterId: 'bill_laurie', role: 'recruiter, drops the Newton cover' },
+      { characterId: 'hannah_park', role: 'recruiter, drops the Gilchrist cover' },
+      { characterId: 'horace_wyndholme', role: 'recommended Cynthia' }
+    ],
+    significance: 'Reveals the weekend\'s secret agents and draws Cynthia into British intelligence work.',
+    chapter: 'chapter_03',
+    keyActions: [
+      'Newton reveals he is Bill Laurie',
+      'Gilchrist reveals she is Hannah Park',
+      'Jane\'s VAD story is admitted to be false',
+      'Cynthia is asked to join and to watch and listen',
+      'The pair walk off as if discussing flowers'
+    ]
+  },
+  {
+    id: 'lakeside_talk_with_richard',
+    title: 'Comparing notes at the lake',
+    date: 'Saturday late morning, May 1932',
+    description: 'Cynthia asks Richard why he hid that she was being set up. He reveals two MI5 men questioned him at the bank on Friday about German business and told him to keep quiet, even with her; with Snowden and Harrington watching from the water, the couple keep up a casual act while she briefs him.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'confronts and briefs Richard' },
+      { characterId: 'richard_childreth', role: 'reveals the MI5 visit' },
+      { characterId: 'peter_snowden', role: 'watches from the lake' },
+      { characterId: 'bob_harrington', role: 'watches from the lake' }
+    ],
+    significance: 'Shows MI5 had already approached Richard and that the sympathisers are keeping an eye on the couple.',
+    chapter: 'chapter_04',
+    keyActions: [
+      'Cynthia challenges Richard',
+      'Richard describes the MI5 visit',
+      'He fiddles with his fly as cover',
+      'Cynthia waves to the watchers'
+    ]
+  },
+  {
+    id: 'drawing_room_politics',
+    title: 'Marjorie\'s politics in the drawing room',
+    date: 'Saturday evening, May 1932',
+    description: 'After a dinner at which the Snowdens arrive late in black tie and \'Miss Gilchrist\' mirrors the Colonel\'s outfit, the ladies withdraw. Marjorie needles Gilchrist about how the Germans would view her, reveals she and Peter were recently guests of his pro-Hitler military friends in Germany, and lectures Cynthia, who plays down her languages and claims no interest in politics. Louise praises Mosley but is uneasy about his \'Biff Boy\' militia.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'marjorie_snowden', role: 'airs pro-Hitler views' },
+      { characterId: 'hannah_park', role: '\'Miss Gilchrist\', parries Marjorie' },
+      { characterId: 'cynthia_childreth', role: 'feigns indifference' },
+      { characterId: 'louise_harrington', role: 'admires Mosley with doubts' },
+      { characterId: 'amy_wyndholme', role: 'silent hostess' },
+      { characterId: 'peter_snowden', role: 'dresses to make an entrance' }
+    ],
+    significance: 'Reveals the Snowdens\' direct links with pro-Hitler German officers and shows Cynthia beginning to play a part.',
+    chapter: 'chapter_04',
+    keyActions: [
+      'The Snowdens make an entrance in black tie',
+      'Hannah mirrors the Colonel\'s outfit',
+      'Marjorie describes her German party',
+      'Cynthia underplays her travels and languages',
+      'Louise worries about the \'Biff Boys\''
+    ]
+  },
+  {
+    id: 'lakeside_debrief_with_jane',
+    title: 'Late-night debrief with Jane',
+    date: 'Saturday night, May 1932',
+    description: 'Jane joins the Childreths for a stroll and leads them to the lake, away from open windows, giggling loudly for the benefit of any watchers. Richard reports that the men talked only politics and dropped names such as Mosley, Brown and Nicholson; Jane wonders whether the sympathisers are there to recruit Cynthia and promises to provide evidence of her sympathies.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'jane_maclean', role: 'debriefs the couple' },
+      { characterId: 'richard_childreth', role: 'reports the men\'s talk' },
+      { characterId: 'cynthia_childreth', role: 'listens' },
+      { characterId: 'bill_laurie', role: 'sat silently reading among the men' }
+    ],
+    significance: 'Raises the idea that the sympathisers may be cultivating Cynthia and that her cover will need building.',
+    chapter: 'chapter_04',
+    keyActions: [
+      'Jane moves the talk out of earshot',
+      'Richard reports the name-dropping',
+      'Jane asks how the sympathisers knew Cynthia would come',
+      'Jane promises to manufacture evidence'
+    ]
+  },
+  {
+    id: 'churchyard_briefing',
+    title: 'Briefing in St Andrew\'s churchyard',
+    date: 'Sunday morning, May 1932',
+    description: 'Amy uses the 11 o\'clock service as cover: she and Richard go into church while Bill and Cynthia talk on a damp bench behind it. Bill explains Amy staged the weekend from his list, that Horace works with his organisation and is partly his boss, and that Cynthia should infiltrate the Snowdens\' and Harringtons\' circle after a trip to Germany gives her political provenance. He adds that Snowden was only a Major, and Cynthia agrees to join.',
+    location: 'st_andrews_church',
+    characters: [
+      { characterId: 'bill_laurie', role: 'sets out the mission' },
+      { characterId: 'cynthia_childreth', role: 'agrees to join' },
+      { characterId: 'amy_wyndholme', role: 'arranges the church cover' },
+      { characterId: 'richard_childreth', role: 'attends the service as cover' },
+      { characterId: 'horace_wyndholme', role: 'revealed as Bill\'s partial boss' }
+    ],
+    significance: 'Cynthia formally commits to the infiltration plan.',
+    chapter: 'chapter_05',
+    keyActions: [
+      'Amy splits the group at the church',
+      'Bill explains the guest list and Horace\'s role',
+      'The Germany trip is proposed',
+      'Snowden\'s real rank is revealed',
+      'Cynthia says \'count me in\''
+    ]
+  },
+  {
+    id: 'bill_phone_call_and_card',
+    title: 'A phone call and a business card',
+    date: 'Sunday, May 1932',
+    description: 'Once Cynthia accepts, Bill dashes to the phone box by the pub to make a call, then catches the others up at the gates. Thinking it would look odd to stay after the other guests leave, he hands Richard a card for Imperial Aggregates, 35 Cromwell Road, and fixes a meeting there for Wednesday at 11.',
+    location: 'st_andrews_church',
+    characters: [
+      { characterId: 'bill_laurie', role: 'makes the call, gives the card' },
+      { characterId: 'richard_childreth', role: 'receives the card' },
+      { characterId: 'cynthia_childreth', role: 'new recruit' },
+      { characterId: 'amy_wyndholme', role: 'walks back with them' }
+    ],
+    significance: 'Introduces the front company that will serve as the team\'s office.',
+    chapter: 'chapter_05',
+    keyActions: [
+      'Bill phones from the box by the pub',
+      'He avoids lingering at Denleigh',
+      'He hands over the Imperial Aggregates card',
+      'Meeting set for Wednesday at 11'
+    ]
+  },
+  {
+    id: 'denleigh_departures',
+    title: 'Leaving Denleigh',
+    date: 'Sunday afternoon, May 1932',
+    description: 'After a muted lunch the guests say their farewells. Richard\'s green MG arrives first and he drives off, and Cynthia follows in her Alvis, relieved to escape what she thinks of as a curious weekend.',
+    location: 'denleigh_manor',
+    characters: [
+      { characterId: 'richard_childreth', role: 'leaves first' },
+      { characterId: 'cynthia_childreth', role: 'follows him home' },
+      { characterId: 'amy_wyndholme', role: 'hostess' }
+    ],
+    significance: 'Closes the weekend without giving the sympathisers cause for suspicion.',
+    chapter: 'chapter_05',
+    keyActions: ['Bags gathered in the hall', 'Richard tips the footman', 'The Childreths drive home separately']
+  },
+  {
+    id: 'imperial_aggregates_briefing',
+    title: 'The Imperial Aggregates briefing',
+    date: 'Wednesday, May 1932, 11 a.m.',
+    description: 'Felicity lets the Childreths in and serves coffee, then Bill, Jane and Hannah brief them with no notes taken. Bill describes a network of minor aristocrats and gentry who support Mussolini and Hitler, and explains that Horace has arranged a bank trip to Germany whose real purpose the directors do not know. Hannah asks Cynthia to listen for British names, hide her fluent German and voice subtle support for National Socialism, and Jane warns her not to seem too keen.',
+    location: 'imperial_aggregates',
+    characters: [
+      { characterId: 'bill_laurie', role: 'leads the briefing' },
+      { characterId: 'hannah_park', role: 'explains Cynthia\'s tasks' },
+      { characterId: 'jane_maclean', role: 'urges restraint' },
+      { characterId: 'felicity', role: 'receptionist' },
+      { characterId: 'cynthia_childreth', role: 'being briefed' },
+      { characterId: 'richard_childreth', role: 'being briefed' },
+      { characterId: 'horace_wyndholme', role: 'arranged the trip' }
+    ],
+    significance: 'Sets out exactly what the Childreths are to do in Germany.',
+    chapter: 'chapter_06',
+    keyActions: [
+      'Strict need-to-know, no minutes',
+      'Bill outlines the pro-fascist network',
+      'Richard is told simply to be himself',
+      'Cynthia must hide her German',
+      'Jane warns against seeming eager'
+    ]
+  },
+  {
+    id: 'childreths_join_up',
+    title: 'The Childreths sign up as sleepers',
+    date: 'Wednesday, May 1932',
+    description: 'Bill explains the aim: to draw British sympathisers out of the woodwork once the couple return, treating them as \'sleepers\' in a long game. Unseen people will look out for them, and anyone from his side needing to approach will refer to his rank. The Childreths confirm they are in, and Felicity is to arrange flights to Berlin and contact them under the company\'s cover.',
+    location: 'imperial_aggregates',
+    characters: [
+      { characterId: 'bill_laurie', role: 'explains the long game' },
+      { characterId: 'cynthia_childreth', role: 'agrees, asks about exposure' },
+      { characterId: 'richard_childreth', role: 'agrees' },
+      { characterId: 'jane_maclean', role: 'says they know everything about the couple' },
+      { characterId: 'felicity', role: 'will arrange travel' }
+    ],
+    significance: 'Commits the Childreths to a long-term undercover role.',
+    chapter: 'chapter_06',
+    keyActions: [
+      'The \'sleeper\' idea is explained',
+      'A recognition sign is agreed',
+      'The couple confirm they are in',
+      'Felicity to book the flights'
+    ]
+  },
+  {
+    id: 'felicity_confirms_travel',
+    title: 'Felicity confirms the trip',
+    date: 'June 1932 (three weeks after the London meeting)',
+    description: 'Felicity phones Cynthia to say hotels, flights and social events are arranged: they will fly from Croydon to Berlin with Deutsche Luft Hansa next Monday and the bank\'s directors are preparing papers for Richard. Cynthia\'s 1926 passport still reads \'Ireland\', which is fine, and Felicity mentions that people in Germany will monitor their visit.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'felicity', role: 'arranges the travel' },
+      { characterId: 'cynthia_childreth', role: 'takes the call' }
+    ],
+    significance: 'Sets the departure date and hints at unseen watchers in Germany.',
+    chapter: 'chapter_07',
+    keyActions: [
+      'Flights booked for next Monday',
+      'Passport question settled',
+      'Bank documents promised',
+      'People in Germany will monitor the visit'
+    ]
+  },
+  {
+    id: 'courier_and_newbury_shopping',
+    title: 'Travel papers and new dresses',
+    date: 'June 1932',
+    description: 'A motorcycle courier delivers a large envelope of travel documents and rides back to London on his Triumph. Cynthia then drives to Newbury to buy new evening wear at Camp Hopson.',
+    location: 'newbury',
+    characters: [{ characterId: 'cynthia_childreth', role: 'signs for papers, shops' }],
+    significance: 'The trip becomes real and Cynthia dresses for the part.',
+    chapter: 'chapter_07',
+    keyActions: ['Courier delivers the package', 'Cynthia signs for it', 'She buys evening wear at Camp Hopson']
+  },
+  {
+    id: 'croydon_departure',
+    title: 'Departure from Croydon',
+    date: 'Monday, June 1932',
+    description: 'An official black Daimler takes the Childreths to Croydon Airport, where a polite official checks their papers and warns of cold and turbulence. Cynthia studies photographs of the airport\'s history before about twenty-five passengers board a giant Junkers G38, whose deafening take-off unnerves the first-time flyers.',
+    location: 'croydon_airport',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'first-time flyer' },
+      { characterId: 'richard_childreth', role: 'first-time flyer' }
+    ],
+    significance: 'The Childreths leave Britain for their mission in Berlin.',
+    chapter: 'chapter_07',
+    keyActions: [
+      'Daimler drives them to Croydon',
+      'Tickets and passports checked',
+      'Cynthia reads about Lindbergh and \'Mayday\'',
+      'They board the Junkers G38',
+      'A noisy, nervous take-off'
+    ]
+  },
+  {
+    id: 'tempelhof_arrival',
+    title: 'Landing at Tempelhof',
+    date: 'Monday, June 1932',
+    description: 'After a buffeting flight the Childreths land at Tempelhof, where a quick passport check and chalk-marked luggage see them through in half an hour. A chauffeur greets them in German and Cynthia, hiding her fluency, asks whether he speaks English.',
+    location: 'tempelhof',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'pretends not to speak German' },
+      { characterId: 'richard_childreth', role: 'traveller' },
+      { characterId: 'berlin_driver', role: 'chauffeur' }
+    ],
+    significance: 'Cynthia begins her language deception on German soil.',
+    chapter: 'chapter_08',
+    keyActions: [
+      'Bumpy flight ends',
+      'Passports stamped, cases chalked',
+      'Driver greets them in German',
+      'Cynthia asks for English'
+    ]
+  },
+  {
+    id: 'driver_reveals_embassy_link',
+    title: 'The driver drops his act',
+    date: 'Monday, June 1932',
+    description: 'Outside the Hotel Adlon the chauffeur takes Richard aside and reveals in good English that his halting manner was an act: he works for the British Embassy next door. He gives Richard an unofficial phone number, explains meetings will be at the Reichsbank and parties at the hotel, and says he will always speak German first in public.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'berlin_driver', role: 'covert embassy helper' },
+      { characterId: 'richard_childreth', role: 'receives the message' },
+      { characterId: 'cynthia_childreth', role: 'recalls her past in Berlin' }
+    ],
+    significance: 'Gives the couple a trusted British contact in Berlin.',
+    chapter: 'chapter_08',
+    keyActions: [
+      'Driver admits his English is fine',
+      'He names the embassy as his employer',
+      'He hands over a private number',
+      'Explains where meetings and parties will be'
+    ]
+  },
+  {
+    id: 'adlon_check_in',
+    title: 'Checking in at the Adlon',
+    date: 'Monday, June 1932',
+    description: 'A receptionist fluent in English and French checks the couple into room 204, and they choose to keep their passports in their room safe. After a drink in the bar and a tour of the hotel, they find Richard\'s appointments and an invitation from Gerda and Franz Stammer of the Reichsbank to drinks in the library the next evening.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'plays the non-German speaker' },
+      { characterId: 'richard_childreth', role: 'keeps the passports' },
+      { characterId: 'franz_stammer', role: 'sends invitation' },
+      { characterId: 'gerda_stammer', role: 'sends invitation' }
+    ],
+    significance: 'Establishes the Childreths\' high-profile base and their first social engagement.',
+    chapter: 'chapter_08',
+    keyActions: [
+      'Room 204 assigned',
+      'Passports kept in their own safe',
+      'Hotel explored; no ladies\' hairdresser',
+      'Stammers\' invitation found'
+    ]
+  },
+  {
+    id: 'forresters_and_sightseeing',
+    title: 'A near slip and a morning in Berlin',
+    date: 'Tuesday, June 1932',
+    description: 'At breakfast Cynthia answers the waiter\'s German too quickly before reassuring herself the words were obvious. Reception books her into Forrester\'s salon on Pariser Platz, which has an arrangement with the hotel, and gives her an English guide map; after an expensive haircut she reads up on the Brandenburg Gate and walks the Unter den Linden.',
+    location: 'brandenburg_gate',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'tourist keeping her cover' },
+      { characterId: 'richard_childreth', role: 'has a haircut before his meeting' }
+    ],
+    significance: 'Shows how easily Cynthia\'s language cover could slip.',
+    chapter: 'chapter_09',
+    keyActions: [
+      'Cynthia almost answers in German',
+      'Hairdresser booked through the hotel',
+      'Guide map doubles as a guidebook',
+      'Sightseeing at the Gate and the Linden'
+    ]
+  },
+  {
+    id: 'first_reichsbank_meeting',
+    title: 'First meeting at the Reichsbank',
+    date: 'Tuesday, June 1932, about 11 a.m.',
+    description: 'Franz Stammer, with two silent colleagues, gives Richard a long account of Germany\'s crisis, from the Dawes and Young Plans to the Wall Street crash and mass unemployment. He asks Richard\'s bank to help pressure British delegates at the coming Lausanne conference and share its expertise, warning of the extremists and admitting many Germans sympathise with them. Richard offers expertise only and the meeting is adjourned until tomorrow.',
+    location: 'reichsbank',
+    characters: [
+      { characterId: 'franz_stammer', role: 'host making the case' },
+      { characterId: 'richard_childreth', role: 'visiting banker' },
+      { characterId: 'frau_meiden', role: 'secretary who sees him out' }
+    ],
+    significance: 'Reveals what the Germans say they want from Richard\'s bank and hints at Stammer\'s sympathies.',
+    chapter: 'chapter_09',
+    keyActions: [
+      'Stammer reviews reparations and the crash',
+      'He seeks help at Lausanne',
+      'He admits sympathy for the extremists',
+      'Richard offers only expertise',
+      'Meeting adjourned to the next day'
+    ]
+  },
+  {
+    id: 'richard_reports_hidden_agenda',
+    title: 'Richard senses a hidden agenda',
+    date: 'Tuesday afternoon, June 1932',
+    description: 'Back early, Richard finds Cynthia in reception and tells her the meeting was a strange monologue asking for help far beyond a bank\'s remit. He feels there was a hidden agenda he could not see; Cynthia describes walking as far as the Soviet embassy on the Unter den Linden.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'richard_childreth', role: 'reports on the meeting' },
+      { characterId: 'cynthia_childreth', role: 'listens' }
+    ],
+    significance: 'Flags that the Reichsbank\'s stated purpose may not be the real one.',
+    chapter: 'chapter_10',
+    keyActions: [
+      'Richard returns early',
+      'He calls the request beyond the bank\'s remit',
+      'He suspects a hidden agenda'
+    ]
+  },
+  {
+    id: 'stammers_welcome_party',
+    title: 'The Stammers\' welcome party',
+    date: 'Tuesday evening, June 1932',
+    description: 'In the Adlon library Franz introduces his dour, older-looking wife Gerda and tells the guests in German to speak English. Cynthia insists on being called Lady Cynthia, is handed to the Mullers and Sprangers, and as the couple circulate overhears the guests\' German gossip about her dress, wealth and the idea of inviting her for coffee.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'franz_stammer', role: 'host' },
+      { characterId: 'gerda_stammer', role: 'hostess' },
+      { characterId: 'cynthia_childreth', role: 'eavesdrops in German' },
+      { characterId: 'richard_childreth', role: 'guest of honour' },
+      { characterId: 'willa_muller', role: 'assigned to look after them' },
+      { characterId: 'andreas_muller', role: 'assigned to look after them' },
+      { characterId: 'heidi_spranger', role: 'assigned to look after them' },
+      { characterId: 'christian_spranger', role: 'assigned to look after them' }
+    ],
+    significance: 'Cynthia\'s hidden German pays off as she hears what the guests really say about her.',
+    chapter: 'chapter_10',
+    keyActions: [
+      'Gerda is introduced',
+      'English decreed for the evening',
+      'Cynthia insists on her title',
+      'Guests gossip in German behind their backs'
+    ]
+  },
+  {
+    id: 'heidi_coffee_invitation',
+    title: 'Heidi\'s coffee invitation',
+    date: 'Tuesday evening, June 1932',
+    description: 'As Cynthia expected from what she overheard, Heidi Spranger invites her to join some of the ladies for coffee at the hotel at 11 the next morning while Richard is at the bank, with talk of sightseeing and shopping. Franz later mentions he has heard of it from Gerda.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'heidi_spranger', role: 'makes the invitation' },
+      { characterId: 'cynthia_childreth', role: 'accepts' },
+      { characterId: 'franz_stammer', role: 'already knows of it' },
+      { characterId: 'gerda_stammer', role: 'told Franz of it' }
+    ],
+    significance: 'Opens a route into the German wives\' circle without the husbands present.',
+    chapter: 'chapter_10',
+    keyActions: ['Heidi invites Cynthia for 11 a.m.', 'Cynthia accepts', 'Franz knows of it via Gerda']
+  },
+  {
+    id: 'adlon_bar_debrief',
+    title: 'Debrief in the Adlon bar',
+    date: 'Tuesday night, June 1932',
+    description: 'The couple take a secluded corner of the bar with a view of the room and talk quietly. Both found the party stiff and formal, as if the guests had been told to attend, and Cynthia thinks the coffee invitation is the significant development.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reports what she overheard' },
+      { characterId: 'richard_childreth', role: 'finds the party staged' }
+    ],
+    significance: 'Shows the couple learning to compare notes securely and anticipating the next move.',
+    chapter: 'chapter_10',
+    keyActions: [
+      'They choose a corner with a view',
+      'They keep their voices low',
+      'The party seemed staged',
+      'Coffee invitation judged significant'
+    ]
+  },
+  {
+    id: 'ch11_coffee_mornings',
+    title: 'Coffee mornings in the Japanese garden',
+    date: 'June 1932',
+    description: 'While Richard is driven to the Reichsbank each day, Cynthia joins the German wives for coffee and cake in the hotel\'s Japanese garden. The talk is harmless gossip and she learns nothing of interest, apart from a sightseeing trip to Berlin Cathedral. The wives invite the couple to a semi-formal reception on Thursday evening.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'new member of the coffee circle' },
+      { characterId: 'richard_childreth', role: 'attends the Reichsbank daily' }
+    ],
+    significance: 'The routine lets the circle size Cynthia up before showing its hand.',
+    chapter: 'chapter_11',
+    keyActions: [
+      'Daily 11 o\'clock coffee with the wives',
+      'Visit to Berlin Cathedral',
+      'Invitation to Thursday\'s reception',
+      'Evenings spent wondering why they came'
+    ]
+  },
+  {
+    id: 'ch11_thursday_reception',
+    title: 'The Thursday reception',
+    date: 'Thursday, June 1932',
+    description: 'Cynthia wears a striking rust-coloured dress and turns heads. Pretending not to understand German, she hears guests regret Hitler\'s defeat in the presidential election, welcome the lifting of the SA and SS ban, and talk of war as Germany\'s only way back. When questioned, the Childreths adopt ultra-conservative views and wish Britain had a similar movement.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'eavesdrops while feigning ignorance of German' },
+      { characterId: 'richard_childreth', role: 'plays the sympathetic banker' },
+      { characterId: 'gerda_stammer', role: 'hostess' },
+      { characterId: 'franz_stammer', role: 'host' }
+    ],
+    significance: 'The couple\'s performance convinces the group they are like-minded.',
+    chapter: 'chapter_11',
+    keyActions: [
+      'Cynthia dresses to be noticed',
+      'Overhears pro-Hitler and pro-war talk',
+      'Both voice ultra-conservative views',
+      'Guests switch to English to include them'
+    ]
+  },
+  {
+    id: 'ch11_hitler_arrives',
+    title: 'Hitler at the Adlon',
+    date: 'Thursday, June 1932',
+    description: 'Adolf Hitler arrives with three companions at Franz Stammer\'s personal invitation, takes a glass of water from Gerda and mingles. Watching in the mirror over the fireplace, Cynthia sees Bob and Louise Harrington, who claimed at Denleigh never to travel, in deep conversation with him beside a couple she does not recognise, later named as Sir John and Lady Megan Davies.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'adolf_hitler', role: 'guest of honour' },
+      { characterId: 'franz_stammer', role: 'invited Hitler personally' },
+      { characterId: 'gerda_stammer', role: 'hands Hitler water' },
+      { characterId: 'bob_harrington', role: 'talks with Hitler' },
+      { characterId: 'louise_harrington', role: 'talks with Hitler' },
+      { characterId: 'john_davies', role: 'the unknown man beside the Harringtons' },
+      { characterId: 'megan_davies', role: 'the unknown woman beside the Harringtons' },
+      { characterId: 'cynthia_childreth', role: 'watches via the mirror' },
+      { characterId: 'richard_childreth', role: 'watches with Cynthia' }
+    ],
+    significance: 'It exposes the Harringtons\' lie and shows how high Stammer\'s connections reach.',
+    chapter: 'chapter_11',
+    keyActions: [
+      'Hitler arrives with three companions',
+      'Gerda offers him water',
+      'Cynthia spots the Harringtons in the mirror',
+      'Richard decides to keep attention on his own business'
+    ]
+  },
+  {
+    id: 'ch11_paul_in_garden',
+    title: 'Paul in the garden',
+    date: 'Thursday, June 1932',
+    description: 'A tall man greets the couple with regards from the Wing-Commander and leads them into the garden. He says he is from \'next door\', asks to be called Paul, names the Davieses, and reveals that a hotel waiter reports on the coffee mornings. He predicts a recruitment approach, advises Cynthia not to say yes too quickly, offers an early flight home, and asks Richard to pin the bank down.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'paul_berlin', role: 'British contact' },
+      { characterId: 'cynthia_childreth', role: 'receives instructions' },
+      { characterId: 'richard_childreth', role: 'asked to press the Reichsbank' },
+      { characterId: 'bill_laurie', role: 'sends his regards (absent)' }
+    ],
+    significance: 'It confirms British intelligence has people around the couple and sets up the next day\'s approaches.',
+    chapter: 'chapter_11',
+    keyActions: [
+      'Recognition greeting from the Wing-Commander',
+      'Davieses identified',
+      'Waiter revealed as an informant',
+      'Advice to delay saying yes',
+      'Richard tasked to find the bank\'s real aim'
+    ]
+  },
+  {
+    id: 'ch12_tiergarten_walk',
+    title: 'Morning walk in the Tiergarten',
+    date: 'Friday, June 1932',
+    description: 'Cynthia rises early and walks through the Brandenburg Gate into the Tiergarten. She passes limbless ex-servicemen and jobless young men selling pamphlets and maps, a sign of the city\'s poverty, and admires the park\'s lakes and statues before hurrying back for coffee.',
+    location: 'tiergarten',
+    characters: [{ characterId: 'cynthia_childreth', role: 'sightseer' }],
+    significance: 'A glimpse of the hardship behind the Adlon\'s luxury.',
+    chapter: 'chapter_12',
+    keyActions: [
+      'Walks through the Brandenburg Gate',
+      'Sees veterans and the unemployed begging',
+      'Visits the statue of Frederick William III',
+      'Returns in time for coffee'
+    ]
+  },
+  {
+    id: 'ch12_recruitment_pitch',
+    title: 'The coffee-circle recruitment pitch',
+    date: 'Friday, June 1932',
+    description: 'Monika Fischer tests Cynthia\'s reaction to Hitler, then Karen Becker explains in fluent English that the group wants English sympathisers to spread National Socialist ideas and act as a fifth column if war comes. Lena Weber, a founder member, outlines Cynthia\'s duties through Gerda: promoting the cause and hosting gatherings for visiting German colleagues, with contact by telephone through friends in Britain. Cynthia stalls to consult Richard and promises an answer at seven.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'the recruit' },
+      { characterId: 'monika_fischer', role: 'asks the testing question' },
+      { characterId: 'karen_becker', role: 'makes the pitch' },
+      { characterId: 'lena_weber', role: 'founder member; explains the role' },
+      { characterId: 'gerda_stammer', role: 'translates' },
+      { characterId: 'louise_harrington', role: 'English member present' },
+      { characterId: 'megan_davies', role: 'English member present' }
+    ],
+    significance: 'The purpose of the German group is stated openly for the first time.',
+    chapter: 'chapter_12',
+    keyActions: [
+      'Monika\'s loaded question about Hitler',
+      'Hitler\'s companions named',
+      'Karen\'s fifth-column pitch',
+      'Lena outlines the hosting role',
+      'Cynthia asks for time'
+    ]
+  },
+  {
+    id: 'ch12_louise_explains',
+    title: 'Louise explains her act',
+    date: 'Friday, June 1932',
+    description: 'After the meeting Megan Davies introduces herself and apologises for missing Denleigh. Cynthia asks Louise why she claimed not to know Germany or travel; Louise says they were unsure of the other guests, that the Snowdens are also involved, and that they worry the Colonel says too much when drinking.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'louise_harrington', role: 'explains her deception' },
+      { characterId: 'megan_davies', role: 'introduces herself' },
+      { characterId: 'cynthia_childreth', role: 'asks the question' }
+    ],
+    significance: 'It confirms the Snowdens as members and shows the English sympathisers hide their links even from one another.',
+    chapter: 'chapter_12',
+    keyActions: [
+      'Megan introduces herself',
+      'Louise admits her Denleigh pretence',
+      'Snowdens confirmed as involved',
+      'Marjorie said to be the more forceful Snowden'
+    ]
+  },
+  {
+    id: 'ch13_stammer_reveals',
+    title: 'Stammer comes to the point',
+    date: 'Friday, June 1932',
+    description: 'After another lecture on reparations, Richard asks Franz Stammer outright why he was invited. Stammer admits the visit was not really about banking, says friends in Britain including Marjorie Snowden recommended the couple, and asks Richard to promote National Socialism and to open a topped-up account for German visitors to draw on. Richard queries whose name it would carry and says his fellow directors must decide.',
+    location: 'reichsbank',
+    characters: [
+      { characterId: 'richard_childreth', role: 'presses for the truth' },
+      { characterId: 'franz_stammer', role: 'reveals the real agenda' },
+      { characterId: 'marjorie_snowden', role: 'named as having recommended the Childreths' }
+    ],
+    significance: 'It creates the account that will become a money trail to German visitors.',
+    chapter: 'chapter_13',
+    keyActions: [
+      'Richard challenges Stammer',
+      'Snowdens named as talent-spotters',
+      'Goodwill-ambassador request',
+      'Delegates\' account requested',
+      'Richard stalls for board approval'
+    ]
+  },
+  {
+    id: 'ch13_driver_tour',
+    title: 'A tour of Berlin',
+    date: 'Friday, June 1932',
+    description: 'Leaving the bank, Richard finds the embassy driver already knows they will fly home at 14.30 the next day and that a car will meet them at Croydon. The driver then shows him some of the city\'s sights.',
+    location: 'reichsbank',
+    characters: [
+      { characterId: 'berlin_driver', role: 'has the travel arranged' },
+      { characterId: 'richard_childreth', role: 'passenger' }
+    ],
+    significance: 'Shows how smoothly the British side is managing the couple behind the scenes.',
+    chapter: 'chapter_13',
+    keyActions: ['Driver confirms the 14.30 flight', 'Car arranged at Croydon', 'Brief guided tour of Berlin']
+  },
+  {
+    id: 'ch14_comparing_notes',
+    title: 'Comparing notes over dinner',
+    date: 'Friday evening, June 1932',
+    description: 'Over salmon and lamb the Childreths realise they were given matching requests: both to champion National Socialism, Richard to set up a delegates\' account, Cynthia to host house parties for visiting delegates. Richard jokes about the knitting women of the French Terror as a model for a nickname.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reports the coffee pitch' },
+      { characterId: 'richard_childreth', role: 'reports the bank request; makes the knitting joke' }
+    ],
+    significance: 'The \'knitters\' idea is born here.',
+    chapter: 'chapter_14',
+    keyActions: ['Parallel pitches compared', 'Richard recalls \'les tricoteuses\'', 'Agree to go through with it']
+  },
+  {
+    id: 'ch14_acceptance_toast',
+    title: 'Acceptance in the bar',
+    date: 'Friday evening, June 1932',
+    description: 'At seven the couple tell Gerda and two other women that they will help. Gerda toasts them, and once the others leave she welcomes them to the group and says someone will be in touch.',
+    location: 'hotel_adlon',
+    characters: [
+      { characterId: 'gerda_stammer', role: 'welcomes the new members' },
+      { characterId: 'cynthia_childreth', role: 'gives the answer' },
+      { characterId: 'richard_childreth', role: 'shows a united front' }
+    ],
+    significance: 'The Childreths become, in German eyes, members of the network.',
+    chapter: 'chapter_14',
+    keyActions: [
+      'Answer given in the bar',
+      'Toast with \'Prost\'',
+      'Gerda\'s private welcome',
+      'Promise of future contact'
+    ]
+  },
+  {
+    id: 'ch14_croydon_pickup',
+    title: 'Bill waiting at Croydon',
+    date: 'Saturday, June 1932',
+    description: 'After a smoother flight home, the couple find the black Daimler waiting at Croydon with Bill in the front seat. They give him the bare facts on the drive home and fix a full debrief at their house on Monday at 11.',
+    location: 'croydon_airport',
+    characters: [
+      { characterId: 'bill_laurie', role: 'handler' },
+      { characterId: 'cynthia_childreth', role: 'reports' },
+      { characterId: 'richard_childreth', role: 'reports' }
+    ],
+    significance: 'The first stage of the operation is complete.',
+    chapter: 'chapter_14',
+    keyActions: [
+      'Return flight from Berlin',
+      'Unexpected pickup by Bill',
+      'Brief report in the car',
+      'Debrief arranged for Monday'
+    ]
+  },
+  {
+    id: 'ch15_debrief',
+    title: 'Debrief at the Childreths\' house',
+    date: 'Monday, June 1932',
+    description: 'With Richard called to a crisis at his bank, Cynthia reports alone to Bill, Jane and Hannah, after introducing her secretary Mary. Bill sets out what is known of the English sympathisers and the rise of Mosley\'s British Union of Fascists, and Hannah explains that the Childreths will host events where Bill\'s side will plant observers.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reports on Berlin' },
+      { characterId: 'bill_laurie', role: 'leads the briefing' },
+      { characterId: 'hannah_park', role: 'explains the hosting plan' },
+      { characterId: 'jane_maclean', role: 'explains meeting rules' },
+      { characterId: 'mary', role: 'serves coffee; introduced to the team' }
+    ],
+    significance: 'It launches the next, open-ended phase of the operation.',
+    chapter: 'chapter_15',
+    keyActions: [
+      'Mary introduced',
+      'Berlin report given',
+      'BUF threat explained',
+      'Hosting plan agreed',
+      'Bill suggests confiding in Mary'
+    ]
+  },
+  {
+    id: 'ch15_knitters_named',
+    title: '\'The Knitters\' get their name',
+    date: 'Monday, June 1932',
+    description: 'Cynthia suggests calling the German coffee circle \'the Knitters\', after the women who knitted beside the guillotine, and Hannah adopts the name.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'proposes the name' },
+      { characterId: 'hannah_park', role: 'adopts it' }
+    ],
+    significance: 'Gives the team its codename for the German women\'s group.',
+    chapter: 'chapter_15',
+    keyActions: ['Nickname proposed', 'Hannah agrees', 'Name used from now on']
+  },
+  {
+    id: 'ch15_secure_comms_plan',
+    title: 'Plans for a secret line',
+    date: 'Monday, June 1932',
+    description: 'Learning that all three house extensions can overhear one another, Hannah arranges a separate secret line for the bedroom and tells Cynthia to listen for a click that could mean a tap. Jane explains that future meetings will be in public places, possibly with strangers who will work \'Wing-Commander\' into their greeting, and that any follower will be followed in turn.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'hannah_park', role: 'plans the new line' },
+      { characterId: 'jane_maclean', role: 'sets meeting rules' },
+      { characterId: 'cynthia_childreth', role: 'agent' }
+    ],
+    significance: 'Sets up the communications that will later expose a bug.',
+    chapter: 'chapter_15',
+    keyActions: [
+      'New external line planned',
+      'Old line left as it is',
+      'Click warning',
+      'Public meeting places',
+      'Follow the follower'
+    ]
+  },
+  {
+    id: 'ch16_edwards_account',
+    title: 'The T.G. Edwards account',
+    date: 'June 1932',
+    description: 'Richard tells Cynthia that his fellow directors have opened the delegates\' account and cheque book under the name \'T.G. Edwards\'. They chose the name themselves to keep control, and the Chief Cashier will inform Stammer the next morning.',
+    location: 'city_of_london',
+    characters: [
+      { characterId: 'richard_childreth', role: 'reports the account' },
+      { characterId: 'cynthia_childreth', role: 'hears the news' },
+      { characterId: 'franz_stammer', role: 'to be informed' }
+    ],
+    significance: 'Creates a name that will matter far more later.',
+    chapter: 'chapter_16',
+    keyActions: [
+      'Directors agree the account',
+      'Name \'T.G. Edwards\' chosen by the bank',
+      'Stammer to be told officially'
+    ]
+  },
+  {
+    id: 'ch16_phone_installed',
+    title: 'The secret phone is installed',
+    date: 'June 1932',
+    description: 'Two Post Office engineers run a new wire from the pole through the roadside trees and fit the secret telephone in the master bedroom. They hand Cynthia the number disc so no visitor can read the number.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'receives the number disc' },
+      { characterId: 'mary', role: 'shows the engineers upstairs' }
+    ],
+    significance: 'Gives Cynthia a private line to Bill\'s office.',
+    chapter: 'chapter_16',
+    keyActions: [
+      'Albion van arrives',
+      'Wire strung through the trees',
+      'Phone fitted in the master bedroom',
+      'Number disc removed'
+    ]
+  },
+  {
+    id: 'ch16_quiet_months',
+    title: 'Months of silence',
+    date: 'July to 31 December 1932',
+    description: 'Nobody from either side gets in touch. The Lausanne Conference ends in July with reparations effectively over, Britain\'s unemployment passes three million, and the couple carry on with work, house and village life through Christmas before toasting 1933 alone.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'runs house and village duties' },
+      { characterId: 'richard_childreth', role: 'commutes to the City' }
+    ],
+    significance: 'The operation goes dormant, building suspense for 1933.',
+    chapter: 'chapter_16',
+    keyActions: [
+      'Lausanne ends reparations',
+      'Secret phone stays silent',
+      'Christmas as Chair of the School Board',
+      'New Year\'s Eve toast'
+    ]
+  },
+  {
+    id: 'ch17_gerda_letter',
+    title: 'Gerda\'s letter',
+    date: 'early April 1933 (letter dated 30 March 1933)',
+    description: 'A letter from Gerda arrives at Cynthia\'s home address, which she never gave the Germans, and remarks that her house is large. It praises Hitler\'s new emergency powers, asks Cynthia to activate the hosting plan, encloses a list of English supporters to invite, and asks for the dates so German delegates can attend.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'recipient' },
+      { characterId: 'gerda_stammer', role: 'writer' },
+      { characterId: 'mary', role: 'reads it and copies the list' }
+    ],
+    significance: 'Activates the plan and suggests Cynthia is being watched.',
+    chapter: 'chapter_17',
+    keyActions: [
+      'Letter arrives at the home address',
+      'Praise for Hitler\'s powers',
+      'Hosting plan activated',
+      'List of names enclosed',
+      'Claims approval from \'the highest authority\''
+    ]
+  },
+  {
+    id: 'ch17_first_secret_call',
+    title: 'First call on the secret line',
+    date: 'early April 1933',
+    description: 'Cynthia rings Bill for the first time; the call is answered as \'Imperial Aggregates\'. Bill suspects she is being watched, arranges tradecraft training from a colleague called Don disguised as a fishmonger, asks for a copy of the list, and agrees a ring-twice test for a tapped line.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'caller' },
+      { characterId: 'bill_laurie', role: 'handler' },
+      { characterId: 'don', role: 'colleague to be sent (named only)' }
+    ],
+    significance: 'Moves the operation into active tradecraft.',
+    chapter: 'chapter_17',
+    keyActions: [
+      'Secret line used',
+      'Surveillance suspected',
+      'Don\'s visit arranged',
+      'Ring-twice click test agreed'
+    ]
+  },
+  {
+    id: 'ch17_green_car_reported',
+    title: 'Gladys reports a green car',
+    date: 'early April 1933',
+    description: 'Mary makes discreet enquiries at the post office. Gladys tells her a green car was parked along the road for most of the previous day, though nobody could be seen inside it.',
+    location: 'village_shop',
+    characters: [
+      { characterId: 'mary', role: 'makes enquiries' },
+      { characterId: 'gladys', role: 'village lookout' }
+    ],
+    significance: 'The first sign of watchers outside the house.',
+    chapter: 'chapter_17',
+    keyActions: ['Mary visits the post office', 'Gladys mentions the green car', 'No occupants seen']
+  },
+  {
+    id: 'ch18_don_training',
+    title: 'Don\'s tradecraft lesson',
+    date: 'early April 1933',
+    description: 'Don arrives at the tradesman\'s entrance in white overalls with a basket of real fish. In half an hour in the kitchen he teaches Cynthia and Mary back doubles, using shop-window reflections and acting normally, then takes away the copied list.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'don', role: 'instructor disguised as a fishmonger' },
+      { characterId: 'cynthia_childreth', role: 'pupil' },
+      { characterId: 'mary', role: 'pupil; hands over the list' }
+    ],
+    significance: 'Equips Cynthia and Mary to spot and handle surveillance.',
+    chapter: 'chapter_18',
+    keyActions: [
+      'Fish given away free',
+      'Counter-surveillance basics taught',
+      'Gladys offered as lookout',
+      'Copied list handed over'
+    ]
+  },
+  {
+    id: 'ch18_car_tails_don',
+    title: 'The green car follows Don',
+    date: 'early April 1933',
+    description: 'As Don drives out towards the pub and shop, Cynthia sees a small green car follow him, then return to its spot once it sees where he is going. Bill asks her to get its number so he can trace who is behind it.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'don', role: 'followed' },
+      { characterId: 'cynthia_childreth', role: 'spots the tail' },
+      { characterId: 'bill_laurie', role: 'wants the number traced' }
+    ],
+    significance: 'Confirms that the house is under watch.',
+    chapter: 'chapter_18',
+    keyActions: [
+      'Green car follows the van',
+      'Don\'s real fish sales pay off',
+      'Car returns to watch the house',
+      'Bill asks for the registration'
+    ]
+  },
+  {
+    id: 'ch18_party_arranged',
+    title: 'The first party is arranged',
+    date: 'early April 1933',
+    description: 'Cynthia tells Bill the first party will be on Saturday 27 May. Bill will provide and pay the caterers, put his own people among the waiting staff and create invoices in Cynthia\'s name. After seeing the list he suggests inviting a random half now. Mary writes thirty invitations, a letter goes to Gerda via Franz\'s bank, and the caterers agree a buffet.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'hostess' },
+      { characterId: 'bill_laurie', role: 'funds and staffs the event' },
+      { characterId: 'mary', role: 'writes the invitations' },
+      { characterId: 'richard_childreth', role: 'helped choose the date' }
+    ],
+    significance: 'Turns Cynthia\'s parties into an intelligence-gathering operation.',
+    chapter: 'chapter_18',
+    keyActions: [
+      'Date set for 27 May',
+      'Undercover waiters planned',
+      'Paper trail and funds arranged',
+      'Network judged bigger than expected',
+      'Thirty invitations posted'
+    ]
+  },
+  {
+    id: 'ch19_reading_outing',
+    title: 'Shopping in Reading',
+    date: '27 May 1933',
+    description: 'Richard takes Gerda and Lena to Reading to keep them out of the caterers\' way; they shop at Heelas and see the Forbury Gardens, the lion memorial and the Abbey ruins. Back home, Lena\'s fluent English makes Cynthia suspect she hid it in Berlin to eavesdrop.',
+    location: 'reading',
+    characters: [
+      { characterId: 'richard_childreth', role: 'driver and guide' },
+      { characterId: 'gerda_stammer', role: 'house guest' },
+      { characterId: 'lena_weber', role: 'house guest; English much improved' },
+      { characterId: 'cynthia_childreth', role: 'explains the sights' }
+    ],
+    significance: 'Reveals that Lena, like Cynthia, has been hiding a language.',
+    chapter: 'chapter_19',
+    keyActions: [
+      'Drop-off at Heelas',
+      'Forbury Gardens and Abbey ruins',
+      'Cynthia explains the lion memorial',
+      'Lena\'s English noticed'
+    ]
+  },
+  {
+    id: 'ch19_staff_arrive',
+    title: 'Edwin\'s team arrives',
+    date: '27 May 1933',
+    description: 'At six, three cars bring the waiting staff. Their leader introduces himself as Edwin: they are all military personnel given a crash course in waiting, he will act as butler, and he is Bill\'s long-time minder.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'edwin', role: 'leads the undercover staff' },
+      { characterId: 'cynthia_childreth', role: 'hostess' }
+    ],
+    significance: 'Bill\'s observers are now inside the party.',
+    chapter: 'chapter_19',
+    keyActions: ['Staff arrive by car', 'Edwin introduces himself', 'Soldiers posing as waiters']
+  },
+  {
+    id: 'ch19_garden_party',
+    title: 'The first garden party',
+    date: '27 May 1933',
+    description: 'About thirty sympathisers arrive from 7.40, including the Harringtons, Snowdens and Davieses, with Bill as \'Mr Newton\' and Hannah as \'Miss Gilchrist\' alongside Jane. Richard tells the guests they may speak freely and introduces Gerda and Lena, who hold court about Hitler\'s Germany while the waiters listen. At the end the German women announce they will stay a few days with the Snowdens and shop in London with Marjorie and Louise.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'hostess' },
+      { characterId: 'richard_childreth', role: 'host; makes the welcome speech' },
+      { characterId: 'gerda_stammer', role: 'guest of honour' },
+      { characterId: 'lena_weber', role: 'guest of honour' },
+      { characterId: 'bill_laurie', role: 'attends as \'Mr Newton\'' },
+      { characterId: 'hannah_park', role: 'attends as \'Miss Gilchrist\'' },
+      { characterId: 'jane_maclean', role: 'quiet observer' },
+      { characterId: 'edwin', role: 'acting butler' },
+      { characterId: 'peter_snowden', role: 'loud guest' },
+      { characterId: 'marjorie_snowden', role: 'guest' },
+      { characterId: 'bob_harrington', role: 'guest' },
+      { characterId: 'louise_harrington', role: 'guest' },
+      { characterId: 'john_davies', role: 'guest' },
+      { characterId: 'megan_davies', role: 'guest' },
+      { characterId: 'pete', role: 'directs the parking' }
+    ],
+    significance: 'Gives both sides their first good look at the English network.',
+    chapter: 'chapter_19',
+    keyActions: [
+      'Guests led through the laurel-hedge gate',
+      'Richard invites free talk',
+      'German women hold court',
+      'Business cards exchanged',
+      'Germans to stay on with the Snowdens'
+    ]
+  },
+  {
+    id: 'ch19_office_snooping',
+    title: 'Snooping in the office',
+    date: '27 May 1933',
+    description: 'Mary sees Lena Weber and Marjorie Snowden slipping out of Cynthia\'s office while everyone is in the garden. Cynthia passes the word to Hannah, who, while pretending to talk about plants, has Edwin\'s team keep watch on Gerda, Lena, Louise and Megan.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'mary', role: 'witness' },
+      { characterId: 'lena_weber', role: 'seen leaving the office' },
+      { characterId: 'marjorie_snowden', role: 'seen leaving the office' },
+      { characterId: 'cynthia_childreth', role: 'raises the alarm' },
+      { characterId: 'hannah_park', role: 'orders the watch' },
+      { characterId: 'edwin', role: 'puts his team on it' }
+    ],
+    significance: 'Raises the question of what the two women were doing in the office.',
+    chapter: 'chapter_19',
+    keyActions: [
+      'Mary spots the pair',
+      'Message passed to Bill and Hannah',
+      'Talk disguised as gardening',
+      'Four women put under watch'
+    ]
+  },
+  {
+    id: 'ch20_breakfast_review',
+    title: 'Lena\'s verdict at breakfast',
+    date: 'Sunday 28 May 1933',
+    description: 'Lena calls the party a great success, praises Hitler\'s bans on Communists, unions and strikes, and asks for a second event for the rest of the list, without \'that frightful woman with the monocle\'. Snowden collects the German women at ten.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'lena_weber', role: 'reviews the party' },
+      { characterId: 'gerda_stammer', role: 'wants the rest of the list invited' },
+      { characterId: 'cynthia_childreth', role: 'hostess' },
+      { characterId: 'peter_snowden', role: 'collects the women' }
+    ],
+    significance: 'Commits Cynthia to a second party and forces Hannah to find a new disguise.',
+    chapter: 'chapter_20',
+    keyActions: [
+      'Party judged a success',
+      'Second event requested',
+      '\'Miss Gilchrist\' banned',
+      'Snowden drives the women away'
+    ]
+  },
+  {
+    id: 'ch20_gladys_report',
+    title: 'Gladys reports the questioners',
+    date: 'Sunday 28 May 1933',
+    description: 'Buying biscuits, Cynthia learns that two guests with foreign accents asked Gladys how long she had known Cynthia, what she does, whether she had had more visitors lately, and why Richard is not a lord. Gladys gave harmless answers and notes that the green car is not there today.',
+    location: 'village_shop',
+    characters: [
+      { characterId: 'gladys', role: 'village shopkeeper and lookout' },
+      { characterId: 'cynthia_childreth', role: 'customer' }
+    ],
+    significance: 'Shows the Germans are running background checks on Cynthia.',
+    chapter: 'chapter_20',
+    keyActions: [
+      'Gladys reports the questions',
+      'Her answers were harmless',
+      'Green car absent',
+      'Cynthia asks her to keep watching'
+    ]
+  },
+  {
+    id: 'ch20_bug_found',
+    title: 'The bug in the office phone',
+    date: 'Sunday 28 May 1933',
+    description: 'Bill arrives disguised on Edwin\'s lorry and realises Lena and Marjorie were putting something into the office, not taking it out. In silence he has Cynthia lift the office receiver and she hears a click. In the conservatory he explains it is a bug, decides to leave it and use it, and Edwin checks the upstairs line is clean.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'finds the bug' },
+      { characterId: 'edwin', role: 'checks the other line' },
+      { characterId: 'cynthia_childreth', role: 'hears the click' },
+      { characterId: 'mary', role: 'present' }
+    ],
+    significance: 'Answers the snooping mystery and shows someone in Britain is organising the surveillance.',
+    chapter: 'chapter_20',
+    keyActions: [
+      'Bill arrives in a dust coat',
+      'Mimed phone test',
+      'Click confirms the bug',
+      'Bug left in place',
+      'Upstairs line found clean'
+    ]
+  },
+  {
+    id: 'ch20_edwin_assessment',
+    title: 'Edwin sizes up the ringleaders',
+    date: 'Sunday 28 May 1933',
+    description: 'Edwin reports that the Harringtons, Snowdens and Davieses split up to steer different groups, marking them as the leaders, and predicts all eight will meet with the German women. He warns that Snowden only pretends to be drunk, having been seen tipping wine into pot plants, and that he provokes people to test them.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'edwin', role: 'gives his assessment' },
+      { characterId: 'bill_laurie', role: 'decides not to tail Snowden' },
+      { characterId: 'peter_snowden', role: 'the subject (absent)' }
+    ],
+    significance: 'Recasts Snowden as a shrewd operator rather than a buffoon.',
+    chapter: 'chapter_20',
+    keyActions: [
+      'Leaders identified',
+      'Meeting of eight predicted',
+      'Snowden\'s drunkenness exposed as an act',
+      'No tail put on Snowden',
+      'Second party to be summer or spring'
+    ]
+  },
+  {
+    id: 'second_party_date_set',
+    title: 'Second party fixed for 7 July',
+    date: 'late 1933',
+    description: 'Sticking to their plan of waiting until early summer, Cynthia and Richard choose 7 July 1934 for their next party, after an invitation to Royal Ascot in June. Over the winter they hear from Gerda only by occasional letters routed through Richard\'s bank.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'hostess' },
+      { characterId: 'richard_childreth', role: 'host' },
+      { characterId: 'gerda_stammer', role: 'writes via the bank' }
+    ],
+    significance: 'Sets the date for the party at which the network will finally show its hand.',
+    chapter: 'chapter_21',
+    keyActions: [
+      'Party date set for 7 July',
+      'Ascot invitation shapes the timing',
+      'Gerda writes only through the bank',
+      'The village is snowed in in January'
+    ]
+  },
+  {
+    id: 'mi5_infiltrates_buf',
+    title: 'Agents planted inside the BUF',
+    date: 'early 1934',
+    description: 'Worried that Mosley\'s oratory could win enough money to make the BUF a real force, Bill\'s department and Special Branch place agents inside the organisation and monitor his communications. This gives Bill extra knowledge of some of the people on Cynthia\'s guest list.',
+    location: 'black_house_chelsea',
+    characters: [
+      { characterId: 'bill_laurie', role: 'runs the operation with Special Branch' },
+      { characterId: 'oswald_mosley', role: 'target of the infiltration' }
+    ],
+    significance: 'Gives British intelligence an inside view of Mosley\'s movement and of interest in Cynthia.',
+    chapter: 'chapter_21',
+    keyActions: [
+      'Agents planted in the BUF',
+      'Mosley\'s communications monitored',
+      'Bill learns more about the guest list'
+    ]
+  },
+  {
+    id: 'olympia_rally',
+    title: 'The Olympia rally',
+    date: '7 June 1934',
+    description: 'At a large BUF rally at Olympia, the over-zealous violence of Mosley\'s bodyguards brings a storm of bad publicity. Membership falls, though Mosley stays leader of the shrunken party.',
+    location: 'olympia_london',
+    characters: [{ characterId: 'oswald_mosley', role: 'BUF leader' }],
+    significance: 'Marks the start of the BUF\'s decline and makes Mosley keener for friendly platforms.',
+    chapter: 'chapter_21',
+    keyActions: ['Blackshirt stewards use violence', 'Bad press follows', 'BUF membership declines']
+  },
+  {
+    id: 'bill_urgent_call_may_1934',
+    title: 'Bill\'s urgent Sunday call',
+    date: 'a Sunday in early May 1934',
+    description: 'Bill rings early on a Sunday asking Cynthia and Richard to come to London on Tuesday, separately, for a matter he will not discuss even on a secure line. He warns Cynthia that interest in her and her parties has grown, so she may be followed, and arranges for his own people to watch her route.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'handler' },
+      { characterId: 'cynthia_childreth', role: 'agent' },
+      { characterId: 'richard_childreth', role: 'summoned to Thames House' }
+    ],
+    significance: 'Shows the opposition is now focused on Cynthia but has not noticed Richard.',
+    chapter: 'chapter_21',
+    keyActions: [
+      'Separate meetings arranged',
+      'Richard to go to Thames House',
+      'Cynthia to meet Hannah at the Ritz',
+      'Walking route chosen to expose any tail'
+    ]
+  },
+  {
+    id: 'ritz_meeting_mosley_proposal',
+    title: 'Hannah\'s proposal at the Ritz',
+    date: 'a Tuesday in May 1934, 11 am',
+    description: 'Cynthia walks from Paddington across Hyde Park and up Piccadilly to the Ritz, where Hannah, almost unrecognisable in blonde ringlets, asks her to invite Oswald Mosley to the July party to flush out his serious supporters. Bill puts the same question to Richard at Thames House. Dropping her napkin, Cynthia identifies the Snowdens\' guests as the knitters Monika Fischer and Karen Becker.',
+    location: 'ritz_london',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'agent being consulted' },
+      { characterId: 'hannah_park', role: 'puts the proposal, in a new disguise' },
+      { characterId: 'richard_childreth', role: 'consulted separately at Thames House' },
+      { characterId: 'bill_laurie', role: 'consults Richard' },
+      { characterId: 'peter_snowden', role: 'at another table' },
+      { characterId: 'marjorie_snowden', role: 'at another table' },
+      { characterId: 'monika_fischer', role: 'the Snowdens\' guest' },
+      { characterId: 'karen_becker', role: 'the Snowdens\' guest' }
+    ],
+    significance: 'Launches the plan to bring Mosley to Cynthia\'s party and exposes a Snowden channel to the German knitters.',
+    chapter: 'chapter_21',
+    keyActions: [
+      'Cynthia walks a route past hidden watchers',
+      'Hannah proposes inviting Mosley',
+      'BUF interest in Cynthia explained',
+      'Cynthia spots Fischer and Becker with the Snowdens'
+    ]
+  },
+  {
+    id: 'royal_ascot_1934',
+    title: 'A winner at Royal Ascot',
+    date: 'June 1934',
+    description: 'Trying to ignore anxious press reports about the BUF, the Childreths have a very good day at Royal Ascot, backing the Aga Khan\'s Felicitation, ridden by Gordon Richards, to win the Gold Cup at 9/2.',
+    location: 'royal_ascot',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'racegoer' },
+      { characterId: 'richard_childreth', role: 'racegoer' }
+    ],
+    significance: 'A moment of normal society life amid the build-up to the Mosley party.',
+    chapter: 'chapter_22',
+    keyActions: ['Back Felicitation in the Gold Cup', 'Win at 9/2', 'Try to shut out BUF news']
+  },
+  {
+    id: 'mosley_accepts_invitation',
+    title: 'Mosley accepts the invitation',
+    date: 'late June 1934',
+    description: 'The department drafts an invitation that appears to come from Cynthia, and Mary sends out the general invitations without mentioning Mosley. After the Olympia debacle, Mosley\'s secretary writes to accept; he will come alone with two bodyguards. Gerda and Lena again arrange to stay with the Snowdens.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'oswald_mosley', role: 'accepts via his secretary' },
+      { characterId: 'mary', role: 'sends the invitations' },
+      { characterId: 'bill_laurie', role: 'has the invitation drafted' },
+      { characterId: 'gerda_stammer', role: 'will stay with the Snowdens' },
+      { characterId: 'lena_weber', role: 'will stay with the Snowdens' }
+    ],
+    significance: 'Brings the BUF leader into a house wired for observation.',
+    chapter: 'chapter_22',
+    keyActions: [
+      'Invitation drafted in Cynthia\'s name',
+      'General invitations sent',
+      'Mosley accepts',
+      'German guests lodge with the Snowdens'
+    ]
+  },
+  {
+    id: 'second_garden_party_mosley',
+    title: 'Mosley at the second garden party',
+    date: '7 July 1934',
+    description: 'Edwin\'s team handles security and serves canapes so they can overhear guests. Mosley arrives quietly after eight in a grey suit with two huge black-uniformed minders and shocks Cynthia with antisemitic remarks, so she hands him over to the delighted Gerda and Lena. Bill stays out of Mosley\'s sight to protect future operations.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'hostess' },
+      { characterId: 'oswald_mosley', role: 'guest of honour' },
+      { characterId: 'gerda_stammer', role: 'German guest' },
+      { characterId: 'lena_weber', role: 'German guest' },
+      { characterId: 'bill_laurie', role: 'avoids Mosley' },
+      { characterId: 'hannah_park', role: 'present in disguise' },
+      { characterId: 'jane_maclean', role: 'observer' },
+      { characterId: 'edwin', role: 'security and staff' }
+    ],
+    significance: 'Draws Mosley and his closest devotees into the open, as Bill intended.',
+    chapter: 'chapter_22',
+    keyActions: [
+      'Mosley arrives unannounced with bodyguards',
+      'Antisemitic remarks anger Cynthia',
+      'Cynthia passes him to Gerda and Lena',
+      'Bill keeps his distance'
+    ]
+  },
+  {
+    id: 'mosley_safe_house_request',
+    title: 'Mosley asks for a safe house',
+    date: '7 July 1934',
+    description: 'With the Snowdens at his side, Mosley tells the Childreths his people have been keeping an eye on them and asks them to shelter agents entering the country in case of alliance or war, likening it to hiding priests under Elizabeth I. He says other safe houses already exist through the Snowdens or contacts in Germany. Richard asks for time to think, and Mosley says replies should go through Peter Snowden.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'oswald_mosley', role: 'makes the request' },
+      { characterId: 'cynthia_childreth', role: 'asked to run a safe house' },
+      { characterId: 'richard_childreth', role: 'buys time' },
+      { characterId: 'peter_snowden', role: 'named go-between' },
+      { characterId: 'marjorie_snowden', role: 'vouches for Cynthia' }
+    ],
+    significance: 'Creates the safe-house role that will later be called upon, and confirms the Snowdens and Harringtons as central figures.',
+    chapter: 'chapter_22',
+    keyActions: [
+      'Mosley admits surveillance of the couple',
+      'Safe-house request made',
+      'Richard asks for time',
+      'Peter Snowden named as go-between',
+      'Bill and Hannah want them to agree'
+    ]
+  },
+  {
+    id: 'bill_louise_conversation',
+    title: 'Bill and Louise talk privately',
+    date: '7 July 1934',
+    description: 'Looking for Bill after the Mosley conversation, Cynthia finds him talking with Louise Harrington, who drifts away as she approaches. Bill is muttering to himself as if something worries him, but says nothing about it.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'in private conversation' },
+      { characterId: 'louise_harrington', role: 'slips away' },
+      { characterId: 'cynthia_childreth', role: 'interrupts' }
+    ],
+    significance: 'An unexplained exchange that raises questions about Louise.',
+    chapter: 'chapter_22',
+    keyActions: ['Bill seen with Louise', 'Louise drifts off', 'Bill looks troubled']
+  },
+  {
+    id: 'battle_of_cable_street',
+    title: 'Battle of Cable Street',
+    date: 'October 1936',
+    description: 'A BUF march into a largely Jewish area of the East End is blocked by protesters, and after the Police Commissioner intervenes Mosley abandons it. In December the Public Order Act bans political uniforms.',
+    location: 'cable_street',
+    characters: [{ characterId: 'oswald_mosley', role: 'BUF leader' }],
+    significance: 'Part of the BUF\'s decline that leaves the Denleigh group to work without a figurehead.',
+    chapter: 'chapter_23',
+    keyActions: ['March blocked', 'Mosley forced to withdraw', 'Public Order Act follows']
+  },
+  {
+    id: 'earls_court_rally_declined',
+    title: 'Cynthia declines the Earls Court rally',
+    date: '16 July 1939',
+    description: 'Mosley\'s \'Britain First\' rally at Earls Court draws a vast crowd. The Harringtons invite Cynthia to go with them, but she declines, giving her birthday as the excuse, appalled at the idea of a Hitler-style harangue.',
+    location: 'earls_court',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'declines' },
+      { characterId: 'bob_harrington', role: 'invites her' },
+      { characterId: 'louise_harrington', role: 'invites her' },
+      { characterId: 'oswald_mosley', role: 'addresses the rally' }
+    ],
+    significance: 'The only approach from the group for years; Cynthia otherwise lies dormant.',
+    chapter: 'chapter_23',
+    keyActions: ['Harringtons send an invitation', 'Cynthia cites her birthday', 'Mosley holds his largest rally']
+  },
+  {
+    id: 'mosley_interned',
+    title: 'Mosley interned',
+    date: '23 May 1940',
+    description: 'After Mosley campaigns for a negotiated peace, the authorities lose patience and intern him under Defence Regulation 18B; the BUF is banned later that year. He stays in Holloway Prison with his second wife until his release in 1943.',
+    location: 'holloway_prison',
+    characters: [
+      { characterId: 'oswald_mosley', role: 'interned' },
+      { characterId: 'bill_laurie', role: 'had advance knowledge through infiltration' }
+    ],
+    significance: 'Leaves the Snowdens, Harringtons and Davieses to carry on fifth-column work alone.',
+    chapter: 'chapter_23',
+    keyActions: ['Peace campaign', 'Internment under 18B', 'BUF proscribed', 'Released in 1943']
+  },
+  {
+    id: 'marjorie_service_call',
+    title: 'Marjorie\'s \'be of service\' call',
+    date: 'a Saturday in 1943, after Mosley\'s release',
+    description: 'Marjorie Snowden rings unexpectedly, complains about Mosley\'s treatment, praises Lord Haw-Haw\'s broadcasts and says \'the others\' want Cynthia to know she has not been forgotten and will soon be called on to be of service. Cynthia reports to Bill, who says it fits signs that something may be about to happen.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'marjorie_snowden', role: 'messenger for the group' },
+      { characterId: 'cynthia_childreth', role: 'sleeper put on alert' },
+      { characterId: 'bill_laurie', role: 'receives her report' },
+      { characterId: 'lord_haw_haw', role: 'praised by Marjorie' }
+    ],
+    significance: 'Ends Cynthia\'s years as a dormant sleeper and signals a coming operation.',
+    chapter: 'chapter_23',
+    keyActions: [
+      'Marjorie defends Mosley',
+      'She praises Lord Haw-Haw',
+      'Cynthia warned she will be called upon',
+      'Bill links it to other intelligence'
+    ]
+  },
+  {
+    id: 'robbins_macmillan_visit',
+    title: 'Robbins and Macmillan bring news',
+    date: 'June 1943',
+    description: 'Two officials working with the Wing Commander, Mike Robbins and Keith Macmillan, tell Cynthia and Mary that \'he is in the country\'. Special Branch picked him up from a call from Penzance and are following him; he chose a compartment with a man and an elderly woman, so someone will board at Taunton to follow the man. He travels as Edwards, and Cynthia is to do nothing and contact the \'Wingco\' only in an emergency.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'mike_robbins', role: 'briefs Cynthia' },
+      { characterId: 'keith_macmillan', role: 'accompanies Robbins' },
+      { characterId: 'cynthia_childreth', role: 'safe-house keeper in waiting' },
+      { characterId: 'mary', role: 'serves coffee and sits in' },
+      { characterId: 'helmut_schnitter', role: 'the agent travelling as Edwards (not present)' }
+    ],
+    significance: 'Tells Cynthia, and the reader, that the long-awaited agent has arrived and is being tracked.',
+    chapter: 'chapter_24',
+    keyActions: [
+      'Officials show ID cards',
+      'Agent\'s arrival confirmed',
+      'Train surveillance plan explained',
+      'Cynthia told to wait'
+    ]
+  },
+  {
+    id: 'snowden_half_way_house_briefing',
+    title: 'Snowden\'s briefing at the Half-way House',
+    date: 'June 1943, 1 pm',
+    description: 'Peter Snowden summons Cynthia to the Half-way House pub on the A4 and explains her service: a German agent named Edwards will carry out a single mission, then shelter at her house until he can be smuggled to France. He will identify himself with a cheque book in that name issued by her husband\'s bank, and the group will keep her house under surveillance. Snowden leaves first so they are not seen together.',
+    location: 'half_way_house_pub',
+    characters: [
+      { characterId: 'peter_snowden', role: 'gives the orders' },
+      { characterId: 'cynthia_childreth', role: 'accepts the safe-house task' },
+      { characterId: 'helmut_schnitter', role: 'the agent \'Edwards\' (not present)' }
+    ],
+    significance: 'Activates Cynthia as a safe house and sets the cheque book as the recognition token.',
+    chapter: 'chapter_24',
+    keyActions: [
+      'Urgent phone summons',
+      'Mission and escape route outlined',
+      'Cheque book named as recognition token',
+      'Surveillance on her house promised',
+      'Separate departures'
+    ]
+  },
+  {
+    id: 'cynthia_reports_edwards_plan',
+    title: 'Cynthia reports to Bill',
+    date: 'June 1943',
+    description: 'Back home, Cynthia rings Bill and passes on Snowden\'s plan. Bill confirms they know of Edwards\' arrival and are tracking him, and wonders how the group found out so quickly, concluding someone must have been watching for him in Penzance.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reports' },
+      { characterId: 'bill_laurie', role: 'handler' }
+    ],
+    significance: 'Raises the question of how the conspirators knew of the landing.',
+    chapter: 'chapter_24',
+    keyActions: ['Cynthia relays the plan', 'Bill confirms tracking', 'Bill suspects a watcher at Penzance']
+  },
+  {
+    id: 'bennet_stakeout_hugh_town',
+    title: 'George Bennet\'s stake-out',
+    date: 'June 1943',
+    description: 'For three days George Bennet sits in the window of the Atlantic Hotel, posing as a lonely middle-aged visitor while watching Hugh Town\'s main street. He is looking for someone who does not fit in and is carrying two cases, one heavy enough to hold a radio.',
+    location: 'atlantic_hotel_scilly',
+    characters: [{ characterId: 'george_bennet', role: 'Special Branch watcher' }],
+    significance: 'Shows the authorities were waiting for the agent before he even reached the mainland.',
+    chapter: 'chapter_25',
+    keyActions: [
+      'Watches from the hotel window',
+      'Learns the street\'s routines',
+      'Waits for a heavy-laden stranger'
+    ]
+  },
+  {
+    id: 'edwards_buys_ferry_ticket',
+    title: 'The T. G. Edwards cheque',
+    date: 'June 1943, about 9 am',
+    description: 'On the fourth morning George spots a man in an overcoat, unusual for June, carrying two cases long before the ferry is due. After the man buys a single to Penzance, George talks the clerk into showing him the payment: a Martins Bank cheque, 68 Lombard Street, account name T. G. Edwards. George is certain he has his man.',
+    location: 'st_marys_scilly',
+    characters: [
+      { characterId: 'george_bennet', role: 'identifies the target' },
+      { characterId: 'helmut_schnitter', role: 'the man calling himself T. G. Edwards' }
+    ],
+    significance: 'Confirms the agent\'s arrival and ties him to the name Edwards.',
+    chapter: 'chapter_25',
+    keyActions: [
+      'Odd overcoat and early luggage noticed',
+      'Man followed to the Steamship office',
+      'Clerk shows the cheque',
+      'Bank security features checked'
+    ]
+  },
+  {
+    id: 'leggatt_grave_walk',
+    title: 'George\'s walk to Old Town',
+    date: 'June 1943',
+    description: 'With only one way off the island, George has no need to tail Edwards. He walks past Porthcressa Beach and round Peninnis Head to Old Town church to see the upright stone coffin of naval surgeon Abraham Leggatt, then packs for the afternoon ferry.',
+    location: 'old_town_church_scilly',
+    characters: [{ characterId: 'george_bennet', role: 'waits out the morning' }],
+    significance: 'Shows George\'s confidence and his personal ties to the islands.',
+    chapter: 'chapter_25',
+    keyActions: ['Walks the coast', 'Visits Leggatt\'s grave', 'Returns to pack for the ferry']
+  },
+  {
+    id: 'scillonian_crossing',
+    title: 'The Scillonian crossing',
+    date: 'June 1943, about 4 pm to 7 pm',
+    description: 'George, dressed as a tourist, sails with Edwards on the blacked-out, armed Scillonian, escorted by a destroyer and a Hurricane. In Penzance Edwards takes a room at the Long Boat Inn, where the landlady shows George\'s Special Branch card the respect it deserves and reveals that Edwards paid with another Martins Bank cheque.',
+    location: 'long_boat_inn',
+    characters: [
+      { characterId: 'george_bennet', role: 'tails the target' },
+      { characterId: 'helmut_schnitter', role: '\'Edwards\'' }
+    ],
+    significance: 'Carries the trail to the mainland and confirms the cheque pattern.',
+    chapter: 'chapter_26',
+    keyActions: [
+      'Escorted crossing to Penzance',
+      'Edwards books into the Long Boat Inn',
+      'Landlady shows a second cheque',
+      'George books a room too'
+    ]
+  },
+  {
+    id: 'penzance_train_departure',
+    title: 'The 07.45 to Paddington',
+    date: 'June 1943, 07.45',
+    description: 'George\'s colleague Jim, posing as a cycling holidaymaker, confirms that Edwards has bought a ticket to London; Edwards walks the platform looking for a particular compartment. George phones the London office, then joins Edwards\' compartment, which also holds an elderly woman knitting and a studious man in pince-nez. Edwards puts his cases on the rack between others of similar design.',
+    location: 'penzance',
+    characters: [
+      { characterId: 'george_bennet', role: 'sits in the compartment' },
+      { characterId: 'jim_redgrave', role: 'checks the ticket and sits behind' },
+      { characterId: 'helmut_schnitter', role: '\'Edwards\'' }
+    ],
+    significance: 'Puts Edwards in a compartment with two strangers and identical-looking luggage.',
+    chapter: 'chapter_26',
+    keyActions: [
+      'Jim confirms the destination',
+      'Edwards picks a specific compartment',
+      'Trunk call to London',
+      'Sight lines covered both ways'
+    ]
+  },
+  {
+    id: 'alison_boards_at_taunton',
+    title: 'Alison\'s note',
+    date: 'June 1943',
+    description: 'At Taunton a lively young woman in tweeds, with auburn hair and a rucksack, joins the compartment. In the corridor she offers George a cigarette, introduces herself as Alison and, while shaking hands, palms him a note saying she is with him and will follow the man with the glasses.',
+    location: 'taunton',
+    characters: [
+      { characterId: 'alison', role: 'plays a scatterbrained rambler' },
+      { characterId: 'george_bennet', role: 'receives the note' }
+    ],
+    significance: 'Brings a second, unknown ally into the surveillance.',
+    chapter: 'chapter_26',
+    keyActions: [
+      'Alison boards late',
+      'Cigarette in the corridor',
+      'Note passed in a handshake',
+      'She feigns sleep'
+    ]
+  },
+  {
+    id: 'box_tunnel_switch',
+    title: 'The switch in the Box Tunnel',
+    date: 'June 1943, after 3 pm',
+    description: 'Feeling claustrophobic, George steps into the corridor just as the train enters the long, dark Box Tunnel beyond Bath. Later in the chapter the knitting passenger reveals that a switch was made in the compartment during those couple of minutes.',
+    location: 'box_tunnel',
+    characters: [
+      { characterId: 'george_bennet', role: 'in the corridor, unaware' },
+      { characterId: 'helmut_schnitter', role: '\'Edwards\', in the compartment' }
+    ],
+    significance: 'The moment the conspirators exchange cases under the surveillance team\'s nose.',
+    chapter: 'chapter_26',
+    keyActions: ['Train enters the tunnel', 'George is in the corridor', 'Cases switched in the dark']
+  },
+  {
+    id: 'goring_handover',
+    title: 'The knitting woman leaves at Goring',
+    date: 'June 1943',
+    description: 'At Goring the elderly woman in the cloche hat takes down a case, refuses all help and is met by a waiting car. She tells the driver the three of them sat together as arranged and the switch was easy in the Box Tunnel; at a large timbered cottage in Aldworth she removes a grey wig and looks years younger.',
+    location: 'aldworth',
+    characters: [],
+    significance: 'Reveals a planned switch and a disguised conspirator.',
+    chapter: 'chapter_26',
+    keyActions: [
+      'She refuses help with the case',
+      'A driver asks \'Is that it?\'',
+      'She dismisses George and Alison as harmless',
+      'Grey wig removed at Aldworth'
+    ]
+  },
+  {
+    id: 'young_leaves_at_reading',
+    title: 'The man in pince-nez leaves at Reading',
+    date: 'June 1943, 5.40 pm',
+    description: 'At Reading the man in pince-nez takes down a case and leaves; Alison follows, telling George she fancies exploring Reading. He crosses to the Great Western Hotel opposite the station and checks in as \'Young\', room 107, while Alison listens at reception.',
+    location: 'great_western_hotel_reading',
+    characters: [
+      { characterId: 'alison', role: 'follows him' },
+      { characterId: 'george_bennet', role: 'stays on the train' }
+    ],
+    significance: 'Gives the second passenger a name, \'Young\', and a base in Reading.',
+    chapter: 'chapter_27',
+    keyActions: [
+      'He takes a case off the rack',
+      'Alison leaves the train too',
+      'Check-in as Young, room 107',
+      'Alison overhears the name'
+    ]
+  },
+  {
+    id: 'alison_quick_change',
+    title: 'Alison\'s quick change',
+    date: 'June 1943, about 6 pm',
+    description: 'In the station ladies\' room Alison sheds her tweeds and auburn wig for a blouse, trousers, short brown hair and clear-glass spectacles. She leaves her rambler kit at Left Luggage and shows an official ID card to get back through the barrier unchallenged.',
+    location: 'reading',
+    characters: [{ characterId: 'alison', role: 'changes identity' }],
+    significance: 'Shows Alison is a trained official operative, not a chance traveller.',
+    chapter: 'chapter_27',
+    keyActions: [
+      'Wig and tweeds removed',
+      'New look with plain glasses',
+      'Kit stored at Left Luggage',
+      'Official ID used at the barrier'
+    ]
+  },
+  {
+    id: 'alison_checks_into_hotel',
+    title: 'Alison checks in',
+    date: 'June 1943, about 7 pm',
+    description: 'Watching the stairs from the lobby, Alison sees Young walk past to dinner without recognising her. She books a single room with an open-ended stay, pays in advance in case she must leave in a hurry, and follows him into the dining room.',
+    location: 'great_western_hotel_reading',
+    characters: [{ characterId: 'alison', role: 'watcher' }],
+    significance: 'Puts Alison in position to follow Young next morning.',
+    chapter: 'chapter_27',
+    keyActions: ['Watches the stairs', 'Young fails to recognise her', 'Pays in advance', 'Follows him to dinner']
+  },
+  {
+    id: 'paddington_arrival',
+    title: 'Edwards reaches Paddington',
+    date: 'June 1943, evening',
+    description: 'At Paddington George follows Edwards past at least six Special Branch officers, who have orders not to arrest or hinder him because he is their link to British sympathisers. Boxed in by four of them, Edwards checks a slip of paper and walks via Praed Street and the Edgware Road to Crawford Place.',
+    location: 'paddington',
+    characters: [
+      { characterId: 'george_bennet', role: 'leads the follow' },
+      { characterId: 'jim_redgrave', role: 'follows by bicycle' },
+      { characterId: 'helmut_schnitter', role: '\'Edwards\'' }
+    ],
+    significance: 'Edwards is deliberately left free to lead the police to his contacts.',
+    chapter: 'chapter_28',
+    keyActions: [
+      'Six officers in place',
+      'No arrest ordered',
+      'Box surveillance on foot',
+      'Directions checked on a slip'
+    ]
+  },
+  {
+    id: 'crawford_place_flat_entered',
+    title: 'Edwards goes to ground in Crawford Place',
+    date: 'June 1943, evening',
+    description: 'Edwards collects a key from a greengrocer beside the Laurie Arms, lets himself in by the door next to the shop and draws the curtains of the first-floor flat. Two officers stay to watch while the rest regroup.',
+    location: 'crawford_place_flat',
+    characters: [
+      { characterId: 'helmut_schnitter', role: '\'Edwards\'' },
+      { characterId: 'george_bennet', role: 'sets up the watch' }
+    ],
+    significance: 'Fixes Edwards in a prepared bolt-hole under constant observation.',
+    chapter: 'chapter_28',
+    keyActions: ['Key collected from the greengrocer', 'Flat entered', 'Curtains drawn', 'Watchers posted']
+  },
+  {
+    id: 'yard_strategy_meeting',
+    title: 'Strategy meeting and the long watch',
+    date: 'June 1943',
+    description: 'At Scotland Yard George sets up a 24-hour watch, with Jenkins and Dent in the first car and Bert organising the rota, and asks Jim to get Bill Laurie\'s people at \'5\' to detect any radio transmissions. Day after day the watchers report that no one has gone in or out except a postman, and the direction-finding equipment is delayed.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'leads the team' },
+      { characterId: 'jim_redgrave', role: 'liaison with MI5' },
+      { characterId: 'bert', role: 'organises the rota' },
+      { characterId: 'jenkins', role: 'watcher' },
+      { characterId: 'john_dent', role: 'watcher' },
+      { characterId: 'bill_laurie', role: 'asked for radio detection' }
+    ],
+    significance: 'The watch seems airtight, which makes later events baffling.',
+    chapter: 'chapter_28',
+    keyActions: [
+      'Round-the-clock watch set',
+      'Daily 19.00 meetings',
+      'Radio detection requested',
+      'Only a postman seen calling'
+    ]
+  },
+  {
+    id: 'young_bus_to_bucklebury',
+    title: 'Young\'s bus ride into the country',
+    date: 'June 1943, the morning after the train journey',
+    description: 'Alison follows Young from the hotel onto a no. 11 bus from Reading through Theale to the end of the line at the Blade Bone Inn. He walks a little way up one house\'s drive, retreats to buy biscuits at the village shop and waits on the grass before finally going up the drive.',
+    location: 'blade_bone_inn',
+    characters: [
+      { characterId: 'alison', role: 'tails him' },
+      { characterId: 'john_davies', role: 'travelling as \'Young\'' }
+    ],
+    significance: 'Leads Alison to the house where Young is expected.',
+    chapter: 'chapter_28',
+    keyActions: [
+      'Bus to the terminus',
+      'Alison notes the route',
+      'Young reconnoitres the house',
+      'He waits, then approaches'
+    ]
+  },
+  {
+    id: 'davies_at_cynthias_door',
+    title: '\'Young\' is Sir John Davies',
+    date: 'June 1943, late morning',
+    description: 'Young knocks at Cynthia\'s door and says she is expecting him. Alison phones Bill, then Cynthia, opening with the agreed line about the Wing Commander; Cynthia tells her the visitor is not Young but Sir John Davies, though she was told to expect a man called Edwards. Bill is puzzled why Davies has replaced Edwards under a second alias.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'john_davies', role: 'arrives as \'Young\'' },
+      { characterId: 'cynthia_childreth', role: 'recognises him' },
+      { characterId: 'alison', role: 'reports and reassures' },
+      { characterId: 'bill_laurie', role: 'baffled handler' }
+    ],
+    significance: 'Reveals that a known sympathiser was the second man in Edwards\' compartment.',
+    chapter: 'chapter_28',
+    keyActions: [
+      'Davies at the door',
+      'Alison\'s coded call',
+      'Cynthia names Davies',
+      'Bill asks Alison to stay nearby'
+    ]
+  },
+  {
+    id: 'gas_man_ruse',
+    title: 'The gas-man ruse',
+    date: 'June 1943, 9 am',
+    description: 'With still no movement, Jim arranges a gas company uniform and forms because the meter is inside the flat. Bert, the only one who fits the small uniform, calls at a couple of other houses first, then finds the street door unexpectedly unlocked and a strange smell on the stairs.',
+    location: 'crawford_place_flat',
+    characters: [
+      { characterId: 'bert', role: 'poses as the gas man' },
+      { characterId: 'jim_redgrave', role: 'arranges the disguise' },
+      { characterId: 'george_bennet', role: 'plans the entry' }
+    ],
+    significance: 'Gets the team inside without revealing the surveillance.',
+    chapter: 'chapter_29',
+    keyActions: [
+      'Meter location checked',
+      'Uniform supplied',
+      'Cover calls on other houses',
+      'Street door found unlocked'
+    ]
+  },
+  {
+    id: 'edwards_found_dead',
+    title: 'Edwards found dead',
+    date: 'June 1943',
+    description: 'Getting no answer, Bert shoulders open the flimsy flat door and finds Edwards on the floor, shot once through the forehead; he staggers out and is sick in the street. George and Jim find the body on its back with a look of surprise, no sign of a struggle and several days dead, and George seals the scene and keeps the press out.',
+    location: 'crawford_place_flat',
+    characters: [
+      { characterId: 'helmut_schnitter', role: 'victim, known as Edwards' },
+      { characterId: 'bert', role: 'finds the body' },
+      { characterId: 'george_bennet', role: 'takes charge' },
+      { characterId: 'jim_redgrave', role: 'with George' },
+      { characterId: 'jenkins', role: 'sent for the doctor' }
+    ],
+    significance: 'The agent at the centre of the operation was killed under the noses of a 24-hour watch.',
+    chapter: 'chapter_29',
+    keyActions: ['Door forced', 'Body found', 'Bert is sick', 'Doctor and photographer summoned', 'Scene sealed']
+  },
+  {
+    id: 'flat_search_books',
+    title: 'Books instead of a radio',
+    date: 'June 1943',
+    description: 'The police doctor confirms a single gunshot and sends the body away in an unmarked ambulance. Dent learns that the greengrocer only holds the key and that the owner died at Dunkirk, though the flat is clean, stocked and has power. George opens Edwards\' heavy case and finds only books, all in English.',
+    location: 'crawford_place_flat',
+    characters: [
+      { characterId: 'george_bennet', role: 'searches the flat' },
+      { characterId: 'john_dent', role: 'questions the shop' },
+      { characterId: 'helmut_schnitter', role: 'the dead man\'s luggage' }
+    ],
+    significance: 'Shows the radio case was swapped on the journey for one packed in Britain.',
+    chapter: 'chapter_30',
+    keyActions: [
+      'Unmarked ambulance',
+      'Key-holders only at the shop',
+      'Flat mysteriously maintained',
+      'Case of English books opened'
+    ]
+  },
+  {
+    id: 'st_johns_police_visit',
+    title: 'Smoothing things at St Johns',
+    date: 'June 1943',
+    description: 'George calls at St Johns police station, where the Chief Inspector is aggrieved at losing a murder on his patch. Told it is a matter of national security, he agrees to give discreet help and to question his beat officer himself.',
+    location: 'st_johns_police_station',
+    characters: [
+      { characterId: 'george_bennet', role: 'asks for help' },
+      { characterId: 'st_johns_chief_inspector', role: 'local police chief' }
+    ],
+    significance: 'Secures local manpower while keeping control with Special Branch.',
+    chapter: 'chapter_30',
+    keyActions: [
+      'Jurisdiction friction',
+      'National security invoked',
+      'Beat officer to be questioned',
+      'Direct line exchanged'
+    ]
+  },
+  {
+    id: 'timeline_meeting_postman',
+    title: 'The postman becomes a suspect',
+    date: 'June 1943, 7 pm',
+    description: 'At the evening meeting George walks through his timeline and the team agrees the case switch most likely happened in the Box Tunnel. Edwards seems to have been shot as soon as he opened his door; Dent\'s notes show the only caller was a postman on Day 2 at 10.30 who went into a building that should have been locked, yet no post was found. Edwards\' cheque book is also missing.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'reconstructs the case' },
+      { characterId: 'john_dent', role: 'recalls the postman' },
+      { characterId: 'jim_redgrave', role: 'to trace the postal round' },
+      { characterId: 'june', role: 'brings George tea' }
+    ],
+    significance: 'Identifies the probable killer\'s disguise and a missing identity token.',
+    chapter: 'chapter_30',
+    keyActions: [
+      'Timeline reviewed',
+      'Box Tunnel switch agreed',
+      'Postman of Day 2 suspected',
+      'Cheque book found missing',
+      'George to ask \'5\' about the Taunton girl'
+    ]
+  },
+  {
+    id: 'coded_call_to_bill',
+    title: 'George\'s coded call to Bill',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Wary of an open line, George rings Bill at MI5 pretending to want advice on investing a legacy from an aunt. Bill understands at once and fixes a meeting for noon the next day at his offices near Woodstock.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'caller, posing as an investor' },
+      { characterId: 'bill_laurie', role: 'plays along with the code' }
+    ],
+    significance: 'Begins the \'share dealings\' code that George and Bill use for the rest of the case.',
+    chapter: 'chapter_31',
+    keyActions: [
+      'George talks of a legacy to invest',
+      'Bill offers a meeting near Woodstock',
+      'Noon the next day agreed'
+    ]
+  },
+  {
+    id: 'blenheim_meeting',
+    title: 'Special Branch meets MI5 at Blenheim',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'George and Jim enter Blenheim Palace through a green door at the back and learn Bill is now a Group Captain. George reports the murder and the missing cheque book; Bill reveals the Edwards cheques were an MI5 trap set up almost ten years earlier, that the tip-off came from a source high in Germany via the Polish government-in-exile, and that Alison was sent to follow the other man in the compartment. They agree to pool information.',
+    location: 'blenheim_palace',
+    characters: [
+      { characterId: 'george_bennet', role: 'reports the murder' },
+      { characterId: 'jim_redgrave', role: 'accompanies George' },
+      { characterId: 'bill_laurie', role: 'explains MI5\'s side' },
+      { characterId: 'alison', role: 'discussed as Bill\'s agent on the train' },
+      { characterId: 'helmut_schnitter', role: 'the dead \'Edwards\'' }
+    ],
+    significance: 'Special Branch\'s murder inquiry and MI5\'s long fifth-column operation are revealed to be the same case, and the two services join forces.',
+    chapter: 'chapter_31',
+    keyActions: [
+      'Bill\'s promotion revealed',
+      'Missing cheque book reported',
+      'Edwards cheque name revealed as an old MI5 trap',
+      'MI5 tracking nearly 500 fifth columnists',
+      'Agreement to pool information'
+    ]
+  },
+  {
+    id: 'bill_tells_cynthia_edwards_dead',
+    title: 'Bill tells Cynthia that Edwards is dead',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Bill phones Cynthia to say that the Mr Edwards she was told to expect has been shot in London and that Special Branch is now working with MI5. He reflects that Davies must have known on the train what would happen to Edwards, or he would not have taken his place.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'caller' },
+      { characterId: 'cynthia_childreth', role: 'informed' },
+      { characterId: 'john_davies', role: 'suspected of foreknowledge' }
+    ],
+    significance: 'Davies becomes implicated in the planning of Edwards\' death.',
+    chapter: 'chapter_31',
+    keyActions: [
+      'Cynthia told Edwards will not come',
+      'Special Branch and MI5 now joined',
+      'Davies\' foreknowledge inferred'
+    ]
+  },
+  {
+    id: 'postman_was_a_woman',
+    title: 'The \'postman\' turns out to be a woman',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'At the afternoon briefing Bert reports that the flat\'s gas and electricity were reconnected and paid for two weeks before Edwards arrived. The post office says no delivery was due at the time the \'postman\' went in, and a beat constable recalls the postman wearing earring studs. George realises he may be hunting a female assassin.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'draws the conclusion' },
+      { characterId: 'bert', role: 'reports utilities and the constable\'s description' },
+      { characterId: 'jim_redgrave', role: 'reports the post office check' }
+    ],
+    significance: 'The murder suspect is now believed to be a woman, and the killing is shown to have been planned well in advance.',
+    chapter: 'chapter_31',
+    keyActions: [
+      'Utilities found prepaid two weeks earlier',
+      'No real delivery due',
+      'Earring studs noticed by a constable',
+      'Second meeting with Bill arranged'
+    ]
+  },
+  {
+    id: 'thames_house_case_theory',
+    title: 'George\'s theory of the train woman',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'At Thames House George argues that the elderly woman in the compartment was part of the plot. The identical cases on the rack, a switch in the dark of the Box Tunnel, and a case that needed a porter at Penzance but was light enough for her to lift alone at Goring all point to Edwards being an elaborate decoy.',
+    location: 'thames_house',
+    characters: [
+      { characterId: 'george_bennet', role: 'develops the theory' },
+      { characterId: 'bill_laurie', role: 'tests and accepts it' },
+      { characterId: 'jim_redgrave', role: 'cannot confirm the porter' },
+      { characterId: 'helmut_schnitter', role: 'now seen as a decoy' }
+    ],
+    significance: 'Attention shifts from Edwards to the unnoticed woman on the train.',
+    chapter: 'chapter_32',
+    keyActions: [
+      'Postman\'s description shared',
+      'Case-weight contradiction spotted',
+      'Edwards judged a decoy',
+      'Woman named as the key'
+    ]
+  },
+  {
+    id: 'joint_plan_goring',
+    title: 'Plan to search for the woman at Goring',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Bill confirms that the other man in the compartment is using the name Young and is still under MI5 watch. The two men agree to keep the local police out, send a Special Branch team to Goring, share intelligence reports, and keep in touch through the investment ruse because the building may be watched.',
+    location: 'thames_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'sets the ground rules' },
+      { characterId: 'george_bennet', role: 'agrees to send a team' },
+      { characterId: 'jim_redgrave', role: 'will send men to Goring' },
+      { characterId: 'john_davies', role: 'under watch as \'Young\'' }
+    ],
+    significance: 'Sets the next lines of inquiry and warns that the plotters are ruthless enough to kill their own.',
+    chapter: 'chapter_32',
+    keyActions: [
+      '\'Young\' alias confirmed to George',
+      'Team ordered to Goring',
+      'Local police excluded',
+      'Both told to watch their backs'
+    ]
+  },
+  {
+    id: 'young_leaves_suitcase',
+    title: '\'Young\' leaves a suitcase with Cynthia',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'The man calling himself Young, whom Cynthia knows as Sir John Davies, acts as if he has never met her. He says Edwards has been delayed and leaves a locked suitcase to be collected by someone unknown, saying the case itself will serve as identification.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'john_davies', role: 'calling himself Young; delivers the case' },
+      { characterId: 'cynthia_childreth', role: 'receives the case' }
+    ],
+    significance: 'Cynthia\'s house becomes a drop for an unknown collector.',
+    chapter: 'chapter_33',
+    keyActions: [
+      'Davies does not acknowledge Cynthia',
+      'Edwards called \'delayed\'',
+      'Locked case left for collection',
+      'The case is to act as ID'
+    ]
+  },
+  {
+    id: 'alison_as_sarah',
+    title: 'Alison calls as \'Sarah\'',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Alison rings the doorbell during Young\'s visit and loudly greets Cynthia as an old friend. Cynthia improvises the name \'Sarah\' and fixes a Tuesday date, and while taking Cynthia\'s number Alison writes on a notepad that she is outside if needed.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'alison', role: 'checks on Cynthia under cover' },
+      { characterId: 'cynthia_childreth', role: 'improvises the cover' }
+    ],
+    significance: 'Cynthia and Alison meet face to face, and the invented Tuesday date becomes the cover for a real meeting.',
+    chapter: 'chapter_33',
+    keyActions: [
+      'Alison poses as a school friend',
+      'Cynthia invents \'Sarah\'',
+      'Hidden note passed',
+      'Tuesday meeting fixed'
+    ]
+  },
+  {
+    id: 'young_collected_in_reading',
+    title: 'Young is collected by car in Reading',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Alison rides the same bus back to Reading as Young, the two pointedly ignoring each other. An hour later he leaves his hotel without the case and is driven off in a small car, and Alison, unable to follow, returns to London.',
+    location: 'reading',
+    characters: [
+      { characterId: 'alison', role: 'tails Young' },
+      { characterId: 'john_davies', role: 'picked up by an unknown driver' }
+    ],
+    significance: 'Shows that Davies has helpers with transport, and MI5 loses his trail.',
+    chapter: 'chapter_33',
+    keyActions: [
+      'Shared bus ride',
+      'Watch from the hotel foyer',
+      'Pickup by a small car',
+      'Alison returns to London'
+    ]
+  },
+  {
+    id: 'gallery_meeting_arranged',
+    title: 'Bill arranges a meeting at the National Gallery',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Cynthia phones Bill about the visit. He asks her to travel up with Richard on his usual commute the following Tuesday, join the queue for a Myra Hess lunchtime concert, and turn left inside to a meeting room near the toilets.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'reports the visit' },
+      { characterId: 'bill_laurie', role: 'plans the meeting' },
+      { characterId: 'richard_childreth', role: 'his commute is her cover' }
+    ],
+    significance: 'Sets up the first full meeting of the joint team.',
+    chapter: 'chapter_33',
+    keyActions: [
+      'Cynthia reports Young\'s visit',
+      'Tuesday at 11.30 fixed',
+      'Concert queue as cover',
+      'Underground rather than taxi'
+    ]
+  },
+  {
+    id: 'goring_enquiries_fail',
+    title: 'Enquiries at Goring draw a blank',
+    date: 'Wartime, 1943 (inferred)',
+    description: 'Station staff at Goring remember nothing, pointing out that grey-haired ladies with bags and cases are common there and the station sees little passing traffic. The investigation turns to the question of motive.',
+    location: 'goring',
+    characters: [],
+    significance: 'The search for the train woman stalls.',
+    chapter: 'chapter_34',
+    keyActions: ['Station staff questioned', 'No one remembers the woman', 'Focus shifts to the motive']
+  },
+  {
+    id: 'corner_house_watchers',
+    title: 'Spotting the watchers at the Corner House',
+    date: 'Tuesday, 1943 (inferred)',
+    description: 'Alison meets Cynthia at Paddington, warns her she has been followed, and introduces herself as Alison. Over coffee in a Lyons Corner House they pick out two watchers: an obvious young man and a well-dressed lady who bends to feed her dog so she can eavesdrop. Cynthia recalls being watched years before from a car in her village.',
+    location: 'lyons_corner_house_strand',
+    characters: [
+      { characterId: 'alison', role: 'escort and counter-surveillance' },
+      { characterId: 'cynthia_childreth', role: 'learns to spot tails' },
+      { characterId: 'richard_childreth', role: 'travels up with Cynthia' }
+    ],
+    significance: 'Shows that the plotters have suddenly renewed close surveillance of Cynthia.',
+    chapter: 'chapter_34',
+    keyActions: [
+      'Pickup at Paddington',
+      'Alison reveals her real name',
+      'Young man and dog lady spotted',
+      'The man with the pipe ruled out'
+    ]
+  },
+  {
+    id: 'slipping_the_tail_gallery',
+    title: 'Slipping the tail at the National Gallery',
+    date: 'Tuesday, 1943 (inferred)',
+    description: 'The women join the long concert queue round into Charing Cross Road with the young man six places behind. Inside, Alison waits for a gap and turns Cynthia sharply left while the tail carries straight on up the stairs.',
+    location: 'national_gallery',
+    characters: [
+      { characterId: 'alison', role: 'leads the escape' },
+      { characterId: 'cynthia_childreth', role: 'follows Alison\'s lead' }
+    ],
+    significance: 'Cynthia reaches the secret meeting without being seen.',
+    chapter: 'chapter_34',
+    keyActions: [
+      'Join the concert queue',
+      'Nod to the queue steward',
+      'Sharp left turn inside',
+      'Tail goes upstairs'
+    ]
+  },
+  {
+    id: 'gallery_team_meeting',
+    title: 'The joint team meets at the National Gallery',
+    date: 'Tuesday, 1943 (inferred)',
+    description: 'Bill introduces Cynthia to George, Jim, Bert, Hannah, Jane, Alison and Felicity. Cynthia says she has had no orders beyond holding a locked suitcase and judges Mosley irrelevant to the present plot. With no radio involved, the team settles on assassination and narrows the candidates to five army commanders, with Bill\'s instinct pointing to Montgomery and Eisenhower.',
+    location: 'national_gallery',
+    characters: [
+      { characterId: 'bill_laurie', role: 'chairs the meeting' },
+      { characterId: 'cynthia_childreth', role: '\'our help in the shires\'' },
+      { characterId: 'george_bennet', role: 'calls Cynthia a long-term sleeper' },
+      { characterId: 'jim_redgrave', role: 'suggests assassination or kidnap' },
+      { characterId: 'bert', role: 'introduced as the man who found Edwards' },
+      { characterId: 'hannah_park', role: 'assigned Monty and Ike' },
+      { characterId: 'jane_maclean', role: 'assigned Brooke and Auchinleck' },
+      { characterId: 'alison', role: 'assigned Alexander' },
+      { characterId: 'felicity', role: 'takes notes' },
+      { characterId: 'montgomery', role: 'possible target' },
+      { characterId: 'dwight_eisenhower', role: 'possible target' },
+      { characterId: 'alan_brooke', role: 'possible target' }
+    ],
+    significance: 'The team first concludes the plot is likely an assassination of a senior commander.',
+    chapter: 'chapter_35',
+    keyActions: [
+      'Three questions set: what, when, why Cynthia',
+      'Mosley judged uninvolved',
+      'Assassination preferred over bombing or kidnap',
+      'Royals, Churchill and Cabinet ruled unlikely',
+      'Generals shared out for research'
+    ]
+  },
+  {
+    id: 'staggered_exits_gallery',
+    title: 'Staggered exits from the Gallery',
+    date: 'Tuesday, 1943 (inferred)',
+    description: 'Bill brings in Andy, the MI5 man who had been regulating the queue, to lead everyone out by different doors. Hannah, Alison and Bert leave by Charing Cross Road and Jane, Cynthia and Jim by Pall Mall, while Bill and George stay talking.',
+    location: 'national_gallery',
+    characters: [
+      { characterId: 'andy', role: 'escorts people out' },
+      { characterId: 'bill_laurie', role: 'stays behind with George' },
+      { characterId: 'cynthia_childreth', role: 'leaves by Pall Mall' }
+    ],
+    significance: 'Shows the care taken to keep the team from being seen together.',
+    chapter: 'chapter_35',
+    keyActions: ['Andy revealed as MI5', 'Exits at intervals', 'Two different streets used']
+  },
+  {
+    id: 'cynthia_tailed_to_theale',
+    title: 'Cynthia tailed home; the watcher reports',
+    date: 'Tuesday, 1943 (inferred)',
+    description: 'The young man from the coffee shop picks Cynthia up again at Paddington and rides the Newbury train, staying aboard when she gets off at Theale. From Newbury station he phones an unnamed controller, who consults a companion and orders a larger but less visible watch, with no cars parked in the road. Richard, collecting Cynthia, wonders if she imagined it.',
+    location: 'newbury',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'followed home' },
+      { characterId: 'richard_childreth', role: 'collects her at Theale' }
+    ],
+    significance: 'Reveals two unseen controllers directing the surveillance on Cynthia.',
+    chapter: 'chapter_35',
+    keyActions: [
+      'Watcher waits at Paddington bookstall',
+      'Cynthia gets off at Theale',
+      'Report call from Newbury',
+      'Controllers order subtler surveillance'
+    ]
+  },
+  {
+    id: 'suitcase_opened',
+    title: 'Edwin opens the suitcase',
+    date: 'Wednesday, late 1943',
+    description: 'Edwin arrives in a painter-and-decorator van and picks the lock while Mary watches. The case holds only women\'s blouses, skirts, cardigans and toiletries with the labels removed; Cynthia and Mary judge the owner to be about five foot six or seven. Edwin relocks it so no one can tell it was opened.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'edwin', role: 'picks the lock' },
+      { characterId: 'mary', role: 'lets him in and sizes the clothes' },
+      { characterId: 'cynthia_childreth', role: 'examines the contents' }
+    ],
+    significance: 'The case was packed for a woman going away, adding to the trail of women in the case.',
+    chapter: 'chapter_36',
+    keyActions: [
+      'Decorator van as cover',
+      'Lock picked',
+      'Clothes with labels cut out',
+      'Size estimated',
+      'Case relocked'
+    ]
+  },
+  {
+    id: 'strangers_ask_after_cynthia',
+    title: 'Strangers ask about Cynthia; Bill sends watchers',
+    date: 'Wednesday, late 1943',
+    description: 'Gladys reports that a woman dressed as a walker and a man on a bicycle came into the shop separately asking where Cynthia lives and whether she was home. Bill says they are not his people and that afternoon places two locals of his own: an artist sketching the pub and an elderly man laying flowers in the churchyard.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'gladys', role: 'spots the strangers' },
+      { characterId: 'cynthia_childreth', role: 'checks with Bill' },
+      { characterId: 'bill_laurie', role: 'places protection' },
+      { characterId: 'the_artist', role: 'Bill\'s watcher, sketching the pub' }
+    ],
+    significance: 'The opposition is now watching Cynthia directly, and Bill\'s own watchers move in.',
+    chapter: 'chapter_36',
+    keyActions: [
+      'Walker and cyclist ask questions',
+      'Bill denies they are his',
+      'Artist and \'old man\' placed',
+      'Edwin stands guard until they arrive'
+    ]
+  },
+  {
+    id: 'wives_become_suspects',
+    title: 'Targets narrowed and the wives suspected',
+    date: 'Thursday, late 1943',
+    description: 'Research leaves Brooke, Montgomery and Eisenhower as plausible targets, with Monty at Norfolk House and Ike due from January. George has no progress on the murder. Jim notes that a woman links the train, the \'postman\' and the clothes in the case, and proposes concentrating on Marjorie Snowden, Louise Harrington and Megan Davies.',
+    location: 'blenheim_palace',
+    characters: [
+      { characterId: 'jim_redgrave', role: 'proposes the wives as suspects' },
+      { characterId: 'george_bennet', role: 'takes on the wives' },
+      { characterId: 'bill_laurie', role: 'fears for Cynthia\'s safety' },
+      { characterId: 'jane_maclean', role: 'reports on Brooke and Auchinleck' },
+      { characterId: 'hannah_park', role: 'reports on Monty and Ike' },
+      { characterId: 'alison', role: 'reports on Alexander' },
+      { characterId: 'marjorie_snowden', role: 'named suspect' },
+      { characterId: 'louise_harrington', role: 'named suspect' },
+      { characterId: 'megan_davies', role: 'named suspect' }
+    ],
+    significance: 'The investigation turns towards the three wives in the group.',
+    chapter: 'chapter_36',
+    keyActions: [
+      'Brooke, Monty and Ike remain',
+      'Cheques still unused',
+      'Woman seen as the common thread',
+      'Three wives named',
+      'Bill wants someone inside Cynthia\'s house'
+    ]
+  },
+  {
+    id: 'phone_provocation_planned',
+    title: 'Addresses found and a phone provocation planned',
+    date: 'Friday, late 1943',
+    description: 'George gets the wives\' addresses from Mary\'s old party invitations and finds the couples live close together near Goring station. He admits a nagging feeling about something one of the women said or saw. Bill plans for Cynthia to tell Richard on her tapped line that she thinks she is being watched, to see whether the watchers are withdrawn.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'finds the addresses' },
+      { characterId: 'bill_laurie', role: 'devises the provocation' },
+      { characterId: 'mary', role: 'supplies the invitation records' },
+      { characterId: 'cynthia_childreth', role: 'agrees to make the call' },
+      { characterId: 'peter_snowden', role: 'known to have faked drunkenness' },
+      { characterId: 'bob_harrington', role: 'seen at the Adlon despite claiming not to travel' }
+    ],
+    significance: 'The team starts trying to force the group into the open.',
+    chapter: 'chapter_37',
+    keyActions: [
+      'Invitations yield addresses',
+      'Couples near Goring station',
+      'George\'s nagging hunch',
+      'Staged call planned for Tuesday',
+      'Cynthia asked to recall Denleigh'
+    ]
+  },
+  {
+    id: 'aylesbury_and_bucklebury_camp',
+    title: 'Aylesbury inspection and the camp on the Common',
+    date: 'Monday, late 1943',
+    description: 'Hannah reports that Montgomery and General Crocker will inspect the 51st Highland Division and present medals at Aylesbury on Sunday 13 February, and that Monty, Ike, Tedder and Wimberley will visit the division in early February. Alison reveals that American troops have built concrete loading areas and a camouflaged camp on Bucklebury Common, a few hundred yards from Cynthia\'s house.',
+    location: 'blenheim_palace',
+    characters: [
+      { characterId: 'hannah_park', role: 'reports on the generals' },
+      { characterId: 'alison', role: 'discovers the camp' },
+      { characterId: 'bill_laurie', role: 'chairs' },
+      { characterId: 'montgomery', role: 'due at Aylesbury' }
+    ],
+    significance: 'Gives the first concrete date when Montgomery may be exposed and puts a military camp right beside Cynthia\'s house.',
+    chapter: 'chapter_37',
+    keyActions: [
+      'Brooke\'s schedule judged too tight',
+      '13 February at Aylesbury',
+      'American camp found on the Common',
+      'Camp called a \'relocation centre\''
+    ]
+  },
+  {
+    id: 'map_and_artists',
+    title: 'Bill\'s map and the artist-watchers',
+    date: 'Monday, late 1943',
+    description: 'On a large-scale map of mid-Berkshire Bill shows the Harringtons at Aldworth, the Snowdens at Ashampstead and the Davieses at Yattendon, all close to each other and to Cynthia. Reasoning that nobody looks twice at an artist, he asks for painters as watchers; Bert proves to be a watercolourist and Keith Macmillan a sketcher.',
+    location: 'blenheim_palace',
+    characters: [
+      { characterId: 'bill_laurie', role: 'proposes artist cover' },
+      { characterId: 'george_bennet', role: 'finds Bert' },
+      { characterId: 'bert', role: 'watercolourist' },
+      { characterId: 'keith_macmillan', role: 'pencil sketcher' }
+    ],
+    significance: 'Shows the reader that the Harringtons live in Aldworth.',
+    chapter: 'chapter_37',
+    keyActions: [
+      'Map from the map room',
+      'Three villages located',
+      'Artist cover proposed',
+      'Bert and Keith chosen'
+    ]
+  },
+  {
+    id: 'staged_phone_call',
+    title: 'Cynthia\'s staged call to Richard',
+    date: 'Tuesday, late 1943',
+    description: 'Cynthia phones Richard at work in a deliberately tense voice to say she thinks she is being watched, and he calmly brushes it off. She also asks Gladys to report anything suspicious. Within days she notices the watchers on her house have gone.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'makes the call' },
+      { characterId: 'richard_childreth', role: 'plays his part' },
+      { characterId: 'gladys', role: 'keeps watch' }
+    ],
+    significance: 'The withdrawal of the watchers suggests her line is tapped by people tied to the group.',
+    chapter: 'chapter_38',
+    keyActions: [
+      'Tense call on the open line',
+      'Richard dismisses it',
+      'Gladys asked to watch',
+      'Watchers disappear'
+    ]
+  },
+  {
+    id: 'village_surveillance_briefing',
+    title: 'Surveillance teams briefed',
+    date: 'Tuesday, late 1943',
+    description: 'George briefs twelve officers, eight men and four women, some on loan from MI5, in teams of four to watch the three couples. Jane attends for MI5. No one is to sit in parked cars, cars change every other day and are hidden, and reports go in daily from village phone boxes.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'runs the briefing' },
+      { characterId: 'jane_maclean', role: 'MI5 liaison' },
+      { characterId: 'bert', role: 'artist at Ashampstead' },
+      { characterId: 'keith_macmillan', role: 'artist at Yattendon' },
+      { characterId: 'mike_robbins', role: 'team leader at Aldworth' }
+    ],
+    significance: 'Launches round-the-clock watching of the suspect couples.',
+    chapter: 'chapter_38',
+    keyActions: ['Teams of four formed', 'Rules on car use', 'Artists as fixed points', 'Start set for Thursday']
+  },
+  {
+    id: 'marjorie_meets_bert',
+    title: 'Marjorie Snowden admires Bert\'s painting',
+    date: 'Friday, late 1943',
+    description: 'Marjorie strolls across the Ashampstead playing field, pretending not to notice Bert at first, and admires his painting of her row of cottages. When he asks if the green car could be moved, she says it is theirs but she cannot drive, and offers to buy the picture.',
+    location: 'ashampstead',
+    characters: [
+      { characterId: 'marjorie_snowden', role: 'approaches the artist' },
+      { characterId: 'bert', role: 'artist cover, \'Dunkirk veteran\'' },
+      { characterId: 'peter_snowden', role: 'drives the car (mentioned)' }
+    ],
+    significance: 'Links the Snowdens to a green car and shows Marjorie sizing up a stranger.',
+    chapter: 'chapter_38',
+    keyActions: [
+      'Casual approach',
+      'Dunkirk cover story',
+      'Green car is \'ours\'',
+      'Marjorie cannot drive',
+      'Offer to buy the painting'
+    ]
+  },
+  {
+    id: 'harrington_short_drive',
+    title: 'Bob Harrington\'s forty-minute drive',
+    date: 'Late 1943',
+    description: 'In Aldworth, Mike Robbins\'s team sees Bob Harrington go to The Bell at lunchtime and later take his car out for about forty minutes. In Yattendon no one leaves the Davieses\' cottage.',
+    location: 'aldworth',
+    characters: [
+      { characterId: 'bob_harrington', role: 'makes an unexplained drive' },
+      { characterId: 'mike_robbins', role: 'his team observes' },
+      { characterId: 'keith_macmillan', role: 'sees nothing in Yattendon' }
+    ],
+    significance: 'The only unexplained movement by any suspect that week.',
+    chapter: 'chapter_38',
+    keyActions: ['Visit to The Bell', 'Car out for about forty minutes', 'Davieses stay indoors']
+  },
+  {
+    id: 'rifle_unpacked',
+    title: 'A sniper rifle is unpacked',
+    date: 'Autumn, 1943 (inferred)',
+    description: 'An unnamed pair take a case down from a wardrobe and unwrap a German FG42 automatic rifle with a ZF4 telescopic sight, four boxes of ammunition, a bipod and a canvas bag. They degrease, clean and reassemble it.',
+    location: 'churn_ranges',
+    characters: [],
+    significance: 'Shows the reader that the plot centres on a sniper\'s shot at a single target.',
+    chapter: 'chapter_39',
+    keyActions: ['Case lifted from a wardrobe', 'FG42 and sight revealed', 'Weapon cleaned and reassembled']
+  },
+  {
+    id: 'churn_test_firing',
+    title: 'Secret test firing at the Churn ranges',
+    date: 'A Thursday, autumn 1943 (inferred)',
+    description: 'Having watched the ranges and learned that the range officer leaves early on Tuesdays and Thursdays, the pair hide their car, walk in along the Ridgeway, pick the gate lock and take turns firing at 500 yards while the other marks from the butts. They record their settings, gather the spent cases and leave unseen.',
+    location: 'churn_ranges',
+    characters: [],
+    significance: 'Both conspirators can now hit a target at long range with the rifle.',
+    chapter: 'chapter_39',
+    keyActions: [
+      'Range routines studied by binoculars',
+      'Car hidden; walk along the Ridgeway',
+      'Gate lock picked',
+      'Ten rounds each at 500 yards',
+      'Brass collected'
+    ]
+  },
+  {
+    id: 'saturday_lunch_convergence',
+    title: 'All the teams converge on Ashampstead',
+    date: 'Saturday, late 1943',
+    description: 'The Harringtons and Davieses drive to the Snowdens\' for Saturday lunch, and every surveillance team, now keeping its car close, ends up in Ashampstead at once. The teams are rotated from Sunday.',
+    location: 'ashampstead',
+    characters: [
+      { characterId: 'bob_harrington', role: 'lunch guest' },
+      { characterId: 'louise_harrington', role: 'lunch guest' },
+      { characterId: 'john_davies', role: 'lunch guest' },
+      { characterId: 'megan_davies', role: 'lunch guest' },
+      { characterId: 'peter_snowden', role: 'host' },
+      { characterId: 'marjorie_snowden', role: 'host' }
+    ],
+    significance: 'The only time the three couples meet, and possibly a test for tails.',
+    chapter: 'chapter_40',
+    keyActions: [
+      'Couples arrive together',
+      'Teams pile into one village',
+      'Bert to Aldworth, Keith to Ashampstead, Mike to Yattendon'
+    ]
+  },
+  {
+    id: 'admiral_duncan_meeting',
+    title: '\'Take out the planners\'',
+    date: 'Saturday evening, late 1943',
+    description: 'Over a beer in the Admiral Duncan in Soho, George and Bill agree the village watch is close to a waste of effort. Bill reasons that because no radio was sent the plotters do not want the invasion plans but the planners, and names Churchill, Brooke, Montgomery and Eisenhower as the only men with the full picture, focusing on Monty and Ike.',
+    location: 'admiral_duncan',
+    characters: [
+      { characterId: 'bill_laurie', role: 'sets out the theory' },
+      { characterId: 'george_bennet', role: 'names the idea' },
+      { characterId: 'montgomery', role: 'likely target' },
+      { characterId: 'dwight_eisenhower', role: 'likely target' }
+    ],
+    significance: 'The team\'s working theory becomes an attempt to kill a key invasion commander.',
+    chapter: 'chapter_40',
+    keyActions: [
+      'Surveillance judged unproductive',
+      'No postal uniform reported missing',
+      'No radio, so not espionage',
+      'Four men with the full picture',
+      'Contacts to flag ad hoc visits'
+    ]
+  },
+  {
+    id: 'teams_stood_down',
+    title: 'Teams stood down and clues pooled',
+    date: 'Wednesday, about October 1943',
+    description: 'Alison confirms Montgomery\'s timetable at Aylesbury on 13 February, and the village teams are stood down except for Cynthia\'s watchers. Bert, who sold his painting to Marjorie, notes the Snowdens\' green car looks like the one that watched Cynthia; Mike proposes plotting Harrington\'s possible destinations; and Keith suspects the watchers were spotted. Bill decides Cynthia should invite all three couples for drinks, with Keith and Mike posing as relatives.',
+    location: 'scotland_yard',
+    characters: [
+      { characterId: 'george_bennet', role: 'runs the meeting' },
+      { characterId: 'alison', role: 'reports Monty\'s timetable' },
+      { characterId: 'bert', role: 'spots the green-car link' },
+      { characterId: 'mike_robbins', role: 'proposes the drive-radius map' },
+      { characterId: 'keith_macmillan', role: 'suspects the teams were spotted' },
+      { characterId: 'bill_laurie', role: 'plans the drinks party' },
+      { characterId: 'montgomery', role: 'due at Aylesbury' },
+      { characterId: 'john_burford', role: 'Monty\'s driver' },
+      { characterId: 'cynthia_childreth', role: 'to host the drinks (planned)' }
+    ],
+    significance: 'Turns the investigation towards Monty\'s February visit and new ways of drawing out the couples.',
+    chapter: 'chapter_40',
+    keyActions: [
+      'Aylesbury timings confirmed',
+      'Teams withdrawn',
+      'Green-car coincidence noted',
+      'Forty-minute circle proposed',
+      'Drinks party planned'
+    ]
+  },
+  {
+    id: 'churn_ranges_spotted',
+    title: 'Map circles point to Churn',
+    date: 'November 1943',
+    description: 'Bill and Mike draw range circles around Aldworth on Ordnance Survey maps to see where Bob Harrington could have driven in forty minutes. On a larger-scale sheet Mike finds Army rifle ranges at Churn, within easy reach. Bill orders a recce for first thing next morning, with Mike and Keith dressed as walkers.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'bill_laurie', role: 'directs the analysis' },
+      { characterId: 'mike_robbins', role: 'spots the ranges' },
+      { characterId: 'keith_macmillan', role: 'assigned to the recce' },
+      { characterId: 'bob_harrington', role: 'the driver whose trip is analysed' }
+    ],
+    significance: 'It gives the first physical lead suggesting the plot involves a rifle.',
+    chapter: 'chapter_41',
+    keyActions: [
+      'Circles drawn at 8 and 5 inches around Aldworth',
+      'Churn rifle ranges found on a 2.5-inch map',
+      'Route via the Compton road and the Ridgeway worked out',
+      'Recce ordered with Mike and Keith disguised as walkers'
+    ]
+  },
+  {
+    id: 'knitting_link',
+    title: 'Cynthia makes the knitting link',
+    date: 'November 1943',
+    description: 'Bill\'s summary of the train compartment includes a grey-haired lady knitting, and Cynthia rings back with an idea. Louise Harrington knitted at Denleigh and at the Adlon, and lives near Goring station, so she could be the woman on the train. Bill asks her to keep it quiet and passes it straight to George.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'makes the deduction' },
+      { characterId: 'bill_laurie', role: 'handler on the phone' },
+      { characterId: 'louise_harrington', role: 'the suspected knitting woman' },
+      { characterId: 'george_bennet', role: 'told of the theory' }
+    ],
+    significance: 'It puts Louise Harrington in the frame as the mysterious woman on the train.',
+    chapter: 'chapter_41',
+    keyActions: [
+      'Bill describes the three people in the carriage',
+      'Cynthia recalls Louise\'s knitting at Denleigh and the Adlon',
+      'She notes Louise lives near Goring station',
+      'Bill swears her to silence and tells George'
+    ]
+  },
+  {
+    id: 'monty_tour_announced',
+    title: 'Monty\'s tour in the Daily Mail',
+    date: 'November 1943',
+    description: 'Hannah shows Bill a page-three Daily Mail report that Montgomery will make morale-boosting visits to Army bases, including Allied ones, before Christmas. Bill is dismayed that it has reached the national press and sets out to obtain the itinerary.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'hannah_park', role: 'brings the newspaper' },
+      { characterId: 'bill_laurie', role: 'seeks the itinerary' },
+      { characterId: 'montgomery', role: 'the general whose tour is announced' }
+    ],
+    significance: 'It narrows the danger window to the next eight weeks and focuses attention on Monty.',
+    chapter: 'chapter_41',
+    keyActions: [
+      'Hannah spots the article',
+      'Bill realises the plotters can read it too',
+      'Bill resolves to get the itinerary'
+    ]
+  },
+  {
+    id: 'churn_cartridge_found',
+    title: 'Churn recce turns up a foreign cartridge',
+    date: 'November 1943',
+    description: 'Mike and Keith reach the Churn ranges via Churn Road and the halt on the Didcot to Southampton line, and find the security almost non-existent. Among spent .303 cases they pick up a single 7.92mm case, a non-British calibre. Whoever fired it seems to have collected all the other cases.',
+    location: 'churn_ranges',
+    characters: [
+      { characterId: 'mike_robbins', role: 'reports the recce' },
+      { characterId: 'keith_macmillan', role: 'joins the recce' }
+    ],
+    significance: 'It shows someone has been test-firing a foreign weapon near the Harringtons\' home.',
+    chapter: 'chapter_42',
+    keyActions: [
+      'Route timed at about 45 minutes there and back',
+      'Car left at Churn Halt',
+      'Weak chain-link fencing noted',
+      'One 7.92mm case found among .303 rounds'
+    ]
+  },
+  {
+    id: 'fg42_identified',
+    title: 'Jacobs identifies the FG 42',
+    date: 'November 1943',
+    description: 'Mike takes the cartridge downstairs to the department armourer, Jacobs. He judges it comes from a German FG 42 paratrooper rifle which, with a good sight and bipod, makes an efficient sniper\'s weapon. Bill takes it as near-confirmation that the scheme hides a killing.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'jacobs', role: 'identifies the weapon' },
+      { characterId: 'mike_robbins', role: 'brings the cartridge' },
+      { characterId: 'bill_laurie', role: 'draws the conclusion' }
+    ],
+    significance: 'The investigation now firmly treats the plot as an assassination attempt.',
+    chapter: 'chapter_42',
+    keyActions: [
+      'Cartridge shown to Jacobs',
+      'FG 42 identified',
+      'Sniper adaptation explained',
+      'Jim told to brief Monty\'s ADC'
+    ]
+  },
+  {
+    id: 'tasks_allocated',
+    title: 'Bill\'s 48-hour task list',
+    date: 'November 1943',
+    description: 'With Monty\'s visits due between 6 and 17 December, Bill lists the American hospital at Hermitage and the transport camp on Bucklebury Common as possible venues. He swaps in fresh watchers on the three couples under Bert, sends Hannah and Jane to Hermitage and Keith and Mike to the camp, and has Alison move into Cynthia\'s house armed. George\'s suggestion that the Edwards murder go back to the local police is adopted.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'bill_laurie', role: 'allocates tasks' },
+      { characterId: 'george_bennet', role: 'suggests priorities' },
+      { characterId: 'bert', role: 'overall surveillance leader' },
+      { characterId: 'hannah_park', role: 'assigned to Hermitage' },
+      { characterId: 'jane_maclean', role: 'assigned to Hermitage' },
+      { characterId: 'alison', role: 'assigned as Cynthia\'s bodyguard' },
+      { characterId: 'jim_redgrave', role: 'to brief Monty\'s ADC' },
+      { characterId: 'montys_adc', role: 'to be informed' }
+    ],
+    significance: 'It sets up the inside protector and the targeted surveillance that the climax depends on.',
+    chapter: 'chapter_42',
+    keyActions: [
+      'Two possible December venues identified',
+      'New watchers replace known faces',
+      'Alison to pose as \'Sarah\' and draw a pistol',
+      'Edwards murder returned to St Johns police',
+      '48-hour deadline set'
+    ]
+  },
+  {
+    id: 'alison_moves_in',
+    title: 'Alison moves in as \'Sarah\'',
+    date: 'November 1943',
+    description: 'Alison arrives at Cynthia\'s house in a small cream car and is greeted with air-kisses as her old friend \'Sarah\'. Mary shows her the whole house, including the glass-walled tower studio of Cynthia\'s late mother, with a door onto a flat roof overlooking Bucklebury Common. The studio is always left unlocked.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'alison', role: 'protector under cover' },
+      { characterId: 'mary', role: 'shows her round' },
+      { characterId: 'cynthia_childreth', role: 'host' }
+    ],
+    significance: 'It places an armed protector in the house and reveals the tower that will matter later.',
+    chapter: 'chapter_43',
+    keyActions: [
+      'Cover greeting for any watchers',
+      'Alison urges Cynthia to act normally',
+      'House tour from top to bottom',
+      'Unlocked tower studio and roof noted',
+      'Cellar door to the garden noted'
+    ]
+  },
+  {
+    id: 'tower_firing_point',
+    title: 'Alison flags the tower as a firing point',
+    date: 'November 1943',
+    description: 'Phoning in to the evening meeting, Alison suggests the plotters may be more interested in Cynthia\'s house than in Cynthia. The tower gives an all-round view across Bucklebury Common and its approaches, and a gunman could lie flat on the roof. She also lists every door into the house.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'alison', role: 'reports by phone' },
+      { characterId: 'bill_laurie', role: 'relays her findings' }
+    ],
+    significance: 'It identifies the likely sniper\'s nest at Cynthia\'s own home.',
+    chapter: 'chapter_43',
+    keyActions: [
+      'Tower described as a small observatory',
+      'Flat roof suits a prone shooter',
+      'German guests may have seen the tower',
+      'All doors except the tower locked at night'
+    ]
+  },
+  {
+    id: 'target_sites_assessed',
+    title: 'Hermitage ruled out; Bucklebury kept',
+    date: 'November 1943',
+    description: 'Hannah and Jane find the Hermitage hospital tightly secured, with no clear line of sight. Keith and Mike report that the Bucklebury camp has a busy temporary barrier, that traffic queues along the Avenue near Cynthia\'s house, and that Monty plans to arrive in an open jeep. The team drops the hospital and concentrates on the camp and the 13 February inspection.',
+    location: 'bucklebury_common',
+    characters: [
+      { characterId: 'jane_maclean', role: 'reports on Hermitage' },
+      { characterId: 'hannah_park', role: 'reports on Hermitage' },
+      { characterId: 'keith_macmillan', role: 'reports on the camp' },
+      { characterId: 'mike_robbins', role: 'reports on the camp' },
+      { characterId: 'montgomery', role: 'plans an open-jeep arrival' }
+    ],
+    significance: 'The danger zone shifts to the road past Cynthia\'s house.',
+    chapter: 'chapter_43',
+    keyActions: [
+      'Hospital: trees, internal access, no line of sight',
+      'Camp: traffic backs up through the Avenue',
+      'Monty to arrive in an open jeep',
+      'Focus set on the camp and 13 February'
+    ]
+  },
+  {
+    id: 'couples_backgrounds',
+    title: 'Backgrounds of the three couples',
+    date: 'November 1943',
+    description: 'Bill admits he wrongly dismissed the couples as amateurs and reports their backgrounds. Snowden is a butcher\'s son who won a field commission and ended as a major. Davies is a Welsh baronet, Megan a rector\'s daughter. Bob Harrington was a male nurse given unexplained \'special duties\' in 1915, and Louise is a Girton linguist and a serious competitive shot. Bert proposes renting a cottage near the Harringtons.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'bill_laurie', role: 'presents the research' },
+      { characterId: 'jim_redgrave', role: 'helped research' },
+      { characterId: 'george_bennet', role: 'cautions about thin evidence' },
+      { characterId: 'felicity', role: 'made the inquiry calls' },
+      { characterId: 'bert', role: 'suggests the cottage' }
+    ],
+    significance: 'It singles out the Harringtons, especially Louise\'s marksmanship and Bob\'s mystery war service.',
+    chapter: 'chapter_43',
+    keyActions: [
+      'Snowden confirmed a major, not a colonel',
+      'Bob\'s 1915 special duties unexplained',
+      'Louise\'s shooting record revealed',
+      'Cottage observation post proposed'
+    ]
+  },
+  {
+    id: 'felicity_moves_to_aldworth',
+    title: 'Felicity takes the Jones place',
+    date: 'November 1943',
+    description: 'Bert rents a primitive furnished cottage on Aldworth\'s square on a three-month lease, saying it is for a writer. Felicity drives down the same day with blankets and candles. She sets up a table in the bow window as an observation post and scatters typed pages to support her cover.',
+    location: 'jones_cottage',
+    characters: [
+      { characterId: 'bert', role: 'rents the cottage' },
+      { characterId: 'felicity', role: 'moves in undercover' }
+    ],
+    significance: 'It gives the team a hidden observer right beside the Harringtons.',
+    chapter: 'chapter_44',
+    keyActions: [
+      'Lease signed in Bert\'s name at Goring',
+      'No electricity, gas or indoor facilities',
+      'Writer\'s props laid out',
+      'Felicity spots Bert\'s road menders'
+    ]
+  },
+  {
+    id: 'louise_questions_felicity',
+    title: 'Louise questions the newcomer',
+    date: 'November 1943',
+    description: 'While Felicity registers her ration book at the shop, Louise Harrington arrives and asks who she is and how long she will stay. Felicity sticks to her writer\'s story and says she has the cottage until the end of February. That afternoon she sees a green car outside the Harringtons\' house, which leaves at dusk.',
+    location: 'aldworth',
+    characters: [
+      { characterId: 'felicity', role: 'keeps her cover' },
+      { characterId: 'louise_harrington', role: 'probes the stranger' },
+      { characterId: 'jack', role: 'shopkeeper' }
+    ],
+    significance: 'It shows how closely the village is watched and links a green car to the Harringtons.',
+    chapter: 'chapter_44',
+    keyActions: [
+      'Shopkeeper already knows of the new tenant',
+      'Louise asks pointed questions',
+      'Felicity cites a friend walking the Ridgeway',
+      'Green car seen at the Harringtons\''
+    ]
+  },
+  {
+    id: 'letter_opened_at_post_office',
+    title: 'Jack reads Felicity\'s letter for Louise',
+    date: 'November 1943',
+    description: 'After Felicity posts her first report, Louise persuades Jack to take the envelope out of the mailbag and read the address: Paul Holness, BK Publishing, Braunston, Rutland. Jack then hands Louise a small, badly addressed parcel, which she says is a birthday present from her nephew. Louise and Marjorie Snowden agree to keep an eye on the newcomer.',
+    location: 'aldworth',
+    characters: [
+      { characterId: 'louise_harrington', role: 'gets the address' },
+      { characterId: 'jack', role: 'breaks postal rules' },
+      { characterId: 'marjorie_snowden', role: 'with Louise' }
+    ],
+    significance: 'It exposes the post office as a leak to the plotters.',
+    chapter: 'chapter_44',
+    keyActions: [
+      'Report padded to look like manuscript',
+      'Jack removes the letter from the bag',
+      'Publisher\'s address read out',
+      'Mystery parcel handed to Louise'
+    ]
+  },
+  {
+    id: 'snowden_pretext_call',
+    title: 'Snowden checks Felicity\'s publisher',
+    date: 'November 1943',
+    description: 'Peter Snowden tells the women they are imagining things but promises to check. The next morning he phones BK Publishing posing as a local journalist. Paul Holness backs up Felicity\'s invented career, saying she is writing a book on letter writing and interview technique for job seekers. Paul then warns Bill that the address must have leaked from the post office.',
+    location: 'braunston_rutland',
+    characters: [
+      { characterId: 'peter_snowden', role: 'makes the pretext call' },
+      { characterId: 'paul_holness', role: 'keeps the cover intact' },
+      { characterId: 'bill_laurie', role: 'warned' }
+    ],
+    significance: 'Felicity\'s cover holds, but the plotters are clearly checking up on newcomers.',
+    chapter: 'chapter_45',
+    keyActions: [
+      'Snowden relies on Jack to report anything odd',
+      'Snowden poses as a journalist',
+      'Paul uses the fictitious biography',
+      'Paul identifies the post office leak'
+    ]
+  },
+  {
+    id: 'monty_date_confirmed',
+    title: 'Monty\'s visit fixed for 7 December',
+    date: 'Thursday 25 November 1943',
+    description: 'George reports that Monty will visit the Bucklebury camp on the morning of Tuesday 7 December, and that the date has gone to the local press. With twelve days to cover, Bert moves his watchers into cars on the roads out of Aldworth and the pub car park at the four-way junction. Felicity becomes the only watcher inside the village.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'george_bennet', role: 'announces the date' },
+      { characterId: 'bert', role: 'redesigns surveillance' },
+      { characterId: 'bill_laurie', role: 'plans contact with Felicity' },
+      { characterId: 'jim_redgrave', role: 'backs the courier plan' }
+    ],
+    significance: 'It gives a fixed date for the probable attempt.',
+    chapter: 'chapter_45',
+    keyActions: [
+      'Date made public in local press',
+      'Road and phone crews withdrawn',
+      'Cars posted on exit roads',
+      'Felicity to phone from other villages'
+    ]
+  },
+  {
+    id: 'courier_delivery',
+    title: 'A courier delivers to \'Mrs Green\'',
+    date: 'November 1943',
+    description: 'Paul Holness hands genuine-looking research papers to Bill\'s motorcycle courier outside the Royal Opera House in Covent Garden. In Aldworth the courier openly asks Jack where Mrs Felicity Green lives and avoids his trick question about where he has come from. He hands Felicity the package, with Bill\'s letter hidden inside, and quietly warns her that they are being watched.',
+    location: 'jones_cottage',
+    characters: [
+      { characterId: 'paul_holness', role: 'provides the cover package' },
+      { characterId: 'motorcycle_courier', role: 'delivers it' },
+      { characterId: 'jack', role: 'tries to catch him out' },
+      { characterId: 'felicity', role: 'receives Bill\'s instructions' }
+    ],
+    significance: 'It opens a secure channel to the only watcher in the village.',
+    chapter: 'chapter_45',
+    keyActions: [
+      'Handover at 9.30 outside the Opera House',
+      'Courier asks directions openly',
+      'Says he came from Rutland',
+      'Delivery docket signed for show'
+    ]
+  },
+  {
+    id: 'davies_house_searched',
+    title: 'The Davies\' empty house',
+    date: 'Thursday 2 December 1943',
+    description: 'Noticing that the Davies\' have not been seen for about ten days, Bill has their outbuildings checked and finds a hidden back exit and an empty garage. George, Jim and Bill get in, with Jim picking the lock. The house is neat, but the wardrobes and drawers have been emptied, and the Pembrokeshire police report the couple are not on their Welsh estate.',
+    location: 'yattendon',
+    characters: [
+      { characterId: 'bill_laurie', role: 'orders the search' },
+      { characterId: 'george_bennet', role: 'leads the entry' },
+      { characterId: 'jim_redgrave', role: 'picks the lock' },
+      { characterId: 'john_davies', role: 'missing' },
+      { characterId: 'megan_davies', role: 'missing' }
+    ],
+    significance: 'It shows the Davies\' planned a long absence.',
+    chapter: 'chapter_46',
+    keyActions: [
+      'Back entrance found behind the outbuildings',
+      'Lock picked',
+      'Empty hangers and drawers',
+      'Lease arranged by Felicity\'s agents'
+    ]
+  },
+  {
+    id: 'davies_car_ferry',
+    title: 'The Davies\' car crossed to Ireland',
+    date: 'Thursday 2 December 1943',
+    description: 'Jim traces the Davies\' car, YPK 485, to the Fishguard to Rosslare ferry the previous Monday. The booking form lists two passengers under an illegible name rather than Davies. Bill assumes the couple are in Ireland under false names with a four-day head start.',
+    location: 'fishguard',
+    characters: [
+      { characterId: 'jim_redgrave', role: 'traces the car' },
+      { characterId: 'inspector_williams', role: 'makes local inquiries' },
+      { characterId: 'bill_laurie', role: 'orders further checks' }
+    ],
+    significance: 'It suggests the plotters have an escape route abroad.',
+    chapter: 'chapter_46',
+    keyActions: [
+      'Registration passed to Pembroke police',
+      'Car found on ferry records',
+      'Signature unreadable',
+      'Descriptions of passengers requested'
+    ]
+  },
+  {
+    id: 'artist_warning',
+    title: 'The Artist warns of strangers',
+    date: 'Thursday 2 December 1943',
+    description: 'Bill\'s long-term watcher, the Artist, phones from a call box to say more strangers are about and some have gone up Cynthia\'s drive. Bill warns Cynthia and suggests Alison hide her car. He then orders financial checks on the Davies\' and Snowdens and makes a private safety suggestion to Monty\'s ADC.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'the_artist', role: 'reports the strangers' },
+      { characterId: 'bill_laurie', role: 'warns Cynthia' },
+      { characterId: 'cynthia_childreth', role: 'warned' },
+      { characterId: 'george_bennet', role: 'to investigate the Davies\' finances' },
+      { characterId: 'mike_robbins', role: 'to check the Snowdens' },
+      { characterId: 'montys_adc', role: 'receives Bill\'s suggestion' }
+    ],
+    significance: 'Interest in Cynthia\'s house is clearly building.',
+    chapter: 'chapter_46',
+    keyActions: [
+      'Strangers seen near the house',
+      'Alison\'s car to be hidden',
+      'Emergency Powers Act to be quoted to banks',
+      'Unexplained suggestion to the ADC'
+    ]
+  },
+  {
+    id: 'edwards_cheque_on_ferry',
+    title: 'An Edwards cheque pays the ferry fare',
+    date: 'Saturday 4 December 1943',
+    description: 'Inspector Williams learns that the ferry clerk remembers three people in the Davies\' car, and that the fare was paid by a cheque signed T.G. Edwards. Bill reasons that the chequebook must have come from Edwards\' flat, so it points to whoever killed him.',
+    location: 'fishguard',
+    characters: [
+      { characterId: 'inspector_williams', role: 'gets the information' },
+      { characterId: 'george_bennet', role: 'passes it on' },
+      { characterId: 'bill_laurie', role: 'draws the inference' }
+    ],
+    significance: 'It ties the escape party to Edwards\' killer.',
+    chapter: 'chapter_47',
+    keyActions: [
+      'Three passengers, not two',
+      'Fare paid with an Edwards cheque',
+      'Chequebook traced back to the murder flat'
+    ]
+  },
+  {
+    id: 'edwards_account_checked',
+    title: 'Richard checks the Edwards account',
+    date: 'Saturday 4 December 1943',
+    description: 'Bill catches Richard at Martins Bank after an all-night directors\' meeting. Richard finds the Edwards account still holds a substantial sum, topped up by the Reichsbank until the war. It has not been drawn on since the Long Boat Inn at Penzance, and he promises to report any further use.',
+    location: 'martins_bank',
+    characters: [
+      { characterId: 'richard_childreth', role: 'checks the account' },
+      { characterId: 'bill_laurie', role: 'asks the favour' }
+    ],
+    significance: 'It confirms the ferry cheque is the first use of the account since Edwards\' death.',
+    chapter: 'chapter_47',
+    keyActions: [
+      'Bill holds the line while Richard checks',
+      'Large balance confirmed',
+      'No use since Penzance',
+      'Alert arranged'
+    ]
+  },
+  {
+    id: 'couples_money_to_dublin',
+    title: 'Estates signed away, money moved to Dublin',
+    date: 'Saturday 4 December 1943',
+    description: 'The Davies\' solicitors say Sir John has signed his estate over equally to his two sons from midnight. Mike forces access to the Snowdens\' bank and finds their accounts were emptied into the Bank of Ireland in Dublin a week earlier and their share certificates removed. Late that evening George finds the Davies\' accounts were also moved to Dublin, with nothing left for their sons.',
+    location: 'ireland',
+    characters: [
+      { characterId: 'george_bennet', role: 'presses the bank and solicitors' },
+      { characterId: 'hannah_park', role: 'takes the message' },
+      { characterId: 'mike_robbins', role: 'gets the Snowdens\' records' },
+      { characterId: 'john_davies', role: 'signs away his estate' },
+      { characterId: 'peter_snowden', role: 'money moved' },
+      { characterId: 'marjorie_snowden', role: 'money moved' }
+    ],
+    significance: 'Both couples have long planned to leave Britain for good.',
+    chapter: 'chapter_47',
+    keyActions: [
+      'Estate transferred to the sons',
+      'Snowdens\' accounts cleared',
+      'Share certificates gone',
+      'Davies\' accounts cleared',
+      'Bill turns to Tuesday'
+    ]
+  },
+  {
+    id: 'harringtons_leave_aldworth',
+    title: 'The Harringtons drive off',
+    date: 'Sunday 5 December 1943',
+    description: 'Felicity phones from a call box to say the Harringtons have loaded cases into their car and left. A road team reports them speeding past. Soon afterwards the Artist sees two cars meet in the pub car park opposite Cynthia\'s house.',
+    location: 'aldworth',
+    characters: [
+      { characterId: 'felicity', role: 'reports the departure' },
+      { characterId: 'bob_harrington', role: 'drives off' },
+      { characterId: 'louise_harrington', role: 'drives off' },
+      { characterId: 'the_artist', role: 'sees the cars meet' }
+    ],
+    significance: 'The plotters are on the move two days before the visit.',
+    chapter: 'chapter_48',
+    keyActions: ['Cases loaded into the car', 'Road team sees them pass', 'Meeting in the pub car park']
+  },
+  {
+    id: 'phone_line_cut',
+    title: 'Cynthia\'s line goes dead',
+    date: 'Sunday 5 December 1943',
+    description: 'Bill rings Cynthia to warn her of unwanted guests and to have Alison keep out of sight, but the line dies mid-sentence. The Artist reports that the two cars have gone up the drive, after a man with ladders posing as a window cleaner went round the side of the house. Bill sends her to fetch the car teams from Aldworth.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'cut off mid-call' },
+      { characterId: 'cynthia_childreth', role: 'loses contact' },
+      { characterId: 'the_artist', role: 'reports and fetches help' },
+      { characterId: 'jack', role: 'the \'window cleaner\'' }
+    ],
+    significance: 'The house is cut off from Bill\'s team.',
+    chapter: 'chapter_48',
+    keyActions: ['Warning call cut off', 'Window cleaner seen on a bike', 'Artist sent to the four-way junction']
+  },
+  {
+    id: 'house_taken_over',
+    title: 'Davies and the Harringtons take over the house',
+    date: 'Sunday 5 December 1943',
+    description: 'Sir John Davies and Bob and Louise Harrington push past Mary and announce they are calling in their favour by using the house for two days. Davies collects the unopened suitcase and admits he played the stranger when he delivered it as \'Young\'. He says the plotters swapped houses and cars, spotted the artists, and know Cynthia has been playing a double game. Bob reveals that Jack cut the phone wire.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'john_davies', role: 'takes command' },
+      { characterId: 'bob_harrington', role: 'fetches the suitcase' },
+      { characterId: 'louise_harrington', role: 'searches the house' },
+      { characterId: 'cynthia_childreth', role: 'hostage' },
+      { characterId: 'richard_childreth', role: 'hostage' },
+      { characterId: 'mary', role: 'made to serve tea' },
+      { characterId: 'jack', role: 'cut the phone wire' }
+    ],
+    significance: 'The Childreths become hostages in a house chosen as the firing point.',
+    chapter: 'chapter_48',
+    keyActions: [
+      'Suitcase checked for tampering',
+      'Davies explains the Young episode',
+      'Plotters reveal their counter-surveillance',
+      'Louise inspects the tower studio',
+      'Cars moved to the back lane and across the gate'
+    ]
+  },
+  {
+    id: 'alison_escapes_to_summerhouse',
+    title: 'Alison hides in the summerhouse',
+    date: 'Sunday 5 December 1943',
+    description: 'Alison gathers her things from the guest room while Louise searches and slips out through the cellar\'s garden door to the summerhouse. Cynthia finds her there, whispers through the window, and points her to a phone box about a mile away. She returns carrying logs to explain her walk.',
+    location: 'childreth_summerhouse',
+    characters: [
+      { characterId: 'alison', role: 'hides' },
+      { characterId: 'cynthia_childreth', role: 'makes contact' }
+    ],
+    significance: 'The plotters do not know there is an armed agent on the property.',
+    chapter: 'chapter_48',
+    keyActions: [
+      'Escape timed by the sound of Louise\'s search',
+      'Cellar garden door used',
+      'Whispered talk through the window',
+      'Logs carried as cover'
+    ]
+  },
+  {
+    id: 'balloon_gone_up',
+    title: 'Bill tells George the balloon has gone up',
+    date: 'Sunday 5 December 1943',
+    description: 'Bill tells George that Cynthia\'s house has been occupied and the phone cut, and arranges to meet him at the Queen\'s Head at nine the next morning. He wants Jim dropped near the Avenue in disguise to gather the car teams, and will contact Monty\'s ADC first thing.',
+    location: 'bills_office_london',
+    characters: [
+      { characterId: 'bill_laurie', role: 'plans the response' },
+      { characterId: 'george_bennet', role: 'to join him' },
+      { characterId: 'jim_redgrave', role: 'to find the teams' }
+    ],
+    significance: 'It sets up the final operation.',
+    chapter: 'chapter_48',
+    keyActions: ['George briefed', 'Meeting set at the Queen\'s Head', 'Jim to round up the car teams']
+  },
+  {
+    id: 'jim_uniform_recce',
+    title: 'Jim\'s recce in uniform',
+    date: 'Monday 6 December 1943',
+    description: 'Jim puts on his old RAF uniform as Squadron Leader Jim Redgrave DFC and marches down the Avenue among the troops, returning salutes. He finds both car teams and sends them to the meeting, and sees a large car blocking Cynthia\'s gate.',
+    location: 'bucklebury_avenue',
+    characters: [{ characterId: 'jim_redgrave', role: 'disguised as himself, an RAF officer' }],
+    significance: 'It confirms the plotters are dug in at the house.',
+    chapter: 'chapter_49',
+    keyActions: ['Uniform used as disguise', 'Car teams located', 'Blocked gate spotted']
+  },
+  {
+    id: 'queens_head_plan',
+    title: 'The plan at the Queen\'s Head',
+    date: 'Monday 6 December 1943',
+    description: 'Ten of the team meet over coffee at the Queen\'s Head. Bill says he holds a couple of aces he cannot reveal until tomorrow. The plan: a car in the back lane at 0900, a leopard crawl in groups of three to the summerhouse, entry through the cellar\'s garden door, Keith and Mike on the ground floor, and George and Bill heading for the tower to catch the shooter in the act.',
+    location: 'queens_head_pub',
+    characters: [
+      { characterId: 'bill_laurie', role: 'chairs and plans' },
+      { characterId: 'george_bennet', role: 'to make arrests' },
+      { characterId: 'jim_redgrave', role: 'reports on the house' },
+      { characterId: 'hannah_park', role: 'team member' },
+      { characterId: 'jane_maclean', role: 'team member' },
+      { characterId: 'bert', role: 'team member' },
+      { characterId: 'keith_macmillan', role: 'to guard the ground floor' },
+      { characterId: 'mike_robbins', role: 'to guard the ground floor' }
+    ],
+    significance: 'The team commits to catching the sniper in the act.',
+    chapter: 'chapter_49',
+    keyActions: [
+      'Bill hints at two aces',
+      'Monty due at noon in an open jeep',
+      'Silent approach with hand signals',
+      'Escape route to be blocked'
+    ]
+  },
+  {
+    id: 'tower_dry_run',
+    title: 'Dry run in the tower',
+    date: 'Monday 6 December 1943',
+    description: 'Davies orders everyone in position by 11.30, since Monty will pass at about noon. Bob claims the shot, saying his First World War special duties were sniper training. He sets up and sights the rifle in the tower, while Louise, the better shot at Churn, looks disappointed.',
+    location: 'cynthia_tower_studio',
+    characters: [
+      { characterId: 'john_davies', role: 'commands' },
+      { characterId: 'bob_harrington', role: 'chosen marksman' },
+      { characterId: 'louise_harrington', role: 'passed over' }
+    ],
+    significance: 'It confirms Monty is the target and the tower is the firing point.',
+    chapter: 'chapter_49',
+    keyActions: [
+      'Timing set for 11.30',
+      'Bob claims the shot',
+      'Rifle calibrated with cushions and bipod',
+      'Louise minds the hostages, knitting'
+    ]
+  },
+  {
+    id: 'alison_back_in_cellar',
+    title: 'Alison returns to the cellar',
+    date: 'Monday 6 December 1943',
+    description: 'Cynthia brings Alison news and leaves food in the cellar on the pretext of fetching coal. That night, as the household goes to bed, Alison creeps back inside, eats, and warms herself briefly by the lounge embers before hiding again.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'cynthia_childreth', role: 'supplies food' },
+      { characterId: 'alison', role: 'moves back inside' }
+    ],
+    significance: 'It puts Bill\'s agent inside the house for the morning.',
+    chapter: 'chapter_49',
+    keyActions: [
+      'Second whispered exchange at the summerhouse',
+      'Food left in the cellar',
+      'Alison re-enters at night'
+    ]
+  },
+  {
+    id: 'cellar_infiltration',
+    title: 'The team crawls in',
+    date: 'Tuesday 7 December 1943',
+    description: 'Leaving Ken with a car in the back lane, Bill\'s team crawls in groups across the frosty field to the summerhouse and slips into the cellar, where they find Alison. Cynthia comes down on a pretext, gives a thumbs up, and signals that the plotters will go upstairs at 11.30.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'leads' },
+      { characterId: 'ken', role: 'guards the back lane' },
+      { characterId: 'hannah_park', role: 'leads the first group' },
+      { characterId: 'jane_maclean', role: 'first group' },
+      { characterId: 'jim_redgrave', role: 'first group' },
+      { characterId: 'keith_macmillan', role: 'second group' },
+      { characterId: 'mike_robbins', role: 'second group' },
+      { characterId: 'bert', role: 'second group' },
+      { characterId: 'george_bennet', role: 'third group' },
+      { characterId: 'pete_team', role: 'with Bill' },
+      { characterId: 'alison', role: 'already in the cellar' },
+      { characterId: 'cynthia_childreth', role: 'signals the timing' }
+    ],
+    significance: 'It puts the team inside the house unseen.',
+    chapter: 'chapter_50',
+    keyActions: [
+      '0900 start from the back lane',
+      'Leopard crawl through frost',
+      'Regroup at the summerhouse',
+      'Silent entry via the cellar door',
+      'Cynthia mouths \'11.30\' and points up'
+    ]
+  },
+  {
+    id: 'louise_last_appeal',
+    title: 'Louise\'s last appeal to Bob',
+    date: 'Tuesday 7 December 1943',
+    description: 'In the studio Louise urges Bob to cut their losses and flee to Ireland with the others. He refuses, saying the task was set when they received the code word from Haw Haw. At 11.20 Bob comes down dressed in the women\'s clothes from the suitcase as a getaway disguise.',
+    location: 'cynthia_tower_studio',
+    characters: [
+      { characterId: 'louise_harrington', role: 'urges retreat' },
+      { characterId: 'bob_harrington', role: 'refuses' },
+      { characterId: 'john_davies', role: 'plans the getaway' }
+    ],
+    significance: 'It shows the plot was triggered from Germany and that Louise wanted out.',
+    chapter: 'chapter_50',
+    keyActions: [
+      'Louise suggests fleeing',
+      'Bob cites Haw Haw\'s code word',
+      'Cases and rifle to be left behind',
+      'Bob dresses as a woman'
+    ]
+  },
+  {
+    id: 'assassination_foiled',
+    title: 'Three Montys and a pistol',
+    date: 'Tuesday 7 December 1943',
+    description: 'As the convoy approaches, Bob lies behind the rifle on the roof and sees three \'Montys\' in three jeeps, and cannot tell which is real. Louise, at the studio door, orders him away at gunpoint and shoots him through the hand when he picks up the rifle again. Bill, now at her side, wounds Davies in the arm as he rushes her.',
+    location: 'cynthia_tower_studio',
+    characters: [
+      { characterId: 'bob_harrington', role: 'would-be sniper' },
+      { characterId: 'louise_harrington', role: 'stops the shot' },
+      { characterId: 'john_davies', role: 'tries to rush Louise' },
+      { characterId: 'bill_laurie', role: 'shoots Davies' },
+      { characterId: 'george_bennet', role: 'on the stairs' },
+      { characterId: 'jim_redgrave', role: 'on the stairs' },
+      { characterId: 'montgomery', role: 'the target, unharmed' }
+    ],
+    significance: 'The assassination attempt on Montgomery fails.',
+    chapter: 'chapter_50',
+    keyActions: [
+      'Decoy jeeps confuse the sniper',
+      'Louise draws a pistol',
+      'Bob shot through the hand',
+      'Davies shot in the arm',
+      'Convoy passes safely'
+    ]
+  },
+  {
+    id: 'plotters_arrested',
+    title: 'Bob and Davies arrested',
+    date: 'Tuesday 7 December 1943',
+    description: 'George takes Bob and Davies into custody, and a medic is sent for from the camp. Davies boasts that there will be others, and Cynthia tells him to shut up, saying the movement has been finished since Mosley\'s internment. Ken and Mike lead the prisoners to the car.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'george_bennet', role: 'arrests' },
+      { characterId: 'bob_harrington', role: 'arrested' },
+      { characterId: 'john_davies', role: 'arrested, defiant' },
+      { characterId: 'cynthia_childreth', role: 'silences Davies' },
+      { characterId: 'ken', role: 'escorts the prisoners' },
+      { characterId: 'mike_robbins', role: 'brings the car' }
+    ],
+    significance: 'The ringleaders in England are caught in the act.',
+    chapter: 'chapter_50',
+    keyActions: ['Prisoners brought down', 'Davies defiant', 'Cynthia loses patience', 'Medic summoned']
+  },
+  {
+    id: 'bills_aces_revealed',
+    title: 'Bill reveals his aces',
+    date: 'Tuesday 7 December 1943',
+    description: 'Bill explains that Louise has been his inside agent since a short conversation at Cynthia\'s second party. Louise says Megan Davies shot Edwards and took his chequebook, and that she herself was the woman on the train, brought the gun home and tested it at Churn, and that Bill posted her a pistol through the village shop. The second ace was two look-alike Montys arranged with the ADC. Louise chooses to go back to her cottage.',
+    location: 'childreth_house',
+    characters: [
+      { characterId: 'bill_laurie', role: 'explains' },
+      { characterId: 'louise_harrington', role: 'revealed as his agent' },
+      { characterId: 'megan_davies', role: 'named as Edwards\' killer' },
+      { characterId: 'cynthia_childreth', role: 'listens' },
+      { characterId: 'richard_childreth', role: 'listens' },
+      { characterId: 'mary', role: 'listens' },
+      { characterId: 'montys_adc', role: 'arranged the decoys' },
+      { characterId: 'the_artist', role: 'revealed as a younger agent' },
+      { characterId: 'gladys', role: 'praised as an unexpected bonus' }
+    ],
+    significance: 'It resolves the book\'s central mysteries.',
+    chapter: 'chapter_50',
+    keyActions: [
+      'Louise\'s double role explained',
+      'Megan named as the killer',
+      'Pistol posted in an innocent parcel',
+      'Decoy Montys explained',
+      'Childreths thanked'
+    ]
+  },
+  {
+    id: 'louise_cottage_explosion',
+    title: 'Gas explosion kills Louise',
+    date: 'About two weeks after 7 December 1943',
+    description: 'A gas explosion destroys Louise\'s cottage and the one next door, killing her and her elderly neighbour. No one claims responsibility and it is treated as an accident. It is noted, though, that Jack had time to tell someone of her betrayal before his arrest.',
+    location: 'aldworth',
+    characters: [
+      { characterId: 'louise_harrington', role: 'killed' },
+      { characterId: 'louise_neighbour', role: 'killed' },
+      { characterId: 'jack', role: 'suspected of passing on her betrayal' }
+    ],
+    significance: 'It suggests the remaining sympathisers took revenge.',
+    chapter: 'epilogue',
+    keyActions: [
+      'Two cottages destroyed',
+      'Louise and her neighbour killed',
+      'Officially an accident',
+      'Suspicion falls on Jack\'s tip-off'
+    ]
+  },
+  {
+    id: 'trial_and_honours',
+    title: 'Trial in camera and Cynthia\'s OBE',
+    date: 'Late 1943 onward',
+    description: 'Bob Harrington and Sir John Davies are tried in secret for attempted murder and crimes against the state and imprisoned, since there is too little evidence for treason. The Snowdens and Megan remain in Ireland. Cynthia receives an OBE for services to war work in the next honours list.',
+    location: null,
+    characters: [
+      { characterId: 'bob_harrington', role: 'convicted' },
+      { characterId: 'john_davies', role: 'convicted' },
+      { characterId: 'cynthia_childreth', role: 'awarded the OBE' },
+      { characterId: 'peter_snowden', role: 'remains in Ireland' },
+      { characterId: 'marjorie_snowden', role: 'remains in Ireland' },
+      { characterId: 'megan_davies', role: 'remains in Ireland' }
+    ],
+    significance: 'It closes the story\'s accounts.',
+    chapter: 'epilogue',
+    keyActions: ['Secret trial for security reasons', 'Prison sentences', 'No treason charge', 'OBE for Cynthia']
+  }
+];

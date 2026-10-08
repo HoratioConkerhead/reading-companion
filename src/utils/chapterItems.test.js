@@ -1,4 +1,4 @@
-import { itemText, isChapterReached, visibleItems, lastVisibleChapterIndex } from './chapterItems';
+import { itemText, isChapterReached, visibleItems, lastVisibleChapterIndex, applyCoverNames } from './chapterItems';
 
 const chapters = [{ id: 'ch1' }, { id: 'ch2' }, { id: 'ch3' }];
 
@@ -44,5 +44,32 @@ describe('lastVisibleChapterIndex', () => {
   it('is the filter chapter, or the last chapter without one', () => {
     expect(lastVisibleChapterIndex(chapters, 'ch2')).toBe(1);
     expect(lastVisibleChapterIndex(chapters, null)).toBe(2);
+  });
+});
+
+describe('applyCoverNames', () => {
+  const people = [{ id: 'bill', name: 'Bill Laurie', title: 'Wing-Commander', coverName: 'Mr Newton', nameRevealedInChapter: 'ch2' }, { id: 'amy', name: 'Amy' }];
+
+  it('shows the cover name until the reveal', () => {
+    const [bill, amy] = applyCoverNames(people, chapters, 'ch1');
+    expect(bill.name).toBe('Mr Newton');
+    expect(bill.title).toBeUndefined();
+    expect(amy.name).toBe('Amy');
+  });
+
+  it('shows the real name from the reveal on, and without a filter', () => {
+    expect(applyCoverNames(people, chapters, 'ch2')[0].name).toBe('Bill Laurie');
+    expect(applyCoverNames(people, chapters, null)[0].name).toBe('Bill Laurie');
+  });
+});
+
+describe('reveals', () => {
+  const people = [{ id: 'g', name: 'Guest', role: 'A quiet guest', reveals: [{ chapter: 'ch2', role: 'An officer' }, { chapter: 'ch3', role: 'The handler' }] }];
+
+  it('applies each reveal from its chapter on', () => {
+    expect(applyCoverNames(people, chapters, 'ch1')[0].role).toBe('A quiet guest');
+    expect(applyCoverNames(people, chapters, 'ch2')[0].role).toBe('An officer');
+    expect(applyCoverNames(people, chapters, 'ch3')[0].role).toBe('The handler');
+    expect(applyCoverNames(people, chapters, null)[0].role).toBe('The handler');
   });
 });

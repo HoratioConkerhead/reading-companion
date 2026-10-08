@@ -1,0 +1,429 @@
+// Stitched Up v4: chapters. Generated from chapter-by-chapter notes on the text;
+// every item is tied to the chapter in which the reader learns it.
+export const chapters = [
+  {
+    id: 'preface',
+    title: 'Preface',
+    description: 'On a summer night in 1943 a German Type VIIC U-boat slips on the surface into a sound off St Mary\'s in the Isles of Scilly. Five crewmen launch a black inflatable and a sailor rows a lone passenger with two suitcases to the shingle beach. The passenger, Helmut Schnitter from Hamburg, shelters behind the sea wall until dawn, then walks into Hugh Town meaning to act like a businessman and catch the afternoon Scillonian to Penzance. The narrator explains why the islands are a weak spot: a light garrison and a daily ferry needing only an identity card and a ticket. Unknown to Schnitter, MI5 already expects agents like him, having been tipped off in March by a source inside the Abwehr.',
+    events: ['uboat_lands_schnitter', 'schnitter_heads_for_hugh_town'],
+    timeframe: 'St Mary\'s, Isles of Scilly, summer 1943'
+  },
+  {
+    id: 'chapter_01',
+    title: 'Chapter 1',
+    description: 'Lady Cynthia Childreth drives her Alvis to Denleigh Manor in Wiltshire for a weekend house party she only agreed to because her old school friend Lady Amelia \'Amy\' Wyndholme insisted. Colonel Peter Snowden introduces the guests: his wife Marjorie, Bob and Louise Harrington, Miss Maclean, her striking monocled companion Miss Gilchrist, and a Mr Newton who says nothing at all over lunch; Sir John and Lady Davies have sent apologies. In her room Cynthia finds a note from Amy admitting she was told to invite her and that a guest, identity unknown even to Amy, will approach her on an important matter. We learn Cynthia speaks fluent French and German, dislikes the trappings of class and prefers to live \'in the shadows\', and that her marriage to the financier Richard is one of convenience. Richard arrives in the afternoon and wakes her as she dozes in the garden, and the maid Sheila describes the household staff.',
+    events: ['cynthia_arrives_at_denleigh', 'amys_secret_note_found', 'richard_arrives_at_denleigh'],
+    timeframe: 'Denleigh Manor, Wiltshire, a Friday in May 1932'
+  },
+  {
+    id: 'chapter_02',
+    title: 'Chapter 2',
+    description: 'Over gin and tonics in the library Cynthia introduces Richard, with whom she has shared Amy\'s mysterious note. A lavish dinner with exceptional wines ends with the ladies staying for spirits and cigars, and with Horace away in London the half-drunk Colonel steers the talk to war service. Harrington was an army doctor who gave up medicine after the war, Mr Newton hesitates before claiming the RFC and then the RAF, Richard fought at Passchendaele with the Royal Berkshires, and Miss Maclean rebukes the Colonel, saying she and Miss Gilchrist were VAD nurses. The Colonel and Harrington then praise Hitler and Louise says England needs someone like Mosley, splitting the party into enthusiasts and polite disapprovers. Alone on the terrace afterwards, Cynthia tallies the guests and still cannot tell which one is her contact.',
+    events: ['war_service_conversation', 'hitler_and_mosley_praised', 'cynthia_terrace_reflection'],
+    timeframe: 'Denleigh Manor, Friday evening, May 1932'
+  },
+  {
+    id: 'chapter_03',
+    title: 'Chapter 3',
+    description: 'At breakfast the Colonel recruits Richard to fly-fish the trout lake with him and Harrington, while Cynthia chooses to wander the gardens alone; on the lawn Louise knits, Marjorie and Jane read, and Miss Gilchrist seems to sketch the house. In a secluded arbour Miss Gilchrist and Mr Newton approach her and drop their covers. Newton is really Wing-Commander William \'Bill\' Laurie, an RFC pilot shot up over the Somme who was moved to secret work before the RAF was formed, and Gilchrist is Hannah Park, who like Jane (whose name is genuine) was a WAAC Section Controller, not a VAD. Hannah\'s outrageous style was a deliberate ploy to keep the other women at a distance, Amy knows who they are, and Horace recommended Cynthia. They ask her to think about joining work concerning national security, to be discussed in London, and meanwhile simply to watch and listen.',
+    events: ['arbour_recruitment'],
+    timeframe: 'Denleigh Manor, Saturday morning, May 1932'
+  },
+  {
+    id: 'chapter_04',
+    title: 'Chapter 4',
+    description: 'At the lake Cynthia confronts Richard, who admits two MI5 men questioned him at his bank on Friday about its German dealings and swore him to secrecy, even from her; aware that Snowden and Harrington are watching from the water, they keep up a casual act. That evening the Snowdens arrive late in formal black tie, while Hannah, still playing Miss Gilchrist, turns up in an almost identical black trouser suit with monocle and cigarette holder. In the drawing room Marjorie needles \'Miss Gilchrist\' about Germany and reveals she and Peter recently attended a party there given by his pro-Hitler military friends, while Cynthia deliberately plays down her languages and claims no interest in politics. Louise admires Mosley but worries about his \'Biff Boy\' militia and says Bob\'s nerves keep them at home. Down by the lake, out of earshot, Jane hears Richard\'s report of the men\'s name-dropping and wonders whether the sympathisers are there to recruit Cynthia, promising to supply \'evidence\' of her sympathies.',
+    events: ['lakeside_talk_with_richard', 'drawing_room_politics', 'lakeside_debrief_with_jane'],
+    timeframe: 'Denleigh Manor, Saturday, May 1932'
+  },
+  {
+    id: 'chapter_05',
+    title: 'Chapter 5',
+    description: 'On Sunday morning Amy, Cynthia, Richard and Bill walk to the 11 o\'clock service at St Andrew\'s, a pretext so that Richard can attend church with Amy while Bill and Cynthia talk on a churchyard bench. Bill explains that Amy staged the weekend from his guest list and that Horace is more than a Foreign Office man: he works with Bill\'s organisation and is in some ways his boss. Cynthia is to infiltrate the circle around the Snowdens and Harringtons, gaining \'political provenance\' by accompanying Richard on a bank business trip to Germany and appearing sympathetic to the regime; Bill also reveals that the \'Colonel\' was only ever a Major. Cynthia agrees, Bill makes a call from the phone box by the pub, and on the walk back he hands Richard a card for Imperial Aggregates, 35 Cromwell Road, fixing a meeting for Wednesday at 11. After lunch the guests disperse and the Childreths drive home in their separate cars.',
+    events: ['churchyard_briefing', 'bill_phone_call_and_card', 'denleigh_departures'],
+    timeframe: 'Denleigh Manor and St Andrew\'s Church, Sunday, May 1932'
+  },
+  {
+    id: 'chapter_06',
+    title: 'Chapter 6',
+    description: 'The Childreths arrive at Imperial Aggregates, a former Georgian house almost opposite the Natural History Museum, where a young woman called Felicity serves coffee. Bill, Jane and a soberly dressed Hannah brief them on a strictly need-to-know basis, with no notes taken: they are worried about minor aristocrats and gentry who back Mussolini and Hitler, only some of whom, like the Snowdens and Harringtons, are known. Through Horace, Richard\'s bank will send the couple to Germany without its directors knowing why; Richard is simply to be himself, while Cynthia must listen for British names, hide her fluent German and drop subtle remarks in favour of National Socialism without seeming too keen. The hope is that on their return they will be courted by British sympathisers, acting as \'sleepers\' in a long game, and anyone from Bill\'s side who needs to approach them will refer to his rank. The Childreths confirm they are in, and Felicity will arrange the flights to Berlin.',
+    events: ['imperial_aggregates_briefing', 'childreths_join_up'],
+    timeframe: 'Imperial Aggregates, Cromwell Road, London; the following Wednesday, May 1932'
+  },
+  {
+    id: 'chapter_07',
+    title: 'Chapter 7',
+    description: 'Three weeks later Felicity phones to say that hotels, flights and social events in Berlin are arranged, that the Childreths fly with Deutsche Luft Hansa from Croydon the following Monday, and that people in Germany will monitor their visit. Cynthia\'s 1926 passport still says \'Ireland\' on the cover, which Felicity says does not matter. A motorcycle courier delivers the travel papers, and Cynthia drives to Camp Hopson in Newbury to buy new evening wear. On Monday an official black Daimler takes them to Croydon Airport, where Cynthia browses photographs of its history while they wait. About twenty-five passengers board an enormous four-engine Junkers G38, and the couple, flying for the first time, are unnerved by the deafening take-off.',
+    events: ['felicity_confirms_travel', 'courier_and_newbury_shopping', 'croydon_departure'],
+    timeframe: 'Bucklebury, Newbury and Croydon Airport; about three weeks later, June 1932'
+  },
+  {
+    id: 'chapter_08',
+    title: 'Chapter 8',
+    description: 'After a bumpy flight the Childreths land at Tempelhof and pass a quick passport check. A uniformed chauffeur greets them in German and Cynthia pretends to need English, while privately recalling the time she spent in Berlin in the 1920s, which she must not reveal. Outside the Hotel Adlon the driver quietly tells Richard that his poor English was an act: he works for the British Embassy next door, will drive them all week and gives an unofficial phone number, adding that meetings will be at the Reichsbank and social events at the hotel. A multilingual receptionist checks them into room 204, and they choose to keep their passports in their own safe. In their room they find Richard\'s appointment list and an ornate invitation from Gerda and Franz Stammer of the Reichsbank to drinks in the hotel library the next evening.',
+    events: ['tempelhof_arrival', 'driver_reveals_embassy_link', 'adlon_check_in'],
+    timeframe: 'Tempelhof airport and the Hotel Adlon, Berlin; a Monday, June 1932'
+  },
+  {
+    id: 'chapter_09',
+    title: 'Chapter 9',
+    description: 'At breakfast Cynthia nearly gives herself away by answering the waiter\'s German too readily, then reassures herself that the words were obvious. Reception books her into Forrester\'s salon on Pariser Platz, which has an arrangement with the hotel, and gives her an English map that doubles as a guidebook; after a very expensive haircut she sightsees at the Brandenburg Gate and along the Unter den Linden. Meanwhile Richard is driven to the Reichsbank, where Franz Stammer, flanked by two silent colleagues, delivers a long account of Germany\'s economic crisis, from reparations to mass unemployment. Stammer asks Richard\'s bank to help pressure British delegates at the coming Lausanne conference and share its expertise, warning that otherwise extremists will gain ground and admitting that many Germans sympathise with them. Richard offers only expertise, and the meeting is adjourned until the next day, with the secretary Frau Meiden seeing him to his car.',
+    events: ['forresters_and_sightseeing', 'first_reichsbank_meeting'],
+    timeframe: 'Hotel Adlon, Pariser Platz, Unter den Linden and the Reichsbank, Berlin; Tuesday, June 1932'
+  },
+  {
+    id: 'chapter_10',
+    title: 'Chapter 10',
+    description: 'Richard returns early and tells Cynthia the meeting was really a monologue and that he sensed a hidden agenda he could not see. At the Stammers\' party in the Adlon library Franz introduces his dour, much older-looking wife Gerda, kisses Cynthia\'s hand and decrees that everyone will speak English; Cynthia understands his German but lets him translate. To make an impression she insists on being addressed as Lady Cynthia, and is handed over to Willa and Andreas Muller and Heidi and Christian Spranger. As the couple circulate, guests lapse into German behind their backs, and Cynthia overhears remarks about her dress, her presumed wealth and suggestions that she be asked to coffee, an invitation Heidi Spranger duly makes for 11 the next morning. In a quiet corner of the bar afterwards they agree the party felt stiff, as if the guests had been told to attend, and Cynthia judges the coffee invitation the real development.',
+    events: [
+      'richard_reports_hidden_agenda',
+      'stammers_welcome_party',
+      'heidi_coffee_invitation',
+      'adlon_bar_debrief'
+    ],
+    timeframe: 'Hotel Adlon, Berlin; Tuesday afternoon and evening, June 1932'
+  },
+  {
+    id: 'chapter_11',
+    title: 'Chapter 11',
+    description: 'Cynthia settles into the German wives\' daily coffee mornings at the Adlon, which turn out to be little more than gossip and cake, while Richard\'s bank meetings go nowhere. At a Thursday evening reception she dresses to be noticed and, hiding her German, overhears openly pro-Hitler talk, including the idea that only a war can restore Germany; the Childreths play the part of ultra-conservatives. Adolf Hitler arrives at Franz Stammer\'s personal invitation, and in a mirror Cynthia sees the Harringtons, who claimed never to travel, deep in conversation with him beside an unknown couple. A British contact who asks to be called Paul draws the couple into the garden with a greeting from the Wing-Commander. He names the other couple as Sir John and Lady Megan Davies, reveals a hotel waiter reports to his side, predicts Cynthia will be invited to join a pro-German network, and asks Richard to make the Reichsbank state its real purpose.',
+    events: ['ch11_coffee_mornings', 'ch11_thursday_reception', 'ch11_hitler_arrives', 'ch11_paul_in_garden'],
+    timeframe: 'Berlin (Hotel Adlon), June 1932'
+  },
+  {
+    id: 'chapter_12',
+    title: 'Chapter 12',
+    description: 'Cynthia walks early through the Brandenburg Gate into the Tiergarten, passing disabled ex-servicemen and jobless men selling pamphlets. At the 11 o\'clock coffee meeting the wives now treat her as one of them, and Louise Harrington is present with knitting in her bag. Monika Fischer probes Cynthia\'s reaction to Hitler, then Karen Becker makes the pitch: the group wants English sympathisers of Cynthia\'s class to spread National Socialist ideas now and act as a fifth column if war comes. Lena Weber, a founder member, explains (through Gerda) that Cynthia would promote the cause and host gatherings for visiting German colleagues, with contact by telephone through friends in Britain. Cynthia stalls to consult Richard and promises an answer in the bar at seven. Megan Davies introduces herself, and Louise admits the Snowdens are also involved and that she hid her German links at Denleigh because she did not know whom to trust.',
+    events: ['ch12_tiergarten_walk', 'ch12_recruitment_pitch', 'ch12_louise_explains'],
+    timeframe: 'Berlin (Tiergarten and Hotel Adlon), a Friday in June 1932'
+  },
+  {
+    id: 'chapter_13',
+    title: 'Chapter 13',
+    description: 'At the Reichsbank Richard endures another lecture on Versailles, the Ruhr occupation and the Dawes and Young plans, then presses Franz Stammer for the real reason behind the visit. Stammer admits it was hardly about banking: the Childreths were recommended by friends in Britain, including Marjorie Snowden. He asks Richard to act, like Cynthia, as an unofficial goodwill ambassador for National Socialism, and asks the bank to hold a permanently topped-up account that visiting German \'colleagues\' can draw on in Britain without currency paperwork. Richard raises the awkward question of whose name the account would carry and buys time by saying the other directors must approve it. The embassy driver already knows they will fly home the next afternoon, with a car waiting at Croydon, and gives Richard a tour of Berlin.',
+    events: ['ch13_stammer_reveals', 'ch13_driver_tour'],
+    timeframe: 'Berlin (Reichsbank), the same Friday in June 1932'
+  },
+  {
+    id: 'chapter_14',
+    title: 'Chapter 14',
+    description: 'Over dinner the Childreths compare their parallel recruitment meetings: both were asked to promote National Socialism, Richard to set up an account for delegates and Cynthia to host house parties. Richard jokes that the coffee circle needs a nickname like the women who knitted beside the guillotine. At seven they tell Gerda and the other women in the bar that they accept; Gerda toasts them, welcomes them to the group and says someone will be in touch. On the way home they reflect that they have only seen a wealthy, sanitised corner of Germany and resolve to study National Socialism to play their parts. At Croydon the black Daimler is waiting with Bill in the front seat; they give him the bare facts and fix a full debrief at their house on Monday at 11.',
+    events: ['ch14_comparing_notes', 'ch14_acceptance_toast', 'ch14_croydon_pickup'],
+    timeframe: 'Berlin, Friday evening; Croydon and home, Saturday, June 1932'
+  },
+  {
+    id: 'chapter_15',
+    title: 'Chapter 15',
+    description: 'Bill, Jane and Hannah come to the Childreths\' house for the debrief while Richard is called to a crisis at his bank. Cynthia introduces her trusted secretary Mary and reports on Berlin: the Harringtons and Davieses, Hitler, the request for house parties and the bank account; Hannah adopts her nickname for the German coffee circle, \'the Knitters\'. Bill explains that the known sympathisers are only the visible tip and describes Mosley\'s path from the New Party to the British Union of Fascists, now thought to have about 50,000 members. The plan is for the Childreths to host events, with Bill\'s side planting its own observers among the guests. A separate secret phone line will go into the master bedroom, future meetings will be in public places with contacts using \'Wing-Commander\' in their greeting, and anyone tailing Cynthia will themselves be followed. Bill suggests she take Mary partly into her confidence.',
+    events: ['ch15_debrief', 'ch15_knitters_named', 'ch15_secure_comms_plan'],
+    timeframe: 'The Childreths\' house, Berkshire, a Monday in June 1932'
+  },
+  {
+    id: 'chapter_16',
+    title: 'Chapter 16',
+    description: 'Richard reports that his fellow directors have opened the requested account and cheque book, choosing the name \'T.G. Edwards\' themselves so the bank keeps control, and the Chief Cashier will inform Stammer. The next day Post Office engineers string a new line through the trees and install the secret telephone in the master bedroom, handing Cynthia the number disc so prying eyes cannot read it. Then nothing happens for months. The Lausanne Conference ends in July with reparations effectively over, while Britain struggles with over three million unemployed. The couple carry on with ordinary life through Christmas, and see in 1933 alone with champagne.',
+    events: ['ch16_edwards_account', 'ch16_phone_installed', 'ch16_quiet_months'],
+    timeframe: 'The Childreths\' house and London, June to 31 December 1932'
+  },
+  {
+    id: 'chapter_17',
+    title: 'Chapter 17',
+    description: 'Cynthia follows Hitler\'s appointment as Chancellor and his seizure of emergency powers in her Times. A letter from Gerda Stammer, dated 30 March 1933, arrives at her home address, which she never gave the Germans, and mentions that her house is large. It asks her to start hosting events now, encloses a list of English supporters to invite, asks for dates so German \'delegates\' can attend, and claims approval from \'the highest authority\'. Cynthia uses the secret line for the first time; Bill suspects she is being watched, agrees a ring-twice test for a tapped line, and sends a colleague called Don, disguised as a Newbury fishmonger, to train her and collect a copy of the list. Mary learns from Gladys in the village that a green car was parked along the road all the previous day with nobody visible inside. The list holds the Harringtons, Snowdens and Davieses, and some names that surprise Cynthia.',
+    events: ['ch17_gerda_letter', 'ch17_first_secret_call', 'ch17_green_car_reported'],
+    timeframe: 'The Childreths\' house and village, early April 1933'
+  },
+  {
+    id: 'chapter_18',
+    title: 'Chapter 18',
+    description: 'Don arrives in a fishmonger\'s van with real fish and spends half an hour teaching Cynthia and Mary basic counter-surveillance: back doubles, watching reflections in shop windows, and above all acting normally. As he leaves with the copied list, Cynthia sees the small green car follow him towards the pub and shop, then return to its spot. On the secret line she tells Bill the first party will be on Saturday 27 May; he will supply and pay the caterers, plant his own people as waiting staff and build a paper trail in Cynthia\'s name. Having seen the list, Bill says the network is bigger than expected and suggests inviting a random half now and the rest later. Mary writes thirty invitations for Cynthia to sign, a letter goes to Gerda via her husband\'s bank, and the caterers agree a buffet menu.',
+    events: ['ch18_don_training', 'ch18_car_tails_don', 'ch18_party_arranged'],
+    timeframe: 'The Childreths\' house, early April 1933'
+  },
+  {
+    id: 'chapter_19',
+    title: 'Chapter 19',
+    description: 'Gerda Stammer and Lena Weber come to stay for the party, and while Richard shows them Reading, Cynthia notices that Lena\'s English has improved suspiciously, suggesting she hid it in Berlin just as Cynthia hid her German. At six Bill\'s undercover staff arrive; their leader Edwin, a soldier and Bill\'s long-time minder, plays the butler. Guests arrive from 7.40, among them the Harringtons, Snowdens and Davieses, with Bill as \'Mr Newton\' and Hannah again the showy \'Miss Gilchrist\' beside Jane; Bill reflects that Hannah\'s display keeps eyes off Jane, whose role matters more. Richard invites everyone to speak freely and introduces the German women, who hold court about the new Germany. Mary sees Lena and Marjorie Snowden slipping out of Cynthia\'s office, so Hannah has Edwin\'s team watch Gerda, Lena, Louise and Megan. At the end the German women announce they will spend extra days with the Snowdens, shopping in London.',
+    events: ['ch19_reading_outing', 'ch19_staff_arrive', 'ch19_garden_party', 'ch19_office_snooping'],
+    timeframe: 'Reading and the Childreths\' house, Saturday 27 May 1933'
+  },
+  {
+    id: 'chapter_20',
+    title: 'Chapter 20',
+    description: 'At breakfast Lena calls the party a success, praises Hitler\'s bans on Communists, unions and strikes, asks for a second event for the rest of the list, and asks that the \'frightful\' woman with the monocle not be invited again. Colonel Snowden collects the German women at ten. At the village shop Gladys tells Cynthia that two foreign-accented guests questioned her the day before about Cynthia\'s life and visitors, and points out that the watching green car has gone. That afternoon Bill arrives disguised on Edwin\'s lorry and realises Lena and Marjorie were planting something, not taking it: a click on the office telephone reveals a bug, which he decides to leave in place and use. Edwin judges the Harringtons, Snowdens and Davieses to be the ringleaders and warns that Snowden only pretends to be a drunken buffoon. Bill resolves to find out who in Britain is organising the surveillance.',
+    events: ['ch20_breakfast_review', 'ch20_gladys_report', 'ch20_bug_found', 'ch20_edwin_assessment'],
+    timeframe: 'The Childreths\' house and village shop, Sunday 28 May 1933'
+  },
+  {
+    id: 'chapter_21',
+    title: 'Chapter 21',
+    description: 'The Childreths fix 7 July 1934 for their second party, after Royal Ascot in June. The narrator sketches Mosley\'s Blackshirt defence force, the bad publicity from the violent Olympia rally and Hitler\'s tightening grip on Germany, and reveals that since early 1934 Bill\'s department and Special Branch have had agents inside the BUF and have been tapping Mosley\'s communications. After a quiet, snowbound winter Bill rings one Sunday in May and asks the couple to come to London separately: Richard to the department\'s new offices at Thames House, Cynthia to Hannah at the Ritz, walking across Hyde Park so that Bill\'s people can spot anyone following her. Hannah, transformed into a blonde socialite so that \'Miss Gilchrist\' is never seen with Cynthia, asks her to invite Oswald Mosley to the July party, because the BUF has been talking about Cynthia\'s last event. Across the Palm Court the Snowdens are entertaining two of the Berlin knitters, Monika Fischer and Karen Becker, which puzzles Cynthia because the Snowdens were never in Berlin.',
+    events: [
+      'second_party_date_set',
+      'mi5_infiltrates_buf',
+      'olympia_rally',
+      'bill_urgent_call_may_1934',
+      'ritz_meeting_mosley_proposal'
+    ],
+    timeframe: 'Bucklebury and London, late 1933 to May 1934'
+  },
+  {
+    id: 'chapter_22',
+    title: 'Chapter 22',
+    description: 'Hannah judges that the Snowdens came to the Ritz to meet the Germans rather than to tail Cynthia, and the Childreths agree to invite Mosley. The department drafts an invitation that seems to come from Cynthia, Mosley\'s secretary accepts after the Olympia debacle, and the couple enjoy a winning day at Royal Ascot in the meantime. At the party on 7 July Mosley arrives quietly with two towering black-uniformed bodyguards and quickly appals Cynthia with antisemitic talk, while Bill keeps out of his sight. With the Snowdens beside him, Mosley admits his people have been keeping an eye on the Childreths and asks them to act as a safe house for agents entering the country, replying through Peter Snowden. Bill and Hannah want them to say yes, and Cynthia later finds Bill in a private talk with Louise Harrington that leaves him visibly troubled.',
+    events: [
+      'royal_ascot_1934',
+      'mosley_accepts_invitation',
+      'second_garden_party_mosley',
+      'mosley_safe_house_request',
+      'bill_louise_conversation'
+    ],
+    timeframe: 'London, Ascot and Bucklebury, May to July 1934'
+  },
+  {
+    id: 'chapter_23',
+    title: 'Chapter 23',
+    description: 'A long time-skip: the BUF fades after the Battle of Cable Street and the Public Order Act, though Mosley still fills Earls Court for his \'Britain First\' rally in July 1939, an invitation from the Harringtons that Cynthia declines by pleading her birthday. War comes, Mosley campaigns for a negotiated peace and is interned under Regulation 18B in May 1940 until his release in 1943, while Hitler becomes Fuehrer, rearms and takes Austria and the Sudetenland. The narrator notes that the Snowdens, Harringtons and Davieses carry on their fifth-column work without Mosley, and that the Snowdens\' growing ties with Germany are known to Bill but not to Cynthia. Cynthia, now busy with the WVS and her vegetable garden, gets a call from Marjorie after Mosley\'s release: Marjorie praises Lord Haw-Haw and warns that Cynthia will soon be called upon to be of service. Bill says this fits signs that something is brewing.',
+    events: [
+      'battle_of_cable_street',
+      'earls_court_rally_declined',
+      'mosley_interned',
+      'marjorie_service_call'
+    ],
+    timeframe: 'Britain and Europe, mid-1934 to 1943'
+  },
+  {
+    id: 'chapter_24',
+    title: 'Chapter 24',
+    description: 'Two officials, Mike Robbins and Keith Macmillan, scatter gravel across Cynthia\'s drive and tell her, over coffee in the library with Mary, that \'he is in the country\'. Special Branch picked him up from a call from Penzance and are tracking him to London; he chose a compartment shared with a man and an elderly woman, so another team member will join the train at Taunton to follow the man. He is travelling as Edwards, and Cynthia must simply wait. Soon afterwards Peter Snowden summons her to the Half-way House pub on the A4, where he explains that a German agent called Edwards will carry out a single mission and then hide at her house until he can be smuggled to France; he will identify himself with a cheque book in that name issued by her husband\'s bank. When Cynthia reports back, Bill wonders how the group learned of the arrival so quickly and suspects someone was watching at Penzance.',
+    events: ['robbins_macmillan_visit', 'snowden_half_way_house_briefing', 'cynthia_reports_edwards_plan'],
+    timeframe: 'Bucklebury and the A4 near Newbury, summer 1943'
+  },
+  {
+    id: 'chapter_25',
+    title: 'Chapter 25',
+    description: 'The story moves to Detective Chief Inspector George Bennet, a widower seconded to lead a five-man Special Branch team of \'spy catchers\', who has spent three days watching Hugh Town\'s main street from the Atlantic Hotel. He is waiting for a stranger with two cases, one heavy enough to hold a radio. On the fourth morning a man in an overcoat far too warm for June walks by with two cases hours before the ferry is due. George follows him to the Steamship Company office and, pretending to half-recognise him, learns that he has bought a single to Penzance and paid with a Martins Bank cheque in the name of T. G. Edwards. Sure he has his man, and knowing (though the reader is not told) why a German agent would pay this way, George spends the spare morning walking to Abraham Leggatt\'s upright grave at Old Town.',
+    events: ['bennet_stakeout_hugh_town', 'edwards_buys_ferry_ticket', 'leggatt_grave_walk'],
+    timeframe: 'Hugh Town, St Mary\'s, Isles of Scilly, June 1943'
+  },
+  {
+    id: 'chapter_26',
+    title: 'Chapter 26',
+    description: 'George follows Edwards across on the escorted Scillonian to Penzance, where Edwards takes a room at the Long Boat Inn and the landlady shows George another Martins Bank cheque. At the station George meets his colleague Jim, a former Hurricane pilot posing as a cycling tourist. Next morning Edwards seeks out a particular compartment, which he shares with an elderly knitting woman and a studious man in pince-nez, his cases going on the rack between similar ones; George phones London and joins the compartment. At Taunton a giggling young rambler called Alison boards and, while shaking George\'s hand, palms him a note saying she is on his side and will follow the man with the glasses. The elderly woman leaves at Goring with a case and tells her waiting driver that the three of them sat together as arranged and the switch was made in the Box Tunnel while George was in the corridor; at a timbered cottage in Aldworth she pulls off a grey wig and looks years younger.',
+    events: [
+      'scillonian_crossing',
+      'penzance_train_departure',
+      'alison_boards_at_taunton',
+      'box_tunnel_switch',
+      'goring_handover'
+    ],
+    timeframe: 'Isles of Scilly to Penzance, then the Great Western line to Goring and Aldworth, June 1943'
+  },
+  {
+    id: 'chapter_27',
+    title: 'Chapter 27',
+    description: 'At Reading the man in pince-nez takes down a case and leaves the train, and Alison follows with a breezy farewell to George. He crosses through the subway to the Great Western Hotel opposite the station and checks in under the name Young, room 107, while Alison eavesdrops behind an air-raid leaflet. In the station ladies\' room she transforms herself, swapping an auburn wig and tweeds for her own short brown hair, trousers and clear-glass spectacles, leaves her rambler kit at Left Luggage and uses an official ID card to pass the barrier. From the lobby she watches Young walk past without recognising her, books an open-ended room paid in advance and follows him in to dinner.',
+    events: ['young_leaves_at_reading', 'alison_quick_change', 'alison_checks_into_hotel'],
+    timeframe: 'Reading, Berkshire, June 1943'
+  },
+  {
+    id: 'chapter_28',
+    title: 'Chapter 28',
+    description: 'At Paddington six Special Branch officers shadow Edwards without stopping him, because he is their link to British sympathisers; the narrator explains the Treachery Act and the death penalty awaiting enemy agents. Checking a slip of directions, Edwards collects a key from a greengrocer in Crawford Place and lets himself into the flat next door. George sets up a round-the-clock watch and asks Jim to get Bill Laurie\'s people at \'5\' to listen for radio transmissions, but for days the watchers see nobody go in or out except a postman. Meanwhile Alison follows Young by bus from Reading to the Blade Bone Inn, watches him look over a house, wait, and then knock at the door, which Cynthia opens. Using the agreed opening line, Alison phones Cynthia, who reveals that \'Young\' is really Sir John Davies, although she had been told to expect a man called Edwards, and Bill is baffled.',
+    events: [
+      'paddington_arrival',
+      'crawford_place_flat_entered',
+      'yard_strategy_meeting',
+      'young_bus_to_bucklebury',
+      'davies_at_cynthias_door'
+    ],
+    timeframe: 'London (Paddington, Crawford Place, Scotland Yard) and Reading to Bucklebury, June 1943'
+  },
+  {
+    id: 'chapter_29',
+    title: 'Chapter 29',
+    description: 'After two more quiet days George decides to get inside the flat on a pretext. Jim finds the gas meter is inside, the gas company supplies a uniform, and Bert, the only one small enough to wear it, calls at other houses first to protect his cover. The street door is unexpectedly unlocked and a strange smell hangs on the stairs; getting no answer, Bert shoulders open the flimsy door and finds Edwards dead, shot once through the forehead, and is sick in the street. George and Jim find the body on its back with a look of surprise, no sign of a struggle, and clearly several days dead. George orders a doctor, a photographer, a sealed scene and discreet enquiries with the press kept out, and admits that none of it makes sense.',
+    events: ['gas_man_ruse', 'edwards_found_dead'],
+    timeframe: 'Scotland Yard and Crawford Place, London, June 1943'
+  },
+  {
+    id: 'chapter_30',
+    title: 'Chapter 30',
+    description: 'The police doctor confirms a single gunshot and has the body removed in an unmarked ambulance. Dent learns that the greengrocer only holds the key and that the flat\'s owner died at Dunkirk, yet the flat is clean, stocked with food and has working gas and electricity. George opens Edwards\' heavy case and finds not a radio but English books, proof that it was packed in Britain and swapped on the train, most likely in the Box Tunnel. After placating the Chief Inspector at St Johns police station, George builds a timeline for the evening meeting: Edwards seems to have been shot as soon as he opened the door, and the only caller the watchers logged was a postman on Day 2 at 10.30 who went into a building that should have been locked, though no post was found. The postman becomes the chief suspect, and Edwards\' cheque book, his means of identification, is missing.',
+    events: ['flat_search_books', 'st_johns_police_visit', 'timeline_meeting_postman'],
+    timeframe: 'London (Crawford Place, St Johns police station, Scotland Yard), June 1943'
+  },
+  {
+    id: 'chapter_31',
+    title: 'Chapter 31',
+    description: 'George Bennet sets up a meeting with Bill Laurie by phone, disguising it as talk about investing a legacy, and drives with Jim to MI5\'s wartime offices at Blenheim Palace, where Bill is now a Group Captain. George reports that Edwards has been shot dead and his T. G. Edwards cheque book is missing. Bill explains that MI5 planted the Edwards cheque name almost ten years earlier as a tripwire, that the tip-off about the landing came from a highly placed German source through the Polish government-in-exile, and that Alison was on the train because MI5 is interested in the other man in the compartment. The two services agree to pool what they know, and Bill tells Cynthia that Edwards is dead, reasoning that Davies must have known in advance. Back at the Yard, Bert and Jim find that the flat\'s gas and electricity were reconnected and prepaid two weeks earlier, that no real post was due at that hour, and that the \'postman\' wore earrings. George realises the killer may be a woman.',
+    events: [
+      'coded_call_to_bill',
+      'blenheim_meeting',
+      'bill_tells_cynthia_edwards_dead',
+      'postman_was_a_woman'
+    ],
+    timeframe: 'Scotland Yard, London, and Blenheim Palace, Oxfordshire; two days after the body was found (wartime, 1943 inferred)'
+  },
+  {
+    id: 'chapter_32',
+    title: 'Chapter 32',
+    description: 'George meets Bill at Thames House and reports that the only person seen entering Edwards\' building was a woman of medium height disguised as a postman. He then turns to the elderly woman in the train compartment and argues that all three travellers were working together. A porter had carried a heavy case for a lady at Penzance, yet the woman lifted her own case and refused help at Goring, so the cases must have been switched in the Box Tunnel and hers must hold something lighter than books or a radio. George concludes that Edwards was an elaborate decoy and the woman is the key. Bill agrees the plotters deliberately let British intelligence learn of the landing, confirms the other man is using the name Young and is still watched, and the two agree to send a team to Goring, keep the local police out, and stay in touch through the investment ruse.',
+    events: ['thames_house_case_theory', 'joint_plan_goring'],
+    timeframe: 'Thames House, Millbank, London, the next day at 11.00 (1943 inferred)'
+  },
+  {
+    id: 'chapter_33',
+    title: 'Chapter 33',
+    description: 'Picking up from Young\'s arrival at Cynthia\'s door, the chapter shows Alison ringing the bell and loudly greeting Cynthia as an old friend; Cynthia invents the name \'Sarah\' for her and they fix a \'Tuesday\' meeting while Alison secretly writes that she is outside if needed. Young, whom Cynthia knows as Sir John Davies though he acts as a stranger, says Edwards has been delayed and leaves a locked suitcase that an unknown person will collect, the case itself serving as identification. Cynthia sees the recent warnings, the meeting with Snowden and this visit beginning to fit together. Alison shadows Young back to Reading, where a small car collects him from outside his hotel and she loses him. Bill arranges for Cynthia to come up to London with Richard on Tuesday for a covert meeting at the National Gallery during a Myra Hess lunchtime concert.',
+    events: [
+      'young_leaves_suitcase',
+      'alison_as_sarah',
+      'young_collected_in_reading',
+      'gallery_meeting_arranged'
+    ],
+    timeframe: 'Cynthia\'s house near Bucklebury and Reading, Berkshire, the morning after the train journey (1943 inferred)'
+  },
+  {
+    id: 'chapter_34',
+    title: 'Chapter 34',
+    description: 'Special Branch enquiries at Goring find nothing, since grey-haired ladies with cases are an everyday sight there, so attention turns to the motive. Cynthia travels to London with Richard and is met at Paddington by Alison, who quietly warns her that she has been followed off the train and introduces herself by her real first name. Over coffee in a Lyons Corner House on the Strand the two women play at spotting their watchers: a clumsy young man and a well-dressed lady who keeps bending to feed her dog so she can listen. Cynthia recalls being watched years earlier from a car in her village. In the National Gallery concert queue Alison waits for a gap, steers Cynthia sharply left, and the tail carries on up the stairs.',
+    events: ['goring_enquiries_fail', 'corner_house_watchers', 'slipping_the_tail_gallery'],
+    timeframe: 'Goring; Paddington, the Strand and Trafalgar Square, London; the following Tuesday (1943 inferred)'
+  },
+  {
+    id: 'chapter_35',
+    title: 'Chapter 35',
+    description: 'In a smoky room off the National Gallery entrance Bill introduces Cynthia to the joint MI5 and Special Branch team and asks three questions: what the plot is, when, and why Cynthia matters. Cynthia says she has had no orders beyond keeping a locked suitcase, and argues that Mosley\'s appearance at her party was theatre and that he has no part in the present plot. Because Edwards brought no radio, the team rules out intelligence-gathering, settles on assassination, and narrows the candidates to Brooke, Eisenhower, Montgomery, Auchinleck and Alexander, with Bill\'s instinct pointing to Monty and Ike. Edwin is to open the suitcase, and an MI5 man named Andy takes everyone out by separate exits. The young man from the coffee shop picks Cynthia up again at Paddington and follows her as far as Theale, then phones an unnamed controller from Newbury, who consults a companion and orders bigger but less obvious surveillance.',
+    events: ['gallery_team_meeting', 'staggered_exits_gallery', 'cynthia_tailed_to_theale'],
+    timeframe: 'National Gallery, London; Paddington; Theale and Newbury, Berkshire; the same Tuesday (1943 inferred)'
+  },
+  {
+    id: 'chapter_36',
+    title: 'Chapter 36',
+    description: 'Edwin arrives in a painter-and-decorator van and picks the suitcase\'s lock: it holds only women\'s travelling clothes and toiletries with the labels cut out, sized for a woman of about five foot six or seven. Gladys reports that a woman dressed as a walker and a man on a bicycle have been asking where Cynthia lives; Bill confirms they are not his and places two local watchers of his own, an artist and a convincing \'old man\'. At Thursday\'s meeting the research leaves Brooke, Montgomery and Eisenhower as plausible targets, with Monty at Norfolk House and Ike expected from January. George has no progress on the murder. Jim points out that a woman runs through every lead and proposes concentrating on the group\'s wives, Marjorie Snowden, Louise Harrington and Megan Davies, while Bill admits serious fears for Cynthia\'s safety.',
+    events: ['suitcase_opened', 'strangers_ask_after_cynthia', 'wives_become_suspects'],
+    timeframe: 'Cynthia\'s house and village, Berkshire, on the Wednesday; Bill\'s office on the Thursday (late 1943)'
+  },
+  {
+    id: 'chapter_37',
+    title: 'Chapter 37',
+    description: 'Mary\'s old party invitations give George the wives\' addresses, and the three couples turn out to live in neighbouring villages near Goring station. George confesses a nagging sense that something one of the women said or did, perhaps as far back as Denleigh, links them to the case. Bill plans a provocation: Cynthia will tell Richard on her tapped phone that she thinks she is being watched, to see whether the watchers are pulled back. At Monday\'s meeting Hannah reports that Montgomery and General Crocker will inspect the 51st Highland Division at Aylesbury on Sunday 13 February, and Alison reveals a camouflaged American transport camp on Bucklebury Common, a few hundred yards from Cynthia. Bill\'s map shows the Harringtons at Aldworth, the Snowdens at Ashampstead and the Davieses at Yattendon, and he proposes undercover artists as watchers; Bert and Keith Macmillan turn out to be the artists.',
+    events: ['phone_provocation_planned', 'aylesbury_and_bucklebury_camp', 'map_and_artists'],
+    timeframe: 'Friday to Monday; phone calls and Bill\'s office with its map room (late 1943)'
+  },
+  {
+    id: 'chapter_38',
+    title: 'Chapter 38',
+    description: 'Cynthia makes the staged call, sounding tense, and Richard calmly dismisses her fears. George briefs twelve officers in teams of four to watch the Snowdens, Davieses and Harringtons, with strict rules against sitting in cars and daily reports from village phone boxes. Bert sets up his easel on the playing field facing the Snowdens\' cottages in Ashampstead and Keith paints in oils by the butcher\'s in Yattendon, while Mike Robbins\'s team covers Aldworth. On Friday Marjorie Snowden strolls over to admire Bert\'s painting, says the green car outside is theirs though she cannot drive, and offers to buy the picture; in Aldworth Bob Harrington visits The Bell and takes his car out for about forty minutes. Back home, Cynthia notices that the watchers on her house have vanished since her call.',
+    events: [
+      'staged_phone_call',
+      'village_surveillance_briefing',
+      'marjorie_meets_bert',
+      'harrington_short_drive'
+    ],
+    timeframe: 'Tuesday to Friday; Cynthia\'s house, a Special Branch briefing in London, and Ashampstead, Yattendon and Aldworth, Berkshire (autumn 1943)'
+  },
+  {
+    id: 'chapter_39',
+    title: 'Chapter 39',
+    description: 'Told from the conspirators\' side, this short chapter follows an unnamed pair who lift a case down from the top of a wardrobe. Inside is a German FG42 automatic rifle with a ZF4 telescopic sight, ammunition, a bipod and a canvas carrying bag, a weapon with no equal in Britain and an excellent sniper rifle. After cleaning and reassembling it they use what they have learned from watching the Churn ranges on the Berkshire Downs: weekends and Wednesdays are busy, but on Tuesdays and Thursdays the range officer leaves early. On a Thursday they hide their car, walk in along the Ridgeway, pick the gate lock and take turns firing at 500 yards while the other marks hits from the butts. They log their sight settings, collect the spent cases and leave unseen.',
+    events: ['rifle_unpacked', 'churn_test_firing'],
+    timeframe: 'An unnamed house and the Churn ranges on the Berkshire Downs, a Thursday in autumn (1943 inferred)'
+  },
+  {
+    id: 'chapter_40',
+    title: 'Chapter 40',
+    description: 'The surveillance yields little beyond Marjorie\'s chat with Bert and Harrington\'s short drive, and turns comic when every team converges on Ashampstead as the Harringtons and Davieses arrive together for Saturday lunch with the Snowdens. Over a beer in the Admiral Duncan in Soho, Bill argues that since no radio was sent the plot is not about learning the invasion plans but about killing the planners, and he focuses on Montgomery and Eisenhower. At the Wednesday meeting Alison confirms Monty\'s timetable at Aylesbury on 13 February, and the village teams are stood down except Cynthia\'s watchers. Bert, who has sold his painting to Marjorie, notes that the Snowdens\' green car resembles the one that watched Cynthia; Mike proposes plotting how far Harrington could have driven in forty minutes, and Keith suspects the watchers were spotted. Bill decides Cynthia should invite all three couples for drinks, with Keith and Mike and their wives posing as relatives.',
+    events: ['saturday_lunch_convergence', 'admiral_duncan_meeting', 'teams_stood_down'],
+    timeframe: 'Ashampstead; the Admiral Duncan, Soho; a Special Branch meeting room in London; about October 1943'
+  },
+  {
+    id: 'chapter_41',
+    title: 'Chapter 41',
+    description: 'Bill and Mike draw circles on Ordnance Survey maps around Aldworth to see where Bob Harrington could have gone on his forty-minute drive, and Mike spots the Army rifle ranges at Churn. Bill sends Mike and Keith to look at the ranges the next morning dressed as walkers, and he shelves the planned tea party. On the phone, Bill\'s summary of the train compartment (an enemy agent, a man with a false name, a grey-haired lady knitting) jogs Cynthia\'s memory: Louise Harrington knitted at Denleigh and at the Adlon and lives near Goring station. Unseen, someone with binoculars is watching the back of Cynthia\'s house from across the fields. Hannah then shows Bill a Daily Mail story: Monty is to make morale-boosting visits to Army bases before Christmas.',
+    events: ['churn_ranges_spotted', 'knitting_link', 'monty_tour_announced'],
+    timeframe: 'London and Bucklebury, Berkshire, late autumn 1943'
+  },
+  {
+    id: 'chapter_42',
+    title: 'Chapter 42',
+    description: 'Bill obtains a partial list of Monty\'s visits, set between 6 and 17 December. Two sites fall inside the map circles: the American Military Hospital at Hermitage and the American transport camp on Bucklebury Common. Mike reports that the Churn range is poorly secured and that among the spent .303 cases he found a single 7.92mm case. Jacobs, the armourer, traces it to a German FG 42 paratrooper rifle that can be turned into a sniper\'s weapon. The team now believes it is facing an assassination plot. Bill gives everyone 48 hours: fresh watchers on the three couples, Hannah and Jane to study the hospital, Keith and Mike the camp, and Alison to move into Cynthia\'s house, armed, as her old friend \'Sarah\'. On George\'s advice, the Edwards murder is handed back to the local police.',
+    events: ['churn_cartridge_found', 'fg42_identified', 'tasks_allocated'],
+    timeframe: 'London, November 1943'
+  },
+  {
+    id: 'chapter_43',
+    title: 'Chapter 43',
+    description: 'New surveillance teams take up position disguised as telephone engineers, road menders and villagers. Alison arrives at Cynthia\'s house as \'Sarah\', and Mary shows her round, including the glass tower studio of Cynthia\'s late mother, with its door onto a flat roof that is never locked. Alison reports that the plotters may want the house rather than Cynthia, because the roof would make an ideal firing platform. Hannah and Jane rule out the Hermitage hospital, while Keith and Mike find the Bucklebury camp worrying: traffic backs up near Cynthia\'s house and Monty means to arrive in an open jeep. Bill admits he underestimated the three couples and reports their backgrounds. The standouts are Louise, an expert rifle shot, and Bob, who was no doctor but was given unexplained \'special duties\' in 1915. Bert suggests renting a To Let cottage near the Harringtons as an observation post.',
+    events: ['alison_moves_in', 'tower_firing_point', 'target_sites_assessed', 'couples_backgrounds'],
+    timeframe: 'Bucklebury, Berkshire and London, November 1943 (next meeting Thursday 25 November)'
+  },
+  {
+    id: 'chapter_44',
+    title: 'Chapter 44',
+    description: 'Bert rents the furnished but very basic \'Jones place\' on the square at Aldworth, telling the agents it is for a writer who wants quiet. Felicity, Bill\'s secretary, moves in that afternoon for her first undercover job and sets up a table in the bow window with typed pages scattered about as props. When she registers her ration book at the village shop, Louise Harrington quizzes her. Bill arranges for her reports to go to Paul Holness, an old RAF friend who runs a real publishing firm in Rutland. Felicity notices a green car outside the Harringtons\'. The next morning Louise talks Jack the shopkeeper into taking Felicity\'s letter out of the mailbag to read the address. Jack also hands Louise a badly addressed little parcel, which she calls a birthday present from her nephew.',
+    events: ['felicity_moves_to_aldworth', 'louise_questions_felicity', 'letter_opened_at_post_office'],
+    timeframe: 'Aldworth and Goring, Berkshire, late November 1943'
+  },
+  {
+    id: 'chapter_45',
+    title: 'Chapter 45',
+    description: 'Peter Snowden brushes off the women\'s worries about the newcomer, then quietly phones BK Publishing posing as a local journalist. He is satisfied when Paul Holness backs up Felicity\'s invented career. Paul warns Bill that someone is checking on her and that the address can only have come from the post office. George reports that Monty will visit the Bucklebury camp on the morning of Tuesday 7 December, and that the date has been given to the local press. Bert moves his watchers into cars on the roads out of Aldworth, leaving Felicity as the only observer in the village. A motorcycle courier collects genuine-looking papers from Paul outside the Royal Opera House and asks openly at the post office for \'Mrs Green\'. He sidesteps Jack\'s trick question and hands Felicity the package, which hides Bill\'s instructions, warning her quietly that they are being watched.',
+    events: ['snowden_pretext_call', 'monty_date_confirmed', 'courier_delivery'],
+    timeframe: 'Aldworth, London and Rutland, late November 1943'
+  },
+  {
+    id: 'chapter_46',
+    title: 'Chapter 46',
+    description: 'Days pass quietly until Bill realises nobody has seen the Davies\' for about ten days. Their outbuildings have a hidden back way out and the garage is empty. Jim picks the lock and the house is found tidy, with wardrobes and drawers emptied. The Davies\' car turns out to have crossed from Fishguard to Rosslare the previous Monday under an unreadable name. The Artist, a long-term watcher near Cynthia\'s house, reports strangers taking an interest in it, and Bill warns Cynthia to hide Alison\'s car. He has George dig into the Davies\' bank and solicitors under emergency powers, and Mike into the Snowdens\', who appear to be lying low at home. Bill makes a private suggestion to Monty\'s ADC and walks the Thames Embankment at night, knowing that so far nobody has done anything he can charge them with.',
+    events: ['davies_house_searched', 'davies_car_ferry', 'artist_warning'],
+    timeframe: 'Yattendon, Berkshire and London, up to Thursday 2 December 1943'
+  },
+  {
+    id: 'chapter_47',
+    title: 'Chapter 47',
+    description: 'The Fishguard ferry clerk remembers three people in the Davies\' car, not two, and the fare was paid with a cheque signed \'T.G. Edwards\'. Bill reasons that the chequebook can only have come from Edwards\' flat, and so from his killer. Richard, still at Martins Bank after an all-night directors\' meeting, confirms the Edwards account holds a large Reichsbank-funded balance and has not been touched since Penzance. The Davies\' solicitors reveal that Sir John has signed his estate over to his two sons from midnight. Mike learns that the Snowdens emptied their accounts into the Bank of Ireland in Dublin a week earlier and removed their share certificates, and George finds the Davies\' did the same. Bill concludes that both couples have long planned to leave for good, and turns his attention to Tuesday.',
+    events: ['edwards_cheque_on_ferry', 'edwards_account_checked', 'couples_money_to_dublin'],
+    timeframe: 'London, Saturday 4 December 1943'
+  },
+  {
+    id: 'chapter_48',
+    title: 'Chapter 48',
+    description: 'On Sunday Felicity reports the Harringtons loading cases into their car and leaving Aldworth. The Artist sees two cars meet in the pub car park opposite Cynthia\'s house and then drive up her drive, after a suspicious \'window cleaner\' had gone round the side of the house. Bill\'s warning call goes dead mid-sentence. Sir John Davies and Bob and Louise Harrington walk in. Davies announces they are calling in their favour and will use the house for two days. He collects the unopened suitcase and admits he deliberately played the stranger when he delivered it as \'Young\'. He says the plotters swapped cars and houses to fool the watchers, spotted the artists, and know Cynthia has been playing a double game. Bob mentions that Jack cut the phone wire. Alison slips out through the cellar to the summerhouse before Louise\'s search, and Louise calls the tower studio an ideal spot. The plotters park one car in the back lane and block the drive with the other, and Bill tells George the balloon has gone up.',
+    events: [
+      'harringtons_leave_aldworth',
+      'phone_line_cut',
+      'house_taken_over',
+      'alison_escapes_to_summerhouse',
+      'balloon_gone_up'
+    ],
+    timeframe: 'Bucklebury, Berkshire and London, Sunday 5 December 1943'
+  },
+  {
+    id: 'chapter_49',
+    title: 'Chapter 49',
+    description: 'Jim, wearing his old uniform as Squadron Leader Jim Redgrave DFC, marches unchallenged along the troop-lined Avenue, rounds up the car teams and sees a large car blocking Cynthia\'s gate. At the Queen\'s Head, Bill tells the team he has a couple of \'aces\' he cannot reveal until tomorrow. He sets out the plan: crawl across the back fields to the summerhouse, enter through the cellar\'s garden door, and catch the shooter in the act. Inside the house Davies orders everyone in position by 11.30, since Monty will pass at about noon. Bob insists on taking the shot, explaining that his First World War \'special duties\' were sniper training. Louise, who shot best at Churn, looks disappointed. Cynthia smuggles food to Alison, who creeps back into the cellar that night.',
+    events: ['jim_uniform_recce', 'queens_head_plan', 'tower_dry_run', 'alison_back_in_cellar'],
+    timeframe: 'Bucklebury, Berkshire, Monday 6 December 1943'
+  },
+  {
+    id: 'chapter_50',
+    title: 'Chapter 50',
+    description: 'On a frosty Tuesday morning Bill\'s team crawls across the field to the summerhouse and into the cellar, where they find Alison, and Cynthia signals that the plotters will go up at 11.30. In the tower Louise urges Bob to give up and flee to Ireland, but he refuses, citing the code word they received from Haw Haw. As the convoy passes, Bob, dressed as a woman for the getaway, sees three \'Montys\' in three jeeps and cannot tell which is real. Louise then holds him at gunpoint and shoots him through the hand, and Bill wounds Davies when he rushes her. Bill reveals his two aces. Louise has been his inside agent since Cynthia\'s second party, and two look-alike Montys were arranged with the ADC. Louise explains that Megan Davies shot Edwards and took his chequebook, that she herself was the woman on the train and tested the rifle at Churn, and that Bill posted her a pistol through the village shop. She chooses to go home to her cottage, where she feels safe.',
+    events: [
+      'cellar_infiltration',
+      'louise_last_appeal',
+      'assassination_foiled',
+      'plotters_arrested',
+      'bills_aces_revealed'
+    ],
+    timeframe: 'Bucklebury, Berkshire, Tuesday 7 December 1943'
+  },
+  {
+    id: 'epilogue',
+    title: 'Epilogue',
+    description: 'Bill\'s hopes for Louise come to nothing. About two weeks later a gas explosion destroys her cottage and the one next door, killing her and her elderly neighbour. Officially it is an accident, but people note that Jack had time to pass on word of her betrayal before his arrest. The Snowdens and Megan Davies stay in Ireland, at least for now. Bob Harrington and Sir John Davies are tried in secret for attempted murder and crimes against the state and sent to prison, since there is too little evidence for treason. Cynthia receives an OBE for \'services to war work\' in the next honours list.',
+    events: ['louise_cottage_explosion', 'trial_and_honours'],
+    timeframe: 'Aldworth and beyond, late December 1943 and after'
+  }
+];

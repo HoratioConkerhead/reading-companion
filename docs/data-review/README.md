@@ -1,10 +1,11 @@
-# Data review (groundwork for Stitched Up v4)
+# Data review
 
 Generated reports, one checklist per book:
 
 - [`StitchedUp_v2.md`](StitchedUp_v2.md): the default book, cross-checked against the text in `books/Matt Parry - Stitched Up/`
 - [`StitchedUp_v2_chapter_changes.md`](StitchedUp_v2_chapter_changes.md): the chapter corrections made to v2's events, objects and mysteries
 - [`JekyllAndHyde.md`](JekyllAndHyde.md)
+- [`StitchedUp_v4.md`](StitchedUp_v4.md): how v4 was rebuilt from the text, and notes on the text for the author
 
 Regenerate (e.g. for v4) with:
 
