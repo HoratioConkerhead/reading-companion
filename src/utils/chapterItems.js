@@ -34,10 +34,19 @@ export const visibleItems = (items, chapters = [], chapterFilterId = null) => {
 };
 
 /**
- * Characters known by a cover name at first: `coverName` is shown in place of `name`
- * (and `title` is hidden) until the reader reaches `nameRevealedInChapter`.
+ * What the reader knows about each character at their chapter:
+ * - `coverName` is shown in place of `name` (and `title` is hidden) until the reader
+ *   reaches `nameRevealedInChapter`;
+ * - `reveals` ([{ chapter, role?, background?, group?, ... }]) replace those fields once
+ *   the reader reaches each chapter, in order (e.g. a guest turns out to be an officer).
  */
 export const applyCoverNames = (characters = [], chapters = [], chapterFilterId = null) => characters.map(character => {
-  if (!character.coverName || isChapterReached(character.nameRevealedInChapter, chapters, chapterFilterId)) return character;
-  return { ...character, name: character.coverName, title: undefined };
+  let shown = character;
+  (character.reveals || []).forEach(({ chapter, ...fields }) => {
+    if (isChapterReached(chapter, chapters, chapterFilterId)) shown = { ...shown, ...fields };
+  });
+  if (character.coverName && !isChapterReached(character.nameRevealedInChapter, chapters, chapterFilterId)) {
+    shown = { ...shown, name: character.coverName, title: undefined };
+  }
+  return shown;
 });

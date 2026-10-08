@@ -62,3 +62,14 @@ describe('applyCoverNames', () => {
     expect(applyCoverNames(people, chapters, null)[0].name).toBe('Bill Laurie');
   });
 });
+
+describe('reveals', () => {
+  const people = [{ id: 'g', name: 'Guest', role: 'A quiet guest', reveals: [{ chapter: 'ch2', role: 'An officer' }, { chapter: 'ch3', role: 'The handler' }] }];
+
+  it('applies each reveal from its chapter on', () => {
+    expect(applyCoverNames(people, chapters, 'ch1')[0].role).toBe('A quiet guest');
+    expect(applyCoverNames(people, chapters, 'ch2')[0].role).toBe('An officer');
+    expect(applyCoverNames(people, chapters, 'ch3')[0].role).toBe('The handler');
+    expect(applyCoverNames(people, chapters, null)[0].role).toBe('The handler');
+  });
+});

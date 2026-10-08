@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 // Click every button and clickable item on every tab of every book and fail on any
 // uncaught error. This catches crashes from data shapes a component doesn't expect.
-const BOOKS = ['MattParry_StitchedUp_v2', 'MattParry_StitchedUp_v1', 'RobertLouisStevenson_JekyllAndHyde', 'RichardColes_MurderBeforeEvensong'];
+const BOOKS = ['MattParry_StitchedUp_v2', 'MattParry_StitchedUp_v4', 'MattParry_StitchedUp_v1', 'RobertLouisStevenson_JekyllAndHyde', 'RichardColes_MurderBeforeEvensong'];
 // Draft books are only listed with ?drafts
 const bookUrl = (book, rest = '') => `./?drafts#book=${book}${rest}`;
 const TABS = ['characters', 'relationships', 'timeline', 'locations', 'map', 'plot', 'objects', 'encyclopedia'];
@@ -84,4 +84,16 @@ test('a mystery reveals its solution only at the chapter that reveals it', async
   expect(await backPew('chapter_09')).toContain('Revealed in Chapter 37');
   expect(await backPew('chapter_09')).not.toContain('Dora keeps vigil');
   expect(await backPew('chapter_37')).toContain('weep, unseen');
+});
+
+// A character met under a cover name keeps it until the chapter that reveals them
+test('cover names hide a real identity until it is revealed', async ({ page }) => {
+  const book = 'MattParry_StitchedUp_v4';
+  const panel = page.locator('.react-tabs__tab-panel--selected');
+  await page.goto(bookUrl(book, '&tab=characters&upto=chapter_02'));
+  await expect(panel.getByText('Mr Newton', { exact: true }).first()).toBeVisible();
+  expect(await panel.innerText()).not.toContain('Bill Laurie');
+  await page.goto(bookUrl(book, '&tab=characters&upto=chapter_03'));
+  await panel.getByText('Bill Laurie', { exact: true }).first().click();
+  await expect(panel).toContainText('Cynthia\'s handler');
 });

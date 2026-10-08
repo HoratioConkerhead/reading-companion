@@ -1,0 +1,827 @@
+// Stitched Up v4: locations. Generated from chapter-by-chapter notes on the text;
+// every item is tied to the chapter in which the reader learns it.
+export const locations = [
+  {
+    id: 'st_marys_scilly',
+    name: 'St Mary\'s, Isles of Scilly',
+    type: 'uk',
+    description: 'The main island of the Scillies, 28 miles south-west of Land\'s End, with its capital at Hugh Town. Lightly defended during the war and linked to Penzance by the daily Scillonian ferry.',
+    significance: [
+      'Called the Achilles heel of Britain\'s wartime shore defences',
+      { text: 'A German agent, Helmut Schnitter, is landed here by U-boat in summer 1943', chapter: 'preface' }
+    ],
+    introducedInChapter: 'preface',
+    features: [
+      'Hugh Town',
+      'Star Castle',
+      'Duchy of Cornwall office',
+      'Shingle beach and sea wall',
+      'Shipping company ticket office'
+    ]
+  },
+  {
+    id: 'penzance',
+    name: 'Penzance',
+    type: 'uk',
+    description: 'Cornish mainland port served by the Scillonian steamship from St Mary\'s.',
+    significance: [
+      { text: 'Schnitter\'s next goal: the 16.30 boat from Hugh Town brings him here', chapter: 'preface' }
+    ],
+    introducedInChapter: 'preface',
+    features: ['Scillonian ferry terminal']
+  },
+  {
+    id: 'denleigh_manor',
+    name: 'Denleigh Manor',
+    type: 'uk',
+    description: 'Lady Amy Wyndholme\'s Georgian country house in Wiltshire, less than an hour\'s drive from Bucklebury, with former stables, parkland, gardens and a trout lake (fictional).',
+    significance: [
+      'Venue of the May 1932 house party',
+      { text: 'Cynthia finds Amy\'s secret note here', chapter: 'chapter_01' },
+      { text: 'Bill Laurie and Hannah Park recruit Cynthia in a garden arbour', chapter: 'chapter_03' }
+    ],
+    introducedInChapter: 'chapter_01',
+    features: [
+      'Drawing room',
+      'Library',
+      'Dining room with walnut table',
+      'Terrace with French doors',
+      'Croquet lawn and tennis court',
+      'Trout lake',
+      'Secluded arbour',
+      'Billiard room'
+    ]
+  },
+  {
+    id: 'st_andrews_church',
+    name: 'St Andrew\'s Church',
+    type: 'uk',
+    description: 'A flint-faced village parish church a short walk from Denleigh Manor, with a tall tower, an old lych gate and a churchyard with benches; a pub and phone box stand across the road (fictional village).',
+    significance: [
+      { text: 'Cover for Bill\'s churchyard briefing, at which Cynthia agrees to join', chapter: 'chapter_05' },
+      { text: 'Bill makes a phone call from the box by the pub', chapter: 'chapter_05' }
+    ],
+    introducedInChapter: 'chapter_05',
+    features: ['Lych gate', 'Churchyard benches', 'Bell tower', 'Village pub and phone box']
+  },
+  {
+    id: 'childreth_house',
+    name: 'The Childreths\' house, Bucklebury',
+    type: 'uk',
+    description: 'Cynthia\'s large house with expansive gardens at Bucklebury, Berkshire, less than an hour from Denleigh along the A4.',
+    significance: [
+      'The Childreths\' home',
+      { text: 'Felicity phones here with the travel plans and a courier delivers the tickets', chapter: 'chapter_07' },
+      { text: 'Scene of the debrief after Berlin.', chapter: 'chapter_15' },
+      { text: 'A secret phone line is installed in the master bedroom.', chapter: 'chapter_16' },
+      { text: 'A green car begins watching the house.', chapter: 'chapter_17' },
+      { text: 'Don\'s tradecraft lesson in the kitchen.', chapter: 'chapter_18' },
+      { text: 'Venue of the first garden party for the sympathisers.', chapter: 'chapter_19' },
+      { text: 'The office telephone is found to be bugged.', chapter: 'chapter_20' }
+    ],
+    introducedInChapter: 'chapter_01',
+    features: [
+      'Large gardens',
+      'Hall lined with family portraits',
+      'Library',
+      'Mary\'s office (bugged phone)',
+      'Master bedroom (secret line)',
+      'Glass conservatory with an old grapevine',
+      'Lawns and lake',
+      'Side gate in the laurel hedge',
+      'Tradesman\'s entrance and kitchen'
+    ]
+  },
+  {
+    id: 'imperial_aggregates',
+    name: 'Imperial Aggregates, 35 Cromwell Road',
+    type: 'uk',
+    description: 'Offices in a former Georgian family house on Cromwell Road, London, almost opposite the Natural History Museum, trading under the name Imperial Aggregates.',
+    significance: [
+      { text: 'Address on the card Bill gives Richard', chapter: 'chapter_05' },
+      { text: 'Front office for Bill\'s team, where the Childreths are briefed and sign up', chapter: 'chapter_06' }
+    ],
+    introducedInChapter: 'chapter_05',
+    features: ['Porticoed front door', 'Small high-ceilinged waiting room', 'Bill\'s office']
+  },
+  {
+    id: 'newbury',
+    name: 'Newbury',
+    type: 'uk',
+    description: 'Berkshire market town near Bucklebury; Cynthia shops at the family-owned Camp Hopson on Northbrook Street.',
+    significance: [
+      { text: 'Cynthia buys new evening wear for Berlin at Camp Hopson', chapter: 'chapter_07' },
+      { text: 'Don\'s cover is a fish shop in Newbury, and he takes the train back to London from there.', chapter: 'chapter_17' }
+    ],
+    introducedInChapter: 'chapter_07',
+    features: ['Northbrook Street', 'Camp Hopson', 'Railway station']
+  },
+  {
+    id: 'croydon_airport',
+    name: 'Croydon Airport',
+    type: 'uk',
+    description: 'London\'s airport on Purley Way, whose 1928 terminal was the first of its kind, with the first air-traffic control centre and an on-site hotel.',
+    significance: [
+      { text: 'The Childreths fly from here to Berlin on a Junkers G38', chapter: 'chapter_07' },
+      { text: 'Bill meets the returning couple in the black Daimler.', chapter: 'chapter_14' },
+      { text: 'Richard collects Gerda and Lena here before the first party.', chapter: 'chapter_19' }
+    ],
+    introducedInChapter: 'chapter_07',
+    features: [
+      'Terminal hall with world clocks',
+      'Photographs of Lindbergh and Amy Johnson',
+      'Book stall',
+      'Airport hotel'
+    ]
+  },
+  {
+    id: 'tempelhof',
+    name: 'Tempelhof Airport',
+    type: 'german',
+    description: 'Berlin\'s airport, the first to have its own Underground station, with a dark wood-panelled arrivals hall.',
+    significance: [{ text: 'The Childreths land here and meet their driver', chapter: 'chapter_08' }],
+    introducedInChapter: 'chapter_08',
+    features: ['Passport control', 'Underground link']
+  },
+  {
+    id: 'hotel_adlon',
+    name: 'Hotel Adlon',
+    type: 'german',
+    description: 'Berlin\'s grandest hotel on Wilhelmstrasse at Pariser Platz, opened in 1907, next door to the British Embassy and near the Reich Chancellery and Brandenburg Gate.',
+    significance: [
+      { text: 'The Childreths\' base in Berlin (room 204), suggesting they are meant to be seen', chapter: 'chapter_08' },
+      { text: 'The Stammers\' welcome party is held in its library', chapter: 'chapter_10' },
+      { text: 'Coffee mornings in the Japanese garden, and the reception where Hitler appears.', chapter: 'chapter_11' },
+      { text: 'The coffee circle makes its recruitment pitch in the restaurant.', chapter: 'chapter_12' },
+      { text: 'The Childreths accept membership over wine in the bar.', chapter: 'chapter_14' }
+    ],
+    introducedInChapter: 'chapter_08',
+    features: [
+      'Marble lobby and Japanese garden fountain',
+      'Bar',
+      'Restaurant and café',
+      'Library',
+      'Palm court',
+      'Room 204',
+      'Japanese garden',
+      'Restaurant',
+      'Bar',
+      'Mirror over the restaurant fireplace'
+    ]
+  },
+  {
+    id: 'british_embassy_berlin',
+    name: 'British Embassy, Berlin',
+    type: 'german',
+    description: 'The British Embassy on Wilhelmstrasse, immediately next door to the Hotel Adlon.',
+    significance: [{ text: 'The Childreths\' chauffeur reveals he is employed here', chapter: 'chapter_08' }],
+    introducedInChapter: 'chapter_08',
+    features: []
+  },
+  {
+    id: 'reichsbank',
+    name: 'Reichsbank, Jägerstrasse',
+    type: 'german',
+    description: 'Germany\'s central bank on Jägerstrasse, where Franz Stammer has his office.',
+    significance: [
+      { text: 'Venue of Richard\'s business meetings', chapter: 'chapter_08' },
+      { text: 'Stammer asks Richard\'s bank for help at Lausanne', chapter: 'chapter_09' },
+      { text: 'Stammer admits the visit was not about banking and asks for an account for German visitors.', chapter: 'chapter_13' }
+    ],
+    introducedInChapter: 'chapter_08',
+    features: ['Stammer\'s office with a large meeting table', 'Stammer\'s office']
+  },
+  {
+    id: 'brandenburg_gate',
+    name: 'Brandenburg Gate and Pariser Platz',
+    type: 'german',
+    description: 'Berlin\'s monumental gate of 1788-91, topped by the Quadriga, at the west end of the Unter den Linden; Forrester\'s salon is on the square beside it.',
+    significance: [
+      { text: 'Visible from the Childreths\' hotel room', chapter: 'chapter_08' },
+      { text: 'Cynthia has her hair done at Forrester\'s and sightsees here', chapter: 'chapter_09' }
+    ],
+    introducedInChapter: 'chapter_08',
+    features: ['Quadriga', 'Forrester\'s salon', 'French Embassy on Pariser Platz']
+  },
+  {
+    id: 'unter_den_linden',
+    name: 'Unter den Linden',
+    type: 'german',
+    description: 'Berlin\'s lime-lined boulevard from the Brandenburg Gate to the royal palace and Lustgarten, once a bridle path to the Tiergarten hunting grounds.',
+    significance: [{ text: 'Cynthia walks it as far as the Soviet embassy', chapter: 'chapter_09' }],
+    introducedInChapter: 'chapter_08',
+    features: ['Statue of Frederick II', 'Soviet embassy']
+  },
+  {
+    id: 'berlin_cathedral',
+    name: 'Berlin Cathedral',
+    type: 'german',
+    description: 'Grand church on Berlin\'s Museum Island, built 1894-1905. Cynthia notes it looks far older than it is and is technically a collegiate church, not a bishop\'s seat.',
+    significance: [
+      { text: 'Cynthia\'s one sightseeing trip during the uneventful coffee-morning days.', chapter: 'chapter_11' }
+    ],
+    introducedInChapter: 'chapter_11',
+    features: ['Collegiate church', 'Only 28 years old in 1932']
+  },
+  {
+    id: 'tiergarten',
+    name: 'The Tiergarten',
+    type: 'german',
+    description: 'Berlin\'s great 520-acre park beyond the Brandenburg Gate, once a hunting ground for the Elector of Brandenburg, with lakes, paths, statues and the zoo on its far side.',
+    significance: [
+      { text: 'Cynthia\'s early walk, past begging veterans and unemployed men, shows her the poverty behind the hotel\'s luxury.', chapter: 'chapter_12' }
+    ],
+    introducedInChapter: 'chapter_12',
+    features: [
+      'Statue of Frederick William III',
+      'Lakes and wooded paths',
+      'Zoo (1844)',
+      'Memorials to Fontane, Lessing and Wagner'
+    ]
+  },
+  {
+    id: 'village_shop',
+    name: 'Village shop and post office',
+    type: 'uk',
+    description: 'The small shop in Cynthia\'s village, run by Gladys, with a bell over the door and glass-topped biscuit tins; the hub of village gossip.',
+    significance: [
+      { text: 'Mary\'s enquiries turn up the green car.', chapter: 'chapter_17' },
+      { text: 'Foreign guests question Gladys about Cynthia.', chapter: 'chapter_20' }
+    ],
+    introducedInChapter: 'chapter_17',
+    features: ['Bell over the door', 'Glass-topped biscuit tins', 'Window onto the road']
+  },
+  {
+    id: 'city_of_london',
+    name: 'The City of London',
+    type: 'uk',
+    description: 'London\'s financial district, where Richard\'s bank is and to which he commutes daily.',
+    significance: [{ text: 'Richard\'s directors open the T.G. Edwards account here.', chapter: 'chapter_16' }],
+    introducedInChapter: 'chapter_16',
+    features: ['Richard\'s bank']
+  },
+  {
+    id: 'reading',
+    name: 'Reading',
+    type: 'uk',
+    description: 'Berkshire\'s county town. Richard takes Gerda and Lena there to shop and sightsee on the day of the party.',
+    significance: [
+      { text: 'Gerda and Lena\'s outing, after which Lena\'s surprisingly fluent English gives her away.', chapter: 'chapter_19' }
+    ],
+    introducedInChapter: 'chapter_19',
+    features: [
+      'Heelas department store, Broad Street',
+      'Forbury Gardens',
+      'Lion war memorial to the Berkshire Regiment',
+      'Reading Abbey ruins'
+    ]
+  },
+  {
+    id: 'ritz_london',
+    name: 'The Ritz, Piccadilly',
+    type: 'uk',
+    description: 'Grand London hotel built in 1906; its cream Louis XVI-style Palm Court has gilded armchairs and the La Source fountain.',
+    significance: [
+      'Where Hannah, in disguise, asks Cynthia to invite Mosley',
+      'Where the Snowdens meet two Berlin knitters'
+    ],
+    introducedInChapter: 'chapter_21',
+    features: ['Palm Court', 'La Source fountain']
+  },
+  {
+    id: 'thames_house',
+    name: 'Thames House, Millbank',
+    type: 'uk',
+    description: 'The department\'s new London offices on Millbank, where Bill meets Richard.',
+    significance: [
+      'Richard is consulted there about inviting Mosley',
+      'Where Bill\'s department had its offices in the 1930s',
+      {
+        text: 'George and Bill meet on the top floor of the South Block, where George works out that Edwards was a decoy; Bill suspects the building is watched.',
+        chapter: 'chapter_32'
+      }
+    ],
+    introducedInChapter: 'chapter_21',
+    features: ['South Block top floor']
+  },
+  {
+    id: 'hyde_park',
+    name: 'Hyde Park',
+    type: 'uk',
+    description: 'The London park Cynthia crosses, from Lancaster Gate and the Italian Gardens to Wellington Arch, on her way to the Ritz.',
+    significance: ['A planned walking route so hidden watchers can spot anyone following her'],
+    introducedInChapter: 'chapter_21',
+    features: ['Italian Gardens', 'Lancaster Gate', 'Wellington Arch']
+  },
+  {
+    id: 'paddington',
+    name: 'Paddington Station',
+    type: 'uk',
+    description: 'The Great Western Railway\'s London terminus, its glass roof grimy with soot.',
+    significance: [
+      'Cynthia\'s starting point for her walk to the Ritz',
+      { text: 'Six Special Branch officers shadow Edwards here without arresting him', chapter: 'chapter_28' }
+    ],
+    introducedInChapter: 'chapter_21',
+    features: []
+  },
+  {
+    id: 'olympia_london',
+    name: 'Olympia, London',
+    type: 'uk',
+    description: 'Exhibition hall in west London, scene of the BUF\'s violent rally of 7 June 1934.',
+    significance: ['The rally\'s bad publicity sends BUF membership into decline'],
+    introducedInChapter: 'chapter_21',
+    features: []
+  },
+  {
+    id: 'black_house_chelsea',
+    name: 'Black House, King\'s Road',
+    type: 'uk',
+    description: 'Chelsea headquarters of Mosley\'s Blackshirt defence force.',
+    significance: ['Base of the BUF paramilitaries that Bill\'s department infiltrates'],
+    introducedInChapter: 'chapter_21',
+    features: []
+  },
+  {
+    id: 'royal_ascot',
+    name: 'Royal Ascot',
+    type: 'uk',
+    description: 'The Berkshire racecourse where the Childreths enjoy a day at the June meeting.',
+    significance: ['They back Felicitation to win the 1934 Gold Cup'],
+    introducedInChapter: 'chapter_21',
+    features: []
+  },
+  {
+    id: 'cable_street',
+    name: 'Cable Street',
+    type: 'uk',
+    description: 'East End street where protesters blocked a BUF march in October 1936.',
+    significance: ['The Battle of Cable Street leads to the Public Order Act'],
+    introducedInChapter: 'chapter_23',
+    features: []
+  },
+  {
+    id: 'earls_court',
+    name: 'Earls Court',
+    type: 'uk',
+    description: 'London exhibition centre where Mosley held his \'Britain First\' rally on 16 July 1939.',
+    significance: ['Cynthia declines the Harringtons\' invitation to the rally'],
+    introducedInChapter: 'chapter_23',
+    features: []
+  },
+  {
+    id: 'holloway_prison',
+    name: 'Holloway Prison',
+    type: 'uk',
+    description: 'North London prison where Mosley is held with his second wife after his internment in 1940.',
+    significance: ['Mosley\'s place of internment until 1943'],
+    introducedInChapter: 'chapter_23',
+    features: []
+  },
+  {
+    id: 'half_way_house_pub',
+    name: 'Half-way House pub',
+    type: 'uk',
+    description: 'Pub on the A4 a few miles beyond Newbury.',
+    significance: ['Peter Snowden briefs Cynthia there on sheltering the agent \'Edwards\''],
+    introducedInChapter: 'chapter_24',
+    features: []
+  },
+  {
+    id: 'taunton',
+    name: 'Taunton',
+    type: 'uk',
+    description: 'Somerset town on the Great Western line from Penzance to London.',
+    significance: [
+      'An extra team member is to join the London train here',
+      { text: 'Alison boards here in the guise of a rambler', chapter: 'chapter_26' }
+    ],
+    introducedInChapter: 'chapter_24',
+    features: []
+  },
+  {
+    id: 'atlantic_hotel_scilly',
+    name: 'Atlantic Hotel, Hugh Town',
+    type: 'uk',
+    description: 'Hotel on Hugh Town\'s main street, St Mary\'s, whose window overlooks the comings and goings of the town.',
+    significance: ['George Bennet\'s observation post for his three-day stake-out'],
+    introducedInChapter: 'chapter_25',
+    features: []
+  },
+  {
+    id: 'old_town_church_scilly',
+    name: 'Old Town church, St Mary\'s',
+    type: 'uk',
+    description: 'Churchyard above Old Town Bay with the upright stone coffin of naval surgeon Abraham Leggatt, who died in 1809.',
+    significance: ['George visits the grave while waiting for the ferry'],
+    introducedInChapter: 'chapter_25',
+    features: ['Abraham Leggatt\'s upright grave']
+  },
+  {
+    id: 'long_boat_inn',
+    name: 'Long Boat Inn, Penzance',
+    type: 'uk',
+    description: 'Inn on Station Road opposite Penzance station.',
+    significance: ['Edwards spends the night here and pays with another Martins Bank cheque'],
+    introducedInChapter: 'chapter_26',
+    features: []
+  },
+  {
+    id: 'box_tunnel',
+    name: 'Box Tunnel',
+    type: 'uk',
+    description: 'The 1.8-mile railway tunnel east of Bath on the Great Western main line, where trains run in darkness for a couple of minutes.',
+    significance: [
+      'Where the conspirators switch cases while George is in the corridor',
+      { text: 'George\'s team agrees the switch can only have happened here', chapter: 'chapter_30' }
+    ],
+    introducedInChapter: 'chapter_26',
+    features: []
+  },
+  {
+    id: 'goring',
+    name: 'Goring and Streatley',
+    type: 'uk',
+    description: 'Twin Thames-side villages with a station on the Great Western line.',
+    significance: ['The elderly knitting woman leaves the train here with a case and is met by a car'],
+    introducedInChapter: 'chapter_26',
+    features: ['Goring and Streatley station', 'Thames bridges']
+  },
+  {
+    id: 'aldworth',
+    name: 'Aldworth',
+    type: 'uk',
+    description: 'Berkshire downland village above Streatley.',
+    significance: [
+      'The \'elderly\' woman from the train goes to a large timbered cottage here and removes her grey wig',
+      { text: 'Bill\'s map shows that the Harringtons live here, outside the village centre.', chapter: 'chapter_37' },
+      { text: 'Bob Harrington visits The Bell and takes a forty-minute drive while Mike Robbins\'s team watches.', chapter: 'chapter_38' },
+      { text: 'Mike proposes drawing a circle round Aldworth to see where Harrington could have gone.', chapter: 'chapter_40' }
+    ],
+    introducedInChapter: 'chapter_26',
+    features: ['A large timbered cottage', 'The Bell pub', 'Village shop', 'Phone box']
+  },
+  {
+    id: 'great_western_hotel_reading',
+    name: 'Great Western Hotel, Reading',
+    type: 'uk',
+    description: 'Sandy-coloured hotel opposite Reading station at the corner of Station Road and Queen Victoria Street.',
+    significance: ['\'Young\' stays in room 107; Alison books in to watch him'],
+    introducedInChapter: 'chapter_27',
+    features: ['Room 107']
+  },
+  {
+    id: 'queens_head_pub',
+    name: 'Queens Head pub',
+    type: 'uk',
+    description: 'Village pub on the no. 11 bus route out of Reading, opposite a bus stop near a war memorial with a Passchendaele cross.',
+    significance: ['A landmark on Young\'s bus ride towards Cynthia\'s village', 'Planning meeting for the raid'],
+    introducedInChapter: 'chapter_28',
+    features: []
+  },
+  {
+    id: 'blade_bone_inn',
+    name: 'Blade Bone Inn',
+    type: 'uk',
+    description: 'Inn at the end of the no. 11 bus route, beyond a double avenue of oaks, near Cynthia\'s home.',
+    significance: ['Where Young and Alison get off the bus before he goes to Cynthia\'s house'],
+    introducedInChapter: 'chapter_28',
+    features: ['Bus terminus', 'Phone box by the bus shelter']
+  },
+  {
+    id: 'crawford_place_flat',
+    name: 'Crawford Place flat',
+    type: 'uk',
+    description: 'First-floor flat beside a greengrocer in Crawford Place, Marylebone, near the Laurie Arms; reached by a single street door and threadbare stairs.',
+    significance: [
+      'Edwards\' bolt-hole in London, watched round the clock',
+      { text: 'Edwards is found shot dead inside', chapter: 'chapter_29' },
+      { text: 'Empty for years since its owner died at Dunkirk, yet clean, stocked and with working gas and electricity', chapter: 'chapter_30' }
+    ],
+    introducedInChapter: 'chapter_28',
+    features: ['Greengrocer key-holders', 'Single street door', 'Laurie Arms next door']
+  },
+  {
+    id: 'scotland_yard',
+    name: 'Scotland Yard',
+    type: 'uk',
+    description: 'Headquarters of the Metropolitan Police, with wood-panelled corridors, where George\'s Special Branch team meets daily at 19.00.',
+    significance: [
+      'Base of George\'s spy-catching team and the Edwards investigation',
+      'Base for George\'s Edwards murder inquiry',
+      { text: 'George briefs the twelve officers who will watch the three couples.', chapter: 'chapter_38' },
+      { text: 'The village teams are stood down and the clues are pooled.', chapter: 'chapter_40' }
+    ],
+    introducedInChapter: 'chapter_25',
+    features: ['George\'s office', 'Briefing room']
+  },
+  {
+    id: 'st_johns_police_station',
+    name: 'St Johns police station',
+    type: 'uk',
+    description: 'The local London police station covering Crawford Place; its exact location is not given.',
+    significance: ['Its Chief Inspector agrees to give discreet help with the Edwards murder'],
+    introducedInChapter: 'chapter_30',
+    features: []
+  },
+  {
+    id: 'blenheim_palace',
+    name: 'Blenheim Palace',
+    type: 'uk',
+    description: 'Stately home near Woodstock, north of Oxford, where MI5 has its wartime offices, reached through a green door at the back. Bill\'s office and map room are here.',
+    significance: [
+      'Where Special Branch and MI5 agree to pool their information on Edwards',
+      { text: 'The joint team meets in Bill\'s office to narrow the possible targets and settle on the wives as suspects.', chapter: 'chapter_36' },
+      { text: 'Bill\'s large-scale map of mid-Berkshire shows how close the three couples live to one another and to Cynthia.', chapter: 'chapter_37' }
+    ],
+    introducedInChapter: 'chapter_31',
+    features: ['Green door at the rear', 'Bill\'s office', 'Map room']
+  },
+  {
+    id: 'national_gallery',
+    name: 'National Gallery',
+    type: 'uk',
+    description: 'Art gallery on Trafalgar Square, London. In wartime it hosts Dame Myra Hess\'s popular lunchtime concerts, and MI5 sometimes uses a meeting room off the main entrance.',
+    significance: [
+      'Chosen as cover for a secret meeting during a lunchtime concert',
+      { text: 'Alison loses Cynthia\'s tail by turning left inside the entrance.', chapter: 'chapter_34' },
+      { text: 'The joint team first meets here and concludes the plot is probably an assassination.', chapter: 'chapter_35' }
+    ],
+    introducedInChapter: 'chapter_33',
+    features: [
+      'Concert queue along Charing Cross Road',
+      'Meeting room off the entrance',
+      'Exits to Charing Cross Road and Pall Mall'
+    ]
+  },
+  {
+    id: 'lyons_corner_house_strand',
+    name: 'Lyons Corner House, the Strand',
+    type: 'uk',
+    description: 'Busy tea and coffee house on the Strand near Charing Cross.',
+    significance: ['Where Cynthia and Alison pick out the two people following them'],
+    introducedInChapter: 'chapter_34',
+    features: []
+  },
+  {
+    id: 'theale',
+    name: 'Theale',
+    type: 'uk',
+    description: 'Berkshire village and railway station on the line from Reading to Newbury; the bus to Bucklebury passes through it, and its station is Cynthia\'s stop for home.',
+    significance: [
+      'A stop on the route between Reading and Cynthia\'s village',
+      { text: 'The watcher lets Cynthia get off here, knowing where she lives, and rides on to Newbury.', chapter: 'chapter_35' }
+    ],
+    introducedInChapter: 'chapter_28',
+    features: ['Phone box']
+  },
+  {
+    id: 'ashampstead',
+    name: 'Ashampstead',
+    type: 'uk',
+    description: 'Berkshire village where the Snowdens live in a row of cottages facing the playing field, which has a shelter, the church and a big house with leaded windows.',
+    significance: [
+      'Home of Peter and Marjorie Snowden',
+      { text: 'Bert paints the Snowdens\' cottages and Marjorie approaches him about the green car.', chapter: 'chapter_38' },
+      { text: 'All three couples meet here for Saturday lunch, and every surveillance team converges on the village.', chapter: 'chapter_40' }
+    ],
+    introducedInChapter: 'chapter_37',
+    features: ['Playing field with shelter', 'Row of cottages', 'Church', 'Big house with leaded windows']
+  },
+  {
+    id: 'yattendon',
+    name: 'Yattendon',
+    type: 'uk',
+    description: 'Small Berkshire village where the Davieses have a cottage on the little square, with the Royal Oak pub, a shop, a butcher and a blacksmith.',
+    significance: [
+      'Home of Sir John and Lady Megan Davies',
+      { text: 'Keith watches the Davieses\' cottage while painting by the butcher\'s; no one comes or goes.', chapter: 'chapter_38' }
+    ],
+    introducedInChapter: 'chapter_37',
+    features: ['Small square', 'Royal Oak pub', 'Village shop', 'Butcher', 'Blacksmith']
+  },
+  {
+    id: 'bucklebury_common',
+    name: 'Bucklebury Common',
+    type: 'uk',
+    description: 'Open common in Berkshire, a few hundred yards from Cynthia\'s house, where an American transport detachment has built concrete loading areas and a temporary camp camouflaged from the air.',
+    significance: [
+      'A no-go military area right beside Cynthia\'s house, officially called a relocation centre; villagers are invited to its cinema'
+    ],
+    introducedInChapter: 'chapter_37',
+    features: ['Concrete loading areas', 'Camouflaged American camp', 'Camp cinema']
+  },
+  {
+    id: 'churn_ranges',
+    name: 'Churn rifle ranges',
+    type: 'uk',
+    description: 'Rifle ranges on the Berkshire Downs, set up as a private range early in the century and later taken over by the Army. Security is light: a chain-link gate with a padlock and a small hut for the range officer.',
+    significance: ['An unnamed pair secretly test a sniper rifle here at 500 yards'],
+    introducedInChapter: 'chapter_39',
+    features: [
+      'Chain-link gate and padlock',
+      'Range officer\'s hut',
+      'Butts with targets at about 500 yards',
+      'Reached along the Ridgeway over the Compton to Didcot railway bridge'
+    ]
+  },
+  {
+    id: 'aylesbury',
+    name: 'Aylesbury camp',
+    type: 'uk',
+    description: 'Army camp at Aylesbury, Buckinghamshire, where the 51st Highland Division is to be inspected.',
+    significance: [
+      'Montgomery and General Crocker are due to inspect troops and present medals here on Sunday 13 February',
+      { text: 'Monty is to arrive at 11 for the inspection and march past and lunch in the Officers\' Mess at 13.00.', chapter: 'chapter_40' }
+    ],
+    introducedInChapter: 'chapter_37',
+    features: ['Officers\' Mess']
+  },
+  {
+    id: 'norfolk_house',
+    name: 'Norfolk House, St James\'s Square',
+    type: 'uk',
+    description: 'Building in St James\'s Square, London, housing 21st Army Group and SHAEF.',
+    significance: ['Montgomery is based here, and Eisenhower is expected from January'],
+    introducedInChapter: 'chapter_36',
+    features: []
+  },
+  {
+    id: 'admiral_duncan',
+    name: 'Admiral Duncan, Soho',
+    type: 'uk',
+    description: 'Small pub in Soho, London.',
+    significance: ['Where Bill and George agree that the plotters mean to kill the invasion planners'],
+    introducedInChapter: 'chapter_40',
+    features: []
+  },
+  {
+    id: 'bills_office_london',
+    name: 'Bill\'s office and conference room, London',
+    type: 'uk',
+    description: 'The London office where Bill holds the team\'s regular meetings and takes phone reports; the department\'s armoury is downstairs.',
+    significance: [
+      'Base for the late-1943 investigation',
+      { text: 'Jacobs identifies the FG 42 cartridge downstairs', chapter: 'chapter_42' }
+    ],
+    introducedInChapter: 'chapter_41',
+    features: ['Conference room', 'Chart cabinet of Ordnance Survey maps', 'Armoury downstairs']
+  },
+  {
+    id: 'churn_halt',
+    name: 'Churn Halt',
+    type: 'uk',
+    description: 'A bare railway halt on the Didcot to Southampton line on the Berkshire Downs, with one platform and a wooden shelter, giving access to the Army rifle ranges at Churn.',
+    significance: ['Mike and Keith leave their car here to reach the ranges'],
+    introducedInChapter: 'chapter_42',
+    features: ['Single platform', 'Wooden shelter']
+  },
+  {
+    id: 'hermitage_hospital',
+    name: 'American Military Hospital, Hermitage',
+    type: 'uk',
+    description: 'A US military hospital at Hermitage, Berkshire, listed among Monty\'s possible December visits.',
+    significance: [
+      'Possible venue for an attempt',
+      { text: 'Ruled out: tight security and no line of sight', chapter: 'chapter_43' }
+    ],
+    introducedInChapter: 'chapter_42',
+    features: ['Wooded site', 'Flat farmland behind']
+  },
+  {
+    id: 'cynthia_tower_studio',
+    name: 'Tower studio and roof, Cynthia\'s house',
+    type: 'uk',
+    description: 'A glass-walled room at the top of Cynthia\'s house, once her mother\'s painting studio, with a door onto a flat roof giving views over Bucklebury Common. It is never locked.',
+    significance: [
+      'All-round view over the Common and the Avenue',
+      { text: 'Alison identifies it as an ideal firing platform', chapter: 'chapter_43' },
+      { text: 'Louise calls it an ideal spot', chapter: 'chapter_48' },
+      { text: 'Bob sets up the sniper rifle here', chapter: 'chapter_49' },
+      { text: 'Scene of the foiled assassination', chapter: 'chapter_50' }
+    ],
+    introducedInChapter: 'chapter_43',
+    features: ['Glass walls', 'Flat white roof', 'Unlocked door']
+  },
+  {
+    id: 'childreth_summerhouse',
+    name: 'Summerhouse, Cynthia\'s garden',
+    type: 'uk',
+    description: 'A summerhouse across the lawn from Cynthia\'s house, out of sight of the windows, with loungers, blankets and a water tap.',
+    significance: [
+      'Alison\'s hiding place during the siege',
+      { text: 'Rendezvous point for Bill\'s team before entering the cellar', chapter: 'chapter_50' }
+    ],
+    introducedInChapter: 'chapter_48',
+    features: ['Oak bench outside', 'Window opening on a catch']
+  },
+  {
+    id: 'jones_cottage',
+    name: 'The \'Jones place\', Aldworth',
+    type: 'uk',
+    description: 'A tiny furnished cottage on Aldworth\'s square with no electricity, gas or indoor facilities, rented cheaply as Felicity\'s observation post.',
+    significance: ['Felicity\'s base as a \'writer\'', 'Bow window overlooks the shop, pub and church routes'],
+    introducedInChapter: 'chapter_44',
+    features: ['Bow window', 'Wood-burning range', 'Hand pump in the garden', 'Tin bath']
+  },
+  {
+    id: 'braunston_rutland',
+    name: 'Braunston, Rutland (BK Publishing)',
+    type: 'uk',
+    description: 'Village in Rutland where Paul Holness runs BK Publishing, the front that receives Felicity\'s reports.',
+    significance: [
+      'Address Jack reads off Felicity\'s letter',
+      { text: 'Snowden\'s pretext call is fielded here', chapter: 'chapter_45' }
+    ],
+    introducedInChapter: 'chapter_44',
+    features: []
+  },
+  {
+    id: 'royal_opera_house',
+    name: 'Royal Opera House, Covent Garden',
+    type: 'uk',
+    description: 'London landmark outside which Paul Holness hands the courier his package.',
+    significance: ['Courier handover at 9.30'],
+    introducedInChapter: 'chapter_45',
+    features: []
+  },
+  {
+    id: 'four_points_pub',
+    name: 'Pub car park at the four-way junction, Aldworth',
+    type: 'uk',
+    description: 'A pub car park at the crossroads near Aldworth where one of Bert\'s surveillance cars waits.',
+    significance: [
+      'Watch point covering routes out of Aldworth',
+      { text: 'The Artist fetches the car team from here', chapter: 'chapter_48' }
+    ],
+    introducedInChapter: 'chapter_45',
+    features: []
+  },
+  {
+    id: 'fishguard',
+    name: 'Fishguard ferry',
+    type: 'uk',
+    description: 'Welsh port with the ferry to Rosslare in Ireland.',
+    significance: [
+      'The Davies\' car sails from here',
+      { text: 'Fare paid with an Edwards cheque; three people in the car', chapter: 'chapter_47' }
+    ],
+    introducedInChapter: 'chapter_46',
+    features: ['Ferry to Rosslare']
+  },
+  {
+    id: 'ireland',
+    name: 'Ireland (Rosslare and Dublin)',
+    type: 'irish',
+    description: 'Neutral Ireland, reached by the Fishguard to Rosslare ferry.',
+    significance: [
+      'Destination of the Davies\' car',
+      { text: 'Both couples\' money moved to the Bank of Ireland in Dublin', chapter: 'chapter_47' },
+      { text: 'Refuge of the Snowdens and Megan Davies', chapter: 'chapter_48' }
+    ],
+    introducedInChapter: 'chapter_46',
+    features: ['Bank of Ireland, Dublin']
+  },
+  {
+    id: 'thames_embankment',
+    name: 'Thames Embankment',
+    type: 'uk',
+    description: 'Riverside walk where Bill sits on a bench at night to think through the case.',
+    significance: ['Bill\'s moment of reflection before the climax'],
+    introducedInChapter: 'chapter_46',
+    features: ['Plane trees', 'River wall']
+  },
+  {
+    id: 'martins_bank',
+    name: 'Martins Bank, 68 Lombard Street',
+    type: 'uk',
+    description: 'Richard\'s bank in the City of London, which holds the T. G. Edwards account.',
+    significance: [
+      { text: 'Richard confirms the Edwards account is untouched since Penzance', chapter: 'chapter_47' }
+    ],
+    introducedInChapter: 'chapter_25',
+    features: []
+  },
+  {
+    id: 'bucklebury_avenue',
+    name: 'The Avenue, Bucklebury Common',
+    type: 'uk',
+    description: 'A road across Bucklebury Common lined with Elizabethan oaks, running towards the American transport camp past Cynthia\'s house; troops are camped along it.',
+    significance: ['Monty\'s route to the camp', { text: 'Jim\'s uniformed recce', chapter: 'chapter_49' }],
+    introducedInChapter: 'chapter_43',
+    features: ['Parallel lines of oaks', 'Military camp']
+  },
+  {
+    id: 'pembrokeshire',
+    name: 'Pembrokeshire (the Davies estate)',
+    type: 'uk',
+    description: 'Sir John Davies\' inherited Welsh estates, policed from Pembroke.',
+    significance: [
+      { text: 'The Davies\' are not found there', chapter: 'chapter_46' },
+      { text: 'Estate signed over to the sons', chapter: 'chapter_47' }
+    ],
+    introducedInChapter: 'chapter_43',
+    features: []
+  }
+];
