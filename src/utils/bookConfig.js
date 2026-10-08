@@ -77,6 +77,9 @@ export const getBookConfig = (metadata = {}, data = {}) => {
     // [{ id, label, center: [lat, lng], zoom, hideLocationTypes: [] }]; empty means
     // a single view fitted to the book's locations
     mapViews: metadata.mapViews || [],
+    // 'tiles' (a street map; positions are latitude/longitude) or 'plan' (a drawn plan
+    // for a fictional place; positions are plan coordinates, see mapBoundaries.plan)
+    mapStyle: metadata.mapStyle === 'plan' ? 'plan' : 'tiles',
     locationTypes,
     getLocationType: (type) => locationTypes[type] || locationTypes.default || DEFAULT_LOCATION_TYPE,
 

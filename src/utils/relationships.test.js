@@ -41,7 +41,14 @@ describe('toRelationshipCategory', () => {
     ['superior-subordinate', 'Superior/Subordinate'],
     ['old friend', 'Friend'],
     ['double-agent', 'Informant/Double-Agent'],
-    ['cousin', 'Other'],
+    ['cousin', 'Family'],
+    ['mother-son', 'Family'],
+    ['grandfather-grandson', 'Family'],
+    ['parson', 'Other'],
+    ['lover', 'Romantic'],
+    ['rival', 'Conspirator/Enemy'],
+    ['killer-victim', 'Conspirator/Enemy'],
+    ['acquaintance', 'Other'],
     [undefined, 'Other']
   ])('%s -> %s', (type, category) => {
     expect(toRelationshipCategory(type)).toBe(category);

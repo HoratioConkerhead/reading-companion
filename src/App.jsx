@@ -89,11 +89,17 @@ const InteractiveReadingCompanion = () => {
         setBookData(data);
         // Update page title from book metadata
         document.title = data?.bookMetadata?.appTitle || 'Interactive Reading Companion';
-        // Chapter filter: from the URL if it named one for this book, else none
-        // (it is not otherwise saved between visits)
+        // Chapter filter: from the URL if it named one for this book; otherwise none, or
+        // the first chapter for books that ask to start spoiler-free (mysteries).
+        // It is not otherwise saved between visits.
         const pendingChapter = pendingChapterRef.current;
         pendingChapterRef.current = null;
-        setChapterFilterId(pendingChapter && (data.chapters || []).some(ch => ch.id === pendingChapter) ? pendingChapter : null);
+        const chapterList = data.chapters || [];
+        if (pendingChapter && chapterList.some(ch => ch.id === pendingChapter)) {
+          setChapterFilterId(pendingChapter);
+        } else {
+          setChapterFilterId(data.bookMetadata?.startSpoilerFree ? (chapterList[0]?.id || null) : null);
+        }
       } catch (error) {
         if (superseded) return;
         console.error('Failed to load book data:', error);
@@ -337,6 +343,7 @@ const InteractiveReadingCompanion = () => {
             relationshipsData={filteredRelationships}
             groupStyles={bookData.bookMetadata?.characterGroupStyles || {}}
             groups={bookConfig.groups}
+            chaptersData={bookData.chapters}
             chapterFilterId={chapterFilterId}
           />
         )
@@ -390,6 +397,9 @@ const InteractiveReadingCompanion = () => {
             locationsData={filteredLocations}
             eventsData={filteredEvents}
             charactersData={filteredCharacters}
+            locationTypeLabels={bookConfig.locationTypes}
+            chaptersData={bookData.chapters}
+            chapterFilterId={chapterFilterId}
           />
         )
       },
@@ -413,6 +423,8 @@ const InteractiveReadingCompanion = () => {
             objectPositions={bookData.objectPositions || {}}
             mapBoundaries={bookData.mapBoundaries || null}
             bookConfig={bookConfig}
+            chaptersData={bookData.chapters}
+            chapterFilterId={chapterFilterId}
           />
         )
       },
@@ -444,6 +456,8 @@ const InteractiveReadingCompanion = () => {
             charactersData={filteredCharacters}
             eventsData={filteredEvents}
             locationsData={filteredLocations}
+            chaptersData={bookData.chapters}
+            chapterFilterId={chapterFilterId}
           />
         )
       },
@@ -456,6 +470,8 @@ const InteractiveReadingCompanion = () => {
             spycraftEntries={filteredEncyclopedia}
             config={bookConfig.encyclopedia}
             selectedEntryId={selectedEncyclopediaId}
+            chaptersData={bookData.chapters}
+            chapterFilterId={chapterFilterId}
           />
         )
       }

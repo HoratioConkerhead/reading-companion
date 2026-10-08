@@ -36,6 +36,26 @@ Rules:
 - For relationships, `introducedInChapter` is the chapter the relationship begins and cannot be earlier than either character’s own `introducedInChapter`.
 - UI components filter based on this field to avoid spoilers. If an entity omits `introducedInChapter`, current components treat it as always visible (no spoiler filtering for that item).
 
+## Chapter-Tagged List Items
+
+Some lists can mix plain strings with items tagged with a chapter. A string is always
+shown; a tagged item is shown only once the reader's chapter filter has reached its
+chapter (`src/utils/chapterItems.js`). Use them for anything learned later than the
+thing it describes, so that it stays hidden while reading:
+
+```javascript
+significance: [
+  'Where the story begins',                                   // always shown
+  { text: 'A body is found here', chapter: 'chapter_09' }      // from Chapter 9
+]
+```
+
+Lists that accept them: a character's `development` (as `{ phase, description, chapter }`),
+a location's `significance` and `features`, an object's `significance`, a mystery's `clues`,
+a theme's `examples` and `development`, and an encyclopedia entry's `examples`. Without
+chapters, a character's development falls back to showing only its first entry while a
+chapter is chosen.
+
 ## Data Format Per Type
 
 ### Character Data Format
@@ -61,7 +81,8 @@ export const characters = [
     development: [                // Character development through the story
       { 
         phase: 'Beginning', 
-        description: 'Description of character at this phase' 
+        description: 'Description of character at this phase',
+        chapter: 'chapter_id'     // Optional: shown from this chapter (see Chapter-Tagged List Items)
       }
     ],
     aliases: ['Alias1', 'Alias2'], // Optional: Alternate names or disguises
@@ -257,6 +278,22 @@ export const mapBoundaries = {
 };
 ```
 
+**Plans of fictional places.** With `mapStyle: 'plan'` in the metadata, the Map tab draws
+a plain plan instead of a street map, and `lat`/`lon` are plan coordinates (`lon` from west
+to east, `lat` from south to north). `mapBoundaries.plan` gives the plan's size and the
+outlines to draw, each a list of `[lat, lon]` points; place names are labelled on the plan:
+
+```javascript
+export const mapBoundaries = {
+  plan: {
+    width: 100, height: 80,
+    water: [[[62, 20], [64, 28], [56, 20]]],   // filled shapes (lakes)
+    streams: [[[16, 0], [18, 50], [16, 100]]],  // blue lines
+    roads: [[[13, 0], [14, 50], [13, 100]]]     // white lines
+  }
+};
+```
+
 ### Mystery Elements Data Format (NEW)
 ```javascript
 export const mysteryElements = [
@@ -328,10 +365,18 @@ export const spycraftEntries = [
       'Specific technique 1',
       'Specific technique 2'
     ],
-    bookScenes: ['scene_id_1', 'scene_id_2'] // Related scenes in the book
+    bookScenes: ['scene_id_1', 'scene_id_2'], // Related scenes in the book
+    // Optional, for a mystery's clues: what the entry turns out to mean, hidden until
+    // the reader reaches revealedInChapter
+    meaning: 'What the clue shows',
+    revealedInChapter: 'chapter_id'
   }
 ];
 ```
+
+The tab's wording comes from `bookMetadata.encyclopedia` (`tabLabel`, `intro`,
+`searchPlaceholder`, `listTitle`, `emptyPrompt`, `examplesTitle`, `meaningTitle`,
+`historicalNote`).
 
 ### Metadata Data Format (NEW)
 ```javascript
@@ -383,6 +428,12 @@ export const bookMetadata = {
   // Optional: catalog flags
   isDefault: true,   // The book first-time visitors see
   draft: true,       // Hidden from the book picker unless the URL has ?drafts
+  startSpoilerFree: true, // Start at the first chapter rather than the whole book (for mysteries)
+
+  // Optional: colours per relationship category in the relationship web. Categories come
+  // from relation types: Spouse, Romantic, Family, Friend, Colleague/Partner,
+  // Superior/Subordinate, Handler/Asset, Conspirator/Enemy, Informant/Double-Agent, Other
+  relationshipCategoryColors: { 'Family': '#319795', 'Other': '#718096' },
 
   // Optional: time-period filters on the Timeline and Map. An event matches when
   // the first four-digit year in its `date` is within from..to. Omit for books
@@ -391,15 +442,19 @@ export const bookMetadata = {
     { id: 'early', label: '1932-1939', from: 1932, to: 1939 }
   ],
 
-  // Optional: Map views. Locations whose positions.js `type` is listed in
-  // hideLocationTypes are hidden in that view. With no views, the map fits all
+  // Optional: Map views. Locations whose positions.js `type` (or, without one, their
+  // locations.js `type`) is listed in hideLocationTypes are hidden in that view. With no views, the map fits all
   // locations and the view picker is hidden.
   mapViews: [
     { id: 'uk', label: 'UK', center: [54, -4], zoom: 6, hideLocationTypes: ['german'] }
   ],
 
+  // Optional: "plan" draws a plan of a fictional place instead of a street map
+  // (positions are then plan coordinates; see Positions Data Format)
+  mapStyle: 'plan',
+
   // Optional: Map marker colours and legend labels per location type; `default`
-  // covers locations without a type
+  // covers locations without a type. The labels are also used on the Locations tab.
   locationTypes: {
     uk: { label: 'UK Locations', color: '#3182ce' },
     default: { label: 'Locations', color: '#3182ce' }

@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { getCharacterName as _getCharacterName, getEventTitle as _getEventTitle } from '../utils/dataAccessors';
+import { itemText, visibleItems } from '../utils/chapterItems';
+
 const ObjectGallery = ({ 
   onObjectSelect, 
   selectedObject,
   objectsData,
   charactersData,
   eventsData,
-  locationsData = []
+  locationsData = [],
+  chaptersData = [],
+  chapterFilterId = null
 }) => {
+  // Significance can hold { text, chapter } items; links only go to characters and
+  // events the reader has reached (the data passed in is already chapter-filtered)
+  const shownSignificance = (object) => visibleItems(object.significance, chaptersData, chapterFilterId);
+  const seenEvents = (ids) => (ids || []).filter(id => eventsData.some(e => e.id === id));
+  const metCharacters = (ids) => (ids || []).filter(id => charactersData.some(c => c.id === id));
   const [searchQuery, setSearchQuery] = useState('');
   
   // Filter objects based on search
@@ -105,14 +114,14 @@ const ObjectGallery = ({
                     </>
                   )}
                   
-                  {selectedObject.significance && selectedObject.significance.length > 0 && (
+                  {shownSignificance(selectedObject).length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Significance</h3>
-                      {selectedObject.significance.length === 1 ? (
-                        <p className="text-gray-700 dark:text-gray-300">{selectedObject.significance[0]}</p>
+                      {shownSignificance(selectedObject).length === 1 ? (
+                        <p className="text-gray-700 dark:text-gray-300">{itemText(shownSignificance(selectedObject)[0])}</p>
                       ) : (
                         <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
-                          {selectedObject.significance.map((point, index) => <li key={index}>{point}</li>)}
+                          {shownSignificance(selectedObject).map((point, index) => <li key={index}>{itemText(point)}</li>)}
                         </ul>
                       )}
                     </>
@@ -153,11 +162,11 @@ const ObjectGallery = ({
                     </>
                   )}
                   
-                  {selectedObject.related_events && selectedObject.related_events.length > 0 && (
+                  {seenEvents(selectedObject.related_events).length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Related Events</h3>
                       <div className="space-y-2">
-                        {selectedObject.related_events.map(eventId => (
+                        {seenEvents(selectedObject.related_events).map(eventId => (
                           <div 
                             key={eventId}
                             className="p-2 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -176,11 +185,11 @@ const ObjectGallery = ({
                     </>
                   )}
                   
-                  {selectedObject.related_characters && selectedObject.related_characters.length > 0 && (
+                  {metCharacters(selectedObject.related_characters).length > 0 && (
                     <>
                       <h3 className="font-bold text-lg border-b border-gray-200 dark:border-gray-700 pb-2 mb-2 mt-4 text-gray-900 dark:text-gray-100">Related Characters</h3>
                       <div className="space-y-2">
-                        {selectedObject.related_characters.map(characterId => (
+                        {metCharacters(selectedObject.related_characters).map(characterId => (
                           <div 
                             key={characterId}
                             className="p-2 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

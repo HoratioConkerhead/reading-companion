@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, Polygon, Rectangle, CircleMarker, Tooltip, ZoomControl } from 'react-leaflet';
 import { getBookConfig, eventInPeriod } from '../utils/bookConfig';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { itemText, visibleItems } from '../utils/chapterItems';
 // Position data will be passed as props from the parent component
 // This component no longer imports data directly
 
@@ -105,8 +106,12 @@ const InteractiveMap = ({
   characterPositions = {},
   objectPositions = {},
   mapBoundaries = null,
-  bookConfig = getBookConfig()
+  bookConfig = getBookConfig(),
+  chaptersData = [],
+  chapterFilterId = null
 }) => {
+  // Lists can hold { text, chapter } items: show only those the reader has reached
+  const shownItems = (items) => visibleItems(Array.isArray(items) ? items : (items ? [items] : []), chaptersData, chapterFilterId);
   // State
   const [mapMode, setMapMode] = useState('all'); // 'all', 'locations', 'events', 'characters', 'objects'
   const [timeFilter, setTimeFilter] = useState('all'); // 'all' or a time period id
@@ -118,11 +123,17 @@ const InteractiveMap = ({
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState(null);
-  const [mapCenter] = useState(mapViews[0]?.center || [52.3555, -1.1743]);
-  const [mapZoom] = useState(mapViews[0]?.zoom || 6);
-  // Without configured views, start fitted to all the book's locations
+  // A fictional place is drawn as a plan: flat coordinates, no street-map tiles, and the
+  // outlines (water, streams, roads) from the book's mapBoundaries.plan
+  const isPlan = bookConfig.mapStyle === 'plan';
+  const plan = isPlan ? (mapBoundaries?.plan || {}) : null;
+  const planBounds = plan ? [[0, 0], [plan.height || 100, plan.width || 100]] : null;
+  const [mapCenter] = useState(mapViews[0]?.center || (planBounds ? [planBounds[1][0] / 2, planBounds[1][1] / 2] : [52.3555, -1.1743]));
+  const [mapZoom] = useState(mapViews[0]?.zoom || (isPlan ? 2 : 6));
+  // Without configured views, start fitted to the plan, or to all the book's locations
   const [mapBounds] = useState(() => {
     if (mapViews.length > 0) return null;
+    if (planBounds) return planBounds;
     const points = Object.values(locationPositions).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
     if (points.length === 0) return null;
     const lats = points.map(p => p.lat);
@@ -429,29 +440,35 @@ const InteractiveMap = ({
   const renderLocations = () => {
     if (mapMode !== 'locations' && mapMode !== 'all') return null;
     
-    const visibleLocationIds = new Set(locationsData.map(l => l.id));
-    return Object.entries(locationPositions).map(([id, location]) => {
+    return Object.entries(locationPositions).map(([id, position]) => {
       // Not yet introduced at the reader's chapter (positions cover the whole book)
-      if (!visibleLocationIds.has(id)) return null;
+      const location = locationsData.find(l => l.id === id);
+      if (!location) return null;
+      // The map type (for views and colours) is the position's, else the location's
+      const type = position.type ?? location.type;
       // Skip if location doesn't match view mode
-      if (isHiddenInView(location)) {
+      if (isHiddenInView({ type })) {
         return null;
       }
       
       const isSelected = selectedItem === id && selectedItemType === 'location';
-      const color = getLocationColor(location.type);
+      const color = getLocationColor(type);
+      const label = location.name || position.name || position.label;
       
       return (
         <Marker 
           key={`loc-${id}`}
-          position={[location.lat, location.lon]}
+          position={[position.lat, position.lon]}
           icon={locationIcon(color)}
           eventHandlers={{
             click: () => handleLocationClick(id)
           }}
         >
-          <Popup>{location.label}</Popup>
-          {isSelected && <Popup><strong>{location.label}</strong></Popup>}
+          {/* A plan has no street-map labels, so name each place on it */}
+          {isPlan && (
+            <Tooltip permanent direction="right" offset={[6, 0]} className="plan-label">{label}</Tooltip>
+          )}
+          {isSelected ? <Popup><strong>{label}</strong></Popup> : <Popup>{label}</Popup>}
         </Marker>
       );
     });
@@ -666,26 +683,28 @@ const InteractiveMap = ({
         case 'location':
           return (
             <>
-              <div className="text-gray-600 mb-2">{selectedItemData.area} • {selectedItemData.type}</div>
+              <div className="text-gray-600 mb-2">
+                {[selectedItemData.area, bookConfig.locationTypes?.[selectedItemData.type]?.label || selectedItemData.type].filter(Boolean).join(' • ')}
+              </div>
               {selectedItemData.description && (
                 <p className="mb-2">{selectedItemData.description}</p>
               )}
-              {selectedItemData.significance && (
+              {shownItems(selectedItemData.significance).length > 0 && (
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">Significance:</h4>
                   <ul className="list-disc pl-4 text-sm">
-                    {selectedItemData.significance.map((point, i) => (
-                      <li key={i}>{point}</li>
+                    {shownItems(selectedItemData.significance).map((point, i) => (
+                      <li key={i}>{itemText(point)}</li>
                     ))}
                   </ul>
                 </div>
               )}
-              {selectedItemData.features && (
+              {shownItems(selectedItemData.features).length > 0 && (
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">Features:</h4>
                   <ul className="list-disc pl-4 text-sm">
-                    {selectedItemData.features.map((feature, i) => (
-                      <li key={i}>{feature}</li>
+                    {shownItems(selectedItemData.features).map((feature, i) => (
+                      <li key={i}>{itemText(feature)}</li>
                     ))}
                   </ul>
                 </div>
@@ -773,15 +792,15 @@ const InteractiveMap = ({
                 <div className="text-gray-600 mb-2">{selectedItemData.type}</div>
               )}
               <p className="mb-2">{selectedItemData.description}</p>
-              {selectedItemData.significance && (
+              {shownItems(selectedItemData.significance).length > 0 && (
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">Significance:</h4>
                   <ul className="list-disc pl-4 text-sm">
-                    {selectedItemData.significance.slice(0, 2).map((point, i) => (
-                      <li key={i}>{point}</li>
+                    {shownItems(selectedItemData.significance).slice(0, 2).map((point, i) => (
+                      <li key={i}>{itemText(point)}</li>
                     ))}
-                    {selectedItemData.significance.length > 2 && (
-                      <li>+ {selectedItemData.significance.length - 2} more points</li>
+                    {shownItems(selectedItemData.significance).length > 2 && (
+                      <li>+ {shownItems(selectedItemData.significance).length - 2} more points</li>
                     )}
                   </ul>
                 </div>
@@ -991,13 +1010,30 @@ const InteractiveMap = ({
           <MapContainer 
             center={mapCenter}
             zoom={mapZoom}
-            style={{ height: '100%', width: '100%' }}
+            style={{ height: '100%', width: '100%', ...(isPlan ? { background: 'var(--map-plan-surround, #d9d4c5)' } : {}) }}
             zoomControl={false} // We'll add it in a better position
+            {...(isPlan ? { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, maxBounds: [[-20, -20], [(plan.height || 100) + 20, (plan.width || 100) + 20]] } : {})}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            {isPlan ? (
+              <>
+                {/* The plan: a parchment ground with water, streams and roads */}
+                <Rectangle bounds={planBounds} pathOptions={{ color: '#b8b09a', weight: 1, fillColor: '#efe9d8', fillOpacity: 1 }} interactive={false} />
+                {(plan.roads || []).map((line, i) => (
+                  <Polyline key={`road-${i}`} positions={line} pathOptions={{ color: '#ffffff', weight: 7, opacity: 0.9, lineCap: 'round' }} interactive={false} />
+                ))}
+                {(plan.streams || []).map((line, i) => (
+                  <Polyline key={`stream-${i}`} positions={line} pathOptions={{ color: '#5b8fb9', weight: 5, opacity: 0.8 }} interactive={false} />
+                ))}
+                {(plan.water || []).map((shape, i) => (
+                  <Polygon key={`water-${i}`} positions={shape} pathOptions={{ color: '#4a7ea8', weight: 1, fillColor: '#7fa9cc', fillOpacity: 0.9 }} interactive={false} />
+                ))}
+              </>
+            ) : (
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            )}
             
             <MapInstanceCapture />
 

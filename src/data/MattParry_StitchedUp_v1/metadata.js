@@ -60,6 +60,8 @@ export const bookMetadata = {
     'Superior/Subordinate': '#DD6B20',
     'Friend': '#4299E1',
     'Informant/Double-Agent': '#D53F8C',
+    'Family': '#319795',
+    'Romantic': '#B83280',
     'Other': '#718096'
   },
   // Optional: character importance weighting configuration used by RelationshipWeb
