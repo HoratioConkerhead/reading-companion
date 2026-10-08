@@ -157,7 +157,7 @@ export const events = [
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
     ],
     significance: 'Establishes connections with German Nazi sympathizers and sets up Cynthia\'s role as a host',
-    chapter: 'chapter_04',
+    chapter: 'chapter_08',
     keyActions: [
       'Travel to Berlin',
       'Stay at Hotel Adlon',
@@ -178,7 +178,7 @@ export const events = [
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
     ],
     significance: 'Establishes the operational framework for Cynthia\'s intelligence work',
-    chapter: 'chapter_04',
+    chapter: 'chapter_12',
     keyActions: [
       'Meeting with German sympathizers',
       'Briefing on host role',
@@ -199,7 +199,7 @@ export const events = [
       { characterId: 'franz_stammer', role: 'German Nazi sympathizer' }
     ],
     significance: 'Establishes the German connection to the Nazi sympathizer network',
-    chapter: 'chapter_04',
+    chapter: 'chapter_10',
     keyActions: [
       'Network connections established',
       'Operational methods discussed',
@@ -220,7 +220,7 @@ export const events = [
       { characterId: 'intelligence_agents', role: 'Undercover operatives' }
     ],
     significance: 'First major intelligence-gathering operation hosted by Cynthia',
-    chapter: 'chapter_05',
+    chapter: 'chapter_19',
     keyActions: [
       'Party hosted for Nazi sympathizers',
       'Intelligence agents attend in disguise',
@@ -239,7 +239,7 @@ export const events = [
       { characterId: 'lady_cynthia_childreth', role: 'Host and operative' }
     ],
     significance: 'Successful intelligence-gathering operation',
-    chapter: 'chapter_05',
+    chapter: 'chapter_19',
     keyActions: [
       'Agents maintain disguises',
       'Information gathered on network',
@@ -258,7 +258,7 @@ export const events = [
       { characterId: 'oswald_mosley', role: 'Guest and fascist leader' }
     ],
     significance: 'Reveals the extent of fascist operations and Mosley\'s involvement',
-    chapter: 'chapter_06',
+    chapter: 'chapter_22',
     keyActions: [
       'Mosley attends party',
       'Safe house request made',
@@ -277,7 +277,7 @@ export const events = [
       { characterId: 'oswald_mosley', role: 'Fascist leader' }
     ],
     significance: 'Shows the level of trust placed in Cynthia and the scope of fascist operations',
-    chapter: 'chapter_06',
+    chapter: 'chapter_22',
     keyActions: [
       'Safe house request made',
       'Trust level established',
@@ -297,7 +297,7 @@ export const events = [
       { characterId: 'oswald_mosley', role: 'Recently released from internment' }
     ],
     significance: 'Moves the story to the wartime period and shows how the situation has evolved',
-    chapter: 'chapter_07',
+    chapter: 'chapter_23',
     keyActions: [
       'Time jump to 1943',
       'War situation established',
@@ -315,7 +315,7 @@ export const events = [
       { characterId: 'oswald_mosley', role: 'Fascist leader' }
     ],
     significance: 'Shows the British government\'s response to fascist activities during the war',
-    chapter: 'chapter_07',
+    chapter: 'chapter_23',
     keyActions: [
       'Mosley interned in May 1940',
       'Internment period',
@@ -334,7 +334,7 @@ export const events = [
       { characterId: 'marjorie_snowden', role: 'Network representative' }
     ],
     significance: 'Shows the network is still active and seeking to use Cynthia\'s resources',
-    chapter: 'chapter_07',
+    chapter: 'chapter_23',
     keyActions: [
       'Marjorie contacts Cynthia',
       'Network activity confirmed',
@@ -353,7 +353,7 @@ export const events = [
       { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Shows the network is actively using Cynthia\'s house and reveals Davies\' use of aliases',
-    chapter: 'chapter_08',
+    chapter: 'chapter_36',
     keyActions: [
       'Suitcase delivered',
       'Alias "Young" used',
@@ -372,7 +372,7 @@ export const events = [
       { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Reveals the network\'s operational methods and use of disguises',
-    chapter: 'chapter_08',
+    chapter: 'chapter_28',
     keyActions: [
       'Alias "Young" used',
       'Disguise maintained',
@@ -391,7 +391,7 @@ export const events = [
       { characterId: 'lady_cynthia_childreth', role: 'Subject of surveillance' }
     ],
     significance: 'Shows the intelligence operation is actively monitoring the network',
-    chapter: 'chapter_09',
+    chapter: 'chapter_38',
     keyActions: [
       'Surveillance teams deployed',
       'Movements monitored',
@@ -409,7 +409,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Monitoring operatives' }
     ],
     significance: 'Demonstrates the scope and sophistication of British intelligence operations',
-    chapter: 'chapter_09',
+    chapter: 'chapter_38',
     keyActions: [
       'Multiple monitoring methods used',
       'Teams deployed to various locations',
@@ -427,7 +427,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Discoverers' }
     ],
     significance: 'Provides physical evidence of the network\'s violent intentions',
-    chapter: 'chapter_10',
+    chapter: 'chapter_42',
     keyActions: [
       'Rifle discovered at ranges',
       'Practice sessions identified',
@@ -445,7 +445,7 @@ export const events = [
       { characterId: 'conspirators', role: 'Practicing shooters' }
     ],
     significance: 'Shows the network was actively preparing for violent operations',
-    chapter: 'chapter_10',
+    chapter: 'chapter_42',
     keyActions: [
       'Shooting practice conducted',
       'Targets practiced on',
@@ -463,7 +463,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Discoverers' }
     ],
     significance: 'Provides financial evidence linking the network to Nazi operations',
-    chapter: 'chapter_11',
+    chapter: 'chapter_25',
     keyActions: [
       'Cheque book found',
       'Bank account identified',
@@ -481,7 +481,7 @@ export const events = [
       { characterId: 'tg_edwards', role: 'Account holder' }
     ],
     significance: 'Shows the network\'s financial infrastructure and use of British institutions',
-    chapter: 'chapter_11',
+    chapter: 'chapter_25',
     keyActions: [
       'Account details revealed',
       'Banking connections identified',
@@ -501,7 +501,7 @@ export const events = [
       { characterId: 'sir_john_davies', role: 'Traveler using alias' }
     ],
     significance: 'Shows the network\'s operational methods and case-switching techniques',
-    chapter: 'chapter_12',
+    chapter: 'chapter_41',
     keyActions: [
       'Train journey undertaken',
       'Cases switched in Box Tunnel',
@@ -520,7 +520,7 @@ export const events = [
       { characterId: 'sir_john_davies', role: 'Case switcher' }
     ],
     significance: 'Demonstrates the network\'s sophisticated operational techniques',
-    chapter: 'chapter_12',
+    chapter: 'chapter_32',
     keyActions: [
       'Cases prepared for switching',
       'Switch conducted in tunnel',
@@ -539,7 +539,7 @@ export const events = [
       { characterId: 'sir_john_davies', role: 'Operative' }
     ],
     significance: 'Key operational moment showing network capabilities',
-    chapter: 'chapter_12',
+    chapter: 'chapter_32',
     keyActions: [
       'Tunnel location chosen',
       'Timing coordinated',
@@ -558,7 +558,7 @@ export const events = [
       { characterId: 'murderer', role: 'Woman disguised as postman' }
     ],
     significance: 'Shows the network\'s willingness to use violence and their operational security methods',
-    chapter: 'chapter_13',
+    chapter: 'chapter_36',
     keyActions: [
       'Postman disguise used',
       'Flat accessed',
@@ -577,7 +577,7 @@ export const events = [
       { characterId: 'tg_edwards', role: 'Victim' }
     ],
     significance: 'Demonstrates the network\'s use of sophisticated disguises for violent operations',
-    chapter: 'chapter_13',
+    chapter: 'chapter_36',
     keyActions: [
       'Postman disguise prepared',
       'Disguise maintained during operation',
@@ -595,7 +595,7 @@ export const events = [
       { characterId: 'george_bennet', role: 'Lead investigator' }
     ],
     significance: 'Marks the beginning of the official investigation into the Nazi network',
-    chapter: 'chapter_14',
+    chapter: 'chapter_29',
     keyActions: [
       'Murder scene examined',
       'Evidence collected',
@@ -613,7 +613,7 @@ export const events = [
       { characterId: 'george_bennet', role: 'Investigator' }
     ],
     significance: 'Establishes the official investigation that will lead to the broader operation',
-    chapter: 'chapter_14',
+    chapter: 'chapter_31',
     keyActions: [
       'Evidence analyzed',
       'Connections traced',
@@ -668,7 +668,7 @@ export const events = [
       { characterId: 'wing_commander_bill_lawrie', role: 'Handler' }
     ],
     significance: 'Provides an inside source in the Nazi network and changes operational dynamics',
-    chapter: 'chapter_16',
+    chapter: 'chapter_50',
     keyActions: [
       'Double agent status revealed',
       'Information provided to intelligence',
@@ -687,7 +687,7 @@ export const events = [
       { characterId: 'wing_commander_bill_lawrie', role: 'Handler' }
     ],
     significance: 'Demonstrates the success of British intelligence infiltration operations',
-    chapter: 'chapter_16',
+    chapter: 'chapter_50',
     keyActions: [
       'Status confirmed',
       'Handler relationship established',
@@ -706,7 +706,7 @@ export const events = [
       { characterId: 'conspirators', role: 'Subjects of surveillance' }
     ],
     significance: 'Shows the final phase of the intelligence operation before the climax',
-    chapter: 'chapter_17',
+    chapter: 'chapter_45',
     keyActions: [
       'Surveillance intensified',
       'Movements tracked',
@@ -724,7 +724,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Tracking operatives' }
     ],
     significance: 'Provides operational intelligence for the final phase of the operation',
-    chapter: 'chapter_17',
+    chapter: 'chapter_46',
     keyActions: [
       'All conspirators tracked',
       'Movements monitored',
@@ -745,7 +745,7 @@ export const events = [
       { characterId: 'marjorie_snowden', role: 'Fleeing conspirator' }
     ],
     significance: 'Shows the network\'s escape planning and the pressure they are under',
-    chapter: 'chapter_18',
+    chapter: 'chapter_48',
     keyActions: [
       'Escape to Ireland planned',
       'Escape executed',
@@ -764,7 +764,7 @@ export const events = [
       { characterId: 'louise_harrington', role: 'House occupant' }
     ],
     significance: 'Shows the Harringtons\' commitment and the network\'s operational continuity',
-    chapter: 'chapter_18',
+    chapter: 'chapter_48',
     keyActions: [
       'House occupied',
       'Operations continued',
@@ -784,7 +784,7 @@ export const events = [
       { characterId: 'montgomery', role: 'Target' }
     ],
     significance: 'The main operational objective of the Nazi network',
-    chapter: 'chapter_19',
+    chapter: 'chapter_50',
     keyActions: [
       'Position established',
       'Target identified',
@@ -803,7 +803,7 @@ export const events = [
       { characterId: 'conspirators', role: 'Assassins' }
     ],
     significance: 'Shows the high-level nature of the network\'s targets',
-    chapter: 'chapter_19',
+    chapter: 'chapter_40',
     keyActions: [
       'Target identified',
       'Inspection schedule learned',
@@ -822,7 +822,7 @@ export const events = [
       { characterId: 'bob_harrington', role: 'Assassin' }
     ],
     significance: 'Prevents the assassination and reveals Louise\'s true allegiance',
-    chapter: 'chapter_20',
+    chapter: 'chapter_50',
     keyActions: [
       'Intervention made',
       'Assassination foiled',
@@ -841,7 +841,7 @@ export const events = [
       { characterId: 'security_forces', role: 'Responders' }
     ],
     significance: 'The main operational objective of the Nazi network fails completely',
-    chapter: 'chapter_20',
+    chapter: 'chapter_50',
     keyActions: [
       'Plot disrupted',
       'Security forces respond',
@@ -861,7 +861,7 @@ export const events = [
       { characterId: 'security_forces', role: 'Arresting officers' }
     ],
     significance: 'Shows the partial success of the counter-intelligence operation',
-    chapter: 'chapter_21',
+    chapter: 'chapter_50',
     keyActions: [
       'Harrington arrested',
       'Davies arrested',
@@ -880,7 +880,7 @@ export const events = [
       { characterId: 'sir_john_davies', role: 'Captured conspirator' }
     ],
     significance: 'Provides intelligence through interrogation and shows operational success',
-    chapter: 'chapter_21',
+    chapter: 'chapter_50',
     keyActions: [
       'Both conspirators captured',
       'Interrogation begins',
@@ -899,7 +899,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Operatives' }
     ],
     significance: 'Shows the immediate consequences and evidence gathering',
-    chapter: 'chapter_22',
+    chapter: 'chapter_50',
     keyActions: [
       'Scene secured',
       'Evidence collected',
@@ -917,7 +917,7 @@ export const events = [
       { characterId: 'intelligence_teams', role: 'Assessors' }
     ],
     significance: 'Provides assessment of the overall operation\'s effectiveness',
-    chapter: 'chapter_22',
+    chapter: 'chapter_50',
     keyActions: [
       'Results assessed',
       'Successes identified',
@@ -936,7 +936,7 @@ export const events = [
       { characterId: 'remaining_conspirators', role: 'Likely perpetrators' }
     ],
     significance: 'Shows the network\'s willingness to eliminate traitors and the consequences of betrayal',
-    chapter: 'chapter_23',
+    chapter: 'epilogue',
     keyActions: [
       'Gas explosion orchestrated',
       'Louise killed',
@@ -954,7 +954,7 @@ export const events = [
       { characterId: 'investigators', role: 'Investigators' }
     ],
     significance: 'Shows the difficulty of proving orchestrated murder in wartime',
-    chapter: 'chapter_23',
+    chapter: 'epilogue',
     keyActions: [
       'Death investigated',
       'Suspicious circumstances noted',
@@ -973,7 +973,7 @@ export const events = [
       { characterId: 'sir_john_davies', role: 'Defendant' }
     ],
     significance: 'Shows the legal consequences for the captured conspirators',
-    chapter: 'chapter_24',
+    chapter: 'epilogue',
     keyActions: [
       'Trial conducted in camera',
       'Attempted murder charges',
@@ -991,7 +991,7 @@ export const events = [
       { characterId: 'lady_cynthia_childreth', role: 'Recipient' }
     ],
     significance: 'Recognizes Cynthia\'s contribution to British intelligence and the war effort',
-    chapter: 'chapter_24',
+    chapter: 'epilogue',
     keyActions: [
       'OBE awarded',
       'Services to war work recognized',

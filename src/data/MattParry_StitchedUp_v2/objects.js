@@ -6,7 +6,7 @@ export const objects = [
     description: 'German rifle discovered at Churn Rifle Ranges, where the assassins practiced their shooting. This provides evidence of the network\'s preparation for violent operations.',
     significance: 'Physical evidence of the network\'s violent intentions and preparation for assassination',
     events: ['rifle_discovery', 'churn_ranges_practice'],
-    introducedInChapter: 'chapter_10',
+    introducedInChapter: 'chapter_42',
     location: 'churn_rifle_ranges',
     characters: ['conspirators'],
     features: [
@@ -23,7 +23,7 @@ export const objects = [
     description: 'Suitcase delivered by Davies (using alias "Young") to Cynthia\'s house, believed to contain a radio for Nazi operations. Actually contained women\'s clothes.',
     significance: 'Shows the network\'s operational methods and use of disguises',
     events: ['suitcase_delivery', 'davies_disguise'],
-    introducedInChapter: 'chapter_08',
+    introducedInChapter: 'chapter_36',
     location: 'cynthia_house_bucklebury',
     characters: ['sir_john_davies', 'lady_cynthia_childreth'],
     features: [
@@ -40,7 +40,7 @@ export const objects = [
     description: 'Cheque book for T.G. Edwards found at Martins Bank, 68 Lombard Street, London. Used for financing Nazi operations.',
     significance: 'Financial evidence linking the network to Nazi operations',
     events: ['cheque_book_discovery', 'edwards_account_revealed'],
-    introducedInChapter: 'chapter_11',
+    introducedInChapter: 'chapter_25',
     location: 'martins_bank_london',
     characters: ['tg_edwards'],
     features: [
@@ -57,7 +57,7 @@ export const objects = [
     description: 'Disguise used by a woman to murder T.G. Edwards in his London flat. The disguise included a postman\'s uniform.',
     significance: 'Demonstrates the network\'s use of sophisticated disguises for violent operations',
     events: ['edwards_murder', 'postman_disguise'],
-    introducedInChapter: 'chapter_13',
+    introducedInChapter: 'chapter_36',
     location: 'crawford_place_london',
     characters: ['murderer'],
     features: [
@@ -74,7 +74,7 @@ export const objects = [
     description: 'Cynthia and Richard\'s house in Bucklebury, used as a venue for Nazi sympathizer parties and later taken over by the Harringtons.',
     significance: 'Base for intelligence operations and Nazi sympathizer gatherings',
     events: ['first_party_bucklebury', 'second_party_mosley', 'suitcase_delivery', 'harringtons_takeover'],
-    introducedInChapter: 'chapter_01',
+    introducedInChapter: 'chapter_48',
     location: 'cynthia_house_bucklebury',
     characters: ['lady_cynthia_childreth', 'richard_childreth', 'bob_harrington', 'louise_harrington'],
     features: [
@@ -111,7 +111,7 @@ export const objects = [
     description: 'Luxury hotel building in Berlin where Richard and Cynthia stay during their trip to Germany. Meeting place with German Nazi sympathizers.',
     significance: 'Location of meetings with German Nazi sympathizers and establishment of operational framework',
     events: ['berlin_trip', 'hotel_adlon_meeting', 'nazi_sympathizers_berlin'],
-    introducedInChapter: 'chapter_04',
+    introducedInChapter: 'chapter_08',
     location: 'hotel_adlon_berlin',
     characters: ['lady_cynthia_childreth', 'richard_childreth', 'gerda_stammer', 'franz_stammer'],
     features: [
@@ -129,7 +129,7 @@ export const objects = [
     description: 'Rifle ranges facility where the conspirators practiced shooting, preparing for their assassination attempt. Poor security allowed unauthorized practice.',
     significance: 'Location where conspirators prepared for assassination attempt',
     events: ['rifle_discovery', 'churn_ranges_practice'],
-    introducedInChapter: 'chapter_10',
+    introducedInChapter: 'chapter_42',
     location: 'churn_rifle_ranges',
     characters: ['conspirators'],
     features: [
@@ -147,7 +147,7 @@ export const objects = [
     description: 'T.G. Edwards\' London flat in Crawford Place where he was murdered by a woman disguised as a postman.',
     significance: 'Scene of Edwards\' murder',
     events: ['edwards_murder', 'postman_disguise'],
-    introducedInChapter: 'chapter_13',
+    introducedInChapter: 'chapter_36',
     location: 'crawford_place_london',
     characters: ['tg_edwards', 'murderer'],
     features: [
@@ -164,7 +164,7 @@ export const objects = [
     description: 'Railway tunnel structure on the main line where cases were switched during the train journey as part of the network\'s operational logistics.',
     significance: 'Location of case switching operation during train journey',
     events: ['train_journey', 'case_switching', 'box_tunnel_incident'],
-    introducedInChapter: 'chapter_12',
+    introducedInChapter: 'chapter_32',
     location: 'box_tunnel',
     characters: ['louise_harrington', 'sir_john_davies'],
     features: [
@@ -182,7 +182,7 @@ export const objects = [
     description: 'Military camp facility where Montgomery was scheduled to conduct an inspection, becoming the target of the assassination attempt.',
     significance: 'Target location for assassination attempt on Montgomery',
     events: ['assassination_attempt', 'montgomery_target', 'louise_intervention'],
-    introducedInChapter: 'chapter_19',
+    introducedInChapter: 'chapter_45',
     location: 'american_transport_division_camp',
     characters: ['montgomery', 'bob_harrington', 'louise_harrington'],
     features: [
@@ -200,7 +200,7 @@ export const objects = [
     description: 'Louise Harrington\'s cottage building where she was killed in a suspicious gas explosion, likely orchestrated by remaining conspirators.',
     significance: 'Scene of Louise\'s murder',
     events: ['louise_gas_explosion', 'suspicious_death'],
-    introducedInChapter: 'chapter_23',
+    introducedInChapter: 'epilogue',
     location: 'louise_cottage',
     characters: ['louise_harrington', 'remaining_conspirators'],
     features: [
@@ -217,7 +217,7 @@ export const objects = [
     description: 'Hotel building in the Isles of Scilly where Chief Inspector Bennet conducted surveillance operations, watching for suspicious activity.',
     significance: 'Base for Bennet\'s surveillance operation in Scilly Isles',
     events: ['atlantic_hotel_surveillance', 'suspicious_activity_watch'],
-    introducedInChapter: 'chapter_27',
+    introducedInChapter: 'chapter_25',
     location: 'atlantic_hotel',
     characters: ['george_bennet'],
     features: [
@@ -270,7 +270,7 @@ export const objects = [
     description: 'Bank building in London where T.G. Edwards maintained an account used for Nazi operations. Located in the financial district.',
     significance: 'Financial institution used by Nazi network',
     events: ['cheque_book_discovery', 'edwards_account_revealed'],
-    introducedInChapter: 'chapter_11',
+    introducedInChapter: 'chapter_25',
     location: 'martins_bank_london',
     characters: ['tg_edwards'],
     features: [
@@ -305,7 +305,7 @@ export const objects = [
     description: 'Order of the British Empire (OBE) medal awarded to Cynthia for "services to war work" in recognition of her contribution to British intelligence operations.',
     significance: 'Recognizes Cynthia\'s contribution to British intelligence and the war effort',
     events: ['cynthia_obe'],
-    introducedInChapter: 'chapter_24',
+    introducedInChapter: 'epilogue',
     location: 'uk',
     characters: ['lady_cynthia_childreth'],
     features: [
@@ -322,7 +322,7 @@ export const objects = [
     description: 'Knitting needles used by Louise Harrington, representing her signature trait and the network\'s name "the knitters".',
     significance: 'Symbolic representation of the network\'s identity and Louise\'s character',
     events: ['louise_betrayal'],
-    introducedInChapter: 'chapter_01',
+    introducedInChapter: 'chapter_15',
     location: 'various',
     characters: ['louise_harrington'],
     features: [
@@ -408,7 +408,7 @@ export const objects = [
     description: 'Green car discovered outside Cynthia\'s house, potentially linking to the Snowdens and their involvement in operations.',
     significance: 'Potential evidence linking Snowdens to operations',
     events: ['green_car_discovery', 'snowden_car_link'],
-    introducedInChapter: 'chapter_35',
+    introducedInChapter: 'chapter_38',
     location: 'cynthia_house_bucklebury',
     characters: ['peter_snowden', 'marjorie_snowden'],
     features: [
@@ -425,7 +425,7 @@ export const objects = [
     description: 'Car used by Bob Harrington for his mysterious 40-minute trip, potentially visiting a hidden location.',
     significance: 'Vehicle used for operational activities',
     events: ['harrington_mystery_trip', 'hidden_location_visit'],
-    introducedInChapter: 'chapter_36',
+    introducedInChapter: 'chapter_38',
     location: 'aldworth',
     characters: ['bob_harrington'],
     features: [
@@ -442,7 +442,7 @@ export const objects = [
     description: 'Various surveillance equipment used by British intelligence teams to monitor the conspirators in their villages.',
     significance: 'Tools used for intelligence gathering operations',
     events: ['aldworth_surveillance', 'ashampstead_watch', 'yattendon_observation'],
-    introducedInChapter: 'chapter_31',
+    introducedInChapter: 'chapter_38',
     location: 'various',
     characters: ['intelligence_teams'],
     features: [
@@ -459,7 +459,7 @@ export const objects = [
     description: 'Art supplies used by Bert as cover for surveillance operations, including easel and painting materials.',
     significance: 'Cover story for surveillance operations',
     events: ['aldworth_surveillance', 'harrington_monitoring'],
-    introducedInChapter: 'chapter_14',
+    introducedInChapter: 'chapter_38',
     location: 'aldworth',
     characters: ['bert'],
     features: [
@@ -493,7 +493,7 @@ export const objects = [
     description: 'British railway network used by conspirators for travel and case switching operations, including Box Tunnel.',
     significance: 'Transport infrastructure used for operational logistics',
     events: ['train_journey', 'case_switching', 'box_tunnel_incident'],
-    introducedInChapter: 'chapter_12',
+    introducedInChapter: 'chapter_32',
     location: 'uk',
     characters: ['tg_edwards', 'louise_harrington', 'sir_john_davies'],
     features: [
